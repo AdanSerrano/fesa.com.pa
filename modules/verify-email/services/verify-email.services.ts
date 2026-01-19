@@ -25,9 +25,9 @@ export class VerifyEmailService {
         return { error: validation.error };
       }
 
-      const { tokenId, userId, email } = validation.tokenData;
+      const { tokenId, userId } = validation.tokenData;
 
-      await this.repository.markEmailAsVerified(userId, email);
+      await this.repository.markEmailAsVerified(userId);
       await this.repository.deleteVerificationToken(tokenId);
 
       return { success: "¡Tu email ha sido verificado correctamente!" };

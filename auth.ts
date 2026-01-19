@@ -27,14 +27,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return true;
     },
     async session({ token, session }) {
-      if (token.sub && session.user) session.user.id = token.sub;
-      if (token.role && session.user) session.user.role = token.role as Role;
       if (session.user) {
+        if (token.sub) session.user.id = token.sub;
         session.user.userName = token.userName as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.image = token.image as string;
-        session.user.role = token.role as string;
+        session.user.role = token.role as Role;
         session.user.isTwoFactorEnabled = token.isTwoFactorEnabled as boolean;
       }
       return session;

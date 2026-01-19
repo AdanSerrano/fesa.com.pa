@@ -13,12 +13,11 @@ export class VerifyEmailRepository {
     });
   }
 
-  public async markEmailAsVerified(userId: string, email: string) {
+  public async markEmailAsVerified(userId: string) {
     return await db.user.update({
       where: { id: userId },
       data: {
         emailVerified: new Date(),
-        email,
       },
     });
   }

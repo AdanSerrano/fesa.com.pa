@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import { generateVerificationToken } from "@/lib/tokens";
+import { checkRateLimit, formatResetTime } from "@/lib/rate-limit";
 import { sendVerificationEmail } from "../emails/register.emails";
 import { RegisterRepository } from "../repository/register.repository";
 import { RegisterUser } from "../validations/schema/register.schema";
@@ -9,6 +10,7 @@ export interface RegisterResult {
   success?: string;
   error?: string;
   requiresVerification?: boolean;
+  rateLimited?: boolean;
 }
 
 export class RegisterService {
@@ -22,6 +24,16 @@ export class RegisterService {
 
   public async register(registerData: RegisterUser): Promise<RegisterResult> {
     try {
+      const rateLimitKey = `register:${registerData.email.toLowerCase()}`;
+      const rateLimit = checkRateLimit(rateLimitKey);
+
+      if (!rateLimit.allowed) {
+        return {
+          error: `Demasiados intentos. Intenta de nuevo en ${formatResetTime(rateLimit.resetIn)}.`,
+          rateLimited: true,
+        };
+      }
+
       const domainValidation =
         await this.registerDomainService.validateRegisterBusinessRules(
           registerData

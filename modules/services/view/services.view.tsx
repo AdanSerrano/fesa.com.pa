@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getUserSessionAction } from "../actions/services.actions";
+import { LogoutButton } from "@/modules/logout/components/logout-button";
 
 export async function ServicesView() {
   const result = await getUserSessionAction();
@@ -54,6 +55,9 @@ export async function ServicesView() {
           />
         </div>
       </CardContent>
+      <CardFooter>
+        <LogoutButton variant="outline" className="w-full" />
+      </CardFooter>
     </Card>
   );
 }
