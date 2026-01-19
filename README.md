@@ -108,6 +108,7 @@ modules/
     ├── hooks/            # Lógica de UI (React hooks)
     ├── repository/       # Acceso a datos (abstracción DB)
     ├── services/         # Lógica de negocio
+    ├── state/            # Estado global (Zustand)
     ├── validations/      # Schemas Zod + validaciones
     ├── view/             # Componentes página
     └── view-model/       # Bridge entre view y hooks
@@ -152,11 +153,12 @@ bunx prisma migrate dev  # Migraciones
 
 ## Documentación
 
-- [CLAUDE.md](./CLAUDE.md) - Guía completa de arquitectura y patrones
 - [Auth.js](https://authjs.dev/) - Documentación de autenticación
 - [Prisma](https://www.prisma.io/docs) - Documentación de ORM
 - [shadcn/ui](https://ui.shadcn.com/) - Componentes UI
 - [Resend](https://resend.com/docs) - Envío de emails
+- [ReactEmail](https://react.email/) - Componentes de react email
+- [Zustand](https://zustand-demo.pmnd.rs/) - Manejador de estados
 
 ## Licencia
 
