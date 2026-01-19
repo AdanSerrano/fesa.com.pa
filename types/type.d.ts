@@ -1,4 +1,4 @@
-import { Role } from "@/app/prisma/enums";
+import { Role } from "@/app/generated/prisma/enums";
 
 declare module "next-auth" {
   interface User {

@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
-import { resetRateLimit } from "@/lib/rate-limit";
 import { ResetPasswordRepository } from "../repository/reset-password.repository";
 import { ResetPasswordDomainService } from "./reset-password.domain.service";
 import { ResetPasswordInput } from "../validations/schema/reset-password.schema";
+import { resetFailedAttempts } from "@/lib/account-security";
 
 export interface ResetPasswordResult {
   success?: string;
@@ -38,7 +38,8 @@ export class ResetPasswordService {
 
       await this.repository.deletePasswordResetToken(validation.tokenId!);
 
-      resetRateLimit(validation.email!.toLowerCase());
+      // Resetear intentos fallidos después de cambiar contraseña
+      await resetFailedAttempts(validation.userId!);
 
       return {
         success: "¡Contraseña actualizada! Ya puedes iniciar sesión.",

@@ -1,5 +1,4 @@
 import { generatePasswordResetToken } from "@/lib/tokens";
-import { checkRateLimit, formatResetTime } from "@/lib/rate-limit";
 import { sendPasswordResetEmail } from "../emails/forgot-password.emails";
 import { ForgotPasswordDomainService } from "./forgot-password.domain.service";
 import { ForgotPasswordInput } from "../validations/schema/forgot-password.schema";
@@ -10,7 +9,6 @@ const GENERIC_SUCCESS_MESSAGE =
 export interface ForgotPasswordResult {
   success?: string;
   error?: string;
-  rateLimited?: boolean;
 }
 
 export class ForgotPasswordService {
@@ -24,16 +22,6 @@ export class ForgotPasswordService {
     input: ForgotPasswordInput
   ): Promise<ForgotPasswordResult> {
     try {
-      const rateLimitKey = `forgot-password:${input.email.toLowerCase()}`;
-      const rateLimit = checkRateLimit(rateLimitKey);
-
-      if (!rateLimit.allowed) {
-        return {
-          error: `Demasiados intentos. Intenta de nuevo en ${formatResetTime(rateLimit.resetIn)}.`,
-          rateLimited: true,
-        };
-      }
-
       const validation =
         await this.domainService.validateForgotPasswordRequest(input);
 

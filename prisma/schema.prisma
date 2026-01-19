@@ -6,7 +6,7 @@
 
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "../app/prisma"
 }
 
 datasource db {
@@ -28,9 +28,13 @@ model User {
   password              String?
   role                  Role                   @default(USER)
   isTwoFactorEnabled    Boolean                @default(false)
+  failedLoginAttempts   Int                    @default(0)
+  lockedUntil           DateTime?
+  lastFailedLogin       DateTime?
   createdAt             DateTime               @default(now())
   updatedAt             DateTime               @updatedAt
   twoFactorConfirmation twoFactorConfirmation?
+  auditLogs             AuditLog[]
 }
 
 model VerificationToken {
@@ -68,3 +72,34 @@ model twoFactorConfirmation {
   @@unique([userId])
   @@index([userId])
 }
+
+enum AuditAction {
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGOUT
+  PASSWORD_RESET_REQUESTED
+  PASSWORD_RESET_COMPLETED
+  EMAIL_VERIFIED
+  TWO_FACTOR_ENABLED
+  TWO_FACTOR_DISABLED
+  TWO_FACTOR_VERIFIED
+  ACCOUNT_LOCKED
+  ACCOUNT_UNLOCKED
+  REGISTRATION
+}
+
+model AuditLog {
+  id        String      @id @default(cuid())
+  userId    String?
+  user      User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action    AuditAction
+  ipAddress String?
+  userAgent String?
+  metadata  Json?
+  createdAt DateTime    @default(now())
+
+  @@index([userId])
+  @@index([action])
+  @@index([createdAt])
+}
+

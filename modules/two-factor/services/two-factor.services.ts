@@ -1,5 +1,4 @@
 import { generateTwoFactorToken } from "@/lib/tokens";
-import { checkRateLimit, formatResetTime } from "@/lib/rate-limit";
 import { TwoFactorRepository } from "../repository/two-factor.repository";
 import { TwoFactorDomainService } from "./two-factor.domain.service";
 import { sendTwoFactorEmail } from "../emails/two-factor.emails";
@@ -9,7 +8,6 @@ export interface TwoFactorResult {
   success?: string;
   error?: string;
   requiresTwoFactor?: boolean;
-  rateLimited?: boolean;
 }
 
 export class TwoFactorService {
@@ -25,16 +23,6 @@ export class TwoFactorService {
     input: SendTwoFactorInput
   ): Promise<TwoFactorResult> {
     try {
-      const rateLimitKey = `two-factor:${input.email.toLowerCase()}`;
-      const rateLimit = checkRateLimit(rateLimitKey);
-
-      if (!rateLimit.allowed) {
-        return {
-          error: `Demasiados intentos. Intenta de nuevo en ${formatResetTime(rateLimit.resetIn)}.`,
-          rateLimited: true,
-        };
-      }
-
       const validation = await this.domainService.validateUserForTwoFactor(
         input.email
       );
@@ -60,16 +48,6 @@ export class TwoFactorService {
     input: TwoFactorInput
   ): Promise<TwoFactorResult> {
     try {
-      const rateLimitKey = `two-factor-verify:${input.email.toLowerCase()}`;
-      const rateLimit = checkRateLimit(rateLimitKey);
-
-      if (!rateLimit.allowed) {
-        return {
-          error: `Demasiados intentos. Intenta de nuevo en ${formatResetTime(rateLimit.resetIn)}.`,
-          rateLimited: true,
-        };
-      }
-
       const validation = await this.domainService.validateTwoFactorCode(input);
 
       if (!validation.isValid || !validation.userId || !validation.tokenId) {

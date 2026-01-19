@@ -36,7 +36,14 @@ export class LoginDomainService {
       const { identifier } = validationResult.data;
       const user = await this.loginRepository.getUserByIdentifier(loginUser);
 
-      if (!user || !user.email || !user.password) {
+      if (!user) {
+        return {
+          isValid: false,
+          error: "Usuario no encontrado",
+        };
+      }
+
+      if (!user.email || !user.password) {
         return {
           isValid: false,
           error: "Credenciales inválidas",

@@ -64,3 +64,8 @@ export type TwoFactorToken = Prisma.TwoFactorTokenModel
  * 
  */
 export type twoFactorConfirmation = Prisma.twoFactorConfirmationModel
+/**
+ * Model AuditLog
+ * 
+ */
+export type AuditLog = Prisma.AuditLogModel

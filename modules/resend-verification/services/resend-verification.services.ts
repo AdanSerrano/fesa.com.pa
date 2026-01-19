@@ -1,6 +1,5 @@
 import { sendVerificationEmail } from "../emails/resend-verification.emails";
 import { generateVerificationToken } from "@/lib/tokens";
-import { checkRateLimit, formatResetTime } from "@/lib/rate-limit";
 import { ResendVerificationDomainService } from "./resend-verification.domain.service";
 import { ResendVerificationInput } from "../validations/schema/resend-verification.schema";
 
@@ -10,7 +9,6 @@ const GENERIC_SUCCESS_MESSAGE =
 export interface ResendVerificationResult {
   success?: string;
   error?: string;
-  rateLimited?: boolean;
 }
 
 export class ResendVerificationService {
@@ -24,16 +22,6 @@ export class ResendVerificationService {
     input: ResendVerificationInput
   ): Promise<ResendVerificationResult> {
     try {
-      const rateLimitKey = `resend-verification:${input.email.toLowerCase()}`;
-      const rateLimit = checkRateLimit(rateLimitKey);
-
-      if (!rateLimit.allowed) {
-        return {
-          error: `Demasiados intentos. Intenta de nuevo en ${formatResetTime(rateLimit.resetIn)}.`,
-          rateLimited: true,
-        };
-      }
-
       const validation =
         await this.domainService.validateResendRequest(input);
 
