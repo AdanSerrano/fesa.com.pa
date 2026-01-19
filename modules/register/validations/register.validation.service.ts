@@ -10,18 +10,14 @@ export interface ValidationResult {
 }
 
 export class RegisterValidationService {
-  /**
-   * Valida el formato de los datos de entrada usando Zod schema
-   */
   public validateInputData(data: RegisterUser): ValidationResult {
     const validatedFields = createRegisterFormSchema.safeParse(data);
 
     if (!validatedFields.success) {
-      // Obtener el primer error para mejor UX
-      const firstError = validatedFields.error.errors[0];
+      const firstIssue = validatedFields.error.issues[0];
       return {
         isValid: false,
-        error: firstError?.message ?? "Campos inválidos",
+        error: firstIssue?.message ?? "Campos inválidos",
       };
     }
 

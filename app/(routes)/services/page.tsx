@@ -1,17 +1,15 @@
-import { auth } from "@/auth";
+import { Suspense } from "react";
+import { ServicesView } from "@/modules/services/view/services.view";
+import { ServicesSkeleton } from "@/modules/services/components/services.skeleton";
 
-export default async function ServicesPage() {
-  const user = await auth();
-  console.log(user);
+export default function ServicesPage() {
   return (
-    <>
-      <div>isTwoFactorEnabled: {user?.user?.isTwoFactorEnabled}</div>
-      <div>userName: {user?.user?.userName}</div>
-      <div>name: {user?.user?.name}</div>
-      <div>email: {user?.user?.email}</div>
-      <div>image: {user?.user?.image}</div>
-      <div>role: {user?.user?.role}</div>
-      <div>id: {user?.user?.id}</div>
-    </>
+    <div className="flex min-h-screen items-center justify-center px-4 sm:px-6 lg:px-8 bg-linear-to-b from-background to-muted/20">
+      <div className="w-full max-w-md">
+        <Suspense fallback={<ServicesSkeleton />}>
+          <ServicesView />
+        </Suspense>
+      </div>
+    </div>
   );
 }

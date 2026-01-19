@@ -1,5 +1,5 @@
 import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
+import { AuthError, CredentialsSignin } from "next-auth";
 
 export interface AuthResult {
   success?: string;
@@ -21,14 +21,16 @@ export class LoginAuthService {
 
       return { success: "Login Realizado Correctamente", redirect: true };
     } catch (error) {
-      console.error("Error en signIn:", error);
-
-      if (error instanceof AuthError) {
+      if (error instanceof CredentialsSignin) {
         return { error: "Credenciales incorrectas" };
       }
 
-      if ((error as Error).message === "NEXT_REDIRECT") {
-        console.log("Redirección detectada, ignorando...");
+      if (error instanceof AuthError) {
+        return { error: "Error de autenticación" };
+      }
+
+      const errorMessage = (error as Error).message;
+      if (errorMessage?.includes("NEXT_REDIRECT")) {
         return { success: "Login Realizado Correctamente", redirect: true };
       }
 

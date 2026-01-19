@@ -40,11 +40,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async jwt({ token, user, trigger }) {
-      // Solo cargar datos del usuario cuando:
-      // 1. Es un nuevo login (user existe)
-      // 2. Se solicita actualización explícita (trigger === "update")
       if (user) {
-        // Nuevo login - cargar datos iniciales del usuario
         token.userName = user.userName ?? undefined;
         token.name = user.name;
         token.email = user.email;
@@ -54,7 +50,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token;
       }
 
-      // Solo refrescar datos de la DB si se solicita explícitamente
       if (trigger === "update" && token.sub) {
         const existingUser = await db.user.findUnique({
           where: { id: token.sub },

@@ -8,7 +8,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(({ suffix, className, type, ...props }, ref) => {
   return (
-    <div className="flex flex-row items-center w-full gap-2">
+    <div className="flex flex-row items-center w-full gap-2 relative">
       <input
         type={type}
         data-slot="input"
@@ -21,7 +21,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(({ suffix, classNam
         {...props}
         ref={ref}
       />
-      {suffix}
+      {suffix && <div className="absolute right-0 top-0 h-full px-3 py-2.5">{suffix}</div>}
     </div>
   )
 })

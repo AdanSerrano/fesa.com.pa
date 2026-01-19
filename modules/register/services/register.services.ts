@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import { generateVerificationToken } from "@/lib/tokens";
-import { sendVerificationEmail } from "@/lib/email/send-email";
+import { sendVerificationEmail } from "../emails/register.emails";
 import { RegisterRepository } from "../repository/register.repository";
 import { RegisterUser } from "../validations/schema/register.schema";
 import { RegisterDomainService } from "./register.domain.service";
