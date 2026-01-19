@@ -1,36 +1,163 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Structure - Next.js Authentication Boilerplate
 
-## Getting Started
+Sistema de autenticación completo con arquitectura limpia, diseñado para ser escalable y fácilmente migrable.
 
-First, run the development server:
+## Stack Tecnológico
+
+| Categoría | Tecnología |
+|-----------|------------|
+| **Framework** | Next.js 16 (App Router, Turbopack) |
+| **UI** | Tailwind CSS 4 + shadcn/ui + Aceternity UI |
+| **Autenticación** | Auth.js v5 (NextAuth) |
+| **Base de Datos** | PostgreSQL + Prisma 7 |
+| **Validación** | Zod 4 + React Hook Form |
+| **Email** | Resend + React Email |
+| **Runtime** | Bun |
+
+## Funcionalidades
+
+- Registro de usuarios con verificación por email
+- Login con credenciales (email o nombre de usuario)
+- Recuperación de contraseña
+- Rate limiting para protección contra fuerza bruta
+- Indicador de fortaleza de contraseña
+- Diseño responsive (mobile-first)
+- Tema claro/oscuro
+
+## Inicio Rápido
+
+### Requisitos
+
+- [Bun](https://bun.sh/) >= 1.0
+- PostgreSQL >= 14
+- Cuenta en [Resend](https://resend.com/) (para emails)
+
+### Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clonar repositorio
+git clone <repo-url>
+cd structure
+
+# Instalar dependencias
+bun install
+
+# Configurar variables de entorno
+cp .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Variables de Entorno
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Edita `.env.local` con tus credenciales:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+# Auth.js - Clave secreta para firmar tokens de sesión
+# Generar con: npx auth secret
+AUTH_SECRET=
 
-## Learn More
+# PostgreSQL - URL de conexión a la base de datos
+# Formato: postgresql://USER:PASSWORD@HOST:PORT/DATABASE
+DATABASE_URL=
 
-To learn more about Next.js, take a look at the following resources:
+# Resend - API key para envío de emails transaccionales
+# Obtener en: https://resend.com/api-keys
+RESEND_API_KEY=
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Resend - Email remitente verificado en Resend
+RESEND_FROM_EMAIL=
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+# URL pública de la aplicación (sin slash al final)
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
-## Deploy on Vercel
+### Base de Datos
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Generar cliente de Prisma
+bunx prisma generate
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+# Aplicar schema a la base de datos
+bunx prisma db push
+
+# (Opcional) Abrir Prisma Studio
+bun run db:studio
+```
+
+### Ejecutar
+
+```bash
+# Desarrollo
+bun run dev
+
+# Producción
+bun run build
+bun run start
+```
+
+## Arquitectura
+
+El proyecto sigue una arquitectura modular con separación estricta de capas:
+
+```
+modules/
+└── {feature}/
+    ├── actions/          # Server Actions (entry point)
+    ├── components/       # Componentes UI + emails
+    ├── controllers/      # Delegadores
+    ├── emails/           # Servicios de envío de email
+    ├── hooks/            # Lógica de UI (React hooks)
+    ├── repository/       # Acceso a datos (abstracción DB)
+    ├── services/         # Lógica de negocio
+    ├── validations/      # Schemas Zod + validaciones
+    ├── view/             # Componentes página
+    └── view-model/       # Bridge entre view y hooks
+```
+
+### Flujo de Datos
+
+```
+view → actions → controllers → services → repository → db
+```
+
+Cada capa tiene una responsabilidad única y solo puede comunicarse con la capa adyacente.
+
+## Módulos Disponibles
+
+| Módulo | Descripción |
+|--------|-------------|
+| `login` | Autenticación con email/username |
+| `register` | Registro de usuarios |
+| `register-success` | Página de éxito post-registro |
+| `verify-email` | Verificación de email |
+| `resend-verification` | Reenvío de email de verificación |
+| `forgot-password` | Solicitud de reset de contraseña |
+| `reset-password` | Cambio de contraseña |
+| `services` | Dashboard de usuario autenticado |
+
+## Comandos
+
+```bash
+# Desarrollo
+bun run dev              # Servidor de desarrollo
+bun run build            # Build de producción
+bun run lint             # ESLint
+
+# Base de datos
+bun run db:studio        # Prisma Studio
+bun run db:test          # Test de conexión
+bunx prisma generate     # Generar cliente
+bunx prisma db push      # Push schema
+bunx prisma migrate dev  # Migraciones
+```
+
+## Documentación
+
+- [CLAUDE.md](./CLAUDE.md) - Guía completa de arquitectura y patrones
+- [Auth.js](https://authjs.dev/) - Documentación de autenticación
+- [Prisma](https://www.prisma.io/docs) - Documentación de ORM
+- [shadcn/ui](https://ui.shadcn.com/) - Componentes UI
+- [Resend](https://resend.com/docs) - Envío de emails
+
+## Licencia
+
+MIT
