@@ -17,10 +17,12 @@ import { cn } from "@/lib/utils";
 import { Loader2, UserPlus } from "lucide-react";
 import Link from "next/link";
 import { PasswordInput } from "@/components/ui/pasword-input";
+import { memo, useDeferredValue } from "react";
 
-export const RegisterForm = () => {
+export const RegisterForm = memo(function RegisterForm() {
   const { handleRegister, isPending, error, form } = RegisterViewModel();
   const password = form.watch("password");
+  const deferredPassword = useDeferredValue(password);
 
   return (
     <Form {...form}>
@@ -36,6 +38,7 @@ export const RegisterForm = () => {
                   type="email"
                   placeholder="tu@email.com"
                   autoComplete="email"
+                  aria-label="Correo electrónico"
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -62,6 +65,7 @@ export const RegisterForm = () => {
                   type="text"
                   placeholder="mi_usuario"
                   autoComplete="username"
+                  aria-label="Nombre de usuario"
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -88,6 +92,7 @@ export const RegisterForm = () => {
                   type="text"
                   placeholder="Juan Pérez"
                   autoComplete="name"
+                  aria-label="Nombre completo"
                   {...field}
                   disabled={isPending}
                 />
@@ -110,6 +115,7 @@ export const RegisterForm = () => {
                 <PasswordInput
                   placeholder="••••••••"
                   autoComplete="new-password"
+                  aria-label="Contraseña"
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -118,7 +124,7 @@ export const RegisterForm = () => {
                   )}
                 />
               </FormControl>
-              <PasswordStrengthIndicator password={password || ""} />
+              <PasswordStrengthIndicator password={deferredPassword || ""} />
               <FormMessage />
             </FormItem>
           )}
@@ -134,6 +140,7 @@ export const RegisterForm = () => {
                 <PasswordInput
                   placeholder="••••••••"
                   autoComplete="new-password"
+                  aria-label="Confirmar contraseña"
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -148,20 +155,29 @@ export const RegisterForm = () => {
         />
 
         {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+          <div
+            role="alert"
+            aria-live="polite"
+            className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+          >
             {error}
           </div>
         )}
 
-        <Button type="submit" disabled={isPending} className="w-full">
+        <Button
+          type="submit"
+          disabled={isPending}
+          aria-busy={isPending}
+          className="w-full"
+        >
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
               Creando cuenta...
             </>
           ) : (
             <>
-              <UserPlus className="mr-2 h-4 w-4" />
+              <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" />
               Crear cuenta
             </>
           )}
@@ -179,4 +195,4 @@ export const RegisterForm = () => {
       </form>
     </Form>
   );
-};
+});

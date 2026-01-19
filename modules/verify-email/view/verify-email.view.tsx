@@ -28,9 +28,17 @@ function SuccessState({ message }: { message: string }) {
   return (
     <Card className="w-full border-border/40 shadow-lg">
       <CardContent className="pt-6">
-        <div className="flex flex-col items-center space-y-4 text-center">
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex flex-col items-center space-y-4 text-center"
+        >
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
-            <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
+            <CheckCircle
+              className="h-8 w-8 text-green-600 dark:text-green-400"
+              aria-hidden="true"
+            />
+            <span className="sr-only">Verificación exitosa</span>
           </div>
           <div className="space-y-2">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
@@ -51,9 +59,17 @@ function ErrorState({ message }: { message: string }) {
   return (
     <Card className="w-full border-border/40 shadow-lg">
       <CardContent className="pt-6">
-        <div className="flex flex-col items-center space-y-4 text-center">
+        <div
+          role="alert"
+          aria-live="polite"
+          className="flex flex-col items-center space-y-4 text-center"
+        >
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/20">
-            <XCircle className="h-8 w-8 text-red-600 dark:text-red-400" />
+            <XCircle
+              className="h-8 w-8 text-red-600 dark:text-red-400"
+              aria-hidden="true"
+            />
+            <span className="sr-only">Error de verificación</span>
           </div>
           <div className="space-y-2">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">

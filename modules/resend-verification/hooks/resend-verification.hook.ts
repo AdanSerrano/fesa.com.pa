@@ -6,7 +6,7 @@ import {
   ResendVerificationInput,
 } from "../validations/schema/resend-verification.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -22,7 +22,7 @@ export const useResendVerification = () => {
     },
   });
 
-  const handleResend = async (values: ResendVerificationInput) => {
+  const handleResend = useCallback(async (values: ResendVerificationInput) => {
     setError(null);
     startTransition(async () => {
       try {
@@ -43,7 +43,7 @@ export const useResendVerification = () => {
         toast.error(msg);
       }
     });
-  };
+  }, []);
 
   return { handleResend, isPending, error, form, sent };
 };

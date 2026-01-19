@@ -15,8 +15,9 @@ import { cn } from "@/lib/utils";
 import { Loader2, LogIn } from "lucide-react";
 import Link from "next/link";
 import { PasswordInput } from "@/components/ui/pasword-input";
+import { memo } from "react";
 
-export const LoginForm = () => {
+export const LoginForm = memo(function LoginForm() {
   const { handleLogin, form, isPending, error } = LoginViewModel();
 
   return (
@@ -33,6 +34,7 @@ export const LoginForm = () => {
                   type="text"
                   placeholder="tu@email.com"
                   autoComplete="username"
+                  aria-label="Email o nombre de usuario"
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -63,6 +65,7 @@ export const LoginForm = () => {
                 <PasswordInput
                   placeholder="••••••••"
                   autoComplete="current-password"
+                  aria-label="Contraseña"
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -77,20 +80,29 @@ export const LoginForm = () => {
         />
 
         {error && (
-          <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20">
+          <div
+            role="alert"
+            aria-live="polite"
+            className="rounded-md bg-destructive/10 p-3 text-sm text-destructive border border-destructive/20"
+          >
             {error}
           </div>
         )}
 
-        <Button type="submit" disabled={isPending} className="w-full">
+        <Button
+          type="submit"
+          disabled={isPending}
+          aria-busy={isPending}
+          className="w-full"
+        >
           {isPending ? (
             <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
               Iniciando sesión...
             </>
           ) : (
             <>
-              <LogIn className="mr-2 h-4 w-4" />
+              <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
               Iniciar sesión
             </>
           )}
@@ -108,4 +120,4 @@ export const LoginForm = () => {
       </form>
     </Form>
   );
-};
+});

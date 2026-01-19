@@ -6,7 +6,7 @@ import {
   ForgotPasswordInput,
 } from "../validations/schema/forgot-password.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -22,7 +22,7 @@ export const useForgotPassword = () => {
     },
   });
 
-  const execute = async (values: ForgotPasswordInput) => {
+  const execute = useCallback(async (values: ForgotPasswordInput) => {
     setError(null);
     startTransition(async () => {
       try {
@@ -40,7 +40,7 @@ export const useForgotPassword = () => {
         toast.error(msg);
       }
     });
-  };
+  }, []);
 
   return { execute, isPending, error, form, sent };
 };
