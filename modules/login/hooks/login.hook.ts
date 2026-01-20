@@ -12,7 +12,6 @@ import {
   LoginActionInput,
   createLoginFormSchema,
 } from "../validations/schema/login.schema";
-import { useReCaptcha } from "@/hooks/use-recaptcha";
 
 interface TwoFactorState {
   required: boolean;
@@ -46,7 +45,6 @@ export const useLogin = () => {
     dialogOpen: false,
   });
   const [credentials, setCredentials] = useState<LoginActionInput | null>(null);
-  const { getToken: getReCaptchaToken, isConfigured: isReCaptchaConfigured } = useReCaptcha();
 
   const form = useForm<LoginUser>({
     resolver: zodResolver(createLoginFormSchema),
@@ -61,27 +59,9 @@ export const useLogin = () => {
       setError(null);
       startTransition(async () => {
         try {
-          console.log("[reCAPTCHA] isConfigured:", isReCaptchaConfigured);
-          console.log("[reCAPTCHA] Obteniendo token para action: login");
-
-          const recaptchaToken = await getReCaptchaToken("login");
-
-          console.log("[reCAPTCHA] Token obtenido:", recaptchaToken ? `${recaptchaToken.substring(0, 20)}...` : "null");
-
-          // Si reCAPTCHA está configurado pero no se pudo obtener el token, fallar
-          if (isReCaptchaConfigured && !recaptchaToken) {
-            console.log("[reCAPTCHA] ERROR: Configurado pero no se obtuvo token");
-            setError("Error de verificación de seguridad. Intenta de nuevo.");
-            toast.error("Error de verificación de seguridad. Intenta de nuevo.");
-            return;
-          }
-
           const actionInput: LoginActionInput = {
             ...values,
-            recaptchaToken: recaptchaToken || undefined,
           };
-
-          console.log("[reCAPTCHA] Enviando al servidor con token:", !!recaptchaToken);
 
           const result = await loginAction(actionInput);
 
@@ -129,7 +109,7 @@ export const useLogin = () => {
         }
       });
     },
-    [router, searchParams, getReCaptchaToken, isReCaptchaConfigured]
+    [router, searchParams]
   );
 
   const completeTwoFactorLogin = useCallback(async () => {

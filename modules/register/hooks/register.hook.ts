@@ -11,13 +11,11 @@ import {
   RegisterActionInput,
   createRegisterFormSchema,
 } from "../validations/schema/register.schema";
-import { useReCaptcha } from "@/hooks/use-recaptcha";
 
 export const useRegister = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const { getToken: getReCaptchaToken, isConfigured: isReCaptchaConfigured } = useReCaptcha();
 
   const form = useForm<RegisterUser>({
     resolver: zodResolver(createRegisterFormSchema),
@@ -36,18 +34,8 @@ export const useRegister = () => {
 
       startTransition(async () => {
         try {
-          const recaptchaToken = await getReCaptchaToken("register");
-
-          // Si reCAPTCHA está configurado pero no se pudo obtener el token, fallar
-          if (isReCaptchaConfigured && !recaptchaToken) {
-            setError("Error de verificación de seguridad. Intenta de nuevo.");
-            toast.error("Error de verificación de seguridad. Intenta de nuevo.");
-            return;
-          }
-
           const actionInput: RegisterActionInput = {
             ...values,
-            recaptchaToken: recaptchaToken || undefined,
           };
 
           const result = await registerAction(actionInput);
@@ -69,7 +57,7 @@ export const useRegister = () => {
         }
       });
     },
-    [router, getReCaptchaToken, isReCaptchaConfigured]
+    [router]
   );
 
   return {

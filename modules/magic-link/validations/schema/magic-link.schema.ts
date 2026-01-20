@@ -11,8 +11,6 @@ export const verifyMagicLinkSchema = z.object({
 export type RequestMagicLinkInput = z.infer<typeof requestMagicLinkSchema>;
 export type VerifyMagicLinkInput = z.infer<typeof verifyMagicLinkSchema>;
 
-export const requestMagicLinkActionSchema = requestMagicLinkSchema.extend({
-  recaptchaToken: z.string().optional(),
-});
+export const requestMagicLinkActionSchema = requestMagicLinkSchema;
 
 export type RequestMagicLinkActionInput = z.infer<typeof requestMagicLinkActionSchema>;

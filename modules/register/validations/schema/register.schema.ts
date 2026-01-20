@@ -51,9 +51,7 @@ export const createRegisterFormSchema = z
 
 export type RegisterUser = z.infer<typeof createRegisterFormSchema>;
 
-export const registerActionSchema = createRegisterFormSchema.extend({
-  recaptchaToken: z.string().optional(),
-});
+export const registerActionSchema = createRegisterFormSchema;
 
 export type RegisterActionInput = z.infer<typeof registerActionSchema>;
 

@@ -13,13 +13,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition, useCallback, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { useReCaptcha } from "@/hooks/use-recaptcha";
 
 export const useRequestMagicLink = () => {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const { getToken: getReCaptchaToken, isConfigured: isReCaptchaConfigured } = useReCaptcha();
 
   const form = useForm<RequestMagicLinkInput>({
     resolver: zodResolver(requestMagicLinkSchema),
@@ -34,18 +32,8 @@ export const useRequestMagicLink = () => {
 
     startTransition(async () => {
       try {
-        const recaptchaToken = await getReCaptchaToken("magic_link");
-
-        // Si reCAPTCHA está configurado pero no se pudo obtener el token, fallar
-        if (isReCaptchaConfigured && !recaptchaToken) {
-          setError("Error de verificación de seguridad. Intenta de nuevo.");
-          toast.error("Error de verificación de seguridad. Intenta de nuevo.");
-          return;
-        }
-
         const actionInput: RequestMagicLinkActionInput = {
           ...values,
-          recaptchaToken: recaptchaToken || undefined,
         };
 
         const result = await requestMagicLinkAction(actionInput);
@@ -68,7 +56,7 @@ export const useRequestMagicLink = () => {
         toast.error(errorMessage);
       }
     });
-  }, [form, getReCaptchaToken, isReCaptchaConfigured]);
+  }, [form]);
 
   return {
     requestMagicLink,
