@@ -38,7 +38,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
       return session;
     },
-    async jwt({ token, user, trigger }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.userName = user.userName ?? undefined;
         token.name = user.name;
@@ -49,17 +49,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return token;
       }
 
-      if (trigger === "update" && token.sub) {
-        const existingUser = await db.user.findUnique({
-          where: { id: token.sub },
-        });
-        if (existingUser) {
-          token.userName = existingUser.userName ?? undefined;
-          token.name = existingUser.name;
-          token.email = existingUser.email;
-          token.role = existingUser.role;
-          token.image = existingUser.image;
-          token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+      if (trigger === "update") {
+        if (session?.user) {
+          if (session.user.name !== undefined) token.name = session.user.name;
+          if (session.user.userName !== undefined)
+            token.userName = session.user.userName;
+          if (session.user.image !== undefined) token.image = session.user.image;
+          if (session.user.email !== undefined) token.email = session.user.email;
+          if (session.user.isTwoFactorEnabled !== undefined)
+            token.isTwoFactorEnabled = session.user.isTwoFactorEnabled;
+        } else if (token.sub) {
+          const existingUser = await db.user.findUnique({
+            where: { id: token.sub },
+          });
+          if (existingUser) {
+            token.userName = existingUser.userName ?? undefined;
+            token.name = existingUser.name;
+            token.email = existingUser.email;
+            token.role = existingUser.role;
+            token.image = existingUser.image;
+            token.isTwoFactorEnabled = existingUser.isTwoFactorEnabled;
+          }
         }
       }
 

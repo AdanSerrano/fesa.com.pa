@@ -57,7 +57,15 @@ export const useProfileForm = ({ defaultValues }: UseProfileFormProps = {}) => {
           }
 
           toast.success(result.success);
-          await updateSession();
+          
+          await updateSession({
+            user: {
+              name: values.name,
+              userName: values.userName,
+              image: values.image,
+            },
+          });
+
           router.refresh();
         } catch (err) {
           const message =
