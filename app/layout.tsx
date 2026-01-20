@@ -175,7 +175,7 @@ export default async function RootLayout({
             <CookieConsentBanner />
           </ReCaptchaProvider>
         </SessionProvider>
-        <Toaster position="bottom-right" richColors />
+        <Toaster position="bottom-right" richColors  closeButton={true} duration={3000} />
       </body>
     </html>
   );

@@ -19,6 +19,9 @@ import {
   Zap,
   Layers,
   Code2,
+  Bot,
+  Cookie,
+  Wand2,
 } from "lucide-react";
 
 const features = [
@@ -33,6 +36,12 @@ const features = [
     title: "Verificación de email",
     description:
       "Flujo completo de verificación de correo electrónico con tokens seguros y reenvío automático.",
+  },
+  {
+    icon: Wand2,
+    title: "Magic Link",
+    description:
+      "Inicio de sesión sin contraseña mediante enlace seguro enviado por email.",
   },
   {
     icon: Lock,
@@ -58,6 +67,18 @@ const features = [
     description:
       "Rate limiting, bloqueo de cuentas por intentos fallidos y auditoría de accesos.",
   },
+  {
+    icon: Bot,
+    title: "Google reCAPTCHA v3",
+    description:
+      "Protección invisible contra bots en login, registro y magic link con verificación basada en puntuación.",
+  },
+  {
+    icon: Cookie,
+    title: "Gestión de cookies GDPR",
+    description:
+      "Banner de consentimiento con preferencias personalizables: cookies necesarias, analíticas y funcionales.",
+  },
 ];
 
 const techStack = [
@@ -75,6 +96,8 @@ const benefits = [
   "Emails transaccionales con React Email",
   "Soporte para dark/light mode",
   "Diseño responsive mobile-first",
+  "Google reCAPTCHA v3 integrado",
+  "Cumplimiento GDPR con gestión de cookies",
   "Listo para producción",
 ];
 
@@ -104,7 +127,7 @@ export default function Home() {
 
               <p className="mb-8 text-lg text-muted-foreground md:text-xl">
                 Boilerplate de autenticación production-ready con arquitectura limpia,
-                verificación de email, 2FA, recuperación de contraseña y mucho más.
+                verificación de email, 2FA, reCAPTCHA v3, gestión de cookies GDPR y mucho más.
               </p>
 
               <HeroButtons />
