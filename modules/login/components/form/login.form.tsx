@@ -24,6 +24,7 @@ import Link from "next/link";
 import { PasswordInput } from "@/components/ui/pasword-input";
 import { memo } from "react";
 import { TwoFactorDialogContent } from "@/modules/two-factor/components/form/two-factor.form";
+import { ReactivateAccountDialog } from "../reactivate-account.dialog";
 
 export const LoginForm = memo(function LoginForm() {
   const {
@@ -32,10 +33,13 @@ export const LoginForm = memo(function LoginForm() {
     isPending,
     error,
     twoFactor,
+    pendingDeletion,
     completeTwoFactorLogin,
     cancelTwoFactor,
     closeTwoFactorDialog,
     openTwoFactorDialog,
+    closePendingDeletionDialog,
+    onAccountReactivated,
   } = LoginViewModel();
 
   const isTwoFactorPending = twoFactor.required && !!twoFactor.email;
@@ -70,6 +74,15 @@ export const LoginForm = memo(function LoginForm() {
           )}
         </DialogContent>
       </Dialog>
+
+      <ReactivateAccountDialog
+        isOpen={pendingDeletion.dialogOpen}
+        onOpenChange={closePendingDeletionDialog}
+        email={pendingDeletion.email || ""}
+        scheduledDeletionDate={pendingDeletion.scheduledDeletionDate || undefined}
+        daysRemaining={pendingDeletion.daysRemaining || undefined}
+        onSuccess={onAccountReactivated}
+      />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(handleLogin)} className="space-y-5">

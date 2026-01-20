@@ -1,14 +1,16 @@
-import { SecuritySettingsView } from "@/modules/settings/security/view/security-settings.view";
+import { Suspense } from "react";
+import { UserProfileView } from "@/modules/user/view/user.view";
+import { UserProfileSkeleton } from "@/modules/user/components/user.skeleton";
 import { DashboardHeader } from "@/components/dashboard/dashboard-header";
 import { Badge } from "@/components/ui/badge";
-import { Shield } from "lucide-react";
+import { Settings } from "lucide-react";
 
 export const metadata = {
-  title: "Seguridad",
-  description: "Gestiona la seguridad de tu cuenta",
+  title: "Configuración",
+  description: "Administra tu información de usuario",
 };
 
-export default function SecuritySettingsPage() {
+export default function ProfilePage() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
@@ -21,17 +23,16 @@ export default function SecuritySettingsPage() {
           <div className="container px-4 py-12 md:px-6 md:py-16">
             <div className="mx-auto max-w-2xl text-center">
               <Badge variant="secondary" className="mb-4">
-                <Shield className="mr-1 h-3 w-3" />
-                Seguridad
+                <Settings className="mr-1 h-3 w-3" />
+                Configuración
               </Badge>
 
               <h1 className="mb-4 text-3xl font-bold tracking-tight sm:text-4xl">
-                Configuración de seguridad
+                Tu perfil
               </h1>
 
               <p className="text-muted-foreground">
-                Protege tu cuenta con autenticación de dos factores y gestiona
-                tus preferencias de seguridad.
+                Administra tu información personal y preferencias de cuenta.
               </p>
             </div>
           </div>
@@ -40,7 +41,9 @@ export default function SecuritySettingsPage() {
         <section className="py-12">
           <div className="container px-4 md:px-6">
             <div className="mx-auto max-w-2xl">
-              <SecuritySettingsView />
+              <Suspense fallback={<UserProfileSkeleton />}>
+                <UserProfileView />
+              </Suspense>
             </div>
           </div>
         </section>

@@ -47,6 +47,12 @@ export type UserMinAggregateOutputType = {
   failedLoginAttempts: number | null
   lockedUntil: Date | null
   lastFailedLogin: Date | null
+  isBlocked: boolean | null
+  blockedAt: Date | null
+  blockedReason: string | null
+  deletedAt: Date | null
+  scheduledDeletionDate: Date | null
+  deletionReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,6 +70,12 @@ export type UserMaxAggregateOutputType = {
   failedLoginAttempts: number | null
   lockedUntil: Date | null
   lastFailedLogin: Date | null
+  isBlocked: boolean | null
+  blockedAt: Date | null
+  blockedReason: string | null
+  deletedAt: Date | null
+  scheduledDeletionDate: Date | null
+  deletionReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -81,6 +93,13 @@ export type UserCountAggregateOutputType = {
   failedLoginAttempts: number
   lockedUntil: number
   lastFailedLogin: number
+  isBlocked: number
+  blockedAt: number
+  blockedReason: number
+  blockedServices: number
+  deletedAt: number
+  scheduledDeletionDate: number
+  deletionReason: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -108,6 +127,12 @@ export type UserMinAggregateInputType = {
   failedLoginAttempts?: true
   lockedUntil?: true
   lastFailedLogin?: true
+  isBlocked?: true
+  blockedAt?: true
+  blockedReason?: true
+  deletedAt?: true
+  scheduledDeletionDate?: true
+  deletionReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -125,6 +150,12 @@ export type UserMaxAggregateInputType = {
   failedLoginAttempts?: true
   lockedUntil?: true
   lastFailedLogin?: true
+  isBlocked?: true
+  blockedAt?: true
+  blockedReason?: true
+  deletedAt?: true
+  scheduledDeletionDate?: true
+  deletionReason?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -142,6 +173,13 @@ export type UserCountAggregateInputType = {
   failedLoginAttempts?: true
   lockedUntil?: true
   lastFailedLogin?: true
+  isBlocked?: true
+  blockedAt?: true
+  blockedReason?: true
+  blockedServices?: true
+  deletedAt?: true
+  scheduledDeletionDate?: true
+  deletionReason?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -246,6 +284,13 @@ export type UserGroupByOutputType = {
   failedLoginAttempts: number
   lockedUntil: Date | null
   lastFailedLogin: Date | null
+  isBlocked: boolean
+  blockedAt: Date | null
+  blockedReason: string | null
+  blockedServices: string[]
+  deletedAt: Date | null
+  scheduledDeletionDate: Date | null
+  deletionReason: string | null
   createdAt: Date
   updatedAt: Date
   _count: UserCountAggregateOutputType | null
@@ -286,6 +331,13 @@ export type UserWhereInput = {
   failedLoginAttempts?: Prisma.IntFilter<"User"> | number
   lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastFailedLogin?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  isBlocked?: Prisma.BoolFilter<"User"> | boolean
+  blockedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  blockedReason?: Prisma.StringNullableFilter<"User"> | string | null
+  blockedServices?: Prisma.StringNullableListFilter<"User">
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  scheduledDeletionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  deletionReason?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   twoFactorConfirmation?: Prisma.XOR<Prisma.TwoFactorConfirmationNullableScalarRelationFilter, Prisma.twoFactorConfirmationWhereInput> | null
@@ -305,6 +357,13 @@ export type UserOrderByWithRelationInput = {
   failedLoginAttempts?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   lastFailedLogin?: Prisma.SortOrderInput | Prisma.SortOrder
+  isBlocked?: Prisma.SortOrder
+  blockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  blockedReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  blockedServices?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  scheduledDeletionDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   twoFactorConfirmation?: Prisma.twoFactorConfirmationOrderByWithRelationInput
@@ -327,6 +386,13 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   failedLoginAttempts?: Prisma.IntFilter<"User"> | number
   lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   lastFailedLogin?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  isBlocked?: Prisma.BoolFilter<"User"> | boolean
+  blockedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  blockedReason?: Prisma.StringNullableFilter<"User"> | string | null
+  blockedServices?: Prisma.StringNullableListFilter<"User">
+  deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  scheduledDeletionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  deletionReason?: Prisma.StringNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   twoFactorConfirmation?: Prisma.XOR<Prisma.TwoFactorConfirmationNullableScalarRelationFilter, Prisma.twoFactorConfirmationWhereInput> | null
@@ -346,6 +412,13 @@ export type UserOrderByWithAggregationInput = {
   failedLoginAttempts?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
   lastFailedLogin?: Prisma.SortOrderInput | Prisma.SortOrder
+  isBlocked?: Prisma.SortOrder
+  blockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  blockedReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  blockedServices?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  scheduledDeletionDate?: Prisma.SortOrderInput | Prisma.SortOrder
+  deletionReason?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
@@ -371,6 +444,13 @@ export type UserScalarWhereWithAggregatesInput = {
   failedLoginAttempts?: Prisma.IntWithAggregatesFilter<"User"> | number
   lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   lastFailedLogin?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  isBlocked?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  blockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  blockedReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  blockedServices?: Prisma.StringNullableListFilter<"User">
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  scheduledDeletionDate?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  deletionReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
@@ -388,6 +468,13 @@ export type UserCreateInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationCreateNestedOneWithoutUserInput
@@ -407,6 +494,13 @@ export type UserUncheckedCreateInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationUncheckedCreateNestedOneWithoutUserInput
@@ -426,6 +520,13 @@ export type UserUpdateInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationUpdateOneWithoutUserNestedInput
@@ -445,6 +546,13 @@ export type UserUncheckedUpdateInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationUncheckedUpdateOneWithoutUserNestedInput
@@ -464,6 +572,13 @@ export type UserCreateManyInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -481,6 +596,13 @@ export type UserUpdateManyMutationInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -498,8 +620,23 @@ export type UserUncheckedUpdateManyInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -515,6 +652,13 @@ export type UserCountOrderByAggregateInput = {
   failedLoginAttempts?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrder
   lastFailedLogin?: Prisma.SortOrder
+  isBlocked?: Prisma.SortOrder
+  blockedAt?: Prisma.SortOrder
+  blockedReason?: Prisma.SortOrder
+  blockedServices?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  scheduledDeletionDate?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -536,6 +680,12 @@ export type UserMaxOrderByAggregateInput = {
   failedLoginAttempts?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrder
   lastFailedLogin?: Prisma.SortOrder
+  isBlocked?: Prisma.SortOrder
+  blockedAt?: Prisma.SortOrder
+  blockedReason?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  scheduledDeletionDate?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -553,6 +703,12 @@ export type UserMinOrderByAggregateInput = {
   failedLoginAttempts?: Prisma.SortOrder
   lockedUntil?: Prisma.SortOrder
   lastFailedLogin?: Prisma.SortOrder
+  isBlocked?: Prisma.SortOrder
+  blockedAt?: Prisma.SortOrder
+  blockedReason?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
+  scheduledDeletionDate?: Prisma.SortOrder
+  deletionReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -569,6 +725,10 @@ export type UserScalarRelationFilter = {
 export type UserNullableScalarRelationFilter = {
   is?: Prisma.UserWhereInput | null
   isNot?: Prisma.UserWhereInput | null
+}
+
+export type UserCreateblockedServicesInput = {
+  set: string[]
 }
 
 export type StringFieldUpdateOperationsInput = {
@@ -597,6 +757,11 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
+}
+
+export type UserUpdateblockedServicesInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -646,6 +811,13 @@ export type UserCreateWithoutTwoFactorConfirmationInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.AuditLogCreateNestedManyWithoutUserInput
@@ -664,6 +836,13 @@ export type UserUncheckedCreateWithoutTwoFactorConfirmationInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutUserInput
@@ -698,6 +877,13 @@ export type UserUpdateWithoutTwoFactorConfirmationInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.AuditLogUpdateManyWithoutUserNestedInput
@@ -716,6 +902,13 @@ export type UserUncheckedUpdateWithoutTwoFactorConfirmationInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutUserNestedInput
@@ -734,6 +927,13 @@ export type UserCreateWithoutAuditLogsInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationCreateNestedOneWithoutUserInput
@@ -752,6 +952,13 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   failedLoginAttempts?: number
   lockedUntil?: Date | string | null
   lastFailedLogin?: Date | string | null
+  isBlocked?: boolean
+  blockedAt?: Date | string | null
+  blockedReason?: string | null
+  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  deletedAt?: Date | string | null
+  scheduledDeletionDate?: Date | string | null
+  deletionReason?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationUncheckedCreateNestedOneWithoutUserInput
@@ -786,6 +993,13 @@ export type UserUpdateWithoutAuditLogsInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationUpdateOneWithoutUserNestedInput
@@ -804,6 +1018,13 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   failedLoginAttempts?: Prisma.IntFieldUpdateOperationsInput | number
   lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastFailedLogin?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   twoFactorConfirmation?: Prisma.twoFactorConfirmationUncheckedUpdateOneWithoutUserNestedInput
@@ -853,6 +1074,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   failedLoginAttempts?: boolean
   lockedUntil?: boolean
   lastFailedLogin?: boolean
+  isBlocked?: boolean
+  blockedAt?: boolean
+  blockedReason?: boolean
+  blockedServices?: boolean
+  deletedAt?: boolean
+  scheduledDeletionDate?: boolean
+  deletionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   twoFactorConfirmation?: boolean | Prisma.User$twoFactorConfirmationArgs<ExtArgs>
@@ -873,6 +1101,13 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   failedLoginAttempts?: boolean
   lockedUntil?: boolean
   lastFailedLogin?: boolean
+  isBlocked?: boolean
+  blockedAt?: boolean
+  blockedReason?: boolean
+  blockedServices?: boolean
+  deletedAt?: boolean
+  scheduledDeletionDate?: boolean
+  deletionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -890,6 +1125,13 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   failedLoginAttempts?: boolean
   lockedUntil?: boolean
   lastFailedLogin?: boolean
+  isBlocked?: boolean
+  blockedAt?: boolean
+  blockedReason?: boolean
+  blockedServices?: boolean
+  deletedAt?: boolean
+  scheduledDeletionDate?: boolean
+  deletionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["user"]>
@@ -907,11 +1149,18 @@ export type UserSelectScalar = {
   failedLoginAttempts?: boolean
   lockedUntil?: boolean
   lastFailedLogin?: boolean
+  isBlocked?: boolean
+  blockedAt?: boolean
+  blockedReason?: boolean
+  blockedServices?: boolean
+  deletedAt?: boolean
+  scheduledDeletionDate?: boolean
+  deletionReason?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userName" | "name" | "email" | "emailVerified" | "image" | "password" | "role" | "isTwoFactorEnabled" | "failedLoginAttempts" | "lockedUntil" | "lastFailedLogin" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userName" | "name" | "email" | "emailVerified" | "image" | "password" | "role" | "isTwoFactorEnabled" | "failedLoginAttempts" | "lockedUntil" | "lastFailedLogin" | "isBlocked" | "blockedAt" | "blockedReason" | "blockedServices" | "deletedAt" | "scheduledDeletionDate" | "deletionReason" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   twoFactorConfirmation?: boolean | Prisma.User$twoFactorConfirmationArgs<ExtArgs>
   auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
@@ -939,6 +1188,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     failedLoginAttempts: number
     lockedUntil: Date | null
     lastFailedLogin: Date | null
+    isBlocked: boolean
+    blockedAt: Date | null
+    blockedReason: string | null
+    blockedServices: string[]
+    deletedAt: Date | null
+    scheduledDeletionDate: Date | null
+    deletionReason: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["user"]>
@@ -1378,6 +1634,13 @@ export interface UserFieldRefs {
   readonly failedLoginAttempts: Prisma.FieldRef<"User", 'Int'>
   readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
   readonly lastFailedLogin: Prisma.FieldRef<"User", 'DateTime'>
+  readonly isBlocked: Prisma.FieldRef<"User", 'Boolean'>
+  readonly blockedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly blockedReason: Prisma.FieldRef<"User", 'String'>
+  readonly blockedServices: Prisma.FieldRef<"User", 'String[]'>
+  readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly scheduledDeletionDate: Prisma.FieldRef<"User", 'DateTime'>
+  readonly deletionReason: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"User", 'DateTime'>
 }

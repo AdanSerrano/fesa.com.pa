@@ -1,0 +1,21 @@
+# Nexus - Sistema de Autenticación
+# https://nexus.app
+
+User-agent: *
+Allow: /
+
+# Rutas públicas permitidas
+Allow: /login
+Allow: /register
+Allow: /forgot-password
+
+# Rutas protegidas - no indexar
+Disallow: /api/
+Disallow: /settings/
+Disallow: /services/
+Disallow: /verify-email
+Disallow: /reset-password
+Disallow: /resend-verification
+
+# Sitemap
+Sitemap: https://nexus.app/sitemap.xml

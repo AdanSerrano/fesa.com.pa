@@ -18,6 +18,14 @@ interface TwoFactorState {
   dialogOpen: boolean;
 }
 
+interface PendingDeletionState {
+  isPending: boolean;
+  email: string | null;
+  scheduledDeletionDate: Date | null;
+  daysRemaining: number | null;
+  dialogOpen: boolean;
+}
+
 export const useLogin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -26,6 +34,13 @@ export const useLogin = () => {
   const [twoFactor, setTwoFactor] = useState<TwoFactorState>({
     required: false,
     email: null,
+    dialogOpen: false,
+  });
+  const [pendingDeletion, setPendingDeletion] = useState<PendingDeletionState>({
+    isPending: false,
+    email: null,
+    scheduledDeletionDate: null,
+    daysRemaining: null,
     dialogOpen: false,
   });
   const [credentials, setCredentials] = useState<LoginUser | null>(null);
@@ -47,6 +62,18 @@ export const useLogin = () => {
             if (result?.error) {
               setError(result.error);
               toast.error(result.error);
+              return;
+            }
+
+            if (result?.pendingDeletion && result?.email) {
+              setCredentials(values);
+              setPendingDeletion({
+                isPending: true,
+                email: result.email,
+                scheduledDeletionDate: result.scheduledDeletionDate || null,
+                daysRemaining: result.daysRemaining ?? null,
+                dialogOpen: true,
+              });
               return;
             }
 
@@ -123,15 +150,35 @@ export const useLogin = () => {
     setTwoFactor((prev) => ({ ...prev, dialogOpen: true }));
   }, []);
 
+  const closePendingDeletionDialog = useCallback(() => {
+    setPendingDeletion((prev) => ({ ...prev, dialogOpen: false }));
+  }, []);
+
+  const onAccountReactivated = useCallback(() => {
+    setPendingDeletion({
+      isPending: false,
+      email: null,
+      scheduledDeletionDate: null,
+      daysRemaining: null,
+      dialogOpen: false,
+    });
+    if (credentials) {
+      login(credentials);
+    }
+  }, [credentials, login]);
+
   return {
     login,
     isPending,
     error,
     form,
     twoFactor,
+    pendingDeletion,
     completeTwoFactorLogin,
     cancelTwoFactor,
     closeTwoFactorDialog,
     openTwoFactorDialog,
+    closePendingDeletionDialog,
+    onAccountReactivated,
   };
 };

@@ -11,9 +11,6 @@ export interface AuditLogData {
   metadata?: Record<string, unknown>;
 }
 
-/**
- * Registra un evento de auditoría en la base de datos
- */
 export async function logAuditEvent(data: AuditLogData): Promise<void> {
   try {
     await db.auditLog.create({
@@ -26,14 +23,10 @@ export async function logAuditEvent(data: AuditLogData): Promise<void> {
       },
     });
   } catch (error) {
-    // No fallar si el audit log falla, solo loggear
     console.error("Error al registrar audit log:", error);
   }
 }
 
-/**
- * Registra un intento de login exitoso
- */
 export async function logLoginSuccess(
   userId: string,
   ipAddress?: string,
@@ -47,9 +40,6 @@ export async function logLoginSuccess(
   });
 }
 
-/**
- * Registra un intento de login fallido
- */
 export async function logLoginFailed(
   email: string,
   reason: string,
@@ -64,9 +54,6 @@ export async function logLoginFailed(
   });
 }
 
-/**
- * Registra un logout
- */
 export async function logLogout(
   userId: string,
   ipAddress?: string,
@@ -80,9 +67,6 @@ export async function logLogout(
   });
 }
 
-/**
- * Registra una solicitud de reset de password
- */
 export async function logPasswordResetRequested(
   email: string,
   ipAddress?: string,
@@ -96,9 +80,6 @@ export async function logPasswordResetRequested(
   });
 }
 
-/**
- * Registra un reset de password completado
- */
 export async function logPasswordResetCompleted(
   userId: string,
   ipAddress?: string,
@@ -112,9 +93,6 @@ export async function logPasswordResetCompleted(
   });
 }
 
-/**
- * Registra verificación de email
- */
 export async function logEmailVerified(
   userId: string,
   email: string,
@@ -130,9 +108,6 @@ export async function logEmailVerified(
   });
 }
 
-/**
- * Registra activación de 2FA
- */
 export async function logTwoFactorEnabled(
   userId: string,
   ipAddress?: string,
@@ -146,9 +121,6 @@ export async function logTwoFactorEnabled(
   });
 }
 
-/**
- * Registra desactivación de 2FA
- */
 export async function logTwoFactorDisabled(
   userId: string,
   ipAddress?: string,
@@ -162,9 +134,6 @@ export async function logTwoFactorDisabled(
   });
 }
 
-/**
- * Registra verificación de 2FA exitosa
- */
 export async function logTwoFactorVerified(
   userId: string,
   ipAddress?: string,
@@ -178,9 +147,6 @@ export async function logTwoFactorVerified(
   });
 }
 
-/**
- * Registra bloqueo de cuenta
- */
 export async function logAccountLocked(
   userId: string,
   reason: string,
@@ -196,9 +162,6 @@ export async function logAccountLocked(
   });
 }
 
-/**
- * Registra desbloqueo de cuenta
- */
 export async function logAccountUnlocked(
   userId: string,
   ipAddress?: string,
@@ -212,9 +175,6 @@ export async function logAccountUnlocked(
   });
 }
 
-/**
- * Registra un nuevo registro de usuario
- */
 export async function logRegistration(
   userId: string,
   email: string,
@@ -230,9 +190,6 @@ export async function logRegistration(
   });
 }
 
-/**
- * Obtiene los últimos eventos de auditoría de un usuario
- */
 export async function getUserAuditLogs(
   userId: string,
   limit: number = 50

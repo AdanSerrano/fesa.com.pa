@@ -9,6 +9,7 @@ import {
   recordFailedLogin,
   resetFailedAttempts,
 } from "@/lib/account-security";
+import { isUserBlocked } from "@/lib/user-blocking";
 import { logLoginSuccess } from "@/lib/audit";
 import bcrypt from "bcryptjs";
 
@@ -17,6 +18,9 @@ export interface LoginResult extends AuthResult {
   remainingAttempts?: number;
   requiresTwoFactor?: boolean;
   email?: string;
+  pendingDeletion?: boolean;
+  scheduledDeletionDate?: Date;
+  daysRemaining?: number;
 }
 
 export class LoginService {
@@ -30,7 +34,6 @@ export class LoginService {
 
   public async login(loginUser: LoginUser): Promise<LoginResult> {
     try {
-      // 1. Validar datos de entrada y obtener usuario
       const domainValidation =
         await this.loginDomainService.validateLoginBusinessRules(loginUser);
 
@@ -48,7 +51,31 @@ export class LoginService {
         return { error: "Error interno de validación" };
       }
 
-      // 2. Verificar si la cuenta está bloqueada
+      const userBlocked = await isUserBlocked(user.id);
+      if (userBlocked) {
+        return {
+          error: "Tu cuenta ha sido suspendida. Contacta a soporte para más información.",
+        };
+      }
+
+      if (user.deletedAt && user.scheduledDeletionDate) {
+        const now = new Date();
+        const scheduledDate = new Date(user.scheduledDeletionDate);
+
+        if (scheduledDate > now) {
+          const daysRemaining = Math.ceil(
+            (scheduledDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+          );
+
+          return {
+            pendingDeletion: true,
+            email: user.email || undefined,
+            scheduledDeletionDate: user.scheduledDeletionDate,
+            daysRemaining,
+          };
+        }
+      }
+
       const accountLock = await checkAccountLock(user.id);
       if (!accountLock.allowed) {
         return {
@@ -57,10 +84,8 @@ export class LoginService {
         };
       }
 
-      // 3. Verificar contraseña
       const passwordMatch = await bcrypt.compare(loginUser.password, user.password);
       if (!passwordMatch) {
-        // Registrar intento fallido en la base de datos
         const failedResult = await recordFailedLogin(
           user.id,
           user.email || identifier,
@@ -80,7 +105,6 @@ export class LoginService {
         };
       }
 
-      // 4. Contraseña correcta - proceder con 2FA si está habilitado
       if (user.isTwoFactorEnabled && user.email) {
         const twoFactorConfirmation = await db.twoFactorConfirmation.findUnique({
           where: { userId: user.id },
@@ -102,13 +126,11 @@ export class LoginService {
         }
       }
 
-      // 5. Autenticar usuario
       const authResult = await this.loginAuthService.authenticateUser(
         identifier,
         loginUser.password
       );
 
-      // 6. Si login exitoso, resetear intentos fallidos y registrar
       if (authResult.success) {
         await resetFailedAttempts(user.id);
         await logLoginSuccess(user.id);

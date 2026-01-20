@@ -14,9 +14,6 @@ export interface AccountSecurityResult {
   remainingAttempts?: number;
 }
 
-/**
- * Verifica si una cuenta está bloqueada
- */
 export async function checkAccountLock(
   userId: string
 ): Promise<AccountSecurityResult> {
@@ -33,7 +30,6 @@ export async function checkAccountLock(
       return { allowed: true };
     }
 
-    // Si está bloqueado y el bloqueo sigue activo
     if (user.lockedUntil && user.lockedUntil > new Date()) {
       const authError = formatAccountLockedError(user.lockedUntil);
       return {
@@ -45,7 +41,6 @@ export async function checkAccountLock(
       };
     }
 
-    // Si el bloqueo expiró, resetear
     if (user.lockedUntil && user.lockedUntil <= new Date()) {
       await db.user.update({
         where: { id: userId },
@@ -66,9 +61,6 @@ export async function checkAccountLock(
   }
 }
 
-/**
- * Registra un intento de login fallido y bloquea si es necesario
- */
 export async function recordFailedLogin(
   userId: string,
   email: string,
@@ -77,7 +69,6 @@ export async function recordFailedLogin(
   userAgent?: string
 ): Promise<AccountSecurityResult> {
   try {
-    // Registrar en audit log
     await logLoginFailed(email, reason, ipAddress, userAgent);
 
     const user = await db.user.update({
@@ -91,7 +82,6 @@ export async function recordFailedLogin(
       },
     });
 
-    // Si excedió el máximo de intentos, bloquear
     if (user.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
       const lockedUntil = new Date(Date.now() + LOCKOUT_DURATION_MS);
 
@@ -122,9 +112,6 @@ export async function recordFailedLogin(
   }
 }
 
-/**
- * Resetea los intentos fallidos después de un login exitoso
- */
 export async function resetFailedAttempts(userId: string): Promise<void> {
   try {
     await db.user.update({
@@ -140,9 +127,6 @@ export async function resetFailedAttempts(userId: string): Promise<void> {
   }
 }
 
-/**
- * Desbloquea manualmente una cuenta (admin)
- */
 export async function unlockAccount(
   userId: string,
   adminId?: string
@@ -164,9 +148,6 @@ export async function unlockAccount(
   }
 }
 
-/**
- * Obtiene información de seguridad de la cuenta
- */
 export async function getAccountSecurityInfo(userId: string): Promise<{
   failedAttempts: number;
   lockedUntil: Date | null;

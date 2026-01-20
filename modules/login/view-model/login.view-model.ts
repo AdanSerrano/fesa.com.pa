@@ -9,10 +9,13 @@ export function LoginViewModel() {
     error,
     form,
     twoFactor,
+    pendingDeletion,
     completeTwoFactorLogin,
     cancelTwoFactor,
     closeTwoFactorDialog,
     openTwoFactorDialog,
+    closePendingDeletionDialog,
+    onAccountReactivated,
   } = useLogin();
 
   const handleLogin = useCallback(async (values: LoginUser) => {
@@ -25,9 +28,12 @@ export function LoginViewModel() {
     isPending,
     error,
     twoFactor,
+    pendingDeletion,
     completeTwoFactorLogin,
     cancelTwoFactor,
     closeTwoFactorDialog,
     openTwoFactorDialog,
+    closePendingDeletionDialog,
+    onAccountReactivated,
   };
 }
