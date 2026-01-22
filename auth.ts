@@ -14,12 +14,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     signOut: "/login",
   },
   events: {
-    async linkAccount({ user }) {
-      await db.user.update({
-        where: { id: user.id },
-        data: { emailVerified: new Date() },
-      });
-    },
     async signOut(message) {
       if ("token" in message && message.token?.sessionToken) {
         await deleteSessionByToken(message.token.sessionToken as string);
@@ -27,10 +21,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   },
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.provider !== "credentials" && account?.provider !== "magic-link") {
-        return true;
-      }
+    async signIn({ user }) {
+      // Verificar que el email esté verificado (solo auth local)
       const existingUser = await db.user.findUnique({ where: { id: user.id } });
       if (!existingUser?.emailVerified) return false;
       return true;

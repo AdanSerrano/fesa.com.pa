@@ -78,7 +78,7 @@ export class UserDomainService {
     if (!user.password) {
       return {
         isValid: false,
-        error: "No puedes cambiar el email de una cuenta OAuth",
+        error: "Tu cuenta no tiene una contraseña configurada",
       };
     }
 
@@ -126,7 +126,7 @@ export class UserDomainService {
     if (!user.password) {
       return {
         isValid: false,
-        error: "No puedes cambiar la contraseña de una cuenta OAuth",
+        error: "Tu cuenta no tiene una contraseña configurada",
       };
     }
 
@@ -165,7 +165,7 @@ export class UserDomainService {
     if (!user.password) {
       return {
         isValid: false,
-        error: "No puedes eliminar una cuenta OAuth desde aquí",
+        error: "Tu cuenta no tiene una contraseña configurada",
       };
     }
 
