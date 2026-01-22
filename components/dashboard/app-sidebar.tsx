@@ -9,6 +9,7 @@ import {
   KeyRound,
   Home,
   ChevronUp,
+  Table,
 } from "lucide-react";
 import {
   Sidebar,
@@ -54,6 +55,11 @@ const settingsNavItems: NavItem[] = [
     title: "Seguridad",
     url: "/settings/security",
     icon: Shield,
+  },
+  {
+    title: "Datatable",
+    url: "/demo/table",
+    icon: Table,
   },
 ];
 
