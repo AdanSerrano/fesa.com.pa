@@ -59,8 +59,62 @@ export class DemoTableState {
   private state: DemoTableStateData = { ...initialState };
   private listeners: Set<() => void> = new Set();
 
+  // Flags de fetch que NO causan re-renders (para evitar duplicados en Strict Mode)
+  private _isFetchingProducts = false;
+  private _isFetchingStats = false;
+  private _lastFetchParams = {
+    page: 0,
+    pageSize: 0,
+    sort: "",
+    sortDir: "",
+    search: "",
+  };
+
   public getState(): DemoTableStateData {
     return this.state;
+  }
+
+  // Métodos para controlar fetch sin causar re-renders
+  public canFetchProducts(params: typeof this._lastFetchParams): boolean {
+    if (this._isFetchingProducts) return false;
+    if (
+      this.state.isInitialized &&
+      this._lastFetchParams.page === params.page &&
+      this._lastFetchParams.pageSize === params.pageSize &&
+      this._lastFetchParams.sort === params.sort &&
+      this._lastFetchParams.sortDir === params.sortDir &&
+      this._lastFetchParams.search === params.search
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  public startFetchingProducts(params: typeof this._lastFetchParams): void {
+    this._isFetchingProducts = true;
+    this._lastFetchParams = { ...params };
+  }
+
+  public finishFetchingProducts(): void {
+    this._isFetchingProducts = false;
+  }
+
+  public canFetchStats(): boolean {
+    return !this._isFetchingStats && !this.state.stats;
+  }
+
+  public startFetchingStats(): void {
+    this._isFetchingStats = true;
+  }
+
+  public finishFetchingStats(): void {
+    this._isFetchingStats = false;
+  }
+
+  public resetFetchFlags(): void {
+    this._isFetchingProducts = false;
+    this._isFetchingStats = false;
+    this._lastFetchParams = { page: 0, pageSize: 0, sort: "", sortDir: "", search: "" };
   }
 
   public setProducts(products: DemoProduct[]): void {

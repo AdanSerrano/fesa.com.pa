@@ -10,7 +10,19 @@ export const metadata = {
   description: "Administra los usuarios de la plataforma",
 };
 
-export default async function AdminUsersPage() {
+interface PageProps {
+  searchParams: Promise<{
+    users_page?: string;
+    users_pageSize?: string;
+    users_sort?: string;
+    users_sortDir?: string;
+    users_search?: string;
+    users_role?: string;
+    users_status?: string;
+  }>;
+}
+
+export default async function AdminUsersPage({ searchParams }: PageProps) {
   const session = await auth();
 
   if (!session?.user) {
@@ -21,10 +33,12 @@ export default async function AdminUsersPage() {
     redirect("/dashboard/services");
   }
 
+  const params = await searchParams;
+
   return (
     <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
       <Suspense fallback={<AdminUsersSkeleton />}>
-        <AdminUsersView />
+        <AdminUsersView searchParams={params} />
       </Suspense>
     </div>
   );

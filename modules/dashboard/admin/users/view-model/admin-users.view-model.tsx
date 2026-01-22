@@ -28,7 +28,6 @@ export function AdminUsersViewModel() {
     stats,
     isLoading,
     isPending,
-    isInitialized,
     error,
     filters,
     rowSelection,
@@ -58,20 +57,7 @@ export function AdminUsersViewModel() {
     getSelectedCount,
   } = useAdminUsers();
 
-  const isInitializedRef = useRef(false);
-
-  useEffect(() => {
-    if (!isInitializedRef.current) {
-      isInitializedRef.current = true;
-      fetchUsers();
-    }
-  }, [fetchUsers]);
-
-  useEffect(() => {
-    if (isInitialized) {
-      fetchUsers();
-    }
-  }, [pagination.pageIndex, pagination.pageSize, sorting, filters, isInitialized]);
+  // El fetch se maneja automáticamente en el hook cuando cambian los parámetros de URL
 
   const actionsRef = useRef({
     onOpenDialog: (dialog: AdminUsersDialogType, user: AdminUser) => {

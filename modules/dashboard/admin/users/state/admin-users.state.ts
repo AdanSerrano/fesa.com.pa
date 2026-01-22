@@ -61,6 +61,18 @@ export class AdminUsersState {
   private state: AdminUsersStateData = { ...initialState };
   private listeners: Set<() => void> = new Set();
 
+  // Flag de fetch que NO causa re-renders (para evitar duplicados en Strict Mode)
+  private _isFetching = false;
+  private _lastFetchParams = {
+    page: 0,
+    pageSize: 0,
+    sort: "",
+    sortDir: "",
+    search: "",
+    role: "",
+    status: "",
+  };
+
   public getState(): AdminUsersStateData {
     return this.state;
   }
@@ -80,6 +92,46 @@ export class AdminUsersState {
 
   private notify(): void {
     this.listeners.forEach((listener) => listener());
+  }
+
+  // Métodos para controlar fetch sin causar re-renders
+  public canFetch(params: typeof this._lastFetchParams): boolean {
+    if (this._isFetching) return false;
+    if (
+      this.state.isInitialized &&
+      this._lastFetchParams.page === params.page &&
+      this._lastFetchParams.pageSize === params.pageSize &&
+      this._lastFetchParams.sort === params.sort &&
+      this._lastFetchParams.sortDir === params.sortDir &&
+      this._lastFetchParams.search === params.search &&
+      this._lastFetchParams.role === params.role &&
+      this._lastFetchParams.status === params.status
+    ) {
+      return false;
+    }
+    return true;
+  }
+
+  public startFetching(params: typeof this._lastFetchParams): void {
+    this._isFetching = true;
+    this._lastFetchParams = { ...params };
+  }
+
+  public finishFetching(): void {
+    this._isFetching = false;
+  }
+
+  public resetFetchFlags(): void {
+    this._isFetching = false;
+    this._lastFetchParams = {
+      page: 0,
+      pageSize: 0,
+      sort: "",
+      sortDir: "",
+      search: "",
+      role: "",
+      status: "",
+    };
   }
 
   public setUsers(users: AdminUser[]): void {
