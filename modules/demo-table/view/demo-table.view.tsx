@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { getProductsAction, getStatsAction } from "../actions/demo-table.actions";
 import { DemoTableClient } from "./demo-table.client";
 import { DemoTableSkeleton } from "../components/demo-table.skeleton";
-import type { DemoProductFilters, DemoTableSorting } from "../types/demo-table.types";
+import type { DemoProductFilters, DemoTableSorting, ProductStatus, ProductCategory } from "../types/demo-table.types";
 
 interface DemoTableViewProps {
   searchParams?: {
@@ -11,6 +11,8 @@ interface DemoTableViewProps {
     products_sort?: string;
     products_sortDir?: string;
     products_search?: string;
+    products_status?: string;
+    products_category?: string;
   };
 }
 
@@ -26,6 +28,8 @@ export async function DemoTableView({ searchParams }: DemoTableViewProps) {
   const sort = params.products_sort || "createdAt";
   const sortDir = (params.products_sortDir || "desc") as "asc" | "desc";
   const search = params.products_search || "";
+  const status = (params.products_status || "all") as ProductStatus | "all";
+  const category = (params.products_category || "all") as ProductCategory | "all";
 
   const sorting: DemoTableSorting[] = sort
     ? [{ id: sort, desc: sortDir === "desc" }]
@@ -33,8 +37,8 @@ export async function DemoTableView({ searchParams }: DemoTableViewProps) {
 
   const filters: DemoProductFilters = {
     search,
-    status: "all",
-    category: "all",
+    status,
+    category,
   };
 
   // Fetch inicial en el servidor (solo 1 llamada)

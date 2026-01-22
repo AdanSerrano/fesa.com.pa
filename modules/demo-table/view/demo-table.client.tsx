@@ -29,6 +29,7 @@ import type {
   DemoTablePagination,
   DemoTableSorting,
   ProductStatus,
+  ProductCategory,
 } from "../types/demo-table.types";
 import type {
   StyleConfig,
@@ -133,6 +134,7 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
     if (initialData.stats) {
       demoTableState.setStats(initialData.stats);
     }
+    demoTableState.setFilters(initialData.filters);
     demoTableState.setInitialized(true);
     isInitializedRef.current = true;
   }
@@ -153,6 +155,8 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       sort: getParam("sort") || "createdAt",
       sortDir: (getParam("sortDir") || "desc") as "asc" | "desc",
       search: getParam("search") || "",
+      status: (getParam("status") || "all") as ProductStatus | "all",
+      category: getParam("category") || "all",
     };
   }, [searchParams]);
 
@@ -179,8 +183,14 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       if (!newState.search) params.delete(`${PREFIX}_search`);
       else params.set(`${PREFIX}_search`, newState.search);
 
+      if (!newState.status || newState.status === "all") params.delete(`${PREFIX}_status`);
+      else params.set(`${PREFIX}_status`, newState.status);
+
+      if (!newState.category || newState.category === "all") params.delete(`${PREFIX}_category`);
+      else params.set(`${PREFIX}_category`, newState.category);
+
       const queryString = params.toString();
-      router.push(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
     },
     [searchParams, pathname, router, urlState]
   );
@@ -194,8 +204,9 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
           : [];
 
         const filters: DemoProductFilters = {
-          ...state.filters,
           search: params.search,
+          status: params.status as ProductStatus | "all",
+          category: params.category as ProductCategory | "all",
         };
 
         const result = await getProductsAction({
@@ -219,10 +230,11 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
             totalRows: result.data.pagination.totalRows,
             totalPages: result.data.pagination.totalPages,
           });
+          demoTableState.setFilters(filters);
         }
       });
     },
-    [state.filters]
+    []
   );
 
   const fetchStats = useCallback(() => {
@@ -280,9 +292,16 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   const handleFiltersChange = useCallback(
     (newFilters: Partial<DemoProductFilters>) => {
       demoTableState.setFilters(newFilters);
-      fetchProducts(urlState);
+      const newParams = {
+        ...urlState,
+        status: newFilters.status ?? urlState.status,
+        category: newFilters.category ?? urlState.category,
+        page: 1,
+      };
+      updateUrl(newParams);
+      fetchProducts(newParams);
     },
-    [urlState, fetchProducts]
+    [urlState, updateUrl, fetchProducts]
   );
 
   // Actions
@@ -460,6 +479,8 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       globalFilter: urlState.search,
       onGlobalFilterChange: handleSearchChange,
       placeholder: "Buscar por nombre, SKU o descripción...",
+      debounceMs: 300,
+      showClearButton: true,
     }),
     [urlState.search, handleSearchChange]
   );

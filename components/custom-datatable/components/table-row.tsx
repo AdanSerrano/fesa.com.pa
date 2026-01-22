@@ -48,10 +48,12 @@ const SelectionCell = memo(function SelectionCell({
   isSelected,
   mode,
   onToggle,
+  rowIndex,
 }: {
   isSelected: boolean;
   mode: "single" | "multiple";
   onToggle: () => void;
+  rowIndex: number;
 }) {
   return (
     <TableCell
@@ -67,7 +69,7 @@ const SelectionCell = memo(function SelectionCell({
           <Checkbox
             checked={isSelected}
             onCheckedChange={onToggle}
-            aria-label="Seleccionar fila"
+            aria-label={`Seleccionar fila ${rowIndex + 1}`}
           />
         ) : (
           <div
@@ -76,6 +78,16 @@ const SelectionCell = memo(function SelectionCell({
               isSelected ? "border-primary bg-primary" : "border-muted-foreground/50"
             )}
             onClick={onToggle}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                onToggle();
+              }
+            }}
+            role="radio"
+            aria-checked={isSelected}
+            aria-label={`Seleccionar fila ${rowIndex + 1}`}
+            tabIndex={0}
           >
             {isSelected && (
               <div className="h-full w-full flex items-center justify-center">
@@ -95,11 +107,13 @@ const ExpanderCell = memo(function ExpanderCell({
   canExpand,
   onToggle,
   hasCheckbox,
+  rowIndex,
 }: {
   isExpanded: boolean;
   canExpand: boolean;
   onToggle: () => void;
   hasCheckbox: boolean;
+  rowIndex: number;
 }) {
   return (
     <TableCell
@@ -119,11 +133,13 @@ const ExpanderCell = memo(function ExpanderCell({
               e.stopPropagation();
               onToggle();
             }}
+            aria-expanded={isExpanded}
+            aria-label={isExpanded ? `Contraer fila ${rowIndex + 1}` : `Expandir fila ${rowIndex + 1}`}
           >
             {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="h-4 w-4" aria-hidden="true" />
             ) : (
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className="h-4 w-4" aria-hidden="true" />
             )}
           </Button>
         </div>
@@ -332,6 +348,7 @@ function TableRowInner<TData>({
             isSelected={isSelected}
             mode={selection.mode ?? "multiple"}
             onToggle={handleToggleSelection}
+            rowIndex={rowIndex}
           />
         )}
 
@@ -342,6 +359,7 @@ function TableRowInner<TData>({
             canExpand={canExpand}
             onToggle={handleToggleExpansion}
             hasCheckbox={!!hasCheckbox}
+            rowIndex={rowIndex}
           />
         )}
 

@@ -128,12 +128,14 @@ function TablePaginationInner({
   }, [pageIndex, totalPages]);
 
   return (
-    <div
+    <nav
       className={cn(
         "flex flex-col gap-4 px-2 py-4",
         "lg:flex-row lg:items-center lg:justify-between",
         className
       )}
+      role="navigation"
+      aria-label="Paginación de tabla"
     >
       {/* Left side: Info */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
@@ -200,12 +202,13 @@ function TablePaginationInner({
 
           {/* Page numbers */}
           {showPageNumbers && (
-            <div className="hidden sm:flex items-center gap-1">
+            <div className="hidden sm:flex items-center gap-1" role="group" aria-label="Páginas">
               {pageNumbers.map((page, index) =>
                 page === "ellipsis" ? (
                   <span
                     key={`ellipsis-${index}`}
                     className="flex h-8 w-8 items-center justify-center"
+                    aria-hidden="true"
                   >
                     <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
                   </span>
@@ -216,6 +219,8 @@ function TablePaginationInner({
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => handlePageChange(page)}
+                    aria-label={`Ir a página ${page + 1}`}
+                    aria-current={pageIndex === page ? "page" : undefined}
                   >
                     {page + 1}
                   </Button>
@@ -258,7 +263,7 @@ function TablePaginationInner({
           )}
         </div>
       </div>
-    </div>
+    </nav>
   );
 }
 

@@ -3,6 +3,18 @@
 import { useCallback } from "react";
 import type { PrintConfig, CustomColumnDef, StyleConfig } from "../types";
 
+// Utility function to escape HTML and prevent XSS
+function escapeHtml(str: string): string {
+  const htmlEscapes: Record<string, string> = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  };
+  return str.replace(/[&<>"']/g, (char) => htmlEscapes[char] || char);
+}
+
 interface UsePrintProps<TData> {
   enabled: boolean;
   config?: PrintConfig;
@@ -158,14 +170,14 @@ export function usePrint<TData>({
     `;
 
     const headerRow = visibleColumns
-      .map((col) => `<th>${col.header || col.id}</th>`)
+      .map((col) => `<th>${escapeHtml(String(col.header || col.id))}</th>`)
       .join("");
 
     const dataRows = data
       .map(
-        (row, index) =>
+        (row) =>
           `<tr>${visibleColumns
-            .map((col) => `<td>${getCellValue(row, col)}</td>`)
+            .map((col) => `<td>${escapeHtml(getCellValue(row, col))}</td>`)
             .join("")}</tr>`
       )
       .join("");
@@ -178,13 +190,15 @@ export function usePrint<TData>({
       minute: "2-digit",
     });
 
+    const escapedTitle = escapeHtml(printTitle);
+
     return `
       <!DOCTYPE html>
       <html lang="es">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>${printTitle}</title>
+        <title>${escapedTitle}</title>
         <style>
           ${pageStyles}
           ${tableStyles}
@@ -194,7 +208,7 @@ export function usePrint<TData>({
         <div class="print-container">
           <div class="print-header">
             ${config?.showLogo ? '<div class="print-logo"><!-- Logo placeholder --></div>' : ""}
-            <h1 class="print-title">${printTitle}</h1>
+            <h1 class="print-title">${escapedTitle}</h1>
             <p class="print-meta">Generado el ${currentDate}</p>
           </div>
 
@@ -234,6 +248,7 @@ export function usePrint<TData>({
     if (!enabled || !config?.enabled) return;
 
     const printHTML = generatePrintHTML();
+    // Note: Cannot use noopener as we need document.write access
     const printWindow = window.open("", "_blank");
 
     if (printWindow) {
@@ -250,6 +265,7 @@ export function usePrint<TData>({
       /<script>[\s\S]*?<\/script>/,
       ""
     );
+    // Note: Cannot use noopener as we need document.write access
     const previewWindow = window.open("", "_blank");
 
     if (previewWindow) {

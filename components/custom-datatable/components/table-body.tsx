@@ -138,9 +138,9 @@ const EmptyRow = memo(function EmptyRow({
 }) {
   return (
     <TableRow>
-      <TableCell colSpan={columnsCount} className="h-32 text-center">
+      <TableCell colSpan={columnsCount} className="h-32 text-center" role="status" aria-live="polite">
         <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
-          {emptyIcon}
+          {emptyIcon && <span aria-hidden="true">{emptyIcon}</span>}
           <span>{emptyMessage}</span>
         </div>
       </TableCell>

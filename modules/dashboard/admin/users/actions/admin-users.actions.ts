@@ -3,6 +3,15 @@
 import { auth } from "@/auth";
 import { Role } from "@/app/prisma/client";
 import { AdminUsersController } from "../controllers/admin-users.controllers";
+import {
+  getUsersParamsSchema,
+  blockUserSchema,
+  unblockUserSchema,
+  changeRoleSchema,
+  deleteUserSchema,
+  bulkBlockSchema,
+  bulkDeleteSchema,
+} from "../validations/schema/admin-users.schema";
 import type {
   GetUsersParams,
   AdminUsersActionResult,
@@ -31,100 +40,135 @@ async function validateAdminAccess(): Promise<{
 export async function getUsersAction(
   params: GetUsersParams
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.getUsers(params);
+  const inputValidation = getUsersParamsSchema.safeParse(params);
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Parámetros inválidos" };
+  }
+
+  return await controller.getUsers(inputValidation.data);
 }
 
 export async function blockUserAction(
   userId: string,
   reason?: string
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid || !validation.userId) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.blockUser({
+  const inputValidation = blockUserSchema.safeParse({
     userId,
     reason,
-    currentUserId: validation.userId,
+    currentUserId: accessValidation.userId,
   });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.blockUser(inputValidation.data);
 }
 
 export async function unblockUserAction(
   userId: string
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid || !validation.userId) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.unblockUser({
+  const inputValidation = unblockUserSchema.safeParse({
     userId,
-    currentUserId: validation.userId,
+    currentUserId: accessValidation.userId,
   });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.unblockUser(inputValidation.data);
 }
 
 export async function changeRoleAction(
   userId: string,
   newRole: Role
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid || !validation.userId) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.changeRole({
+  const inputValidation = changeRoleSchema.safeParse({
     userId,
     newRole,
-    currentUserId: validation.userId,
+    currentUserId: accessValidation.userId,
   });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.changeRole(inputValidation.data);
 }
 
 export async function deleteUserAction(
   userId: string
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid || !validation.userId) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.deleteUser({
+  const inputValidation = deleteUserSchema.safeParse({
     userId,
-    currentUserId: validation.userId,
+    currentUserId: accessValidation.userId,
   });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.deleteUser(inputValidation.data);
 }
 
 export async function bulkBlockUsersAction(
   userIds: string[],
   reason?: string
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid || !validation.userId) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.bulkBlockUsers({
+  const inputValidation = bulkBlockSchema.safeParse({
     userIds,
     reason,
-    currentUserId: validation.userId,
+    currentUserId: accessValidation.userId,
   });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.bulkBlockUsers(inputValidation.data);
 }
 
 export async function bulkDeleteUsersAction(
   userIds: string[]
 ): Promise<AdminUsersActionResult> {
-  const validation = await validateAdminAccess();
-  if (!validation.isValid || !validation.userId) {
-    return { error: validation.error };
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
   }
 
-  return await controller.bulkDeleteUsers({
+  const inputValidation = bulkDeleteSchema.safeParse({
     userIds,
-    currentUserId: validation.userId,
+    currentUserId: accessValidation.userId,
   });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.bulkDeleteUsers(inputValidation.data);
 }

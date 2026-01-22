@@ -2,10 +2,11 @@
 
 import { memo, useSyncExternalStore, useTransition, useCallback, useMemo, useRef } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Ban, Trash2 } from "lucide-react";
+import { AlertCircle, Ban, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CustomDataTable } from "@/components/custom-datatable";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
@@ -117,6 +118,34 @@ const AdminUsersHeader = memo(function AdminUsersHeader() {
   );
 });
 
+interface ErrorAlertProps {
+  error: string;
+  onRetry: () => void;
+  isPending: boolean;
+}
+
+const ErrorAlert = memo(function ErrorAlert({ error, onRetry, isPending }: ErrorAlertProps) {
+  return (
+    <Alert variant="destructive" role="alert" aria-live="assertive">
+      <AlertCircle className="h-4 w-4" />
+      <AlertTitle>Error al cargar usuarios</AlertTitle>
+      <AlertDescription className="flex items-center justify-between">
+        <span>{error}</span>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRetry}
+          disabled={isPending}
+          className="ml-4"
+        >
+          <RefreshCw className={`mr-2 h-4 w-4 ${isPending ? "animate-spin" : ""}`} />
+          Reintentar
+        </Button>
+      </AlertDescription>
+    </Alert>
+  );
+});
+
 interface BulkActionsProps {
   selectedCount: number;
   isPending: boolean;
@@ -170,6 +199,9 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       adminUsersState.setStats(initialData.stats);
     }
     adminUsersState.setFilters(initialData.filters);
+    if (initialData.error) {
+      adminUsersState.setError(initialData.error);
+    }
     adminUsersState.setInitialized(true);
     isInitializedRef.current = true;
   }
@@ -257,6 +289,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.setError(result.error);
           toast.error(result.error);
         } else if (result.data) {
+          adminUsersState.setError(null);
           adminUsersState.setUsers(result.data.users);
           adminUsersState.setStats(result.data.stats);
           adminUsersState.setPagination({
@@ -591,6 +624,16 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
   return (
     <div className="space-y-6">
       <AdminUsersHeader />
+
+      {state.error && (
+        <AnimatedSection animation="fade-up" delay={50}>
+          <ErrorAlert
+            error={state.error}
+            onRetry={handleRefresh}
+            isPending={isPending || state.isPending}
+          />
+        </AnimatedSection>
+      )}
 
       <AnimatedSection animation="fade-up" delay={100}>
         <AdminUsersStatsSection stats={state.stats} />

@@ -14,6 +14,8 @@ interface PageProps {
     products_sort?: string;
     products_sortDir?: string;
     products_search?: string;
+    products_status?: string;
+    products_category?: string;
   }>;
 }
 

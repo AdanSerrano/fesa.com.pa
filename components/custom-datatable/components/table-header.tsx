@@ -66,9 +66,9 @@ const SortIcon = memo(function SortIcon({
 }: {
   direction: "asc" | "desc" | false;
 }) {
-  if (direction === "asc") return <ArrowUp className="h-4 w-4" />;
-  if (direction === "desc") return <ArrowDown className="h-4 w-4" />;
-  return <ArrowUpDown className="h-4 w-4 opacity-50" />;
+  if (direction === "asc") return <ArrowUp className="h-4 w-4" aria-hidden="true" />;
+  if (direction === "desc") return <ArrowDown className="h-4 w-4" aria-hidden="true" />;
+  return <ArrowUpDown className="h-4 w-4 opacity-50" aria-hidden="true" />;
 });
 
 interface TableHeaderProps<TData> {
@@ -192,11 +192,19 @@ function TableHeaderInner<TData>({
             column.align === "right" && "-mr-3 ml-auto"
           );
 
+          const ariaSortValue = sortDirection === "asc"
+            ? "ascending"
+            : sortDirection === "desc"
+              ? "descending"
+              : undefined;
+
           return (
             <TableHead
               key={column.id}
               className={cn(alignClass, pinnedClass, column.headerClassName)}
               style={style}
+              aria-sort={canSort ? ariaSortValue : undefined}
+              scope="col"
             >
               {canSort ? (
                 <Button
@@ -204,6 +212,7 @@ function TableHeaderInner<TData>({
                   size="sm"
                   className={buttonClass}
                   onClick={() => onSort?.(column.id)}
+                  aria-label={`Ordenar por ${typeof headerContent === "string" ? headerContent : column.id}${sortDirection ? (sortDirection === "asc" ? ", actualmente ascendente" : ", actualmente descendente") : ""}`}
                 >
                   {headerContent}
                   <span className="flex items-center">
