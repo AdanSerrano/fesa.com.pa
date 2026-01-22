@@ -49,6 +49,7 @@ import type {
   DensityType,
   ExportFormat,
 } from "../types";
+import { DEFAULT_FILTER_DEBOUNCE_MS } from "../constants";
 
 const exportIcons: Record<ExportFormat, React.ElementType> = {
   csv: FileText,
@@ -422,7 +423,7 @@ function TableToolbarInner<TData>({
       clearTimeout(debounceRef.current);
     }
 
-    const debounceMs = filterRef.current?.debounceMs ?? 300;
+    const debounceMs = filterRef.current?.debounceMs ?? DEFAULT_FILTER_DEBOUNCE_MS;
     debounceRef.current = setTimeout(() => {
       filterRef.current?.onGlobalFilterChange?.(value);
     }, debounceMs);

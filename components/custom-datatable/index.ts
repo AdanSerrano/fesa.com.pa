@@ -18,6 +18,8 @@ export { usePersistence } from "./hooks/use-persistence";
 export { useColumnPinning } from "./hooks/use-column-pinning";
 export { useCopyClipboard } from "./hooks/use-copy-clipboard";
 export { usePrint } from "./hooks/use-print";
+export { useAbortController } from "./hooks/use-abort-controller";
+export { usePrefetch, usePaginationPrefetch } from "./hooks/use-prefetch";
 
 // Types
 export type {

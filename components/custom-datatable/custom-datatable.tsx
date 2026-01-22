@@ -575,19 +575,22 @@ function CustomDataTableInner<TData>(
         aria-label="Tabla de datos"
         aria-busy={isLoading || isPending}
       >
-        {/* Loading overlay */}
-        {isPending && !isLoading && (
-          <div
-            className="absolute inset-0 z-10 flex items-center justify-center bg-background/60 backdrop-blur-[1px]"
-            role="status"
-            aria-live="polite"
-          >
-            <div className="flex items-center gap-2 rounded-md bg-background px-4 py-2 shadow-lg border">
-              <Loader2 className="h-4 w-4 animate-spin text-primary" aria-hidden="true" />
-              <span className="text-sm text-muted-foreground">Cargando...</span>
-            </div>
+        {/* Loading indicator - minimally intrusive with smooth animation */}
+        <div
+          className={cn(
+            "absolute top-2 right-2 z-10 transition-all duration-200 ease-out",
+            isPending && !isLoading
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-2 pointer-events-none"
+          )}
+          role="status"
+          aria-live="polite"
+        >
+          <div className="flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 shadow-sm border border-primary/20 backdrop-blur-sm">
+            <Loader2 className="h-3 w-3 animate-spin text-primary" aria-hidden="true" />
+            <span className="text-xs font-medium text-primary">Actualizando</span>
           </div>
-        )}
+        </div>
         <Table aria-label="Tabla de datos" aria-rowcount={pagination?.totalRows ?? data.length}>
           <CustomTableHeader {...headerProps} />
           <CustomTableBody {...bodyProps} />

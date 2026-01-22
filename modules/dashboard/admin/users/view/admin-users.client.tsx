@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useSyncExternalStore, useTransition, useCallback, useMemo, useRef } from "react";
+import { memo, useSyncExternalStore, useTransition, useCallback, useMemo, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, Ban, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -266,11 +266,19 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     [searchParams, pathname, router, urlState]
   );
 
+  // Request ID counter to ignore stale responses
+  const requestIdRef = useRef(0);
+
   // Fetch con Server Action directamente (sin useEffect)
   // NOTA: NO usamos setLoading aquí porque isPending de useTransition ya indica carga.
   // setLoading solo se usa para la carga INICIAL (skeleton), no para búsqueda/paginación.
+  // Usamos requestId para ignorar respuestas obsoletas cuando el usuario escribe rápido.
   const fetchUsers = useCallback(
     (params: typeof urlState) => {
+      // Increment request ID to invalidate any pending requests
+      requestIdRef.current += 1;
+      const currentRequestId = requestIdRef.current;
+
       startTransition(async () => {
         const sorting: AdminUsersSorting[] = params.sort
           ? [{ id: params.sort, desc: params.sortDir === "desc" }]
@@ -288,6 +296,11 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           sorting,
           filters,
         });
+
+        // Ignore stale response if a newer request was started
+        if (currentRequestId !== requestIdRef.current) {
+          return;
+        }
 
         if (result.error) {
           adminUsersState.setError(result.error);
@@ -583,7 +596,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       globalFilter: urlState.search,
       onGlobalFilterChange: handleSearchChange,
       placeholder: "Buscar por nombre, email o usuario...",
-      debounceMs: 700,
+      debounceMs: 150,
       showClearButton: true,
     }),
     [urlState.search, handleSearchChange]

@@ -275,11 +275,13 @@ function TableRowInner<TData>({
     selection?.selectOnRowClick
   );
 
-  // Memoize row class
+  // Memoize row class with smooth transitions
   const rowClass = useMemo(
     () =>
       cn(
         DENSITY_HEIGHT[density],
+        // Smooth transitions for all state changes
+        "transition-all duration-150 ease-out",
         hasRowInteraction &&
           "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
         enableHover && "hover:bg-muted/50",
