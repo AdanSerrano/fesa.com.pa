@@ -63,12 +63,12 @@ function DemoTableFiltersComponent({ filters, onFiltersChange }: Props) {
       <PopoverContent className="w-72" align="start">
         <div className="space-y-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">Estado</label>
+            <label id="status-label" className="text-sm font-medium">Estado</label>
             <Select
               value={filters.status}
               onValueChange={(value) => onFiltersChange({ status: value as ProductStatus | "all" })}
             >
-              <SelectTrigger>
+              <SelectTrigger aria-labelledby="status-label">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -82,12 +82,12 @@ function DemoTableFiltersComponent({ filters, onFiltersChange }: Props) {
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Categoría</label>
+            <label id="category-label" className="text-sm font-medium">Categoría</label>
             <Select
               value={filters.category}
               onValueChange={(value) => onFiltersChange({ category: value as ProductCategory | "all" })}
             >
-              <SelectTrigger>
+              <SelectTrigger aria-labelledby="category-label">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

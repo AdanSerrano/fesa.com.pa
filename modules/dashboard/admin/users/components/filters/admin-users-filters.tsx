@@ -53,7 +53,7 @@ export const AdminUsersFiltersSection = memo(function AdminUsersFiltersSection({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <Select value={filters.role} onValueChange={handleRoleChange}>
-        <SelectTrigger className="w-[140px]">
+        <SelectTrigger className="w-[140px]" aria-label="Filtrar por rol">
           <SelectValue placeholder="Rol" />
         </SelectTrigger>
         <SelectContent>
@@ -64,7 +64,7 @@ export const AdminUsersFiltersSection = memo(function AdminUsersFiltersSection({
       </Select>
 
       <Select value={filters.status} onValueChange={handleStatusChange}>
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger className="w-[160px]" aria-label="Filtrar por estado">
           <SelectValue placeholder="Estado" />
         </SelectTrigger>
         <SelectContent>

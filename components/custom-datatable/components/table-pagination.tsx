@@ -159,7 +159,7 @@ function TablePaginationInner({
             Filas por página
           </span>
           <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-            <SelectTrigger className="h-8 w-[70px]">
+            <SelectTrigger className="h-8 w-[70px]" aria-label="Seleccionar filas por página">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
