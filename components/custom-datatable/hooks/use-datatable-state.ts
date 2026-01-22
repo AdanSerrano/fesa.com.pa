@@ -4,7 +4,6 @@ import { useCallback, useRef, useMemo } from "react";
 import type {
   CustomDataTableProps,
   SortingState,
-  PaginationState,
 } from "../types";
 
 export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
@@ -19,7 +18,7 @@ export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
     filter,
   } = props;
 
-  // Refs for stable callbacks and state
+  // Refs for stable callbacks and state - prevents recreating callbacks on every render
   const callbacksRef = useRef({
     onSelectionChange: selection?.onSelectionChange,
     onExpansionChange: expansion?.onExpansionChange,
@@ -28,12 +27,17 @@ export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
     onGlobalFilterChange: filter?.onGlobalFilterChange,
   });
 
+  // Refs for data and getRowId to avoid dependency cascades
+  const dataRef = useRef(data);
+  const getRowIdRef = useRef(getRowId);
+  const columnsRef = useRef(columns);
+
   // Ref for current selection state to avoid stale closures
   const selectionStateRef = useRef(selection?.selectedRows ?? {});
   const selectionModeRef = useRef(selection?.mode ?? "multiple");
   const selectionEnabledRef = useRef(selection?.enabled ?? false);
 
-  // Update refs on every render
+  // Update refs on every render (safe pattern for callbacks)
   callbacksRef.current = {
     onSelectionChange: selection?.onSelectionChange,
     onExpansionChange: expansion?.onExpansionChange,
@@ -41,6 +45,9 @@ export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
     onSortingChange: sorting?.onSortingChange,
     onGlobalFilterChange: filter?.onGlobalFilterChange,
   };
+  dataRef.current = data;
+  getRowIdRef.current = getRowId;
+  columnsRef.current = columns;
   selectionStateRef.current = selection?.selectedRows ?? {};
   selectionModeRef.current = selection?.mode ?? "multiple";
   selectionEnabledRef.current = selection?.enabled ?? false;
@@ -78,15 +85,19 @@ export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
   expansionStateRef.current = expansion?.expandedRows ?? {};
   expansionEnabledRef.current = expansion?.enabled ?? false;
 
+  // Stable selectAllRows - uses refs to avoid recreation on data changes
   const selectAllRows = useCallback(() => {
     if (!selectionEnabledRef.current || selectionModeRef.current === "single") return;
 
     const newSelection: Record<string, boolean> = {};
-    data.forEach((row) => {
-      newSelection[getRowId(row)] = true;
-    });
+    const currentData = dataRef.current;
+    const getId = getRowIdRef.current;
+
+    for (let i = 0; i < currentData.length; i++) {
+      newSelection[getId(currentData[i])] = true;
+    }
     callbacksRef.current.onSelectionChange?.(newSelection);
-  }, [data, getRowId]);
+  }, []); // Empty deps - stable reference using refs
 
   const clearSelection = useCallback(() => {
     callbacksRef.current.onSelectionChange?.({});
@@ -139,18 +150,28 @@ export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
     [] // Empty deps - uses refs for stable reference
   );
 
+  // Ref for expansion canExpand function
+  const canExpandRef = useRef(expansion?.canExpand);
+  canExpandRef.current = expansion?.canExpand;
+
+  // Stable expandAllRows - uses refs to avoid recreation on data changes
   const expandAllRows = useCallback(() => {
     if (!expansionEnabledRef.current) return;
 
     const newExpansion: Record<string, boolean> = {};
-    data.forEach((row) => {
-      const canExpand = expansion?.canExpand ? expansion.canExpand(row) : true;
+    const currentData = dataRef.current;
+    const getId = getRowIdRef.current;
+    const canExpandFn = canExpandRef.current;
+
+    for (let i = 0; i < currentData.length; i++) {
+      const row = currentData[i];
+      const canExpand = canExpandFn ? canExpandFn(row) : true;
       if (canExpand) {
-        newExpansion[getRowId(row)] = true;
+        newExpansion[getId(row)] = true;
       }
-    });
+    }
     callbacksRef.current.onExpansionChange?.(newExpansion);
-  }, [data, getRowId, expansion?.canExpand]);
+  }, []); // Empty deps - stable reference using refs
 
   const collapseAllRows = useCallback(() => {
     callbacksRef.current.onExpansionChange?.({});
@@ -270,11 +291,22 @@ export function useDataTableState<TData>(props: CustomDataTableProps<TData>) {
     return result;
   }, [data, filter?.globalFilter, filter?.filterFn, sorting, columns]);
 
-  // Get selected rows
+  // Get selected rows - stable using refs
   const getSelectedRows = useCallback(() => {
-    if (!selection?.enabled) return [];
-    return data.filter((row) => selection.selectedRows[getRowId(row)]);
-  }, [selection?.enabled, selection?.selectedRows, data, getRowId]);
+    if (!selectionEnabledRef.current) return [];
+    const currentData = dataRef.current;
+    const getId = getRowIdRef.current;
+    const selectedRows = selectionStateRef.current;
+
+    const result: TData[] = [];
+    for (let i = 0; i < currentData.length; i++) {
+      const row = currentData[i];
+      if (selectedRows[getId(row)]) {
+        result.push(row);
+      }
+    }
+    return result;
+  }, []); // Empty deps - stable reference using refs
 
   return {
     // Selection

@@ -9,20 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { TableCell, TableRow } from "@/components/ui/table";
 
 import type { CustomColumnDef, SelectionConfig, ExpansionConfig, StyleConfig } from "../types";
-
-const CLICK_DELAY_MS = 200;
-
-const densityPadding = {
-  compact: "py-1 px-2",
-  default: "py-2 px-3",
-  comfortable: "py-3 px-4",
-} as const;
-
-const densityHeight = {
-  compact: "h-8",
-  default: "h-12",
-  comfortable: "h-16",
-} as const;
+import { DENSITY_PADDING, DENSITY_HEIGHT, CLICK_DELAY_MS } from "../constants";
 
 interface TableRowProps<TData> {
   row: TData;
@@ -292,7 +279,7 @@ function TableRowInner<TData>({
   const rowClass = useMemo(
     () =>
       cn(
-        densityHeight[density],
+        DENSITY_HEIGHT[density],
         hasRowInteraction &&
           "cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
         enableHover && "hover:bg-muted/50",
@@ -400,7 +387,7 @@ function TableRowInner<TData>({
             <TableCell
               key={column.id}
               className={cn(
-                densityPadding[density],
+                DENSITY_PADDING[density],
                 alignClass,
                 pinnedClass,
                 column.cellClassName

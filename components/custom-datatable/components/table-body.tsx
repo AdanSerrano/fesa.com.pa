@@ -13,18 +13,7 @@ import type {
   ExpansionConfig,
   StyleConfig,
 } from "../types";
-
-const densityPadding = {
-  compact: "py-1 px-2",
-  default: "py-2 px-3",
-  comfortable: "py-3 px-4",
-} as const;
-
-const densityHeight = {
-  compact: "h-8",
-  default: "h-12",
-  comfortable: "h-16",
-} as const;
+import { DENSITY_PADDING, DENSITY_HEIGHT, SKELETON_HEIGHT } from "../constants";
 
 interface TableBodyProps<TData> {
   data: TData[];
@@ -66,7 +55,7 @@ const SkeletonRow = memo(function SkeletonRow({
   skeletonHeight: string;
 }) {
   return (
-    <TableRow className={densityHeight[density]}>
+    <TableRow className={DENSITY_HEIGHT[density]}>
       {hasSelection && (
         <TableCell className="!px-2 !py-0" style={{ width: 40 }}>
           <Skeleton className="h-4 w-4 mx-auto" />
@@ -78,7 +67,7 @@ const SkeletonRow = memo(function SkeletonRow({
         </TableCell>
       )}
       {Array.from({ length: columnsCount }).map((_, colIndex) => (
-        <TableCell key={colIndex} className={densityPadding[density]}>
+        <TableCell key={colIndex} className={DENSITY_PADDING[density]}>
           <Skeleton className={cn(skeletonHeight, "w-full")} />
         </TableCell>
       ))}
@@ -86,7 +75,7 @@ const SkeletonRow = memo(function SkeletonRow({
   );
 });
 
-// Skeleton rows container
+// Skeleton rows container - optimized to avoid array allocation
 const SkeletonRows = memo(function SkeletonRows({
   pageSize,
   columnsCount,
@@ -100,30 +89,25 @@ const SkeletonRows = memo(function SkeletonRows({
   hasExpander: boolean;
   density?: "compact" | "default" | "comfortable";
 }) {
-  const skeletonHeight =
-    density === "compact" ? "h-3" : density === "comfortable" ? "h-5" : "h-4";
+  const skeletonHeight = SKELETON_HEIGHT[density];
 
-  // Generate stable keys
-  const rows = useMemo(
-    () => Array.from({ length: pageSize }, (_, i) => i),
-    [pageSize]
-  );
+  // Render directly without array allocation
+  const rows: React.ReactNode[] = [];
+  for (let i = 0; i < pageSize; i++) {
+    rows.push(
+      <SkeletonRow
+        key={`skeleton-${i}`}
+        index={i}
+        columnsCount={columnsCount}
+        hasSelection={hasSelection}
+        hasExpander={hasExpander}
+        density={density}
+        skeletonHeight={skeletonHeight}
+      />
+    );
+  }
 
-  return (
-    <>
-      {rows.map((index) => (
-        <SkeletonRow
-          key={`skeleton-${index}`}
-          index={index}
-          columnsCount={columnsCount}
-          hasSelection={hasSelection}
-          hasExpander={hasExpander}
-          density={density}
-          skeletonHeight={skeletonHeight}
-        />
-      ))}
-    </>
-  );
+  return <>{rows}</>;
 });
 
 // Empty state component

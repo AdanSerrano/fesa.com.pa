@@ -267,11 +267,11 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
   );
 
   // Fetch con Server Action directamente (sin useEffect)
+  // NOTA: NO usamos setLoading aquí porque isPending de useTransition ya indica carga.
+  // setLoading solo se usa para la carga INICIAL (skeleton), no para búsqueda/paginación.
   const fetchUsers = useCallback(
     (params: typeof urlState) => {
       startTransition(async () => {
-        adminUsersState.setLoading(true);
-
         const sorting: AdminUsersSorting[] = params.sort
           ? [{ id: params.sort, desc: params.sortDir === "desc" }]
           : [];
@@ -304,8 +304,6 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           });
           adminUsersState.setFilters(filters);
         }
-
-        adminUsersState.setLoading(false);
       });
     },
     []

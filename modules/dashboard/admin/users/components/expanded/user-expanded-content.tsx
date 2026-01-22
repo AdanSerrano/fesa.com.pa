@@ -204,7 +204,7 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                     </p>
                   )}
                   {user.blockedReason && (
-                    <p className="text-xs pl-6 break-words whitespace-normal">
+                    <p className="text-xs pl-6 wrap-break-word whitespace-normal">
                       <span className="text-muted-foreground">Razón: </span>
                       {user.blockedReason}
                     </p>

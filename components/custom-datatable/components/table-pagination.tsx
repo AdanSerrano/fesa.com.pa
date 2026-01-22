@@ -89,17 +89,19 @@ function TablePaginationInner({
     return { start, end };
   }, [pageIndex, pageSize, total]);
 
-  // Generate page numbers to display
+  // Generate page numbers to display - optimized with Set for O(1) lookups
   const pageNumbers = useMemo(() => {
     if (totalPages <= 7) {
       return Array.from({ length: totalPages }, (_, i) => i);
     }
 
     const pages: (number | "ellipsis")[] = [];
+    const addedPages = new Set<number>(); // O(1) lookup instead of O(n)
     const current = pageIndex;
 
     // Always show first page
     pages.push(0);
+    addedPages.add(0);
 
     if (current > 3) {
       pages.push("ellipsis");
@@ -110,8 +112,9 @@ function TablePaginationInner({
     const end = Math.min(totalPages - 2, current + 1);
 
     for (let i = start; i <= end; i++) {
-      if (!pages.includes(i)) {
+      if (!addedPages.has(i)) {
         pages.push(i);
+        addedPages.add(i);
       }
     }
 
@@ -120,8 +123,9 @@ function TablePaginationInner({
     }
 
     // Always show last page
-    if (totalPages > 1 && !pages.includes(totalPages - 1)) {
-      pages.push(totalPages - 1);
+    const lastPage = totalPages - 1;
+    if (totalPages > 1 && !addedPages.has(lastPage)) {
+      pages.push(lastPage);
     }
 
     return pages;
