@@ -20,6 +20,7 @@ export { useCopyClipboard } from "./hooks/use-copy-clipboard";
 export { usePrint } from "./hooks/use-print";
 export { useAbortController } from "./hooks/use-abort-controller";
 export { usePrefetch, usePaginationPrefetch } from "./hooks/use-prefetch";
+export { useSafeTransition } from "./hooks/use-safe-transition";
 
 // Types
 export type {

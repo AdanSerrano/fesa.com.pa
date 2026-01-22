@@ -88,6 +88,40 @@ const SelectionCell = memo(function SelectionCell({
   );
 });
 
+// Memoized data cell - avoids re-rendering ALL cells when one changes
+interface DataCellProps {
+  columnId: string;
+  content: React.ReactNode;
+  density: "compact" | "default" | "comfortable";
+  alignClass: string;
+  pinnedClass: string;
+  cellClassName?: string;
+  cellStyle: React.CSSProperties;
+}
+
+const DataCell = memo(function DataCell({
+  content,
+  density,
+  alignClass,
+  pinnedClass,
+  cellClassName,
+  cellStyle,
+}: DataCellProps) {
+  return (
+    <TableCell
+      className={cn(
+        DENSITY_PADDING[density],
+        alignClass,
+        pinnedClass,
+        cellClassName
+      )}
+      style={cellStyle}
+    >
+      {content}
+    </TableCell>
+  );
+});
+
 // Memoized expander cell - no generics, safe to memo
 const ExpanderCell = memo(function ExpanderCell({
   isExpanded,
@@ -311,11 +345,63 @@ function TableRowInner<TData>({
     [columns.length, selection?.enabled, selection?.showCheckbox, expansion?.enabled]
   );
 
-  // Memoize expanded content
+  // Ref for row data to avoid re-rendering expanded content unnecessarily
+  const rowRef = useRef(row);
+  rowRef.current = row;
+
+  // Memoize expanded content - only re-render when isExpanded changes
+  // Uses rowRef to access current row data without triggering re-renders
   const expandedContent = useMemo(() => {
     if (!isExpanded || !expansion?.renderContent) return null;
-    return expansion.renderContent(row);
-  }, [isExpanded, expansion, row]);
+    return expansion.renderContent(rowRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isExpanded, expansion?.renderContent]);
+
+  // Pre-compute cell data for memoization - avoids recalculating in each cell
+  const cellsData = useMemo(() => {
+    return columns.map((column) => {
+      const cellStyle: React.CSSProperties = {};
+      if (column.width) {
+        cellStyle.width =
+          typeof column.width === "number" ? `${column.width}px` : column.width;
+      }
+      if (column.minWidth) cellStyle.minWidth = `${column.minWidth}px`;
+      if (column.maxWidth) cellStyle.maxWidth = `${column.maxWidth}px`;
+
+      const alignClass =
+        column.align === "center"
+          ? "text-center"
+          : column.align === "right"
+            ? "text-right"
+            : "text-left";
+
+      const pinnedClass = column.pinned
+        ? cn(
+            "sticky z-10 bg-background will-change-transform",
+            column.pinned === "left"
+              ? "left-0 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]"
+              : "right-0 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]"
+          )
+        : "";
+
+      // Pre-render cell content
+      const content = column.cell({
+        row,
+        rowIndex,
+        isSelected,
+        isExpanded,
+      });
+
+      return {
+        columnId: column.id,
+        content,
+        alignClass,
+        pinnedClass,
+        cellClassName: column.cellClassName,
+        cellStyle,
+      };
+    });
+  }, [columns, row, rowIndex, isSelected, isExpanded]);
 
   return (
     <Fragment>
@@ -352,54 +438,19 @@ function TableRowInner<TData>({
           />
         )}
 
-        {/* Data cells - rendered inline to preserve TData generic */}
-        {columns.map((column) => {
-          const cellStyle: React.CSSProperties = {};
-          if (column.width) {
-            cellStyle.width =
-              typeof column.width === "number" ? `${column.width}px` : column.width;
-          }
-          if (column.minWidth) cellStyle.minWidth = `${column.minWidth}px`;
-          if (column.maxWidth) cellStyle.maxWidth = `${column.maxWidth}px`;
-
-          const alignClass =
-            column.align === "center"
-              ? "text-center"
-              : column.align === "right"
-                ? "text-right"
-                : "text-left";
-
-          const pinnedClass = column.pinned
-            ? cn(
-                "sticky z-10 bg-background",
-                column.pinned === "left"
-                  ? "left-0 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]"
-                  : "right-0 shadow-[-2px_0_5px_-2px_rgba(0,0,0,0.1)]"
-              )
-            : "";
-
-          const cellContent = column.cell({
-            row,
-            rowIndex,
-            isSelected,
-            isExpanded,
-          });
-
-          return (
-            <TableCell
-              key={column.id}
-              className={cn(
-                DENSITY_PADDING[density],
-                alignClass,
-                pinnedClass,
-                column.cellClassName
-              )}
-              style={cellStyle}
-            >
-              {cellContent}
-            </TableCell>
-          );
-        })}
+        {/* Data cells - memoized individually for better performance */}
+        {cellsData.map((cellData) => (
+          <DataCell
+            key={cellData.columnId}
+            columnId={cellData.columnId}
+            content={cellData.content}
+            density={density}
+            alignClass={cellData.alignClass}
+            pinnedClass={cellData.pinnedClass}
+            cellClassName={cellData.cellClassName}
+            cellStyle={cellData.cellStyle}
+          />
+        ))}
       </TableRow>
 
       {/* Expanded content */}

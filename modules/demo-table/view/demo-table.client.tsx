@@ -1,12 +1,12 @@
 "use client";
 
-import { memo, useSyncExternalStore, useTransition, useCallback, useMemo, useRef } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { memo, useSyncExternalStore, useCallback, useMemo, useRef } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { RefreshCw, Package, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { CustomDataTable } from "@/components/custom-datatable";
+import { CustomDataTable, useSafeTransition } from "@/components/custom-datatable";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
 import { demoTableState } from "../state/demo-table.state";
@@ -121,10 +121,9 @@ const DemoTableHeader = memo(function DemoTableHeader({
 });
 
 export function DemoTableClient({ initialData }: DemoTableClientProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { isPending, safeTransition } = useSafeTransition();
 
   // Inicializar el state global con los datos del servidor (solo una vez)
   const isInitializedRef = useRef(false);
@@ -160,7 +159,7 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
     };
   }, [searchParams]);
 
-  // Actualizar URL sin useEffect
+  // Actualizar URL SIN disparar navegación (evita doble fetch)
   const updateUrl = useCallback(
     (updates: Partial<typeof urlState>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -190,15 +189,16 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       else params.set(`${PREFIX}_category`, newState.category);
 
       const queryString = params.toString();
-      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+      const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+      window.history.replaceState(null, "", newUrl);
     },
-    [searchParams, pathname, router, urlState]
+    [searchParams, pathname, urlState]
   );
 
-  // Fetch con Server Action directamente (sin useEffect)
+  // Fetch con Server Action usando safeTransition (evita doble fetch en Strict Mode)
   const fetchProducts = useCallback(
     (params: typeof urlState) => {
-      startTransition(async () => {
+      safeTransition(async (isStale) => {
         const sorting: DemoTableSorting[] = params.sort
           ? [{ id: params.sort, desc: params.sortDir === "desc" }]
           : [];
@@ -215,6 +215,9 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
           filters,
           sorting,
         });
+
+        // Verificar si esta ejecución es obsoleta (Strict Mode)
+        if (isStale()) return;
 
         if (result.error) {
           demoTableState.setError(result.error);
@@ -234,17 +237,18 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
         }
       });
     },
-    []
+    [safeTransition]
   );
 
   const fetchStats = useCallback(() => {
-    startTransition(async () => {
+    safeTransition(async (isStale) => {
       const result = await getStatsAction();
+      if (isStale()) return;
       if (result.data) {
         demoTableState.setStats(result.data);
       }
     });
-  }, []);
+  }, [safeTransition]);
 
   const handleRefresh = useCallback(() => {
     fetchProducts(urlState);
@@ -479,7 +483,7 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       globalFilter: urlState.search,
       onGlobalFilterChange: handleSearchChange,
       placeholder: "Buscar por nombre, SKU o descripción...",
-      debounceMs: 300,
+      // NO especificar debounceMs - usa el global de 700ms desde constants.ts
       showClearButton: true,
     }),
     [urlState.search, handleSearchChange]

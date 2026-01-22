@@ -7,7 +7,6 @@ import {
   useMemo,
   useState,
   useCallback,
-  useDeferredValue,
 } from "react";
 import { toast } from "sonner";
 
@@ -111,9 +110,6 @@ function CustomDataTableInner<TData>(
     processedData,
   } = useDataTableState(props);
 
-  // Defer data for smoother UI during heavy updates
-  const deferredData = useDeferredValue(processedData);
-
   // Filter visible columns - memoized with stable reference
   const visibleColumns = useMemo(() => {
     if (!columnVisibility?.enabled) return columns;
@@ -135,9 +131,9 @@ function CustomDataTableInner<TData>(
   // Handle export - stable callback
   const handleExport = useCallback(
     (format: ExportFormat) => {
-      exportConfig?.onExport?.(format, deferredData);
+      exportConfig?.onExport?.(format, processedData);
     },
-    [exportConfig?.onExport, deferredData]
+    [exportConfig?.onExport, processedData]
   );
 
   // Handle density change - stable callback
@@ -157,7 +153,7 @@ function CustomDataTableInner<TData>(
   const { copyAll, isCopyEnabled } = useCopyClipboard({
     enabled: copyConfig?.enabled ?? false,
     config: copyConfig,
-    data: deferredData,
+    data: processedData,
     columns: visibleColumns,
     selectedRows: selectedRowsSet,
     getRowId,
@@ -167,7 +163,7 @@ function CustomDataTableInner<TData>(
   const { printAll, isPrintEnabled } = usePrint({
     enabled: printConfig?.enabled ?? false,
     config: printConfig,
-    data: deferredData,
+    data: processedData,
     columns: visibleColumns,
     title: printConfig?.title,
     style,
@@ -191,7 +187,7 @@ function CustomDataTableInner<TData>(
   // Refs for imperative handle to avoid dependency changes
   const stateRef = useRef({
     data,
-    processedData: deferredData,
+    processedData,
     columns,
     visibleColumns,
     exportConfig,
@@ -204,7 +200,7 @@ function CustomDataTableInner<TData>(
 
   stateRef.current = {
     data,
-    processedData: deferredData,
+    processedData,
     columns,
     visibleColumns,
     exportConfig,
@@ -487,7 +483,7 @@ function CustomDataTableInner<TData>(
   // Memoized body props
   const bodyProps = useMemo(
     () => ({
-      data: deferredData,
+      data: processedData,
       columns: visibleColumns,
       getRowId,
       selection,
@@ -509,7 +505,7 @@ function CustomDataTableInner<TData>(
       className: bodyClassName,
     }),
     [
-      deferredData,
+      processedData,
       visibleColumns,
       getRowId,
       selection,

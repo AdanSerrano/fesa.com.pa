@@ -1,13 +1,13 @@
 "use client";
 
-import { memo, useSyncExternalStore, useTransition, useCallback, useMemo, useRef, useState } from "react";
-import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { memo, useSyncExternalStore, useCallback, useMemo, useRef } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, Ban, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { CustomDataTable } from "@/components/custom-datatable";
+import { CustomDataTable, useSafeTransition } from "@/components/custom-datatable";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
 import { adminUsersState } from "../state/admin-users.state";
@@ -189,10 +189,9 @@ const BulkActions = memo(function BulkActions({
 });
 
 export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { isPending, safeTransition } = useSafeTransition();
 
   // Inicializar el state global con los datos del servidor (solo una vez)
   const isInitializedRef = useRef(false);
@@ -210,7 +209,6 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     isInitializedRef.current = true;
   }
 
-  // useSyncExternalStore en lugar de useState + useEffect
   const state = useSyncExternalStore(
     adminUsersState.subscribe.bind(adminUsersState),
     adminUsersState.getSnapshot.bind(adminUsersState),
@@ -231,7 +229,9 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     };
   }, [searchParams]);
 
-  // Actualizar URL sin useEffect
+  // Actualizar URL sin disparar navegación de Next.js (evita doble fetch)
+  // Usamos history.replaceState para actualizar la URL para bookmarks
+  // sin causar que el Server Component se re-renderice
   const updateUrl = useCallback(
     (updates: Partial<typeof urlState>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -261,25 +261,19 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       else params.set(`${PREFIX}_status`, newState.status);
 
       const queryString = params.toString();
-      router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+      const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+
+      // Usar history.replaceState en lugar de router.replace
+      // Esto actualiza la URL sin disparar navegación de Next.js
+      window.history.replaceState(null, "", newUrl);
     },
-    [searchParams, pathname, router, urlState]
+    [searchParams, pathname, urlState]
   );
 
-  // Request ID counter to ignore stale responses
-  const requestIdRef = useRef(0);
-
-  // Fetch con Server Action directamente (sin useEffect)
-  // NOTA: NO usamos setLoading aquí porque isPending de useTransition ya indica carga.
-  // setLoading solo se usa para la carga INICIAL (skeleton), no para búsqueda/paginación.
-  // Usamos requestId para ignorar respuestas obsoletas cuando el usuario escribe rápido.
+  // Fetch con Server Action usando safeTransition para evitar dobles ejecuciones de Strict Mode
   const fetchUsers = useCallback(
     (params: typeof urlState) => {
-      // Increment request ID to invalidate any pending requests
-      requestIdRef.current += 1;
-      const currentRequestId = requestIdRef.current;
-
-      startTransition(async () => {
+      safeTransition(async (isStale) => {
         const sorting: AdminUsersSorting[] = params.sort
           ? [{ id: params.sort, desc: params.sortDir === "desc" }]
           : [];
@@ -297,10 +291,8 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           filters,
         });
 
-        // Ignore stale response if a newer request was started
-        if (currentRequestId !== requestIdRef.current) {
-          return;
-        }
+        // Ignorar si una ejecución más reciente ya inició (Strict Mode o usuario escribió rápido)
+        if (isStale()) return;
 
         if (result.error) {
           adminUsersState.setError(result.error);
@@ -319,7 +311,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
         }
       });
     },
-    []
+    [safeTransition]
   );
 
   const handleRefresh = useCallback(() => {
@@ -389,7 +381,10 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     keysToDelete.forEach((key) => params.delete(key));
 
     const queryString = params.toString();
-    router.replace(queryString ? `${pathname}?${queryString}` : pathname, { scroll: false });
+    const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+
+    // Usar history.replaceState para evitar doble fetch
+    window.history.replaceState(null, "", newUrl);
 
     fetchUsers({
       page: DEFAULT_PAGE,
@@ -400,14 +395,14 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       role: DEFAULT_ROLE as Role | "all",
       status: DEFAULT_STATUS as AdminUserStatus,
     });
-  }, [searchParams, pathname, router, fetchUsers]);
+  }, [searchParams, pathname, fetchUsers]);
 
-  // Actions
+  // Actions - usando safeTransition para evitar dobles ejecuciones de Strict Mode
   const blockUser = useCallback(
     (userId: string, reason?: string) => {
-      startTransition(async () => {
-        adminUsersState.setPending(true);
+      safeTransition(async (isStale) => {
         const result = await blockUserAction(userId, reason);
+        if (isStale()) return;
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -415,17 +410,16 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.closeDialog();
           fetchUsers(urlState);
         }
-        adminUsersState.setPending(false);
       });
     },
-    [fetchUsers, urlState]
+    [safeTransition, fetchUsers, urlState]
   );
 
   const unblockUser = useCallback(
     (userId: string) => {
-      startTransition(async () => {
-        adminUsersState.setPending(true);
+      safeTransition(async (isStale) => {
         const result = await unblockUserAction(userId);
+        if (isStale()) return;
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -433,17 +427,16 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.closeDialog();
           fetchUsers(urlState);
         }
-        adminUsersState.setPending(false);
       });
     },
-    [fetchUsers, urlState]
+    [safeTransition, fetchUsers, urlState]
   );
 
   const changeRole = useCallback(
     (userId: string, newRole: Role) => {
-      startTransition(async () => {
-        adminUsersState.setPending(true);
+      safeTransition(async (isStale) => {
         const result = await changeRoleAction(userId, newRole);
+        if (isStale()) return;
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -451,17 +444,16 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.closeDialog();
           fetchUsers(urlState);
         }
-        adminUsersState.setPending(false);
       });
     },
-    [fetchUsers, urlState]
+    [safeTransition, fetchUsers, urlState]
   );
 
   const deleteUser = useCallback(
     (userId: string, reason: string) => {
-      startTransition(async () => {
-        adminUsersState.setPending(true);
+      safeTransition(async (isStale) => {
         const result = await deleteUserAction(userId, reason);
+        if (isStale()) return;
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -469,17 +461,16 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.closeDialog();
           fetchUsers(urlState);
         }
-        adminUsersState.setPending(false);
       });
     },
-    [fetchUsers, urlState]
+    [safeTransition, fetchUsers, urlState]
   );
 
   const restoreUser = useCallback(
     (userId: string) => {
-      startTransition(async () => {
-        adminUsersState.setPending(true);
+      safeTransition(async (isStale) => {
         const result = await restoreUserAction(userId);
+        if (isStale()) return;
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -487,10 +478,9 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.closeDialog();
           fetchUsers(urlState);
         }
-        adminUsersState.setPending(false);
       });
     },
-    [fetchUsers, urlState]
+    [safeTransition, fetchUsers, urlState]
   );
 
   const bulkBlockUsers = useCallback(
@@ -501,9 +491,9 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
         return;
       }
 
-      startTransition(async () => {
-        adminUsersState.setPending(true);
+      safeTransition(async (isStale) => {
         const result = await bulkBlockUsersAction(selectedIds, reason);
+        if (isStale()) return;
         if (result.error) {
           toast.error(result.error);
         } else if (result.success) {
@@ -511,10 +501,9 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           adminUsersState.clearSelection();
           fetchUsers(urlState);
         }
-        adminUsersState.setPending(false);
       });
     },
-    [state.rowSelection, fetchUsers, urlState]
+    [safeTransition, state.rowSelection, fetchUsers, urlState]
   );
 
   const bulkDeleteUsers = useCallback(() => {
@@ -524,9 +513,9 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       return;
     }
 
-    startTransition(async () => {
-      adminUsersState.setPending(true);
+    safeTransition(async (isStale) => {
       const result = await bulkDeleteUsersAction(selectedIds);
+      if (isStale()) return;
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -534,9 +523,8 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
         adminUsersState.clearSelection();
         fetchUsers(urlState);
       }
-      adminUsersState.setPending(false);
     });
-  }, [state.rowSelection, fetchUsers, urlState]);
+  }, [safeTransition, state.rowSelection, fetchUsers, urlState]);
 
   // Ref para acciones estables
   const actionsRef = useRef({
@@ -596,8 +584,8 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       globalFilter: urlState.search,
       onGlobalFilterChange: handleSearchChange,
       placeholder: "Buscar por nombre, email o usuario...",
-      debounceMs: 150,
       showClearButton: true,
+      // debounceMs usa el default global de 700ms (DEFAULT_FILTER_DEBOUNCE_MS)
     }),
     [urlState.search, handleSearchChange]
   );
@@ -679,7 +667,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           <ErrorAlert
             error={state.error}
             onRetry={handleRefresh}
-            isPending={isPending || state.isPending}
+            isPending={isPending}
           />
         </AnimatedSection>
       )}
@@ -698,7 +686,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
             />
             <BulkActions
               selectedCount={selectedCount}
-              isPending={isPending || state.isPending}
+              isPending={isPending}
               onBulkBlock={() => bulkBlockUsers()}
               onBulkDelete={bulkDeleteUsers}
               onClearSelection={adminUsersState.clearSelection.bind(adminUsersState)}
@@ -722,7 +710,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
             print={PRINT_CONFIG}
             fullscreen={FULLSCREEN_CONFIG}
             isLoading={state.isLoading}
-            isPending={isPending || state.isPending}
+            isPending={isPending}
             emptyMessage="No se encontraron usuarios"
           />
         </div>
@@ -737,7 +725,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       <BlockUserDialog
         user={state.selectedUser}
         open={state.activeDialog === "block" || state.activeDialog === "unblock"}
-        isPending={isPending || state.isPending}
+        isPending={isPending}
         mode={state.activeDialog === "block" ? "block" : "unblock"}
         onClose={adminUsersState.closeDialog.bind(adminUsersState)}
         onBlock={blockUser}
@@ -747,7 +735,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       <ChangeRoleDialog
         user={state.selectedUser}
         open={state.activeDialog === "change-role"}
-        isPending={isPending || state.isPending}
+        isPending={isPending}
         onClose={adminUsersState.closeDialog.bind(adminUsersState)}
         onChangeRole={changeRole}
       />
@@ -755,7 +743,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       <DeleteUserDialog
         user={state.selectedUser}
         open={state.activeDialog === "delete"}
-        isPending={isPending || state.isPending}
+        isPending={isPending}
         onClose={adminUsersState.closeDialog.bind(adminUsersState)}
         onDelete={deleteUser}
       />
@@ -763,7 +751,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       <RestoreUserDialog
         user={state.selectedUser}
         open={state.activeDialog === "restore"}
-        isPending={isPending || state.isPending}
+        isPending={isPending}
         onClose={adminUsersState.closeDialog.bind(adminUsersState)}
         onRestore={restoreUser}
       />

@@ -32,5 +32,5 @@ export const DEFAULT_PAGE_SIZE_OPTIONS = [10, 20, 30, 50, 100] as const;
 // Click delay for distinguishing single vs double click
 export const CLICK_DELAY_MS = 200;
 
-// Debounce delay for filter input (150ms for fast perception)
-export const DEFAULT_FILTER_DEBOUNCE_MS = 150;
+// Debounce delay for filter input (700ms to avoid excessive requests)
+export const DEFAULT_FILTER_DEBOUNCE_MS = 700;
