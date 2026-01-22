@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
 import {
   LayoutDashboard,
   Settings,
   Shield,
   KeyRound,
   Home,
-  ChevronUp,
   Table,
+  Users,
 } from "lucide-react";
 import {
   Sidebar,
@@ -25,6 +26,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
+import { Role } from "@/app/prisma/enums";
 
 interface NavItem {
   title: string;
@@ -40,25 +42,33 @@ const mainNavItems: NavItem[] = [
   },
   {
     title: "Panel",
-    url: "/services",
+    url: "/dashboard/services",
     icon: LayoutDashboard,
+  },
+];
+
+const adminNavItems: NavItem[] = [
+  {
+    title: "Usuarios",
+    url: "/dashboard/admin/users",
+    icon: Users,
   },
 ];
 
 const settingsNavItems: NavItem[] = [
   {
     title: "Configuración",
-    url: "/settings/profile",
+    url: "/dashboard/settings/profile",
     icon: Settings,
   },
   {
     title: "Seguridad",
-    url: "/settings/security",
+    url: "/dashboard/settings/security",
     icon: Shield,
   },
   {
     title: "Datatable",
-    url: "/demo/table",
+    url: "/dashboard/demo/table",
     icon: Table,
   },
 ];
@@ -73,6 +83,8 @@ interface AppSidebarProps {
 
 export function AppSidebar({ user }: AppSidebarProps) {
   const pathname = usePathname();
+  const { data: session } = useSession();
+  const isAdmin = session?.user?.role === Role.ADMIN;
 
   return (
     <Sidebar collapsible="icon">
@@ -118,6 +130,30 @@ export function AppSidebar({ user }: AppSidebarProps) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isAdmin && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administración</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {adminNavItems.map((item) => (
+                  <SidebarMenuItem key={item.url}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={pathname === item.url}
+                      tooltip={item.title}
+                    >
+                      <Link href={item.url}>
+                        <item.icon className="size-4" />
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup>
           <SidebarGroupLabel>Cuenta</SidebarGroupLabel>
