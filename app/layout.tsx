@@ -6,6 +6,7 @@ import "./globals.css";
 import { auth } from "@/auth";
 import { CookieConsentBanner } from "@/components/cookie-consent/cookie-consent";
 import { SessionGuard } from "@/components/auth/session-guard";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -174,13 +175,20 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <SessionProvider session={session}>
-          <SessionGuard>
-            {children}
-          </SessionGuard>
-          <CookieConsentBanner />
-        </SessionProvider>
-        <Toaster position="bottom-right" richColors  closeButton={true} duration={3000} />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <SessionProvider session={session}>
+            <SessionGuard>
+              {children}
+            </SessionGuard>
+            <CookieConsentBanner />
+          </SessionProvider>
+          <Toaster position="bottom-right" richColors closeButton={true} duration={3000} />
+        </ThemeProvider>
       </body>
     </html>
   );

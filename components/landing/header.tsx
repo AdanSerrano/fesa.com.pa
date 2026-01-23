@@ -11,6 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { KeyRound, ArrowRight, User, Settings, Shield } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { currentUser } from "@/lib/user";
+import { ModeToggle } from "@/components/mode-toggle";
 
 export async function Header() {
   const user = await currentUser();
@@ -55,6 +56,7 @@ export async function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <ModeToggle />
           {user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

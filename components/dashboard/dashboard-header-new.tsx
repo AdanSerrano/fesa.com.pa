@@ -11,6 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { ModeToggle } from "../mode-toggle";
 
 const routeLabels: Record<string, string> = {
   "/dashboard/services": "Panel",
@@ -31,7 +32,7 @@ export function DashboardHeader() {
     <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
       <SidebarTrigger className="-ml-1" />
       <Separator orientation="vertical" className="mr-2 h-4" />
-      <Breadcrumb>
+      <Breadcrumb className="flex-1">
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
             <BreadcrumbLink href="/dashboard/services">Dashboard</BreadcrumbLink>
@@ -59,6 +60,9 @@ export function DashboardHeader() {
           <BreadcrumbSeparator className="hidden md:block" />
           <BreadcrumbItem>
             <BreadcrumbPage>{currentLabel}</BreadcrumbPage>
+          </BreadcrumbItem>
+          <BreadcrumbItem className="ml-auto">
+            <ModeToggle />
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
