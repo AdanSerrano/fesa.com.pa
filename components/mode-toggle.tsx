@@ -3,15 +3,18 @@
 import { memo, useCallback } from "react";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import { motion, AnimatePresence } from "motion/react";
 
 import { Button } from "@/components/ui/button";
 
 function ModeToggleComponent() {
-  const { theme, setTheme } = useTheme();
+  const { setTheme, resolvedTheme } = useTheme();
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "dark" ? "light" : "dark");
-  }, [theme, setTheme]);
+    setTheme(resolvedTheme === "dark" ? "light" : "dark");
+  }, [resolvedTheme, setTheme]);
+
+  const isDark = resolvedTheme === "dark";
 
   return (
     <Button
@@ -20,8 +23,29 @@ function ModeToggleComponent() {
       onClick={toggleTheme}
       className="relative overflow-hidden"
     >
-      <Sun className="h-[1.2rem] w-[1.2rem] transition-all duration-300 ease-in-out scale-100 rotate-0 dark:scale-0 dark:-rotate-90 dark:opacity-0" />
-      <Moon className="absolute h-[1.2rem] w-[1.2rem] transition-all duration-300 ease-in-out scale-0 rotate-90 opacity-0 dark:scale-100 dark:rotate-0 dark:opacity-100" />
+      <AnimatePresence mode="wait" initial={false}>
+        {isDark ? (
+          <motion.div
+            key="moon"
+            initial={{ rotate: -90, scale: 0, opacity: 0 }}
+            animate={{ rotate: 0, scale: 1, opacity: 1 }}
+            exit={{ rotate: 90, scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <Moon className="h-5 w-5" />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="sun"
+            initial={{ rotate: 90, scale: 0, opacity: 0 }}
+            animate={{ rotate: 0, scale: 1, opacity: 1 }}
+            exit={{ rotate: -90, scale: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+          >
+            <Sun className="h-5 w-5" />
+          </motion.div>
+        )}
+      </AnimatePresence>
       <span className="sr-only">Cambiar tema</span>
     </Button>
   );
