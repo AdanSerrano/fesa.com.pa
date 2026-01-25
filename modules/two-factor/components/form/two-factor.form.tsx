@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useCallback } from "react";
+import { memo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -38,12 +38,7 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
     countdown,
     handleVerify,
     handleResendCode,
-    startCountdown,
   } = useTwoFactor({ email, onSuccess });
-
-  useEffect(() => {
-    startCountdown();
-  }, [startCountdown]);
 
   const onSubmit = useCallback(
     (values: { code: string; email: string }) => {

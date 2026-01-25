@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { RefreshCw, Package, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -129,8 +129,10 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
   const [activeDialog, setActiveDialog] = useState<DialogType>(null);
   const [selectedProduct, setSelectedProduct] = useState<DemoProduct | null>(null);
-  const [isPending, setIsPending] = useState(false);
-  const [isNavigating, setIsNavigating] = useState(false);
+
+  // useTransition para operaciones async (siguiendo Vercel Best Practices)
+  const [isPending, startTransition] = useTransition();
+  const [isNavigating, startNavigation] = useTransition();
 
   // Datos del servidor (readonly, vienen del Server Component)
   const { products, pagination, stats, filters } = initialData;
@@ -181,13 +183,10 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       const queryString = params.toString();
       const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
-      // Mostrar estado de navegación
-      setIsNavigating(true);
-      router.replace(newUrl, { scroll: false });
-
-      // El Server Component se re-renderizará con los nuevos datos
-      // Reset navigating después de un pequeño delay para UX
-      setTimeout(() => setIsNavigating(false), 100);
+      // useTransition maneja automáticamente el estado de navegación
+      startNavigation(() => {
+        router.replace(newUrl, { scroll: false });
+      });
     },
     [searchParams, pathname, router, urlState]
   );
@@ -250,9 +249,9 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   }, []);
 
   // Actions que modifican datos (usan Server Actions)
+  // Nota: deleteProduct devuelve Promise porque DeleteProductDialog tiene su propio useTransition
   const deleteProduct = useCallback(
     async (id: string) => {
-      setIsPending(true);
       try {
         const result = await deleteProductAction(id);
         if (result.error) {
@@ -261,53 +260,50 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
         }
         closeDialog();
         toast.success(result.success || "Producto eliminado");
-        router.refresh(); // Refrescar datos del servidor
+        router.refresh();
       } catch (err) {
         toast.error(err instanceof Error ? err.message : "Error al eliminar");
-      } finally {
-        setIsPending(false);
       }
     },
     [closeDialog, router]
   );
 
+  // bulkDeleteProducts y changeStatus usan startTransition porque no tienen dialog interno
   const bulkDeleteProducts = useCallback(
-    async (ids: string[]) => {
-      setIsPending(true);
-      try {
-        const result = await bulkDeleteProductsAction(ids);
-        if (result.error) {
-          toast.error(result.error);
-          return;
+    (ids: string[]) => {
+      startTransition(async () => {
+        try {
+          const result = await bulkDeleteProductsAction(ids);
+          if (result.error) {
+            toast.error(result.error);
+            return;
+          }
+          setRowSelection({});
+          toast.success(result.success || `${ids.length} productos eliminados`);
+          router.refresh();
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Error al eliminar");
         }
-        setRowSelection({});
-        toast.success(result.success || `${ids.length} productos eliminados`);
-        router.refresh();
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Error al eliminar");
-      } finally {
-        setIsPending(false);
-      }
+      });
     },
     [router]
   );
 
   const changeStatus = useCallback(
-    async (id: string, status: ProductStatus) => {
-      setIsPending(true);
-      try {
-        const result = await updateProductStatusAction(id, status);
-        if (result.error) {
-          toast.error(result.error);
-          return;
+    (id: string, status: ProductStatus) => {
+      startTransition(async () => {
+        try {
+          const result = await updateProductStatusAction(id, status);
+          if (result.error) {
+            toast.error(result.error);
+            return;
+          }
+          toast.success(result.success || "Estado actualizado");
+          router.refresh();
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Error al cambiar estado");
         }
-        toast.success(result.success || "Estado actualizado");
-        router.refresh();
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Error al cambiar estado");
-      } finally {
-        setIsPending(false);
-      }
+      });
     },
     [router]
   );

@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { currentSession } from "@/lib/user";
 import { SessionsService } from "../services/sessions.services";
 import type { PaginatedResponse } from "@/types/pagination.types";
 import type {
@@ -13,7 +13,7 @@ import type {
 const sessionsService = new SessionsService();
 
 export async function getActiveSessionsAction(): Promise<SessionsResult> {
-  const session = await auth();
+  const session = await currentSession();
 
   if (!session?.user?.id) {
     return { error: "No autorizado" };
@@ -28,7 +28,7 @@ export async function getRecentActivityAction(
   page: number = 1,
   limit: number = 10
 ): Promise<PaginatedResponse<ActivityData> | { error: string }> {
-  const session = await auth();
+  const session = await currentSession();
 
   if (!session?.user?.id) {
     return { error: "No autorizado" };
@@ -40,7 +40,7 @@ export async function getRecentActivityAction(
 export async function revokeSessionAction(
   sessionId: string
 ): Promise<RevokeSessionResult> {
-  const session = await auth();
+  const session = await currentSession();
 
   if (!session?.user?.id) {
     return { error: "No autorizado" };
@@ -56,7 +56,7 @@ export async function revokeSessionAction(
 }
 
 export async function revokeAllOtherSessionsAction(): Promise<RevokeAllResult> {
-  const session = await auth();
+  const session = await currentSession();
 
   if (!session?.user?.id) {
     return { error: "No autorizado" };

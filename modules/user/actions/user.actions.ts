@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { currentUser } from "@/lib/user";
 import { UserController } from "../controllers/user.controllers";
 import {
   UpdateProfileInput,
@@ -12,73 +12,73 @@ import {
 const controller = new UserController();
 
 export async function getProfileAction() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.getProfile(session.user.id);
+  return await controller.getProfile(user.id);
 }
 
 export async function updateProfileAction(input: UpdateProfileInput) {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.updateProfile(session.user.id, input);
+  return await controller.updateProfile(user.id, input);
 }
 
 export async function updateEmailAction(input: UpdateEmailInput) {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.updateEmail(session.user.id, input);
+  return await controller.updateEmail(user.id, input);
 }
 
 export async function updatePasswordAction(input: UpdatePasswordInput) {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.updatePassword(session.user.id, input);
+  return await controller.updatePassword(user.id, input);
 }
 
 export async function scheduleAccountDeletionAction(input: DeleteAccountInput) {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.scheduleAccountDeletion(session.user.id, input);
+  return await controller.scheduleAccountDeletion(user.id, input);
 }
 
 export async function cancelAccountDeletionAction() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.cancelAccountDeletion(session.user.id);
+  return await controller.cancelAccountDeletion(user.id);
 }
 
 export async function getDeletionStatusAction() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autorizado" };
   }
 
-  return await controller.getDeletionStatus(session.user.id);
+  return await controller.getDeletionStatus(user.id);
 }
 
 export async function checkDeletionStatusByEmailAction(email: string) {

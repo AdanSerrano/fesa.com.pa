@@ -1,33 +1,62 @@
+import { cache } from "react";
 import { auth } from "@/auth";
 import { db } from "@/utils/db";
 
-export async function currentUser() {
-  const session = await auth();
+/**
+ * Per-request cached full session (includes sessionToken).
+ * Use when you need access to the full session object.
+ * React.cache() deduplicates within a single request.
+ * @see https://react.dev/reference/react/cache
+ */
+export const currentSession = cache(async () => {
+  return await auth();
+});
+
+/**
+ * Per-request cached auth user.
+ * React.cache() deduplicates within a single request - multiple components
+ * calling this will share the same result (no duplicate auth() calls).
+ * @see https://react.dev/reference/react/cache
+ */
+export const currentUser = cache(async () => {
+  const session = await currentSession();
   return session?.user;
-}
+});
 
-export async function getUser() {
-  const user = await currentUser();
-  return user;
-}
+/**
+ * @deprecated Use currentUser() directly
+ */
+export const getUser = currentUser;
 
-export async function getUserById(id: string) {
+/**
+ * Per-request cached user lookup by ID.
+ * Deduplicates database queries within the same request.
+ */
+export const getUserById = cache(async (id: string) => {
   const user = await db.user.findUnique({
-    where: { id: id },
+    where: { id },
   });
   return user;
-}
+});
 
-export async function getUserByEmail(email: string) {
+/**
+ * Per-request cached user lookup by email.
+ * Deduplicates database queries within the same request.
+ */
+export const getUserByEmail = cache(async (email: string) => {
   const user = await db.user.findUnique({
-    where: { email: email },
+    where: { email },
   });
   return user;
-}
+});
 
-export async function getUserByUserName(userName: string) {
+/**
+ * Per-request cached user lookup by userName.
+ * Deduplicates database queries within the same request.
+ */
+export const getUserByUserName = cache(async (userName: string) => {
   const user = await db.user.findUnique({
-    where: { userName: userName },
+    where: { userName },
   });
   return user;
-};
+});;

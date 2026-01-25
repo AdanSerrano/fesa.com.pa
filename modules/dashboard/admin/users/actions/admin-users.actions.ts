@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/auth";
+import { currentUser } from "@/lib/user";
 import { Role } from "@/app/prisma/client";
 import { AdminUsersController } from "../controllers/admin-users.controllers";
 import {
@@ -26,17 +26,17 @@ async function validateAdminAccess(): Promise<{
   userId?: string;
   error?: string;
 }> {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user) {
+  if (!user) {
     return { isValid: false, error: "No autenticado" };
   }
 
-  if (session.user.role !== Role.ADMIN) {
+  if (user.role !== Role.ADMIN) {
     return { isValid: false, error: "Acceso denegado. Se requiere rol de administrador" };
   }
 
-  return { isValid: true, userId: session.user.id };
+  return { isValid: true, userId: user.id };
 }
 
 export async function getUsersAction(

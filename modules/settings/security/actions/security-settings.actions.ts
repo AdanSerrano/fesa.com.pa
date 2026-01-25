@@ -1,18 +1,18 @@
 "use server";
 
-import { auth } from "@/auth";
+import { currentUser } from "@/lib/user";
 import { SecuritySettingsService } from "../services/security-settings.services";
 
 const securitySettingsService = new SecuritySettingsService();
 
 export async function getSecurityInfoAction() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autenticado" };
   }
 
-  const securityInfo = await securitySettingsService.getSecurityInfo(session.user.id);
+  const securityInfo = await securitySettingsService.getSecurityInfo(user.id);
 
   if (!securityInfo) {
     return { error: "Error al obtener información de seguridad" };
@@ -22,21 +22,21 @@ export async function getSecurityInfoAction() {
 }
 
 export async function enableTwoFactorAction() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autenticado" };
   }
 
-  return securitySettingsService.enableTwoFactor(session.user.id);
+  return securitySettingsService.enableTwoFactor(user.id);
 }
 
 export async function disableTwoFactorAction() {
-  const session = await auth();
+  const user = await currentUser();
 
-  if (!session?.user?.id) {
+  if (!user?.id) {
     return { error: "No autenticado" };
   }
 
-  return securitySettingsService.disableTwoFactor(session.user.id);
+  return securitySettingsService.disableTwoFactor(user.id);
 }

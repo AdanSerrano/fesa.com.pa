@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useTransition } from "react";
+import { useCallback, useState, useTransition, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -22,7 +22,10 @@ export const useTwoFactor = ({ email, onSuccess }: UseTwoFactorProps) => {
   const [isPending, startTransition] = useTransition();
   const [isResending, startResendTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState(0);
+  const [countdown, setCountdown] = useState(60); // Iniciar con 60 directamente
+
+  // useRef para interval ID - evita memory leaks y permite cleanup
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const form = useForm<TwoFactorInput>({
     resolver: zodResolver(twoFactorSchema),
@@ -32,12 +35,51 @@ export const useTwoFactor = ({ email, onSuccess }: UseTwoFactorProps) => {
     },
   });
 
-  const startCountdown = useCallback(() => {
-    setCountdown(60);
-    const interval = setInterval(() => {
+  // Cleanup del interval al desmontar - useEffect para browser API es aceptable
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  // Iniciar countdown al montar - useEffect para browser API (setInterval) es aceptable
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
-          clearInterval(interval);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, []);
+
+  const startCountdown = useCallback(() => {
+    // Limpiar interval anterior si existe
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    setCountdown(60);
+    intervalRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+            intervalRef.current = null;
+          }
           return 0;
         }
         return prev - 1;
