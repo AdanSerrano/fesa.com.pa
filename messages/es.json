@@ -582,56 +582,6 @@
     "empty": "No hay datos para mostrar",
     "loading": "Cargando..."
   },
-  "DemoTable": {
-    "stats": {
-      "total": "Total",
-      "active": "Activos",
-      "inactive": "Inactivos",
-      "discontinued": "Descontinuados",
-      "lowStock": "Stock Bajo",
-      "totalValue": "Valor Total"
-    },
-    "status": {
-      "active": "Activo",
-      "inactive": "Inactivo",
-      "discontinued": "Descontinuado"
-    },
-    "category": {
-      "electronics": "Electrónica",
-      "clothing": "Ropa",
-      "food": "Alimentos",
-      "books": "Libros",
-      "other": "Otros"
-    },
-    "filters": {
-      "title": "Filtros",
-      "status": "Estado",
-      "allStatuses": "Todos los estados",
-      "category": "Categoría",
-      "allCategories": "Todas las categorías"
-    },
-    "columns": {
-      "lowStock": "Stock bajo"
-    },
-    "productDetails": {
-      "title": "Detalles del producto",
-      "subtitle": "Información completa del producto seleccionado",
-      "sku": "SKU",
-      "status": "Estado",
-      "price": "Precio",
-      "stock": "Stock",
-      "category": "Categoría",
-      "stockValue": "Valor en stock",
-      "created": "Creado",
-      "updated": "Actualizado"
-    },
-    "deleteProduct": {
-      "title": "Eliminar producto",
-      "warning": "Esta acción no se puede deshacer.",
-      "confirmMessage": "Estás a punto de eliminar el producto",
-      "permanent": "Esta acción es permanente."
-    }
-  },
   "Errors": {
     "generic": "Ha ocurrido un error. Por favor, inténtalo de nuevo.",
     "notFound": "Página no encontrada",

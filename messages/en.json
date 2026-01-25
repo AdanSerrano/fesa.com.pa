@@ -582,56 +582,7 @@
     "empty": "No data to display",
     "loading": "Loading..."
   },
-  "DemoTable": {
-    "stats": {
-      "total": "Total",
-      "active": "Active",
-      "inactive": "Inactive",
-      "discontinued": "Discontinued",
-      "lowStock": "Low Stock",
-      "totalValue": "Total Value"
-    },
-    "status": {
-      "active": "Active",
-      "inactive": "Inactive",
-      "discontinued": "Discontinued"
-    },
-    "category": {
-      "electronics": "Electronics",
-      "clothing": "Clothing",
-      "food": "Food",
-      "books": "Books",
-      "other": "Other"
-    },
-    "filters": {
-      "title": "Filters",
-      "status": "Status",
-      "allStatuses": "All statuses",
-      "category": "Category",
-      "allCategories": "All categories"
-    },
-    "columns": {
-      "lowStock": "Low stock"
-    },
-    "productDetails": {
-      "title": "Product details",
-      "subtitle": "Complete information of the selected product",
-      "sku": "SKU",
-      "status": "Status",
-      "price": "Price",
-      "stock": "Stock",
-      "category": "Category",
-      "stockValue": "Stock value",
-      "created": "Created",
-      "updated": "Updated"
-    },
-    "deleteProduct": {
-      "title": "Delete product",
-      "warning": "This action cannot be undone.",
-      "confirmMessage": "You are about to delete the product",
-      "permanent": "This action is permanent."
-    }
-  },
+ 
   "Errors": {
     "generic": "An error occurred. Please try again.",
     "notFound": "Page not found",

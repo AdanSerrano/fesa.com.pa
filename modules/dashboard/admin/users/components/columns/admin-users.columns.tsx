@@ -397,6 +397,7 @@ export function createAdminUsersColumns(
     {
       id: "actions",
       header: "",
+      pinned: "right",
       enableSorting: false,
       enableHiding: false,
       cell: ({ row }) => (

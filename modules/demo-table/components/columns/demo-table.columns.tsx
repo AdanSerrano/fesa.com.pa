@@ -394,6 +394,7 @@ export function createDemoTableColumns({ actions, labels }: CreateColumnsOptions
       id: "actions",
       header: labels.columns.actions,
       align: "center",
+      pinned: "right",
       enableSorting: false,
       enableHiding: false,
       minWidth: 80,
