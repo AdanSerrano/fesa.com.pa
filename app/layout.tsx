@@ -160,17 +160,23 @@ export default async function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <head>
+        {/* DNS Prefetch para conexiones más rápidas */}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+        {/* Preconnect para fuentes */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
           href="https://fonts.gstatic.com"
           crossOrigin="anonymous"
         />
+        {/* PWA & Mobile */}
         <link rel="apple-touch-icon" href="/icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Nexus" />
         <meta name="mobile-web-app-capable" content="yes" />
+        {/* Structured Data */}
         <RootJsonLd />
       </head>
       <body
