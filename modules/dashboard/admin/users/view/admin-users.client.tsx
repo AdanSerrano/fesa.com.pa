@@ -4,6 +4,7 @@ import { memo, useCallback, useMemo, useRef, useState, useTransition } from "rea
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, Ban, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -72,12 +73,7 @@ const COPY_CONFIG: CopyConfig = {
   includeHeaders: true,
 };
 
-const PRINT_CONFIG: PrintConfig = {
-  enabled: true,
-  title: "Listado de Usuarios",
-  pageSize: "A4",
-  orientation: "landscape",
-};
+// PRINT_CONFIG se crea dinámicamente dentro del componente para usar traducciones
 
 const FULLSCREEN_CONFIG: FullscreenConfig = {
   enabled: true,
@@ -106,14 +102,15 @@ interface AdminUsersClientProps {
 }
 
 const AdminUsersHeader = memo(function AdminUsersHeader() {
+  const t = useTranslations("Admin.users");
   return (
     <AnimatedSection animation="fade-down" delay={0}>
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">
-          Gestión de Usuarios
+          {t("title")}
         </h1>
         <p className="text-muted-foreground">
-          Administra los usuarios de la plataforma, sus roles y permisos.
+          {t("description")}
         </p>
       </div>
     </AnimatedSection>
@@ -127,10 +124,11 @@ interface ErrorAlertProps {
 }
 
 const ErrorAlert = memo(function ErrorAlert({ error, onRetry, isNavigating }: ErrorAlertProps) {
+  const t = useTranslations("Common");
   return (
     <Alert variant="destructive" role="alert" aria-live="assertive">
       <AlertCircle className="h-4 w-4" />
-      <AlertTitle>Error al cargar usuarios</AlertTitle>
+      <AlertTitle>{t("errorLoading")}</AlertTitle>
       <AlertDescription className="flex items-center justify-between">
         <span>{error}</span>
         <Button
@@ -141,7 +139,7 @@ const ErrorAlert = memo(function ErrorAlert({ error, onRetry, isNavigating }: Er
           className="ml-4"
         >
           <RefreshCw className={`mr-2 h-4 w-4 ${isNavigating ? "animate-spin" : ""}`} />
-          Reintentar
+          {t("retry")}
         </Button>
       </AlertDescription>
     </Alert>
@@ -163,24 +161,26 @@ const BulkActions = memo(function BulkActions({
   onBulkDelete,
   onClearSelection,
 }: BulkActionsProps) {
+  const t = useTranslations("Admin.users");
   if (selectedCount === 0) return null;
 
   return (
     <div className="flex items-center gap-2 rounded-md bg-muted/50 p-2">
       <span className="text-sm text-muted-foreground">
-        {selectedCount} usuario{selectedCount > 1 ? "s" : ""} seleccionado
-        {selectedCount > 1 ? "s" : ""}
+        {selectedCount > 1
+          ? t("bulk.selectedUsersPlural", { count: selectedCount })
+          : t("bulk.selectedUsers", { count: selectedCount })}
       </span>
       <Button variant="outline" size="sm" onClick={onBulkBlock} disabled={isPending}>
         <Ban className="mr-2 h-4 w-4" />
-        Bloquear
+        {t("actions.block")}
       </Button>
       <Button variant="destructive" size="sm" onClick={onBulkDelete} disabled={isPending}>
         <Trash2 className="mr-2 h-4 w-4" />
-        Eliminar
+        {t("actions.delete")}
       </Button>
       <Button variant="ghost" size="sm" onClick={onClearSelection}>
-        Limpiar selección
+        {t("bulk.clearSelection")}
       </Button>
     </div>
   );
@@ -190,6 +190,8 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("Admin.users");
+  const tCommon = useTranslations("Common");
 
   // Estado de UI local (no datos del servidor)
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -311,8 +313,8 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
 
   const handleRefresh = useCallback(() => {
     router.refresh();
-    toast.success("Datos actualizados");
-  }, [router]);
+    toast.success(t("table.dataUpdated"));
+  }, [router, t]);
 
   // Dialog handlers
   const openDialog = useCallback((type: AdminUsersDialogType, user: AdminUser | null = null) => {
@@ -430,7 +432,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     (reason?: string) => {
       const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
       if (selectedIds.length === 0) {
-        toast.error("No hay usuarios seleccionados");
+        toast.error(t("bulk.noUsersSelected"));
         return;
       }
 
@@ -445,17 +447,17 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
             router.refresh();
           }
         } catch (err) {
-          toast.error(err instanceof Error ? err.message : "Error al bloquear usuarios");
+          toast.error(err instanceof Error ? err.message : tCommon("error"));
         }
       });
     },
-    [rowSelection, router]
+    [rowSelection, router, t, tCommon]
   );
 
   const bulkDeleteUsers = useCallback(() => {
     const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
     if (selectedIds.length === 0) {
-      toast.error("No hay usuarios seleccionados");
+      toast.error(t("bulk.noUsersSelected"));
       return;
     }
 
@@ -470,21 +472,37 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           router.refresh();
         }
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Error al eliminar usuarios");
+        toast.error(err instanceof Error ? err.message : tCommon("error"));
       }
     });
-  }, [rowSelection, router]);
+  }, [rowSelection, router, t, tCommon]);
+
+  // Traducciones de columnas memoizadas
+  const columnTranslations = useMemo(
+    () => ({
+      user: t("columns.user"),
+      email: t("columns.email"),
+      role: t("columns.role"),
+      status: t("columns.status"),
+      emailVerified: t("columns.emailVerified"),
+      twoFactor: t("columns.twoFactor"),
+      createdAt: t("columns.createdAt"),
+      updatedAt: t("columns.updatedAt"),
+    }),
+    [t]
+  );
 
   // Ref para acciones estables
   const actionsRef = useRef({
     onOpenDialog: openDialog,
+    translations: columnTranslations,
   });
-  actionsRef.current = { onOpenDialog: openDialog };
+  actionsRef.current = { onOpenDialog: openDialog, translations: columnTranslations };
 
   // Columnas memoizadas
   const columns = useMemo(
     () => createAdminUsersColumns(actionsRef.current),
-    []
+    [columnTranslations]
   );
 
   // Configs memoizadas
@@ -531,11 +549,11 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     () => ({
       globalFilter: urlState.search,
       onGlobalFilterChange: handleSearchChange,
-      placeholder: "Buscar por nombre, email o usuario...",
+      placeholder: t("search.placeholder"),
       showClearButton: true,
       // Usa el global de 700ms desde constants.ts
     }),
-    [urlState.search, handleSearchChange]
+    [urlState.search, handleSearchChange, t]
   );
 
   const columnVisibilityConfig: ColumnVisibilityConfig = useMemo(
@@ -572,6 +590,16 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       includeHeaders: true,
     }),
     []
+  );
+
+  const printConfig: PrintConfig = useMemo(
+    () => ({
+      enabled: true,
+      title: t("table.printTitle"),
+      pageSize: "A4",
+      orientation: "landscape",
+    }),
+    [t]
   );
 
   const renderExpandedContent = useCallback(
@@ -657,11 +685,11 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
             style={STYLE_CONFIG}
             export={exportConfig}
             copy={COPY_CONFIG}
-            print={PRINT_CONFIG}
+            print={printConfig}
             fullscreen={FULLSCREEN_CONFIG}
             isLoading={false}
             isPending={isNavigating || isPending}
-            emptyMessage="No se encontraron usuarios"
+            emptyMessage={t("table.noUsers")}
           />
         </div>
       </AnimatedSection>

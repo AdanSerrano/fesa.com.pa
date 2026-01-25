@@ -1,8 +1,8 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { Package, Calendar, Tag, DollarSign, Layers, Info } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,27 +17,53 @@ import { Separator } from "@/components/ui/separator";
 
 import type { DemoProduct, ProductStatus, ProductCategory } from "../../types/demo-table.types";
 
+export interface DetailsDialogLabels {
+  title: string;
+  description: string;
+  sku: string;
+  status: string;
+  price: string;
+  stock: string;
+  units: string;
+  category: string;
+  stockValue: string;
+  created: string;
+  updated: string;
+  statusActive: string;
+  statusInactive: string;
+  statusDiscontinued: string;
+  categoryElectronics: string;
+  categoryClothing: string;
+  categoryFood: string;
+  categoryBooks: string;
+  categoryOther: string;
+}
+
 interface Props {
   product: DemoProduct | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  labels: DetailsDialogLabels;
+  locale: string;
 }
 
-const statusLabels: Record<ProductStatus, { label: string; variant: "default" | "secondary" | "destructive" }> = {
-  active: { label: "Activo", variant: "default" },
-  inactive: { label: "Inactivo", variant: "secondary" },
-  discontinued: { label: "Descontinuado", variant: "destructive" },
-};
+function ProductDetailsDialogComponent({ product, open, onOpenChange, labels, locale }: Props) {
+  const dateLocale = locale === "es" ? es : enUS;
 
-const categoryLabels: Record<ProductCategory, string> = {
-  electronics: "Electrónica",
-  clothing: "Ropa",
-  food: "Alimentos",
-  books: "Libros",
-  other: "Otros",
-};
+  const statusLabels = useMemo(() => ({
+    active: { label: labels.statusActive, variant: "default" as const },
+    inactive: { label: labels.statusInactive, variant: "secondary" as const },
+    discontinued: { label: labels.statusDiscontinued, variant: "destructive" as const },
+  }), [labels]);
 
-function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
+  const categoryLabels = useMemo((): Record<ProductCategory, string> => ({
+    electronics: labels.categoryElectronics,
+    clothing: labels.categoryClothing,
+    food: labels.categoryFood,
+    books: labels.categoryBooks,
+    other: labels.categoryOther,
+  }), [labels]);
+
   if (!product) return null;
 
   const statusConfig = statusLabels[product.status];
@@ -48,10 +74,10 @@ function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Package className="h-5 w-5 text-primary" />
-            Detalles del producto
+            {labels.title}
           </DialogTitle>
           <DialogDescription>
-            Información completa del producto seleccionado
+            {labels.description}
           </DialogDescription>
         </DialogHeader>
 
@@ -76,7 +102,7 @@ function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Tag className="h-4 w-4" />
-                SKU
+                {labels.sku}
               </div>
               <p className="font-mono font-medium">{product.sku}</p>
             </div>
@@ -84,7 +110,7 @@ function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Info className="h-4 w-4" />
-                Estado
+                {labels.status}
               </div>
               <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
             </div>
@@ -92,25 +118,25 @@ function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <DollarSign className="h-4 w-4" />
-                Precio
+                {labels.price}
               </div>
               <p className="font-mono font-medium text-lg">
-                ${product.price.toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+                ${product.price.toLocaleString(locale, { minimumFractionDigits: 2 })}
               </p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Layers className="h-4 w-4" />
-                Stock
+                {labels.stock}
               </div>
-              <p className="font-mono font-medium">{product.stock} unidades</p>
+              <p className="font-mono font-medium">{product.stock} {labels.units}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Package className="h-4 w-4" />
-                Categoría
+                {labels.category}
               </div>
               <p className="font-medium">{categoryLabels[product.category]}</p>
             </div>
@@ -118,10 +144,10 @@ function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <DollarSign className="h-4 w-4" />
-                Valor en stock
+                {labels.stockValue}
               </div>
               <p className="font-mono font-medium">
-                ${(product.price * product.stock).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+                ${(product.price * product.stock).toLocaleString(locale, { minimumFractionDigits: 2 })}
               </p>
             </div>
           </div>
@@ -132,17 +158,17 @@ function ProductDetailsDialogComponent({ product, open, onOpenChange }: Props) {
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                Creado
+                {labels.created}
               </div>
-              <p>{format(new Date(product.createdAt), "dd/MM/yyyy HH:mm", { locale: es })}</p>
+              <p>{format(new Date(product.createdAt), "dd/MM/yyyy HH:mm", { locale: dateLocale })}</p>
             </div>
 
             <div className="space-y-1">
               <div className="flex items-center gap-2 text-muted-foreground">
                 <Calendar className="h-4 w-4" />
-                Actualizado
+                {labels.updated}
               </div>
-              <p>{format(new Date(product.updatedAt), "dd/MM/yyyy HH:mm", { locale: es })}</p>
+              <p>{format(new Date(product.updatedAt), "dd/MM/yyyy HH:mm", { locale: dateLocale })}</p>
             </div>
           </div>
         </div>

@@ -27,13 +27,28 @@ import {
   Clock,
 } from "lucide-react";
 import { format, formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import type { CustomColumnDef } from "@/components/custom-datatable";
 import type { AdminUser, AdminUsersDialogType } from "../../types/admin-users.types";
 import { Role } from "@/app/prisma/enums";
+import { useTranslations, useLocale } from "next-intl";
+
+type StatusKey = "deleted" | "blocked" | "unverified" | "active";
+
+interface ColumnTranslations {
+  user: string;
+  email: string;
+  role: string;
+  status: string;
+  emailVerified: string;
+  twoFactor: string;
+  createdAt: string;
+  updatedAt: string;
+}
 
 interface ColumnActions {
   onOpenDialog: (dialog: AdminUsersDialogType, user: AdminUser) => void;
+  translations: ColumnTranslations;
 }
 
 function getInitials(name: string | null): string {
@@ -46,24 +61,25 @@ function getInitials(name: string | null): string {
     .slice(0, 2);
 }
 
-function getUserStatus(user: AdminUser): {
-  label: string;
+function getUserStatusKey(user: AdminUser): {
+  key: StatusKey;
   variant: "default" | "secondary" | "destructive" | "outline";
 } {
   if (user.deletedAt) {
-    return { label: "Eliminado", variant: "destructive" };
+    return { key: "deleted", variant: "destructive" };
   }
   if (user.isBlocked) {
-    return { label: "Bloqueado", variant: "destructive" };
+    return { key: "blocked", variant: "destructive" };
   }
   if (!user.emailVerified) {
-    return { label: "Sin verificar", variant: "secondary" };
+    return { key: "unverified", variant: "secondary" };
   }
-  return { label: "Activo", variant: "default" };
+  return { key: "active", variant: "default" };
 }
 
 
 const UserCell = memo(function UserCell({ row }: { row: AdminUser }) {
+  const t = useTranslations("Admin.users");
   const isBlocked = row.isBlocked && !row.deletedAt;
   const isDeleted = !!row.deletedAt;
 
@@ -83,7 +99,7 @@ const UserCell = memo(function UserCell({ row }: { row: AdminUser }) {
         {isBlocked && (
           <div
             className="absolute -bottom-1 -right-1 rounded-full bg-destructive p-1"
-            title="Usuario bloqueado"
+            title={t("userBlocked")}
           >
             <Ban className="h-3 w-3 text-destructive-foreground" />
           </div>
@@ -91,7 +107,7 @@ const UserCell = memo(function UserCell({ row }: { row: AdminUser }) {
         {isDeleted && (
           <div
             className="absolute -bottom-1 -right-1 rounded-full bg-muted p-1"
-            title="Usuario eliminado"
+            title={t("userDeleted")}
           >
             <Trash2 className="h-3 w-3 text-muted-foreground" />
           </div>
@@ -104,12 +120,12 @@ const UserCell = memo(function UserCell({ row }: { row: AdminUser }) {
               isDeleted ? "text-muted-foreground line-through" : ""
             }`}
           >
-            {row.name || "Sin nombre"}
+            {row.name || t("noName")}
           </span>
           {isBlocked && (
             <Badge variant="destructive" className="h-5 gap-1 text-xs">
               <Ban className="h-3 w-3" />
-              Bloqueado
+              {t("status.blocked")}
             </Badge>
           )}
         </div>
@@ -123,16 +139,18 @@ const UserCell = memo(function UserCell({ row }: { row: AdminUser }) {
 
 // Email Cell
 const EmailCell = memo(function EmailCell({ email }: { email: string | null }) {
+  const t = useTranslations("Admin.users");
   return (
     <div className="flex items-center gap-2">
       <Mail className="h-4 w-4 text-muted-foreground" />
-      <span className="text-sm">{email || "Sin email"}</span>
+      <span className="text-sm">{email || t("noEmail")}</span>
     </div>
   );
 });
 
 // Role Cell
 const RoleCell = memo(function RoleCell({ role }: { role: Role }) {
+  const t = useTranslations("Admin.users");
   const isAdmin = role === Role.ADMIN;
   return (
     <Badge variant={isAdmin ? "default" : "secondary"} className="gap-1">
@@ -141,15 +159,16 @@ const RoleCell = memo(function RoleCell({ role }: { role: Role }) {
       ) : (
         <Shield className="h-3 w-3" />
       )}
-      {isAdmin ? "Admin" : "Usuario"}
+      {isAdmin ? t("admin") : t("user")}
     </Badge>
   );
 });
 
 // Status Cell
 const StatusCell = memo(function StatusCell({ row }: { row: AdminUser }) {
-  const status = getUserStatus(row);
-  return <Badge variant={status.variant}>{status.label}</Badge>;
+  const t = useTranslations("Admin.users.status");
+  const status = getUserStatusKey(row);
+  return <Badge variant={status.variant}>{t(status.key)}</Badge>;
 });
 
 const EmailVerifiedCell = memo(function EmailVerifiedCell({
@@ -175,18 +194,19 @@ const TwoFactorCell = memo(function TwoFactorCell({
 }: {
   enabled: boolean;
 }) {
+  const t = useTranslations("Admin.users.twoFactor");
   if (enabled) {
     return (
       <Badge variant="default" className="gap-1">
         <Check className="h-3 w-3" />
-        Activo
+        {t("active")}
       </Badge>
     );
   }
   return (
     <Badge variant="outline" className="gap-1 text-muted-foreground">
       <X className="h-3 w-3" />
-      No
+      {t("inactive")}
     </Badge>
   );
 });
@@ -196,14 +216,16 @@ const CreatedAtCell = memo(function CreatedAtCell({
 }: {
   createdAt: Date;
 }) {
+  const locale = useLocale();
+  const dateLocale = locale === "es" ? es : enUS;
   const date = new Date(createdAt);
   return (
     <div className="flex flex-col">
       <span className="text-sm">
-        {format(date, "dd MMM yyyy", { locale: es })}
+        {format(date, "dd MMM yyyy", { locale: dateLocale })}
       </span>
       <span className="text-xs text-muted-foreground">
-        {formatDistanceToNow(date, { addSuffix: true, locale: es })}
+        {formatDistanceToNow(date, { addSuffix: true, locale: dateLocale })}
       </span>
     </div>
   );
@@ -214,13 +236,15 @@ const UpdatedAtCell = memo(function UpdatedAtCell({
 }: {
   updatedAt: Date;
 }) {
+  const locale = useLocale();
+  const dateLocale = locale === "es" ? es : enUS;
   return (
     <div className="flex items-center gap-2">
       <Clock className="h-4 w-4 text-muted-foreground" />
       <span className="text-sm text-muted-foreground">
         {formatDistanceToNow(new Date(updatedAt), {
           addSuffix: true,
-          locale: es,
+          locale: dateLocale,
         })}
       </span>
     </div>
@@ -236,6 +260,7 @@ const ActionsCell = memo(function ActionsCell({
   row,
   onOpenDialog,
 }: ActionsCellProps) {
+  const t = useTranslations("Admin.users.actions");
   const isDeleted = !!row.deletedAt;
   const isBlocked = row.isBlocked;
 
@@ -244,13 +269,13 @@ const ActionsCell = memo(function ActionsCell({
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <MoreHorizontal className="h-4 w-4" />
-          <span className="sr-only">Abrir menú</span>
+          <span className="sr-only">{t("openMenu")}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => onOpenDialog("details", row)}>
           <Eye className="mr-2 h-4 w-4" />
-          Ver detalles
+          {t("viewDetails")}
         </DropdownMenuItem>
 
         {isDeleted ? (
@@ -261,7 +286,7 @@ const ActionsCell = memo(function ActionsCell({
               className="text-green-600 focus:text-green-600"
             >
               <RotateCcw className="mr-2 h-4 w-4" />
-              Restaurar cuenta
+              {t("restoreAccount")}
             </DropdownMenuItem>
           </>
         ) : (
@@ -271,18 +296,18 @@ const ActionsCell = memo(function ActionsCell({
             {isBlocked ? (
               <DropdownMenuItem onClick={() => onOpenDialog("unblock", row)}>
                 <Unlock className="mr-2 h-4 w-4" />
-                Desbloquear
+                {t("unblock")}
               </DropdownMenuItem>
             ) : (
               <DropdownMenuItem onClick={() => onOpenDialog("block", row)}>
                 <Ban className="mr-2 h-4 w-4" />
-                Bloquear
+                {t("block")}
               </DropdownMenuItem>
             )}
 
             <DropdownMenuItem onClick={() => onOpenDialog("change-role", row)}>
               <UserCog className="mr-2 h-4 w-4" />
-              Cambiar rol
+              {t("changeRole")}
             </DropdownMenuItem>
 
             <DropdownMenuSeparator />
@@ -292,7 +317,7 @@ const ActionsCell = memo(function ActionsCell({
               className="text-destructive focus:text-destructive"
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar
+              {t("delete")}
             </DropdownMenuItem>
           </>
         )}
@@ -304,11 +329,12 @@ const ActionsCell = memo(function ActionsCell({
 export function createAdminUsersColumns(
   actions: ColumnActions
 ): CustomColumnDef<AdminUser>[] {
+  const { translations: t } = actions;
   return [
     {
       id: "user",
       accessorKey: "name",
-      header: "Usuario",
+      header: t.user,
       enableSorting: true,
       minWidth: 200,
       cell: ({ row }) => <UserCell row={row} />,
@@ -316,7 +342,7 @@ export function createAdminUsersColumns(
     {
       id: "email",
       accessorKey: "email",
-      header: "Email",
+      header: t.email,
       enableSorting: true,
       minWidth: 180,
       cell: ({ row }) => <EmailCell email={row.email} />,
@@ -324,14 +350,14 @@ export function createAdminUsersColumns(
     {
       id: "role",
       accessorKey: "role",
-      header: "Rol",
+      header: t.role,
       enableSorting: true,
       align: "center",
       cell: ({ row }) => <RoleCell role={row.role} />,
     },
     {
       id: "status",
-      header: "Estado",
+      header: t.status,
       enableSorting: false,
       align: "center",
       cell: ({ row }) => <StatusCell row={row} />,
@@ -339,7 +365,7 @@ export function createAdminUsersColumns(
     {
       id: "emailVerified",
       accessorKey: "emailVerified",
-      header: "Email Verificado",
+      header: t.emailVerified,
       enableSorting: true,
       align: "center",
       defaultHidden: true,
@@ -348,7 +374,7 @@ export function createAdminUsersColumns(
     {
       id: "twoFactor",
       accessorKey: "isTwoFactorEnabled",
-      header: "2FA",
+      header: t.twoFactor,
       enableSorting: true,
       align: "center",
       cell: ({ row }) => <TwoFactorCell enabled={row.isTwoFactorEnabled} />,
@@ -356,14 +382,14 @@ export function createAdminUsersColumns(
     {
       id: "createdAt",
       accessorKey: "createdAt",
-      header: "Registrado",
+      header: t.createdAt,
       enableSorting: true,
       cell: ({ row }) => <CreatedAtCell createdAt={row.createdAt} />,
     },
     {
       id: "updatedAt",
       accessorKey: "updatedAt",
-      header: "Última Actualización",
+      header: t.updatedAt,
       enableSorting: true,
       // defaultHidden: true,
       cell: ({ row }) => <UpdatedAtCell updatedAt={row.updatedAt} />,

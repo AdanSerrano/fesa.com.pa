@@ -15,11 +15,13 @@ import { PasswordStrengthIndicator } from "@/components/ui/password-strength-ind
 import { RegisterViewModel } from "@/modules/register/view-model/register.view-model";
 import { cn } from "@/lib/utils";
 import { Loader2, UserPlus } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PasswordInput } from "@/components/ui/pasword-input";
 import { memo, useDeferredValue } from "react";
+import { useTranslations } from "next-intl";
 
 export const RegisterForm = memo(function RegisterForm() {
+  const t = useTranslations("Auth");
   const { handleRegister, isPending, error, form } = RegisterViewModel();
   const password = form.watch("password");
   const deferredPassword = useDeferredValue(password);
@@ -32,13 +34,13 @@ export const RegisterForm = memo(function RegisterForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email *</FormLabel>
+              <FormLabel>{t("email")} *</FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder={t("emailPlaceholder")}
                   autoComplete="email"
-                  aria-label="Correo electrónico"
+                  aria-label={t("email")}
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -47,7 +49,7 @@ export const RegisterForm = memo(function RegisterForm() {
                 />
               </FormControl>
               <FormDescription>
-                Usaremos este email para verificar tu cuenta
+                {t("emailHint")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -59,13 +61,13 @@ export const RegisterForm = memo(function RegisterForm() {
           name="userName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre de usuario</FormLabel>
+              <FormLabel>{t("username")}</FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="mi_usuario"
+                  placeholder={t("usernamePlaceholder")}
                   autoComplete="username"
-                  aria-label="Nombre de usuario"
+                  aria-label={t("username")}
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -74,7 +76,7 @@ export const RegisterForm = memo(function RegisterForm() {
                 />
               </FormControl>
               <FormDescription>
-                Solo letras, números y guiones bajos (opcional)
+                {t("usernameHint")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -86,19 +88,19 @@ export const RegisterForm = memo(function RegisterForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nombre completo</FormLabel>
+              <FormLabel>{t("fullName")}</FormLabel>
               <FormControl>
                 <Input
                   type="text"
-                  placeholder="Juan Pérez"
+                  placeholder={t("fullNamePlaceholder")}
                   autoComplete="name"
-                  aria-label="Nombre completo"
+                  aria-label={t("fullName")}
                   {...field}
                   disabled={isPending}
                 />
               </FormControl>
               <FormDescription>
-                Cómo te gustaría que te llamemos (opcional)
+                {t("nameHint")}
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -110,12 +112,12 @@ export const RegisterForm = memo(function RegisterForm() {
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contraseña *</FormLabel>
+              <FormLabel>{t("password")} *</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="••••••••"
+                  placeholder={t("passwordPlaceholder")}
                   autoComplete="new-password"
-                  aria-label="Contraseña"
+                  aria-label={t("password")}
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -135,12 +137,12 @@ export const RegisterForm = memo(function RegisterForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirmar contraseña *</FormLabel>
+              <FormLabel>{t("confirmPassword")} *</FormLabel>
               <FormControl>
                 <PasswordInput
-                  placeholder="••••••••"
+                  placeholder={t("passwordPlaceholder")}
                   autoComplete="new-password"
-                  aria-label="Confirmar contraseña"
+                  aria-label={t("confirmPassword")}
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -173,23 +175,23 @@ export const RegisterForm = memo(function RegisterForm() {
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-              Creando cuenta...
+              {t("registering")}
             </>
           ) : (
             <>
               <UserPlus className="mr-2 h-4 w-4" aria-hidden="true" />
-              Crear cuenta
+              {t("createAccount")}
             </>
           )}
         </Button>
 
         <p className="text-center text-sm text-muted-foreground">
-          ¿Ya tienes una cuenta?{" "}
+          {t("hasAccount")}{" "}
           <Link
             href="/login"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
-            Iniciar sesión
+            {t("login")}
           </Link>
         </p>
       </form>

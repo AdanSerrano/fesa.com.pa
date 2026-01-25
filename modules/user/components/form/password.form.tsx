@@ -14,8 +14,10 @@ import {
 import { Loader2, Eye, EyeOff, Check, X } from "lucide-react";
 import { PasswordViewModel } from "../../view-model/user.view-model";
 import { cn } from "@/lib/utils";
+import { useTranslations } from "next-intl";
 
 export const PasswordForm = memo(function PasswordForm() {
+  const t = useTranslations("PasswordSettings");
   const { handleSubmit, form, isPending, error } = PasswordViewModel();
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -24,11 +26,11 @@ export const PasswordForm = memo(function PasswordForm() {
   const newPassword = form.watch("newPassword");
 
   const requirements = [
-    { label: "Mínimo 8 caracteres", met: newPassword?.length >= 8 },
-    { label: "Una letra mayúscula", met: /[A-Z]/.test(newPassword || "") },
-    { label: "Una letra minúscula", met: /[a-z]/.test(newPassword || "") },
-    { label: "Un número", met: /[0-9]/.test(newPassword || "") },
-    { label: "Un carácter especial", met: /[^A-Za-z0-9]/.test(newPassword || "") },
+    { label: t("minChars"), met: newPassword?.length >= 8 },
+    { label: t("uppercase"), met: /[A-Z]/.test(newPassword || "") },
+    { label: t("lowercase"), met: /[a-z]/.test(newPassword || "") },
+    { label: t("number"), met: /[0-9]/.test(newPassword || "") },
+    { label: t("specialChar"), met: /[^A-Za-z0-9]/.test(newPassword || "") },
   ];
 
   return (
@@ -39,7 +41,7 @@ export const PasswordForm = memo(function PasswordForm() {
           name="currentPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Contraseña actual</FormLabel>
+              <FormLabel>{t("currentPassword")}</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
@@ -72,7 +74,7 @@ export const PasswordForm = memo(function PasswordForm() {
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nueva contraseña</FormLabel>
+              <FormLabel>{t("newPassword")}</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
@@ -102,7 +104,7 @@ export const PasswordForm = memo(function PasswordForm() {
 
         {newPassword && (
           <div className="rounded-lg border border-border bg-muted/30 p-4">
-            <p className="text-sm font-medium mb-3">Requisitos de contraseña</p>
+            <p className="text-sm font-medium mb-3">{t("requirements")}</p>
             <div className="grid grid-cols-2 gap-2">
               {requirements.map((req) => (
                 <div
@@ -129,7 +131,7 @@ export const PasswordForm = memo(function PasswordForm() {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Confirmar nueva contraseña</FormLabel>
+              <FormLabel>{t("confirmNewPassword")}</FormLabel>
               <FormControl>
                 <div className="relative">
                   <Input
@@ -168,10 +170,10 @@ export const PasswordForm = memo(function PasswordForm() {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Cambiando...
+                {t("changing")}
               </>
             ) : (
-              "Cambiar contraseña"
+              t("changePassword")
             )}
           </Button>
         </div>

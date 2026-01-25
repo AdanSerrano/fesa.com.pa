@@ -11,7 +11,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import {
   Mail,
   User,
@@ -22,6 +22,7 @@ import {
   Check,
   X,
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import type { AdminUser } from "../../types/admin-users.types";
 import { Role } from "@/app/prisma/enums";
 
@@ -66,6 +67,11 @@ export const UserDetailsDialog = memo(function UserDetailsDialog({
   open,
   onClose,
 }: UserDetailsDialogProps) {
+  const t = useTranslations("UserDetailsDialog");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
+  const dateLocale = locale === "es" ? es : enUS;
+
   if (!user) return null;
 
   const isAdmin = user.role === Role.ADMIN;
@@ -77,7 +83,7 @@ export const UserDetailsDialog = memo(function UserDetailsDialog({
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Detalles del Usuario</DialogTitle>
+          <DialogTitle>{t("title")}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -90,7 +96,7 @@ export const UserDetailsDialog = memo(function UserDetailsDialog({
             </Avatar>
             <div>
               <h3 className="text-lg font-semibold">
-                {user.name || "Sin nombre"}
+                {user.name || t("noName")}
               </h3>
               {user.userName && (
                 <p className="text-sm text-muted-foreground">@{user.userName}</p>
@@ -102,12 +108,12 @@ export const UserDetailsDialog = memo(function UserDetailsDialog({
                   ) : (
                     <Shield className="mr-1 h-3 w-3" />
                   )}
-                  {isAdmin ? "Admin" : "Usuario"}
+                  {isAdmin ? t("admin") : t("user")}
                 </Badge>
-                {isBlocked && <Badge variant="destructive">Bloqueado</Badge>}
-                {isDeleted && <Badge variant="destructive">Eliminado</Badge>}
+                {isBlocked && <Badge variant="destructive">{t("blocked")}</Badge>}
+                {isDeleted && <Badge variant="destructive">{t("deleted")}</Badge>}
                 {!isVerified && !isDeleted && (
-                  <Badge variant="secondary">Sin verificar</Badge>
+                  <Badge variant="secondary">{t("unverified")}</Badge>
                 )}
               </div>
             </div>
@@ -118,50 +124,51 @@ export const UserDetailsDialog = memo(function UserDetailsDialog({
           <div className="grid gap-4">
             <DetailRow
               icon={Mail}
-              label="Email"
-              value={user.email || "Sin email"}
+              label={t("email")}
+              value={user.email || t("noEmail")}
             />
             <DetailRow
               icon={User}
-              label="Nombre de usuario"
-              value={user.userName || "No definido"}
+              label={t("username")}
+              value={user.userName || t("notDefined")}
             />
             <DetailRow
               icon={Calendar}
-              label="Fecha de registro"
-              value={format(new Date(user.createdAt), "PPP", { locale: es })}
+              label={t("registrationDate")}
+              value={format(new Date(user.createdAt), "PPP", { locale: dateLocale })}
             />
             <DetailRow
               icon={Shield}
-              label="Verificación de email"
+              label={t("emailVerification")}
               value={
                 isVerified ? (
                   <span className="flex items-center gap-1 text-green-600">
                     <Check className="h-3 w-3" />
-                    Verificado el{" "}
-                    {format(new Date(user.emailVerified!), "PPP", { locale: es })}
+                    {t("verifiedOn", {
+                      date: format(new Date(user.emailVerified!), "PPP", { locale: dateLocale })
+                    })}
                   </span>
                 ) : (
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <X className="h-3 w-3" />
-                    No verificado
+                    {tCommon("notVerified")}
                   </span>
                 )
               }
             />
             <DetailRow
               icon={Shield}
-              label="Autenticación 2FA"
+              label={t("twoFactorAuth")}
               value={
                 user.isTwoFactorEnabled ? (
                   <span className="flex items-center gap-1 text-green-600">
                     <Check className="h-3 w-3" />
-                    Habilitada
+                    {tCommon("enabled")}
                   </span>
                 ) : (
                   <span className="flex items-center gap-1 text-muted-foreground">
                     <X className="h-3 w-3" />
-                    Deshabilitada
+                    {tCommon("disabled")}
                   </span>
                 )
               }
@@ -174,13 +181,14 @@ export const UserDetailsDialog = memo(function UserDetailsDialog({
               <div className="rounded-md bg-destructive/10 p-3">
                 <div className="flex items-center gap-2 text-sm font-medium text-destructive">
                   <Ban className="h-4 w-4" />
-                  Razón del bloqueo
+                  {t("blockReason")}
                 </div>
                 <p className="mt-1 text-sm">{user.blockedReason}</p>
                 {user.blockedAt && (
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Bloqueado el{" "}
-                    {format(new Date(user.blockedAt), "PPP", { locale: es })}
+                    {t("blockedOn", {
+                      date: format(new Date(user.blockedAt), "PPP", { locale: dateLocale })
+                    })}
                   </p>
                 )}
               </div>

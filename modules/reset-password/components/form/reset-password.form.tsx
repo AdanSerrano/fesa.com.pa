@@ -22,7 +22,8 @@ import { cn } from "@/lib/utils";
 import { Loader2, KeyRound, CheckCircle } from "lucide-react";
 import { ResetPasswordViewModel } from "../../view-model/reset-password.view-model";
 import { memo, useDeferredValue } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface ResetPasswordFormProps {
   token: string;
@@ -31,6 +32,9 @@ interface ResetPasswordFormProps {
 export const ResetPasswordForm = memo(function ResetPasswordForm({
   token,
 }: ResetPasswordFormProps) {
+  const t = useTranslations("ResetPassword");
+  const tAuth = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
   const { handleSubmit, form, isPending, error, success } =
     ResetPasswordViewModel(token);
   const password = form.watch("password");
@@ -47,10 +51,10 @@ export const ResetPasswordForm = memo(function ResetPasswordForm({
           <KeyRound className="h-6 w-6 text-primary" aria-hidden="true" />
         </div>
         <CardTitle className="text-xl font-bold sm:text-2xl">
-          Crea tu nueva contraseña
+          {t("title")}
         </CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Ingresa y confirma tu nueva contraseña para acceder a tu cuenta.
+          {t("subtitle")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -64,12 +68,12 @@ export const ResetPasswordForm = memo(function ResetPasswordForm({
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nueva contraseña *</FormLabel>
+                  <FormLabel>{t("newPasswordLabel")}</FormLabel>
                   <FormControl>
                     <PasswordInput
-                      placeholder="••••••••"
+                      placeholder={tAuth("passwordPlaceholder")}
                       autoComplete="new-password"
-                      aria-label="Nueva contraseña"
+                      aria-label={tAuth("newPassword")}
                       {...field}
                       disabled={isPending}
                       className={cn(
@@ -89,12 +93,12 @@ export const ResetPasswordForm = memo(function ResetPasswordForm({
               name="confirmPassword"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Confirmar contraseña *</FormLabel>
+                  <FormLabel>{t("confirmPasswordLabel")}</FormLabel>
                   <FormControl>
                     <PasswordInput
-                      placeholder="••••••••"
+                      placeholder={tAuth("passwordPlaceholder")}
                       autoComplete="new-password"
-                      aria-label="Confirmar contraseña"
+                      aria-label={tAuth("confirmPassword")}
                       {...field}
                       disabled={isPending}
                       className={cn(
@@ -131,12 +135,12 @@ export const ResetPasswordForm = memo(function ResetPasswordForm({
                     className="mr-2 h-4 w-4 animate-spin"
                     aria-hidden="true"
                   />
-                  Actualizando...
+                  {tCommon("updating")}
                 </>
               ) : (
                 <>
                   <KeyRound className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Restablecer contraseña
+                  {t("resetButton")}
                 </>
               )}
             </Button>
@@ -148,6 +152,8 @@ export const ResetPasswordForm = memo(function ResetPasswordForm({
 });
 
 function SuccessState() {
+  const t = useTranslations("ResetPassword");
+
   return (
     <Card className="w-full border-border/40 shadow-lg">
       <CardContent className="pt-6">
@@ -164,15 +170,14 @@ function SuccessState() {
           </div>
           <div className="space-y-2">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-              ¡Contraseña actualizada!
+              {t("successTitle")}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Tu contraseña ha sido restablecida correctamente. Serás redirigido
-              al inicio de sesión.
+              {t("successMessage")}
             </p>
           </div>
           <Button asChild className="w-full">
-            <Link href="/login">Ir a iniciar sesión</Link>
+            <Link href="/login">{t("goToLogin")}</Link>
           </Button>
         </div>
       </CardContent>

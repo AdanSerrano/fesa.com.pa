@@ -14,8 +14,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { LogOut } from "lucide-react";
 import { logoutAction } from "@/modules/logout/actions/logout.actions";
+import { useTranslations } from "next-intl";
 
 export function LogoutButton() {
+  const t = useTranslations("Auth");
+  const tNav = useTranslations("Navigation");
+  const tCommon = useTranslations("Common");
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   const handleLogout = () => {
@@ -32,25 +36,24 @@ export function LogoutButton() {
         }}
       >
         <LogOut className="mr-2 h-4 w-4 text-destructive" />
-        Cerrar sesión
+        {tNav("logout")}
       </DropdownMenuItem>
 
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Cerrar sesión?</AlertDialogTitle>
+            <AlertDialogTitle>{t("logoutConfirm")}</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas cerrar tu sesión? Tendrás que volver a
-              iniciar sesión para acceder a tu cuenta.
+              {t("logoutDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
-              Sí, cerrar sesión
+              {t("yesLogout")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

@@ -1,8 +1,11 @@
 import { Button } from "@/components/ui/button";
 import { Home, Search } from "lucide-react";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getTranslations("Errors");
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-950">
       <div className="w-full max-w-md space-y-8 p-6">
@@ -13,11 +16,10 @@ export default function NotFound() {
 
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Página no encontrada
+              {t("notFound")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Lo sentimos, no pudimos encontrar la página que buscas. Puede que
-              haya sido movida o eliminada.
+              {t("notFoundDescription")}
             </p>
           </div>
         </div>
@@ -26,12 +28,12 @@ export default function NotFound() {
           <Button asChild className="w-full" size="lg">
             <Link href="/">
               <Home className="w-4 h-4 mr-2" />
-              Volver al inicio
+              {t("goHome")}
             </Link>
           </Button>
 
           <p className="text-sm text-center text-gray-500 dark:text-gray-500">
-            Si crees que esto es un error, contacta con soporte
+            {t("contactSupport")}
           </p>
         </div>
       </div>

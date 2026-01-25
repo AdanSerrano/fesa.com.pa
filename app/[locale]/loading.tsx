@@ -1,6 +1,9 @@
 import { Loader2 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
-export default function LoadingPage() {
+export default async function LoadingPage() {
+  const t = await getTranslations("Loading");
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-950">
       <div className="w-full max-w-md space-y-8 p-6">
@@ -11,7 +14,7 @@ export default function LoadingPage() {
 
           <div className="space-y-2">
             <p className="text-gray-600 dark:text-gray-400">
-              Por favor espera un momento mientras procesamos tu solicitud
+              {t("pleaseWait")}
             </p>
           </div>
         </div>

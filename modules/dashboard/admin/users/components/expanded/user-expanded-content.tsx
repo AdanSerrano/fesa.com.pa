@@ -22,7 +22,8 @@ import {
   Key,
 } from "lucide-react";
 import { format, formatDistanceToNow, differenceInDays } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
+import { useTranslations, useLocale } from "next-intl";
 import { Role } from "@/app/prisma/enums";
 import type { AdminUser } from "../../types/admin-users.types";
 
@@ -59,6 +60,10 @@ const InfoItem = memo(function InfoItem({
 export const UserExpandedContent = memo(function UserExpandedContent({
   user,
 }: UserExpandedContentProps) {
+  const t = useTranslations("UserExpanded");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
+  const dateLocale = locale === "es" ? es : enUS;
   const GRACE_PERIOD_DAYS = 30;
 
   const getGracePeriodInfo = () => {
@@ -79,13 +84,13 @@ export const UserExpandedContent = memo(function UserExpandedContent({
           <CardContent className="p-4 space-y-4">
             <h4 className="font-semibold text-sm flex items-center gap-2">
               <User className="h-4 w-4" />
-              Información Básica
+              {t("basicInfo")}
             </h4>
             <Separator />
             <div className="space-y-3">
               <InfoItem
                 icon={<Hash className="h-4 w-4" />}
-                label="ID de Usuario"
+                label={t("userId")}
                 value={
                   <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
                     {user.id}
@@ -94,18 +99,18 @@ export const UserExpandedContent = memo(function UserExpandedContent({
               />
               <InfoItem
                 icon={<User className="h-4 w-4" />}
-                label="Nombre"
-                value={user.name || "No especificado"}
+                label={t("name")}
+                value={user.name || tCommon("notSpecified")}
               />
               <InfoItem
                 icon={<AtSign className="h-4 w-4" />}
-                label="Username"
-                value={user.userName ? `@${user.userName}` : "No especificado"}
+                label={t("username")}
+                value={user.userName ? `@${user.userName}` : tCommon("notSpecified")}
               />
               <InfoItem
                 icon={<Mail className="h-4 w-4" />}
                 label="Email"
-                value={user.email || "No especificado"}
+                value={user.email || tCommon("notSpecified")}
               />
             </div>
           </CardContent>
@@ -116,7 +121,7 @@ export const UserExpandedContent = memo(function UserExpandedContent({
           <CardContent className="p-4 space-y-4">
             <h4 className="font-semibold text-sm flex items-center gap-2">
               <Shield className="h-4 w-4" />
-              Seguridad
+              {t("security")}
             </h4>
             <Separator />
             <div className="space-y-3">
@@ -128,10 +133,10 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                     <Shield className="h-4 w-4" />
                   )
                 }
-                label="Rol"
+                label={t("role")}
                 value={
                   <Badge variant={user.role === Role.ADMIN ? "default" : "secondary"}>
-                    {user.role === Role.ADMIN ? "Administrador" : "Usuario"}
+                    {user.role === Role.ADMIN ? t("administrator") : t("user")}
                   </Badge>
                 }
               />
@@ -143,15 +148,16 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                     <XCircle className="h-4 w-4 text-muted-foreground" />
                   )
                 }
-                label="Email Verificado"
+                label={t("emailVerified")}
                 value={
                   user.emailVerified ? (
                     <span className="text-green-600">
-                      Sí -{" "}
-                      {format(new Date(user.emailVerified), "dd/MM/yyyy HH:mm")}
+                      {t("verifiedYes", {
+                        date: format(new Date(user.emailVerified), "dd/MM/yyyy HH:mm")
+                      })}
                     </span>
                   ) : (
-                    <span className="text-muted-foreground">No verificado</span>
+                    <span className="text-muted-foreground">{tCommon("notVerified")}</span>
                   )
                 }
               />
@@ -163,16 +169,16 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                     <Key className="h-4 w-4 text-muted-foreground" />
                   )
                 }
-                label="Autenticación 2FA"
+                label={t("twoFactorAuth")}
                 value={
                   user.isTwoFactorEnabled ? (
                     <Badge variant="default" className="gap-1">
                       <CheckCircle className="h-3 w-3" />
-                      Activo
+                      {tCommon("active")}
                     </Badge>
                   ) : (
                     <Badge variant="outline" className="text-muted-foreground">
-                      Desactivado
+                      {tCommon("disabled")}
                     </Badge>
                   )
                 }
@@ -186,7 +192,7 @@ export const UserExpandedContent = memo(function UserExpandedContent({
           <CardContent className="p-4 space-y-4 min-w-0">
             <h4 className="font-semibold text-sm flex items-center gap-2">
               <ShieldAlert className="h-4 w-4 shrink-0" />
-              <span className="truncate">Estado de la Cuenta</span>
+              <span className="truncate">{t("accountStatus")}</span>
             </h4>
             <Separator />
             <div className="space-y-3 min-w-0">
@@ -194,18 +200,18 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                 <div className="p-3 rounded-md border border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/30 space-y-2">
                   <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                     <Ban className="h-4 w-4 shrink-0" />
-                    <span className="font-medium text-sm">Bloqueada</span>
+                    <span className="font-medium text-sm">{t("statusBlocked")}</span>
                   </div>
                   {user.blockedAt && (
                     <p className="text-xs text-muted-foreground pl-6">
                       {format(new Date(user.blockedAt), "dd/MM/yy HH:mm", {
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </p>
                   )}
                   {user.blockedReason && (
                     <p className="text-xs pl-6 wrap-break-word whitespace-normal">
-                      <span className="text-muted-foreground">Razón: </span>
+                      <span className="text-muted-foreground">{t("reason")} </span>
                       {user.blockedReason}
                     </p>
                   )}
@@ -216,25 +222,25 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                 <div className="p-3 rounded-md border border-red-200 bg-red-50/50 dark:border-red-800 dark:bg-red-950/30 space-y-2 overflow-hidden">
                   <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
                     <Trash2 className="h-4 w-4 shrink-0" />
-                    <span className="font-medium text-sm truncate">Eliminada</span>
+                    <span className="font-medium text-sm truncate">{t("statusDeleted")}</span>
                   </div>
                   <p className="text-xs text-muted-foreground pl-6 truncate">
                     {format(new Date(user.deletedAt), "dd/MM/yy HH:mm", {
-                      locale: es,
+                      locale: dateLocale,
                     })}
                   </p>
                   {gracePeriod && gracePeriod.daysRemaining > 0 && (
                     <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400 pl-6">
                       <AlertTriangle className="h-3 w-3 shrink-0" />
                       <span className="text-xs truncate">
-                        {gracePeriod.daysRemaining}d para reactivar
+                        {t("daysToReactivate", { count: gracePeriod.daysRemaining })}
                       </span>
                     </div>
                   )}
                   {gracePeriod && gracePeriod.daysRemaining === 0 && (
                     <div className="flex items-center gap-2 text-red-600 dark:text-red-400 pl-6">
                       <XCircle className="h-3 w-3 shrink-0" />
-                      <span className="text-xs truncate">Gracia expirado</span>
+                      <span className="text-xs truncate">{t("graceExpired")}</span>
                     </div>
                   )}
                 </div>
@@ -244,10 +250,10 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                 <div className="p-3 rounded-md border border-green-200 bg-green-50/50 dark:border-green-800 dark:bg-green-950/30 overflow-hidden">
                   <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
                     <CheckCircle className="h-4 w-4 shrink-0" />
-                    <span className="font-medium text-sm truncate">Activa</span>
+                    <span className="font-medium text-sm truncate">{t("statusActive")}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1 pl-6 truncate">
-                    Acceso normal
+                    {t("normalAccess")}
                   </p>
                 </div>
               )}
@@ -257,11 +263,11 @@ export const UserExpandedContent = memo(function UserExpandedContent({
                   <div className="flex items-center gap-2 text-yellow-600 dark:text-yellow-400">
                     <AlertTriangle className="h-4 w-4 shrink-0" />
                     <span className="font-medium text-sm truncate">
-                      Sin verificar
+                      {t("statusUnverified")}
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-1 pl-6 truncate">
-                    Verificar email
+                    {t("verifyEmail")}
                   </p>
                 </div>
               )}
@@ -274,24 +280,24 @@ export const UserExpandedContent = memo(function UserExpandedContent({
           <CardContent className="p-4 space-y-4">
             <h4 className="font-semibold text-sm flex items-center gap-2">
               <Calendar className="h-4 w-4" />
-              Fechas
+              {t("dates")}
             </h4>
             <Separator />
             <div className="space-y-3">
               <InfoItem
                 icon={<Calendar className="h-4 w-4" />}
-                label="Fecha de Registro"
+                label={t("registrationDate")}
                 value={
                   <div className="flex flex-col">
                     <span>
                       {format(new Date(user.createdAt), "dd/MM/yyyy HH:mm", {
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(user.createdAt), {
                         addSuffix: true,
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </span>
                   </div>
@@ -299,18 +305,18 @@ export const UserExpandedContent = memo(function UserExpandedContent({
               />
               <InfoItem
                 icon={<Clock className="h-4 w-4" />}
-                label="Última Actualización"
+                label={t("lastUpdate")}
                 value={
                   <div className="flex flex-col">
                     <span>
                       {format(new Date(user.updatedAt), "dd/MM/yyyy HH:mm", {
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </span>
                     <span className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(user.updatedAt), {
                         addSuffix: true,
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </span>
                   </div>
@@ -319,11 +325,11 @@ export const UserExpandedContent = memo(function UserExpandedContent({
               {user.blockedAt && (
                 <InfoItem
                   icon={<Ban className="h-4 w-4 text-destructive" />}
-                  label="Fecha de Bloqueo"
+                  label={t("blockDate")}
                   value={
                     <span className="text-destructive">
                       {format(new Date(user.blockedAt), "dd/MM/yyyy HH:mm", {
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </span>
                   }
@@ -332,11 +338,11 @@ export const UserExpandedContent = memo(function UserExpandedContent({
               {user.deletedAt && (
                 <InfoItem
                   icon={<Trash2 className="h-4 w-4 text-destructive" />}
-                  label="Fecha de Eliminación"
+                  label={t("deletionDate")}
                   value={
                     <span className="text-destructive">
                       {format(new Date(user.deletedAt), "dd/MM/yyyy HH:mm", {
-                        locale: es,
+                        locale: dateLocale,
                       })}
                     </span>
                   }

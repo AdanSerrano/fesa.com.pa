@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { UserCog, Shield, ShieldCheck, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Role } from "@/app/prisma/enums";
 import type { AdminUser } from "../../types/admin-users.types";
 
@@ -31,6 +32,8 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
   onClose,
   onChangeRole,
 }: ChangeRoleDialogProps) {
+  const t = useTranslations("ChangeRoleDialog");
+  const tCommon = useTranslations("Common");
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
 
   const handleClose = useCallback(() => {
@@ -59,6 +62,7 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
 
   const isChangingToAdmin = selectedRole === Role.ADMIN && user.role !== Role.ADMIN;
   const hasChanges = selectedRole !== null && selectedRole !== user.role;
+  const userName = user.name || user.email || "";
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -66,10 +70,10 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserCog className="h-5 w-5" />
-            Cambiar Rol de Usuario
+            {t("title")}
           </DialogTitle>
           <DialogDescription>
-            Selecciona el nuevo rol para {user.name || user.email}.
+            {t("subtitle", { user: userName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -86,9 +90,9 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
               >
                 <Shield className="h-5 w-5 text-muted-foreground" />
                 <div>
-                  <p className="font-medium">Usuario</p>
+                  <p className="font-medium">{t("roleUser")}</p>
                   <p className="text-sm text-muted-foreground">
-                    Acceso estándar a la plataforma
+                    {t("roleUserDesc")}
                   </p>
                 </div>
               </Label>
@@ -102,9 +106,9 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
               >
                 <ShieldCheck className="h-5 w-5 text-primary" />
                 <div>
-                  <p className="font-medium">Administrador</p>
+                  <p className="font-medium">{t("roleAdmin")}</p>
                   <p className="text-sm text-muted-foreground">
-                    Acceso completo al panel de administración
+                    {t("roleAdminDesc")}
                   </p>
                 </div>
               </Label>
@@ -115,9 +119,7 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
             <div className="flex items-start gap-2 rounded-md bg-yellow-50 p-3 dark:bg-yellow-900/20">
               <AlertTriangle className="mt-0.5 h-4 w-4 text-yellow-600" />
               <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                Al otorgar permisos de administrador, este usuario tendrá acceso
-                a todas las funciones de gestión, incluyendo la administración
-                de otros usuarios.
+                {t("adminWarning")}
               </p>
             </div>
           )}
@@ -125,10 +127,10 @@ export const ChangeRoleDialog = memo(function ChangeRoleDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isPending}>
-            Cancelar
+            {tCommon("cancel")}
           </Button>
           <Button onClick={handleConfirm} disabled={isPending || !hasChanges}>
-            {isPending ? "Guardando..." : "Guardar cambios"}
+            {isPending ? tCommon("saving") : t("saveChanges")}
           </Button>
         </DialogFooter>
       </DialogContent>

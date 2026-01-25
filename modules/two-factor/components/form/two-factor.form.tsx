@@ -18,6 +18,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import { Mail, ArrowLeft, RefreshCw, AlertCircle, ShieldCheck } from "lucide-react";
 import { useTwoFactor } from "../../hooks/two-factor.hook";
+import { useTranslations } from "next-intl";
 
 interface TwoFactorDialogContentProps {
   email: string;
@@ -30,6 +31,8 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
   onSuccess,
   onBack,
 }: TwoFactorDialogContentProps) {
+  const t = useTranslations("TwoFactor");
+  const tCommon = useTranslations("Common");
   const {
     form,
     isPending,
@@ -56,7 +59,7 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
           <Mail className="h-4 w-4 text-primary" aria-hidden="true" />
         </div>
         <div className="flex flex-col">
-          <span className="text-xs text-muted-foreground">Código enviado a</span>
+          <span className="text-xs text-muted-foreground">{t("codeSentTo")}</span>
           <span className="text-sm font-medium text-foreground">{maskedEmail}</span>
         </div>
       </div>
@@ -86,7 +89,7 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
                     onChange={field.onChange}
                     disabled={isPending}
                     autoFocus
-                    aria-label="Código de verificación de 6 dígitos"
+                    aria-label={t("codeLabel")}
                   >
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />
@@ -113,7 +116,7 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
                   <span className="text-xs font-bold text-primary">{countdown}</span>
                 </div>
                 <span className="text-sm text-muted-foreground">
-                  segundos para reenviar
+                  {t("secondsToResend")}
                 </span>
               </div>
             ) : (
@@ -129,12 +132,12 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
                 {isResending ? (
                   <>
                     <Spinner className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Enviando...
+                    {t("resending")}
                   </>
                 ) : (
                   <>
                     <RefreshCw className="mr-2 h-4 w-4" aria-hidden="true" />
-                    Reenviar código
+                    {t("resendCode")}
                   </>
                 )}
               </Button>
@@ -151,12 +154,12 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
               {isPending ? (
                 <>
                   <Spinner className="mr-2 h-5 w-5" aria-hidden="true" />
-                  Verificando...
+                  {t("verifying")}
                 </>
               ) : (
                 <>
                   <ShieldCheck className="mr-2 h-5 w-5" aria-hidden="true" />
-                  Verificar código
+                  {t("verifyCode")}
                 </>
               )}
             </Button>
@@ -170,7 +173,7 @@ export const TwoFactorDialogContent = memo(function TwoFactorDialogContent({
                 disabled={isPending}
               >
                 <ArrowLeft className="mr-2 h-4 w-4" aria-hidden="true" />
-                Cancelar
+                {tCommon("cancel")}
               </Button>
             )}
           </div>

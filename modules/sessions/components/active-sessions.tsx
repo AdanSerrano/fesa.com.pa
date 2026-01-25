@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -31,6 +31,7 @@ import {
   AlertTriangle,
   CheckCircle2,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useSessions } from "../hooks/use-sessions";
 import { formatSessionInfo, getDeviceLabel } from "@/lib/device-parser";
 import { formatRelativeTime } from "@/lib/date-utils";
@@ -42,19 +43,30 @@ interface ActiveSessionsProps {
   initialError?: string | null;
 }
 
+interface SessionLabels {
+  currentSession: string;
+  closeConfirm: string;
+  closeDescription: string;
+  cancel: string;
+  closeSession: string;
+  unknown: string;
+}
+
 const SessionItem = memo(function SessionItem({
   session,
   onRevoke,
   isPending,
+  labels,
 }: {
   session: SessionData;
   onRevoke: (id: string) => void;
   isPending: boolean;
+  labels: SessionLabels;
 }) {
   const deviceInfo = {
     deviceType: session.deviceType || "unknown",
-    browser: session.browser || "Desconocido",
-    os: session.os || "Desconocido",
+    browser: session.browser || labels.unknown,
+    os: session.os || labels.unknown,
   } as const;
 
   return (
@@ -83,7 +95,7 @@ const SessionItem = memo(function SessionItem({
           {session.isCurrent && (
             <Badge className="bg-primary hover:bg-primary/90 shrink-0">
               <CheckCircle2 className="mr-1 h-3 w-3" />
-              Esta sesión
+              {labels.currentSession}
             </Badge>
           )}
         </div>
@@ -126,19 +138,20 @@ const SessionItem = memo(function SessionItem({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>¿Cerrar esta sesión?</AlertDialogTitle>
+              <AlertDialogTitle>{labels.closeConfirm}</AlertDialogTitle>
               <AlertDialogDescription>
-                Se cerrará la sesión en {deviceInfo.browser} ({deviceInfo.os}).
-                El dispositivo tendrá que volver a iniciar sesión.
+                {labels.closeDescription
+                  .replace("{browser}", deviceInfo.browser)
+                  .replace("{os}", deviceInfo.os)}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancelar</AlertDialogCancel>
+              <AlertDialogCancel>{labels.cancel}</AlertDialogCancel>
               <AlertDialogAction
                 onClick={() => onRevoke(session.id)}
                 className="bg-destructive text-white hover:bg-destructive/90"
               >
-                Cerrar sesión
+                {labels.closeSession}
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -152,6 +165,9 @@ export const ActiveSessions = memo(function ActiveSessions({
   initialSessions,
   initialError,
 }: ActiveSessionsProps) {
+  const t = useTranslations("Sessions");
+  const tCommon = useTranslations("Common");
+
   const {
     sessions,
     isPending,
@@ -162,6 +178,15 @@ export const ActiveSessions = memo(function ActiveSessions({
     hasOtherSessions,
   } = useSessions({ initialSessions, initialError });
 
+  const sessionLabels = useMemo((): SessionLabels => ({
+    currentSession: t("currentSession"),
+    closeConfirm: t("closeConfirm"),
+    closeDescription: t.raw("closeDescription"),
+    cancel: tCommon("cancel"),
+    closeSession: t("closeSession"),
+    unknown: tCommon("unknown"),
+  }), [t, tCommon]);
+
   if (error) {
     return (
       <Card className="border-destructive/30 bg-destructive/5 shadow-lg">
@@ -170,12 +195,12 @@ export const ActiveSessions = memo(function ActiveSessions({
             <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
           <div className="text-center">
-            <p className="font-medium text-destructive">Error al cargar</p>
+            <p className="font-medium text-destructive">{tCommon("errorLoading")}</p>
             <p className="text-sm text-muted-foreground mt-1">{error}</p>
           </div>
           <Button variant="outline" onClick={refresh}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Reintentar
+            {tCommon("retry")}
           </Button>
         </CardContent>
       </Card>
@@ -191,9 +216,9 @@ export const ActiveSessions = memo(function ActiveSessions({
               <Monitor className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-lg">Sesiones activas</CardTitle>
+              <CardTitle className="text-lg">{t("title")}</CardTitle>
               <CardDescription>
-                Dispositivos donde has iniciado sesión
+                {t("description")}
               </CardDescription>
             </div>
           </div>
@@ -216,7 +241,7 @@ export const ActiveSessions = memo(function ActiveSessions({
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
               <Monitor className="h-6 w-6 text-muted-foreground" />
             </div>
-            <p className="text-muted-foreground">No hay sesiones activas</p>
+            <p className="text-muted-foreground">{t("noSessions")}</p>
           </div>
         ) : (
           <>
@@ -226,6 +251,7 @@ export const ActiveSessions = memo(function ActiveSessions({
                 session={session}
                 onRevoke={revokeSession}
                 isPending={isPending}
+                labels={sessionLabels}
               />
             ))}
 
@@ -243,26 +269,25 @@ export const ActiveSessions = memo(function ActiveSessions({
                       ) : (
                         <LogOut className="mr-2 h-4 w-4" />
                       )}
-                      Cerrar todas las demás sesiones
+                      {t("closeAllOther")}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
                       <AlertDialogTitle>
-                        ¿Cerrar todas las demás sesiones?
+                        {t("closeAllConfirm")}
                       </AlertDialogTitle>
                       <AlertDialogDescription>
-                        Se cerrarán todas las sesiones excepto la actual. Los
-                        dispositivos tendrán que volver a iniciar sesión.
+                        {t("closeAllDescription")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                      <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={revokeAllOther}
                         className="bg-destructive text-white hover:bg-destructive/90"
                       >
-                        Cerrar sesiones
+                        {t("closeSessions")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

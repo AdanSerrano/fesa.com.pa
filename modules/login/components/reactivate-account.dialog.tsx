@@ -14,6 +14,7 @@ import {
 import { Loader2, RefreshCcw, Calendar, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 import { reactivateAccountAction } from "@/modules/user/actions/user.actions";
+import { useTranslations, useLocale } from "next-intl";
 
 interface ReactivateAccountDialogProps {
   isOpen: boolean;
@@ -32,11 +33,14 @@ export function ReactivateAccountDialog({
   daysRemaining,
   onSuccess,
 }: ReactivateAccountDialogProps) {
+  const t = useTranslations("ReactivateAccount");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
   const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("es", {
+    return new Intl.DateTimeFormat(locale, {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -55,12 +59,12 @@ export function ReactivateAccountDialog({
           return;
         }
 
-        toast.success(result.success || "¡Cuenta reactivada!");
+        toast.success(result.success || tCommon("success"));
         onOpenChange(false);
         onSuccess();
       } catch (err) {
         const message =
-          err instanceof Error ? err.message : "Error inesperado";
+          err instanceof Error ? err.message : tCommon("error");
         setError(message);
         toast.error(message);
       }
@@ -75,36 +79,34 @@ export function ReactivateAccountDialog({
             <AlertTriangle className="h-7 w-7 text-amber-600" />
           </div>
           <AlertDialogTitle className="text-center">
-            Tu cuenta está pendiente de eliminación
+            {t("title")}
           </AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="space-y-4 text-center">
               <p>
-                Solicitaste eliminar tu cuenta. Si no haces nada, será eliminada
-                permanentemente.
+                {t("description")}
               </p>
 
               {scheduledDeletionDate && (
                 <div className="rounded-lg bg-muted p-4">
                   <div className="flex items-center justify-center gap-2 text-sm font-medium">
                     <Calendar className="h-4 w-4" />
-                    Fecha de eliminación: {formatDate(scheduledDeletionDate)}
+                    {t("deletionDate")} {formatDate(scheduledDeletionDate)}
                   </div>
                   {daysRemaining !== undefined && (
                     <p className="mt-1 text-sm text-muted-foreground">
                       {daysRemaining === 0
-                        ? "Se eliminará hoy"
+                        ? t("deletesToday")
                         : daysRemaining === 1
-                        ? "Queda 1 día"
-                        : `Quedan ${daysRemaining} días`}
+                        ? t("daysLeft", { count: 1 })
+                        : t("daysLeftPlural", { count: daysRemaining })}
                     </p>
                   )}
                 </div>
               )}
 
               <p className="text-sm">
-                ¿Deseas <strong>reactivar tu cuenta</strong> y cancelar la
-                eliminación?
+                {t("reactivateQuestion")}
               </p>
 
               {error && (
@@ -124,17 +126,17 @@ export function ReactivateAccountDialog({
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Reactivando...
+                {t("reactivating")}
               </>
             ) : (
               <>
                 <RefreshCcw className="mr-2 h-4 w-4" />
-                Sí, reactivar mi cuenta
+                {t("reactivateButton")}
               </>
             )}
           </AlertDialogAction>
           <AlertDialogCancel disabled={isPending} className="w-full">
-            No, continuar con la eliminación
+            {t("continueDelete")}
           </AlertDialogCancel>
         </AlertDialogFooter>
       </AlertDialogContent>

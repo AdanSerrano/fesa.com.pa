@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import type { AdminUsersStats } from "../../types/admin-users.types";
+import { useTranslations } from "next-intl";
 
 interface StatsCardProps {
   title: string;
@@ -56,48 +57,50 @@ interface AdminUsersStatsProps {
 export const AdminUsersStatsSection = memo(function AdminUsersStatsSection({
   stats,
 }: AdminUsersStatsProps) {
+  const t = useTranslations("Admin.users");
+
   if (!stats) return null;
 
   const cards = [
     {
-      title: "Total Usuarios",
+      title: t("totalUsers"),
       value: stats.total,
-      description: "Usuarios registrados",
+      description: t("totalUsersDesc"),
       icon: <Users className="h-4 w-4" />,
       variant: "default" as const,
     },
     {
-      title: "Activos",
+      title: t("activeUsers"),
       value: stats.active,
-      description: "Usuarios activos",
+      description: t("activeUsersDesc"),
       icon: <UserCheck className="h-4 w-4" />,
       variant: "success" as const,
     },
     {
-      title: "Bloqueados",
+      title: t("blockedUsers"),
       value: stats.blocked,
-      description: "Usuarios bloqueados",
+      description: t("blockedUsersDesc"),
       icon: <UserX className="h-4 w-4" />,
       variant: "warning" as const,
     },
     {
-      title: "Administradores",
+      title: t("admins"),
       value: stats.admins,
-      description: "Usuarios admin",
+      description: t("adminsDesc"),
       icon: <ShieldCheck className="h-4 w-4" />,
       variant: "default" as const,
     },
     {
-      title: "Sin Verificar",
+      title: t("unverified"),
       value: stats.unverified,
-      description: "Email no verificado",
+      description: t("unverifiedDesc"),
       icon: <MailWarning className="h-4 w-4" />,
       variant: "warning" as const,
     },
     {
-      title: "Eliminados",
+      title: t("deleted"),
       value: stats.deleted,
-      description: "Usuarios eliminados",
+      description: t("deletedDesc"),
       icon: <Trash2 className="h-4 w-4" />,
       variant: "danger" as const,
     },

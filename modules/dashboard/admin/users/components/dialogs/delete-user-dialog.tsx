@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertTriangle, Trash2 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { AdminUser } from "../../types/admin-users.types";
 
 interface DeleteUserDialogProps {
@@ -30,6 +31,8 @@ export const DeleteUserDialog = memo(function DeleteUserDialog({
   onClose,
   onDelete,
 }: DeleteUserDialogProps) {
+  const t = useTranslations("DeleteUserDialog");
+  const tCommon = useTranslations("Common");
   const [reason, setReason] = useState("");
 
   const handleConfirm = useCallback(() => {
@@ -45,6 +48,7 @@ export const DeleteUserDialog = memo(function DeleteUserDialog({
   if (!user) return null;
 
   const isReasonValid = reason.trim().length >= 5;
+  const userName = user.name || user.email || "";
 
   return (
     <Dialog open={open} onOpenChange={(open) => !open && handleClose()}>
@@ -52,11 +56,10 @@ export const DeleteUserDialog = memo(function DeleteUserDialog({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <Trash2 className="h-5 w-5" />
-            Eliminar Usuario
+            {t("title")}
           </DialogTitle>
           <DialogDescription>
-            ¿Estás seguro de que deseas eliminar a{" "}
-            <strong>{user.name || user.email}</strong>?
+            {t("confirmMessage", { user: userName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -65,25 +68,25 @@ export const DeleteUserDialog = memo(function DeleteUserDialog({
             <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-yellow-600" />
             <div className="text-sm">
               <p className="font-medium text-yellow-800 dark:text-yellow-200">
-                El usuario será bloqueado y eliminado
+                {t("warning1")}
               </p>
               <ul className="mt-2 list-inside list-disc text-muted-foreground space-y-1">
-                <li>No podrá acceder al sistema</li>
+                <li>{t("warning2")}</li>
                 <li>
-                  <strong>30 días de gracia</strong> para reactivar
+                  <strong>{t("warning3")}</strong>
                 </li>
-                <li>Después será permanente</li>
+                <li>{t("warning4")}</li>
               </ul>
             </div>
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="delete-reason" className="text-sm font-medium">
-              Motivo de eliminación <span className="text-destructive">*</span>
+              {t("reasonLabel")} <span className="text-destructive">*</span>
             </Label>
             <Textarea
               id="delete-reason"
-              placeholder="Escribe el motivo de la eliminación (mínimo 5 caracteres)..."
+              placeholder={t("reasonPlaceholder")}
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               className="min-h-[80px] resize-none"
@@ -91,7 +94,7 @@ export const DeleteUserDialog = memo(function DeleteUserDialog({
             />
             {reason.length > 0 && !isReasonValid && (
               <p className="text-xs text-destructive">
-                El motivo debe tener al menos 5 caracteres
+                {t("reasonError")}
               </p>
             )}
           </div>
@@ -99,14 +102,14 @@ export const DeleteUserDialog = memo(function DeleteUserDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={handleClose} disabled={isPending}>
-            Cancelar
+            {tCommon("cancel")}
           </Button>
           <Button
             variant="destructive"
             onClick={handleConfirm}
             disabled={isPending || !isReasonValid}
           >
-            {isPending ? "Eliminando..." : "Eliminar usuario"}
+            {isPending ? tCommon("deleting") : t("deleteButton")}
           </Button>
         </DialogFooter>
       </DialogContent>

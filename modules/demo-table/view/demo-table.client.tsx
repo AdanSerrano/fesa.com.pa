@@ -4,6 +4,7 @@ import { memo, useCallback, useMemo, useRef, useState, useTransition } from "rea
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { RefreshCw, Package, Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations, useLocale } from "next-intl";
 
 import { Button } from "@/components/ui/button";
 import { CustomDataTable } from "@/components/custom-datatable";
@@ -14,10 +15,12 @@ import {
   bulkDeleteProductsAction,
   updateProductStatusAction,
 } from "../actions/demo-table.actions";
-import { createDemoTableColumns } from "../components/columns/demo-table.columns";
-import { DemoTableStats } from "../components/stats/demo-table-stats";
-import { DemoTableFilters } from "../components/filters/demo-table-filters";
+import { createDemoTableColumns, type ColumnLabels } from "../components/columns/demo-table.columns";
+import { DemoTableStats, type StatsLabels } from "../components/stats/demo-table-stats";
+import { DemoTableFilters, type FilterLabels } from "../components/filters/demo-table-filters";
 import { DeleteProductDialog, ProductDetailsDialog } from "../components/dialogs";
+import type { DeleteDialogLabels } from "../components/dialogs/delete-product-dialog";
+import type { DetailsDialogLabels } from "../components/dialogs/product-details-dialog";
 
 import type {
   DemoProduct,
@@ -61,14 +64,6 @@ const COPY_CONFIG: CopyConfig = {
   includeHeaders: true,
 };
 
-const PRINT_CONFIG: PrintConfig = {
-  enabled: true,
-  title: "Catálogo de Productos - Demo",
-  showLogo: false,
-  pageSize: "A4",
-  orientation: "landscape",
-};
-
 const FULLSCREEN_CONFIG: FullscreenConfig = {
   enabled: true,
 };
@@ -91,26 +86,34 @@ interface DemoTableClientProps {
   initialData: InitialData;
 }
 
+interface HeaderLabels {
+  title: string;
+  description: string;
+  refresh: string;
+}
+
 const DemoTableHeader = memo(function DemoTableHeader({
   isNavigating,
   onRefresh,
+  labels,
 }: {
   isNavigating: boolean;
   onRefresh: () => void;
+  labels: HeaderLabels;
 }) {
   return (
     <AnimatedSection animation="fade-down" delay={0}>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Demo DataTable</h1>
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight">{labels.title}</h1>
           <p className="text-sm sm:text-base text-muted-foreground">
-            Demostración de CustomDataTable con Server Components.
+            {labels.description}
           </p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm" onClick={onRefresh} disabled={isNavigating}>
             <RefreshCw className={`h-4 w-4 mr-2 ${isNavigating ? "animate-spin" : ""}`} />
-            Actualizar
+            {labels.refresh}
           </Button>
         </div>
       </div>
@@ -122,6 +125,9 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const t = useTranslations("DemoTable");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
 
   // Estado de UI local (no datos del servidor)
   const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
@@ -136,6 +142,112 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
 
   // Datos del servidor (readonly, vienen del Server Component)
   const { products, pagination, stats, filters } = initialData;
+
+  // Memoized labels for all child components
+  const headerLabels = useMemo((): HeaderLabels => ({
+    title: t("title"),
+    description: t("description"),
+    refresh: t("refresh"),
+  }), [t]);
+
+  const statsLabels = useMemo((): StatsLabels => ({
+    total: t("stats.total"),
+    active: t("stats.active"),
+    inactive: t("stats.inactive"),
+    discontinued: t("stats.discontinued"),
+    lowStock: t("stats.lowStock"),
+    totalValue: t("stats.totalValue"),
+  }), [t]);
+
+  const filterLabels = useMemo((): FilterLabels => ({
+    filters: t("filters.filters"),
+    status: t("filters.status"),
+    category: t("filters.category"),
+    allStatuses: t("filters.allStatuses"),
+    allCategories: t("filters.allCategories"),
+    clearFilters: t("filters.clearFilters"),
+    statusActive: t("status.active"),
+    statusInactive: t("status.inactive"),
+    statusDiscontinued: t("status.discontinued"),
+    categoryElectronics: t("categories.electronics"),
+    categoryClothing: t("categories.clothing"),
+    categoryFood: t("categories.food"),
+    categoryBooks: t("categories.books"),
+    categoryOther: t("categories.other"),
+  }), [t]);
+
+  const columnLabels = useMemo((): ColumnLabels => ({
+    columns: {
+      product: t("columns.product"),
+      category: t("columns.category"),
+      price: t("columns.price"),
+      stock: t("columns.stock"),
+      status: t("columns.status"),
+      updatedAt: t("columns.updatedAt"),
+      actions: t("columns.actions"),
+    },
+    status: {
+      active: t("status.active"),
+      inactive: t("status.inactive"),
+      discontinued: t("status.discontinued"),
+    },
+    categories: {
+      electronics: t("categories.electronics"),
+      clothing: t("categories.clothing"),
+      food: t("categories.food"),
+      books: t("categories.books"),
+      other: t("categories.other"),
+    },
+    actions: {
+      actions: t("actions.actions"),
+      viewDetails: t("actions.viewDetails"),
+      activate: t("actions.activate"),
+      deactivate: t("actions.deactivate"),
+      discontinue: t("actions.discontinue"),
+      delete: t("actions.delete"),
+    },
+    lowStock: t("lowStock"),
+    locale,
+  }), [t, locale]);
+
+  const deleteDialogLabels = useMemo((): DeleteDialogLabels => ({
+    title: t("deleteDialog.title"),
+    description: t("deleteDialog.description"),
+    warning: t.raw("deleteDialog.warning"),
+    cancel: tCommon("cancel"),
+    delete: tCommon("delete"),
+    deleting: t("deleteDialog.deleting"),
+  }), [t, tCommon]);
+
+  const detailsDialogLabels = useMemo((): DetailsDialogLabels => ({
+    title: t("detailsDialog.title"),
+    description: t("detailsDialog.description"),
+    sku: t("sku"),
+    status: t("columns.status"),
+    price: t("columns.price"),
+    stock: t("columns.stock"),
+    units: t("detailsDialog.units"),
+    category: t("columns.category"),
+    stockValue: t("stockValue"),
+    created: t("detailsDialog.created"),
+    updated: t("detailsDialog.updated"),
+    statusActive: t("status.active"),
+    statusInactive: t("status.inactive"),
+    statusDiscontinued: t("status.discontinued"),
+    categoryElectronics: t("categories.electronics"),
+    categoryClothing: t("categories.clothing"),
+    categoryFood: t("categories.food"),
+    categoryBooks: t("categories.books"),
+    categoryOther: t("categories.other"),
+  }), [t]);
+
+  const printConfig: PrintConfig = useMemo(() => ({
+    enabled: true,
+    title: t("printTitle"),
+    showLogo: false,
+    pageSize: "A4",
+    orientation: "landscape",
+  }), [t]);
 
   // Leer estado de URL para sincronizar UI
   const urlState = useMemo(() => {
@@ -234,8 +346,8 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
 
   const handleRefresh = useCallback(() => {
     router.refresh();
-    toast.success("Datos actualizados");
-  }, [router]);
+    toast.success(t("dataUpdated"));
+  }, [router, t]);
 
   // Dialog handlers
   const openDialog = useCallback((type: DialogType, product: DemoProduct | null = null) => {
@@ -259,13 +371,13 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
           return;
         }
         closeDialog();
-        toast.success(result.success || "Producto eliminado");
+        toast.success(result.success || t("productDeleted"));
         router.refresh();
       } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Error al eliminar");
+        toast.error(err instanceof Error ? err.message : t("deleteError"));
       }
     },
-    [closeDialog, router]
+    [closeDialog, router, t]
   );
 
   // bulkDeleteProducts y changeStatus usan startTransition porque no tienen dialog interno
@@ -279,14 +391,14 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
             return;
           }
           setRowSelection({});
-          toast.success(result.success || `${ids.length} productos eliminados`);
+          toast.success(result.success || t("productsDeleted", { count: ids.length }));
           router.refresh();
         } catch (err) {
-          toast.error(err instanceof Error ? err.message : "Error al eliminar");
+          toast.error(err instanceof Error ? err.message : t("deleteError"));
         }
       });
     },
-    [router]
+    [router, t]
   );
 
   const changeStatus = useCallback(
@@ -298,14 +410,14 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
             toast.error(result.error);
             return;
           }
-          toast.success(result.success || "Estado actualizado");
+          toast.success(result.success || t("statusUpdated"));
           router.refresh();
         } catch (err) {
-          toast.error(err instanceof Error ? err.message : "Error al cambiar estado");
+          toast.error(err instanceof Error ? err.message : t("statusError"));
         }
       });
     },
-    [router]
+    [router, t]
   );
 
   // Obtener productos seleccionados
@@ -331,11 +443,14 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   const columns = useMemo(
     () =>
       createDemoTableColumns({
-        onView: (product) => actionsRef.current.openDialog("details", product),
-        onDelete: (product) => actionsRef.current.openDialog("delete", product),
-        onChangeStatus: async (product, status) => actionsRef.current.changeStatus(product.id, status),
+        actions: {
+          onView: (product) => actionsRef.current.openDialog("details", product),
+          onDelete: (product) => actionsRef.current.openDialog("delete", product),
+          onChangeStatus: async (product, status) => actionsRef.current.changeStatus(product.id, status),
+        },
+        labels: columnLabels,
       }),
-    []
+    [columnLabels]
   );
 
   // Configs memoizadas
@@ -358,25 +473,25 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       onExpansionChange: setExpanded,
       renderContent: (product: DemoProduct) => (
         <div className="p-4 bg-muted/30 rounded-md">
-          <h4 className="font-medium mb-2">Descripción completa</h4>
+          <h4 className="font-medium mb-2">{t("fullDescription")}</h4>
           <p className="text-sm text-muted-foreground">{product.description}</p>
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
-              <span className="text-muted-foreground">ID: </span>
+              <span className="text-muted-foreground">{t("id")}: </span>
               <span className="font-mono">{product.id}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">SKU: </span>
+              <span className="text-muted-foreground">{t("sku")}: </span>
               <span className="font-mono">{product.sku}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Categoría: </span>
+              <span className="text-muted-foreground">{t("category")}: </span>
               <span>{product.category}</span>
             </div>
             <div>
-              <span className="text-muted-foreground">Valor en stock: </span>
+              <span className="text-muted-foreground">{t("stockValue")}: </span>
               <span className="font-mono">
-                ${(product.price * product.stock).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+                ${(product.price * product.stock).toLocaleString(locale, { minimumFractionDigits: 2 })}
               </span>
             </div>
           </div>
@@ -384,7 +499,7 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       ),
       expandOnClick: false,
     }),
-    [expanded]
+    [expanded, t, locale]
   );
 
   const paginationConfig: PaginationConfig = useMemo(
@@ -419,11 +534,11 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
     () => ({
       globalFilter: urlState.search,
       onGlobalFilterChange: handleSearchChange,
-      placeholder: "Buscar por nombre, SKU o descripción...",
+      placeholder: t("searchPlaceholder"),
       // Usa el global de 700ms desde constants.ts
       showClearButton: true,
     }),
-    [urlState.search, handleSearchChange]
+    [urlState.search, handleSearchChange, t]
   );
 
   const columnVisibilityConfig: ColumnVisibilityConfig = useMemo(
@@ -437,8 +552,8 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   );
 
   const filtersComponent = useMemo(
-    () => <DemoTableFilters filters={filters} onFiltersChange={handleFiltersChange} />,
-    [filters, handleFiltersChange]
+    () => <DemoTableFilters filters={filters} onFiltersChange={handleFiltersChange} labels={filterLabels} />,
+    [filters, handleFiltersChange, filterLabels]
   );
 
   const toolbarConfig: ToolbarConfig = useMemo(
@@ -459,15 +574,15 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
   );
 
   const handleExport = useCallback((format: ExportFormat, data: DemoProduct[]) => {
-    const filename = `productos_demo_${new Date().toISOString().split("T")[0]}`;
+    const filename = `products_demo_${new Date().toISOString().split("T")[0]}`;
     const exportData = data.map((product) => ({
       id: product.id,
-      nombre: product.name,
-      descripcion: product.description,
-      precio: product.price,
+      name: product.name,
+      description: product.description,
+      price: product.price,
       stock: product.stock,
-      categoria: product.category,
-      estado: product.status,
+      category: product.category,
+      status: product.status,
       sku: product.sku,
     }));
 
@@ -516,10 +631,10 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
 
-    toast.success(`Exportación completada`, {
-      description: `${data.length} productos exportados como ${format.toUpperCase()}`,
+    toast.success(t("exportCompleted"), {
+      description: t("productsExported", { count: data.length, format: format.toUpperCase() }),
     });
-  }, []);
+  }, [t]);
 
   const exportConfig: ExportConfig<DemoProduct> = useMemo(
     () => ({
@@ -536,11 +651,11 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
       <div className="flex items-center gap-2">
         <Button variant="outline" size="sm" className="gap-2">
           <Package className="h-4 w-4" />
-          <span className="hidden sm:inline">{pagination.totalRows} productos</span>
+          <span className="hidden sm:inline">{pagination.totalRows} {t("products")}</span>
         </Button>
       </div>
     ),
-    [pagination.totalRows]
+    [pagination.totalRows, t]
   );
 
   const handleBulkDelete = useCallback(() => {
@@ -554,10 +669,10 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
     (selectedRows: DemoProduct[]) => (
       <Button variant="destructive" size="sm" onClick={handleBulkDelete} className="gap-2">
         <Trash2 className="h-4 w-4" />
-        Eliminar ({selectedRows.length})
+        {t("deleteSelected", { count: selectedRows.length })}
       </Button>
     ),
-    [handleBulkDelete]
+    [handleBulkDelete, t]
   );
 
   const emptyIcon = useMemo(() => <Package className="h-12 w-12 text-muted-foreground/50" />, []);
@@ -573,10 +688,10 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      <DemoTableHeader isNavigating={isNavigating || isPending} onRefresh={handleRefresh} />
+      <DemoTableHeader isNavigating={isNavigating || isPending} onRefresh={handleRefresh} labels={headerLabels} />
 
       <AnimatedSection animation="fade-up" delay={100}>
-        <DemoTableStats stats={stats} isLoading={isNavigating} />
+        <DemoTableStats stats={stats} isLoading={isNavigating} labels={statsLabels} locale={locale} />
       </AnimatedSection>
 
       <AnimatedSection animation="fade-up" delay={200}>
@@ -593,12 +708,12 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
           toolbarConfig={toolbarConfig}
           export={exportConfig}
           copy={COPY_CONFIG}
-          print={PRINT_CONFIG}
+          print={printConfig}
           fullscreen={FULLSCREEN_CONFIG}
           style={STYLE_CONFIG}
           isLoading={false}
           isPending={isNavigating || isPending}
-          emptyMessage="No se encontraron productos"
+          emptyMessage={t("noProductsFound")}
           emptyIcon={emptyIcon}
           headerActions={headerActions}
           bulkActions={bulkActions}
@@ -609,6 +724,8 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
           product={selectedProduct}
           open={activeDialog === "details"}
           onOpenChange={(open) => !open && closeDialog()}
+          labels={detailsDialogLabels}
+          locale={locale}
         />
 
         <DeleteProductDialog
@@ -617,6 +734,7 @@ export function DemoTableClient({ initialData }: DemoTableClientProps) {
           open={activeDialog === "delete"}
           onOpenChange={(open) => !open && closeDialog()}
           onConfirm={handleDelete}
+          labels={deleteDialogLabels}
         />
       </AnimatedSection>
     </div>

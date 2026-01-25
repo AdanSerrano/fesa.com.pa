@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Loader2, Mail, ShieldCheck } from "lucide-react";
 import { EmailViewModel } from "../../view-model/user.view-model";
+import { useTranslations } from "next-intl";
 
 interface EmailFormProps {
   currentEmail?: string | null;
@@ -24,6 +25,8 @@ export const EmailForm = memo(function EmailForm({
   currentEmail,
   isVerified,
 }: EmailFormProps) {
+  const t = useTranslations("EmailSettings");
+  const tCommon = useTranslations("Common");
   const { handleSubmit, form, isPending, error } = EmailViewModel();
 
   return (
@@ -36,16 +39,16 @@ export const EmailForm = memo(function EmailForm({
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
-                <p className="font-medium">{currentEmail || "No configurado"}</p>
+                <p className="font-medium">{currentEmail || tCommon("notConfigured")}</p>
                 {isVerified && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-600">
                     <ShieldCheck className="h-3 w-3" />
-                    Verificado
+                    {tCommon("verified")}
                   </span>
                 )}
               </div>
               <p className="text-sm text-muted-foreground mt-1">
-                Este es tu correo electrónico actual
+                {t("currentEmail")}
               </p>
             </div>
           </div>
@@ -57,18 +60,18 @@ export const EmailForm = memo(function EmailForm({
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nuevo correo electrónico</FormLabel>
+                <FormLabel>{t("newEmail")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     type="email"
-                    placeholder="nuevo@email.com"
+                    placeholder={t("newEmailPlaceholder")}
                     disabled={isPending}
                     className="bg-background"
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
-                  Te enviaremos un enlace de verificación al nuevo correo
+                  {t("newEmailHint")}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -80,7 +83,7 @@ export const EmailForm = memo(function EmailForm({
             name="currentPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirma tu contraseña</FormLabel>
+                <FormLabel>{t("confirmPassword")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -91,7 +94,7 @@ export const EmailForm = memo(function EmailForm({
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
-                  Por seguridad, ingresa tu contraseña actual
+                  {t("confirmPasswordHint")}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -110,10 +113,10 @@ export const EmailForm = memo(function EmailForm({
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Actualizando...
+                {tCommon("updating")}
               </>
             ) : (
-              "Cambiar email"
+              t("changeEmail")
             )}
           </Button>
         </div>

@@ -4,6 +4,7 @@ import { memo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -11,6 +12,9 @@ interface ErrorProps {
 }
 
 const AuthError = memo(function AuthError({ error, reset }: ErrorProps) {
+  const t = useTranslations("AuthError");
+  const tErrors = useTranslations("Errors");
+
   useEffect(() => {
     console.error("Auth error:", error);
   }, [error]);
@@ -23,21 +27,19 @@ const AuthError = memo(function AuthError({ error, reset }: ErrorProps) {
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold">Error de autenticación</h1>
-          <p className="text-muted-foreground">
-            Ha ocurrido un error durante el proceso. Por favor, intenta de nuevo.
-          </p>
+          <h1 className="text-2xl font-bold">{t("title")}</h1>
+          <p className="text-muted-foreground">{t("description")}</p>
         </div>
 
         <div className="flex flex-col gap-3">
           <Button onClick={reset} className="w-full">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Intentar de nuevo
+            {tErrors("tryAgain")}
           </Button>
           <Button variant="outline" asChild className="w-full">
             <Link href="/">
               <Home className="w-4 h-4 mr-2" />
-              Volver al inicio
+              {tErrors("goHome")}
             </Link>
           </Button>
         </div>

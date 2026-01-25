@@ -20,10 +20,14 @@ import { Input } from "@/components/ui/input";
 import { ResendVerificationViewModel } from "../../view-model/resend-verification.view-model";
 import { cn } from "@/lib/utils";
 import { CheckCircle, Loader2, Mail } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 
 export const ResendVerificationForm = memo(function ResendVerificationForm() {
+  const t = useTranslations("ResendVerification");
+  const tAuth = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
   const { handleSubmit, form, isPending, sent } = ResendVerificationViewModel();
 
   if (sent) {
@@ -37,10 +41,10 @@ export const ResendVerificationForm = memo(function ResendVerificationForm() {
           <Mail className="h-6 w-6 text-primary" aria-hidden="true" />
         </div>
         <CardTitle className="text-xl font-bold sm:text-2xl">
-          Reenviar verificación
+          {t("title")}
         </CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Ingresa tu email y te enviaremos un nuevo enlace de verificación.
+          {t("subtitle")}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -51,13 +55,13 @@ export const ResendVerificationForm = memo(function ResendVerificationForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{tAuth("email")}</FormLabel>
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={tAuth("emailPlaceholder")}
                       autoComplete="email"
-                      aria-label="Correo electrónico"
+                      aria-label={tAuth("email")}
                       {...field}
                       disabled={isPending}
                       className={cn(
@@ -79,23 +83,23 @@ export const ResendVerificationForm = memo(function ResendVerificationForm() {
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                  Enviando...
+                  {tCommon("sending")}
                 </>
               ) : (
                 <>
                   <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Enviar enlace de verificación
+                  {t("sendLink")}
                 </>
               )}
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              ¿Ya verificaste tu cuenta?{" "}
+              {t("alreadyVerified")}{" "}
               <Link
                 href="/login"
                 className="font-medium text-primary underline-offset-4 hover:underline"
               >
-                Iniciar sesión
+                {tAuth("login")}
               </Link>
             </p>
           </form>
@@ -106,6 +110,9 @@ export const ResendVerificationForm = memo(function ResendVerificationForm() {
 });
 
 function SuccessState() {
+  const t = useTranslations("ResendVerification");
+  const tForgot = useTranslations("ForgotPassword");
+
   return (
     <Card className="w-full max-w-md border-border/40 shadow-lg">
       <CardContent className="pt-6">
@@ -120,11 +127,10 @@ function SuccessState() {
 
           <div className="space-y-2">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-              ¡Correo enviado!
+              {t("successTitle")}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Si existe una cuenta con ese email, recibirás un nuevo enlace de
-              verificación.
+              {t("successMessage")}
             </p>
           </div>
 
@@ -132,17 +138,16 @@ function SuccessState() {
             <div className="flex items-start gap-3">
               <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" aria-hidden="true" />
               <div className="text-left text-sm">
-                <p className="font-medium">Revisa tu bandeja de entrada</p>
+                <p className="font-medium">{t("checkInbox")}</p>
                 <p className="text-muted-foreground mt-1">
-                  El enlace expirará en 1 hora. Si no lo encuentras, revisa tu
-                  carpeta de spam.
+                  {t("linkExpiry")}
                 </p>
               </div>
             </div>
           </div>
 
           <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Volver al inicio de sesión</Link>
+            <Link href="/login">{tForgot("backToLogin")}</Link>
           </Button>
         </div>
       </CardContent>

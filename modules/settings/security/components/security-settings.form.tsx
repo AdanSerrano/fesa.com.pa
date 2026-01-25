@@ -1,6 +1,6 @@
 "use client";
 
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -31,6 +31,7 @@ import {
   RefreshCw,
   CheckCircle2,
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { SecuritySettingsViewModel } from "../view-model/security-settings.view-model";
 import { ActiveSessions } from "@/modules/sessions/components/active-sessions";
 import { RecentActivity } from "@/modules/sessions/components/recent-activity";
@@ -48,13 +49,6 @@ interface SecuritySettingsFormProps {
   initialActivityError?: string | null;
 }
 
-function formatDate(date: Date): string {
-  return new Intl.DateTimeFormat("es", {
-    dateStyle: "short",
-    timeStyle: "short",
-  }).format(new Date(date));
-}
-
 export const SecuritySettingsForm = memo(function SecuritySettingsForm({
   initialSecurityInfo,
   initialSecurityError,
@@ -64,6 +58,19 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
   initialActivityPagination,
   initialActivityError,
 }: SecuritySettingsFormProps) {
+  const t = useTranslations("SecuritySettings");
+  const tCommon = useTranslations("Common");
+  const locale = useLocale();
+
+  const formatDate = useMemo(() => {
+    return (date: Date): string => {
+      return new Intl.DateTimeFormat(locale, {
+        dateStyle: "short",
+        timeStyle: "short",
+      }).format(new Date(date));
+    };
+  }, [locale]);
+
   const {
     securityInfo,
     isPending,
@@ -85,12 +92,12 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
               <AlertTriangle className="h-6 w-6 sm:h-8 sm:w-8 text-destructive" />
             </div>
             <div className="text-center px-4">
-              <p className="font-medium text-destructive text-sm sm:text-base">Error al cargar</p>
+              <p className="font-medium text-destructive text-sm sm:text-base">{tCommon("errorLoading")}</p>
               <p className="text-xs sm:text-sm text-muted-foreground mt-1">{error}</p>
             </div>
             <Button variant="outline" onClick={refreshSecurityInfo} size="sm" className="sm:size-default">
               <RefreshCw className="mr-2 h-4 w-4" />
-              Reintentar
+              {tCommon("retry")}
             </Button>
           </CardContent>
         </Card>
@@ -103,6 +110,7 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
   }
 
   const isTwoFactorEnabled = securityInfo.isTwoFactorEnabled;
+  const maskedEmail = securityInfo.email?.replace(/(.{2})(.*)(@.*)/, "$1***$3") ?? "";
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -115,9 +123,9 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
                 <Shield className={`h-4 w-4 sm:h-5 sm:w-5 ${isTwoFactorEnabled ? "text-green-500" : "text-primary"}`} />
               </div>
               <div className="min-w-0">
-                <CardTitle className="text-base sm:text-lg">Autenticación de dos factores</CardTitle>
+                <CardTitle className="text-base sm:text-lg">{t("title")}</CardTitle>
                 <CardDescription className="text-xs sm:text-sm truncate">
-                  Protege tu cuenta con verificación adicional
+                  {t("description")}
                 </CardDescription>
               </div>
             </div>
@@ -134,20 +142,20 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <p className="font-medium text-sm sm:text-base">Verificación por email</p>
+                    <p className="font-medium text-sm sm:text-base">{t("emailVerification")}</p>
                     {isTwoFactorEnabled ? (
                       <Badge className="bg-green-500 hover:bg-green-500/90 text-xs">
                         <CheckCircle2 className="mr-1 h-3 w-3" />
-                        Activo
+                        {tCommon("active")}
                       </Badge>
                     ) : (
-                      <Badge variant="secondary" className="text-xs">Inactivo</Badge>
+                      <Badge variant="secondary" className="text-xs">{tCommon("inactive")}</Badge>
                     )}
                   </div>
                   <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                     {isTwoFactorEnabled
-                      ? `Código enviado a ${securityInfo.email?.replace(/(.{2})(.*)(@.*)/, "$1***$3")}`
-                      : "Recibe un código de verificación al iniciar sesión"}
+                      ? t("codeSentTo", { email: maskedEmail })
+                      : t("receiveCode")}
                   </p>
                 </div>
               </div>
@@ -162,24 +170,23 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
                         ) : (
                           <ShieldOff className="mr-2 h-4 w-4" />
                         )}
-                        Desactivar
+                        {t("deactivate")}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent className="mx-4 sm:mx-0 max-w-[calc(100vw-2rem)] sm:max-w-lg">
                       <AlertDialogHeader>
-                        <AlertDialogTitle className="text-base sm:text-lg">¿Desactivar 2FA?</AlertDialogTitle>
+                        <AlertDialogTitle className="text-base sm:text-lg">{t("deactivateConfirm")}</AlertDialogTitle>
                         <AlertDialogDescription className="text-sm">
-                          Tu cuenta será menos segura sin la autenticación de dos
-                          factores. ¿Estás seguro de que deseas continuar?
+                          {t("deactivateWarning")}
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter className="flex-col sm:flex-row gap-2">
-                        <AlertDialogCancel className="w-full sm:w-auto">Cancelar</AlertDialogCancel>
+                        <AlertDialogCancel className="w-full sm:w-auto">{tCommon("cancel")}</AlertDialogCancel>
                         <AlertDialogAction
                           onClick={handleDisableTwoFactor}
                           className="w-full sm:w-auto bg-destructive text-white hover:bg-destructive/90"
                         >
-                          Desactivar
+                          {t("deactivate")}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
@@ -191,7 +198,7 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
                     ) : (
                       <ShieldCheck className="mr-2 h-4 w-4" />
                     )}
-                    Activar 2FA
+                    {t("activate2FA")}
                   </Button>
                 )}
               </div>
@@ -201,9 +208,9 @@ export const SecuritySettingsForm = memo(function SecuritySettingsForm({
               <div className="flex items-center gap-3 rounded-xl bg-destructive/10 border border-destructive/20 px-3 sm:px-4 py-2.5 sm:py-3">
                 <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive shrink-0" />
                 <div className="min-w-0">
-                  <p className="text-xs sm:text-sm font-medium text-destructive">Cuenta bloqueada</p>
+                  <p className="text-xs sm:text-sm font-medium text-destructive">{t("accountLocked")}</p>
                   <p className="text-xs text-destructive/80">
-                    Hasta {formatDate(securityInfo.lockedUntil)}
+                    {t("lockedUntil", { date: formatDate(securityInfo.lockedUntil) })}
                   </p>
                 </div>
               </div>

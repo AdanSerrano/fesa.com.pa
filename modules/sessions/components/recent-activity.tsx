@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useRef, useEffect, useCallback } from "react";
+import { memo, useRef, useEffect, useCallback, useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -29,6 +29,7 @@ import {
   UserPlus,
   Wand2,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useRecentActivity } from "../hooks/use-activity";
 import { formatRelativeTime } from "@/lib/date-utils";
 import { DeviceIcon } from "@/components/device-icon";
@@ -40,27 +41,6 @@ export interface RecentActivityProps {
   initialPagination: PaginationMeta | null;
   initialError?: string | null;
 }
-
-const ACTION_LABELS: Record<string, string> = {
-  LOGIN_SUCCESS: "Inicio de sesión",
-  LOGIN_FAILED: "Intento fallido",
-  LOGOUT: "Cierre de sesión",
-  PASSWORD_RESET_REQUESTED: "Reseteo solicitado",
-  PASSWORD_RESET_COMPLETED: "Contraseña cambiada",
-  EMAIL_VERIFIED: "Email verificado",
-  TWO_FACTOR_ENABLED: "2FA activado",
-  TWO_FACTOR_DISABLED: "2FA desactivado",
-  TWO_FACTOR_VERIFIED: "2FA verificado",
-  ACCOUNT_LOCKED: "Cuenta bloqueada",
-  ACCOUNT_UNLOCKED: "Cuenta desbloqueada",
-  REGISTRATION: "Registro",
-  MAGIC_LINK_REQUESTED: "Magic link solicitado",
-  MAGIC_LINK_LOGIN: "Login con magic link",
-  USER_BLOCKED: "Usuario bloqueado",
-  USER_UNBLOCKED: "Usuario desbloqueado",
-  ACCOUNT_DELETION_REQUESTED: "Eliminación solicitada",
-  ACCOUNT_DELETION_CANCELLED: "Eliminación cancelada",
-};
 
 const ACTION_ICONS: Record<string, React.ReactNode> = {
   LOGIN_SUCCESS: <LogIn className="h-4 w-4" />,
@@ -79,10 +59,17 @@ const ACTION_ICONS: Record<string, React.ReactNode> = {
   MAGIC_LINK_LOGIN: <Wand2 className="h-4 w-4" />,
 };
 
+interface ActivityItemLabels {
+  actionLabels: Record<string, string>;
+  agoMoment: string;
+}
+
 const ActivityItem = memo(function ActivityItem({
   activity,
+  labels,
 }: {
   activity: ActivityData;
+  labels: ActivityItemLabels;
 }) {
   const isNegative =
     activity.action.includes("FAILED") ||
@@ -112,7 +99,7 @@ const ActivityItem = memo(function ActivityItem({
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium truncate">
-          {ACTION_LABELS[activity.action] || activity.action}
+          {labels.actionLabels[activity.action] || activity.action}
         </p>
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {activity.deviceType && (
@@ -134,7 +121,7 @@ const ActivityItem = memo(function ActivityItem({
       </div>
       <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
         <Clock className="h-3 w-3" />
-        <span>{formatRelativeTime(activity.createdAt, "Hace un momento")}</span>
+        <span>{formatRelativeTime(activity.createdAt, labels.agoMoment)}</span>
       </div>
     </div>
   );
@@ -145,6 +132,9 @@ export const RecentActivity = memo(function RecentActivity({
   initialPagination,
   initialError,
 }: RecentActivityProps) {
+  const t = useTranslations("Activity");
+  const tCommon = useTranslations("Common");
+
   const {
     activities,
     isLoadingMore,
@@ -182,6 +172,30 @@ export const RecentActivity = memo(function RecentActivity({
     return () => observer.disconnect();
   }, [handleIntersection]);
 
+  const activityLabels = useMemo((): ActivityItemLabels => ({
+    actionLabels: {
+      LOGIN_SUCCESS: t("events.login"),
+      LOGIN_FAILED: t("events.loginFailed"),
+      LOGOUT: t("events.logout"),
+      PASSWORD_RESET_REQUESTED: t("events.resetRequested"),
+      PASSWORD_RESET_COMPLETED: t("events.passwordChanged"),
+      EMAIL_VERIFIED: t("events.emailVerified"),
+      TWO_FACTOR_ENABLED: t("events.twoFactorEnabled"),
+      TWO_FACTOR_DISABLED: t("events.twoFactorDisabled"),
+      TWO_FACTOR_VERIFIED: t("events.twoFactorVerified"),
+      ACCOUNT_LOCKED: t("events.accountBlocked"),
+      ACCOUNT_UNLOCKED: t("events.accountUnblocked"),
+      REGISTRATION: t("events.register"),
+      MAGIC_LINK_REQUESTED: t("events.magicLinkRequested"),
+      MAGIC_LINK_LOGIN: t("events.magicLinkLogin"),
+      USER_BLOCKED: t("events.userBlocked"),
+      USER_UNBLOCKED: t("events.userUnblocked"),
+      ACCOUNT_DELETION_REQUESTED: t("events.deletionRequested"),
+      ACCOUNT_DELETION_CANCELLED: t("events.deletionCanceled"),
+    },
+    agoMoment: tCommon("agoMoment"),
+  }), [t, tCommon]);
+
   if (error) {
     return (
       <Card className="border-destructive/30 bg-destructive/5 shadow-lg">
@@ -190,12 +204,12 @@ export const RecentActivity = memo(function RecentActivity({
             <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
           <div className="text-center">
-            <p className="font-medium text-destructive">Error al cargar</p>
+            <p className="font-medium text-destructive">{tCommon("errorLoading")}</p>
             <p className="text-sm text-muted-foreground mt-1">{error}</p>
           </div>
           <Button variant="outline" onClick={refresh}>
             <RefreshCw className="mr-2 h-4 w-4" />
-            Reintentar
+            {tCommon("retry")}
           </Button>
         </CardContent>
       </Card>
@@ -211,11 +225,11 @@ export const RecentActivity = memo(function RecentActivity({
               <Activity className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <CardTitle className="text-lg">Actividad reciente</CardTitle>
+              <CardTitle className="text-lg">{t("title")}</CardTitle>
               <CardDescription>
                 {total > 0
-                  ? `${total} eventos de seguridad`
-                  : "Eventos de seguridad en tu cuenta"}
+                  ? t("totalEvents", { total })
+                  : t("description")}
               </CardDescription>
             </div>
           </div>
@@ -238,12 +252,12 @@ export const RecentActivity = memo(function RecentActivity({
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted mb-3">
               <Activity className="h-6 w-6 text-muted-foreground" />
             </div>
-            <p className="text-muted-foreground">No hay actividad reciente</p>
+            <p className="text-muted-foreground">{t("noActivity")}</p>
           </div>
         ) : (
           <div className="space-y-1">
             {activities.map((activity) => (
-              <ActivityItem key={activity.id} activity={activity} />
+              <ActivityItem key={activity.id} activity={activity} labels={activityLabels} />
             ))}
 
             <div ref={loadMoreRef} className="h-1" />
@@ -260,7 +274,7 @@ export const RecentActivity = memo(function RecentActivity({
                 onClick={loadMore}
                 className="w-full text-muted-foreground"
               >
-                Cargar más
+                {tCommon("loadMore")}
               </Button>
             )}
           </div>

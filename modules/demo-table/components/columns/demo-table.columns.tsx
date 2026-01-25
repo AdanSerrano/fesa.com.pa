@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import {
   MoreHorizontal,
   Trash2,
@@ -34,6 +34,40 @@ import {
 import type { CustomColumnDef } from "@/components/custom-datatable";
 import type { DemoProduct, ProductStatus, ProductCategory } from "../../types/demo-table.types";
 
+export interface ColumnLabels {
+  columns: {
+    product: string;
+    category: string;
+    price: string;
+    stock: string;
+    status: string;
+    updatedAt: string;
+    actions: string;
+  };
+  status: {
+    active: string;
+    inactive: string;
+    discontinued: string;
+  };
+  categories: {
+    electronics: string;
+    clothing: string;
+    food: string;
+    books: string;
+    other: string;
+  };
+  actions: {
+    actions: string;
+    viewDetails: string;
+    activate: string;
+    deactivate: string;
+    discontinue: string;
+    delete: string;
+  };
+  lowStock: string;
+  locale: string;
+}
+
 interface ColumnActions {
   onView: (product: DemoProduct) => void;
   onDelete: (product: DemoProduct) => void;
@@ -43,23 +77,6 @@ interface ColumnActions {
 // ============================================
 // CONSTANTS
 // ============================================
-
-const statusConfig: Record<
-  ProductStatus,
-  { label: string; variant: "default" | "secondary" | "destructive" | "outline"; icon: React.ElementType }
-> = {
-  active: { label: "Activo", variant: "default", icon: Power },
-  inactive: { label: "Inactivo", variant: "secondary", icon: PowerOff },
-  discontinued: { label: "Descontinuado", variant: "destructive", icon: Archive },
-};
-
-const categoryLabels: Record<ProductCategory, string> = {
-  electronics: "Electrónica",
-  clothing: "Ropa",
-  food: "Alimentos",
-  books: "Libros",
-  other: "Otros",
-};
 
 const categoryColors: Record<ProductCategory, string> = {
   electronics: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
@@ -104,12 +121,14 @@ const ProductCell = memo(function ProductCell({
 // Category Badge Cell
 const CategoryCell = memo(function CategoryCell({
   category,
+  label,
 }: {
   category: ProductCategory;
+  label: string;
 }) {
   return (
     <Badge variant="outline" className={cn("font-normal", categoryColors[category])}>
-      {categoryLabels[category]}
+      {label}
     </Badge>
   );
 });
@@ -124,7 +143,7 @@ const PriceCell = memo(function PriceCell({ price }: { price: number }) {
 });
 
 // Stock Cell with low stock warning
-const StockCell = memo(function StockCell({ stock }: { stock: number }) {
+const StockCell = memo(function StockCell({ stock, lowStockLabel }: { stock: number; lowStockLabel: string }) {
   const isLowStock = stock > 0 && stock <= 5;
   const isOutOfStock = stock === 0;
 
@@ -136,7 +155,7 @@ const StockCell = memo(function StockCell({ stock }: { stock: number }) {
             <TooltipTrigger>
               <AlertTriangle className="h-4 w-4 text-amber-500" />
             </TooltipTrigger>
-            <TooltipContent>Stock bajo</TooltipContent>
+            <TooltipContent>{lowStockLabel}</TooltipContent>
           </Tooltip>
         </TooltipProvider>
       )}
@@ -154,8 +173,20 @@ const StockCell = memo(function StockCell({ stock }: { stock: number }) {
 });
 
 // Status Badge Cell
-const StatusCell = memo(function StatusCell({ status }: { status: ProductStatus }) {
-  const config = statusConfig[status];
+interface StatusConfig {
+  label: string;
+  variant: "default" | "secondary" | "destructive";
+  icon: React.ElementType;
+}
+
+const StatusCell = memo(function StatusCell({
+  status,
+  statusLabels
+}: {
+  status: ProductStatus;
+  statusLabels: Record<ProductStatus, StatusConfig>;
+}) {
+  const config = statusLabels[status];
   const Icon = config.icon;
 
   return (
@@ -169,20 +200,23 @@ const StatusCell = memo(function StatusCell({ status }: { status: ProductStatus 
 // Updated At Cell with tooltip
 const UpdatedAtCell = memo(function UpdatedAtCell({
   updatedAt,
+  locale,
 }: {
   updatedAt: Date;
+  locale: string;
 }) {
   const date = new Date(updatedAt);
+  const dateLocale = locale === "es" ? es : enUS;
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger asChild>
           <span className="text-sm text-muted-foreground">
-            {format(date, "dd MMM yyyy", { locale: es })}
+            {format(date, "dd MMM yyyy", { locale: dateLocale })}
           </span>
         </TooltipTrigger>
         <TooltipContent>
-          {format(date, "dd/MM/yyyy HH:mm", { locale: es })}
+          {format(date, "dd/MM/yyyy HH:mm", { locale: dateLocale })}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -190,11 +224,21 @@ const UpdatedAtCell = memo(function UpdatedAtCell({
 });
 
 // Actions Dropdown Cell
+interface ActionLabels {
+  actions: string;
+  viewDetails: string;
+  activate: string;
+  deactivate: string;
+  discontinue: string;
+  delete: string;
+}
+
 interface ActionsCellProps {
   product: DemoProduct;
   onView: (product: DemoProduct) => void;
   onDelete: (product: DemoProduct) => void;
   onChangeStatus: (product: DemoProduct, status: ProductStatus) => void;
+  labels: ActionLabels;
 }
 
 const ActionsCell = memo(function ActionsCell({
@@ -202,22 +246,23 @@ const ActionsCell = memo(function ActionsCell({
   onView,
   onDelete,
   onChangeStatus,
+  labels,
 }: ActionsCellProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <MoreHorizontal className="h-4 w-4" />
-          <span className="sr-only">Acciones</span>
+          <span className="sr-only">{labels.actions}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+        <DropdownMenuLabel>{labels.actions}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
         <DropdownMenuItem onClick={() => onView(product)} className="gap-2">
           <Eye className="h-4 w-4" />
-          Ver detalles
+          {labels.viewDetails}
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
@@ -228,7 +273,7 @@ const ActionsCell = memo(function ActionsCell({
             className="gap-2 text-green-600"
           >
             <Power className="h-4 w-4" />
-            Activar
+            {labels.activate}
           </DropdownMenuItem>
         )}
 
@@ -238,7 +283,7 @@ const ActionsCell = memo(function ActionsCell({
             className="gap-2 text-amber-600"
           >
             <PowerOff className="h-4 w-4" />
-            Desactivar
+            {labels.deactivate}
           </DropdownMenuItem>
         )}
 
@@ -248,7 +293,7 @@ const ActionsCell = memo(function ActionsCell({
             className="gap-2 text-gray-600"
           >
             <Archive className="h-4 w-4" />
-            Descontinuar
+            {labels.discontinue}
           </DropdownMenuItem>
         )}
 
@@ -259,7 +304,7 @@ const ActionsCell = memo(function ActionsCell({
           className="gap-2 text-destructive focus:text-destructive"
         >
           <Trash2 className="h-4 w-4" />
-          Eliminar
+          {labels.delete}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -270,12 +315,31 @@ const ActionsCell = memo(function ActionsCell({
 // COLUMNS FACTORY
 // ============================================
 
-export function createDemoTableColumns(actions: ColumnActions): CustomColumnDef<DemoProduct>[] {
+interface CreateColumnsOptions {
+  actions: ColumnActions;
+  labels: ColumnLabels;
+}
+
+export function createDemoTableColumns({ actions, labels }: CreateColumnsOptions): CustomColumnDef<DemoProduct>[] {
+  const statusLabels: Record<ProductStatus, StatusConfig> = {
+    active: { label: labels.status.active, variant: "default", icon: Power },
+    inactive: { label: labels.status.inactive, variant: "secondary", icon: PowerOff },
+    discontinued: { label: labels.status.discontinued, variant: "destructive", icon: Archive },
+  };
+
+  const categoryLabelsMap: Record<ProductCategory, string> = {
+    electronics: labels.categories.electronics,
+    clothing: labels.categories.clothing,
+    food: labels.categories.food,
+    books: labels.categories.books,
+    other: labels.categories.other,
+  };
+
   return [
     {
       id: "name",
       accessorKey: "name",
-      header: "Producto",
+      header: labels.columns.product,
       enableSorting: true,
       enableHiding: false,
       minWidth: 250,
@@ -286,15 +350,15 @@ export function createDemoTableColumns(actions: ColumnActions): CustomColumnDef<
     {
       id: "category",
       accessorKey: "category",
-      header: "Categoría",
+      header: labels.columns.category,
       enableSorting: true,
       minWidth: 120,
-      cell: ({ row }) => <CategoryCell category={row.category} />,
+      cell: ({ row }) => <CategoryCell category={row.category} label={categoryLabelsMap[row.category]} />,
     },
     {
       id: "price",
       accessorKey: "price",
-      header: "Precio",
+      header: labels.columns.price,
       align: "right",
       enableSorting: true,
       minWidth: 100,
@@ -303,32 +367,32 @@ export function createDemoTableColumns(actions: ColumnActions): CustomColumnDef<
     {
       id: "stock",
       accessorKey: "stock",
-      header: "Stock",
+      header: labels.columns.stock,
       align: "center",
       enableSorting: true,
       minWidth: 100,
-      cell: ({ row }) => <StockCell stock={row.stock} />,
+      cell: ({ row }) => <StockCell stock={row.stock} lowStockLabel={labels.lowStock} />,
     },
     {
       id: "status",
       accessorKey: "status",
-      header: "Estado",
+      header: labels.columns.status,
       align: "center",
       enableSorting: true,
       minWidth: 130,
-      cell: ({ row }) => <StatusCell status={row.status} />,
+      cell: ({ row }) => <StatusCell status={row.status} statusLabels={statusLabels} />,
     },
     {
       id: "updatedAt",
       accessorKey: "updatedAt",
-      header: "Actualizado",
+      header: labels.columns.updatedAt,
       enableSorting: true,
       minWidth: 140,
-      cell: ({ row }) => <UpdatedAtCell updatedAt={row.updatedAt} />,
+      cell: ({ row }) => <UpdatedAtCell updatedAt={row.updatedAt} locale={labels.locale} />,
     },
     {
       id: "actions",
-      header: "Acciones",
+      header: labels.columns.actions,
       align: "center",
       enableSorting: false,
       enableHiding: false,
@@ -339,6 +403,7 @@ export function createDemoTableColumns(actions: ColumnActions): CustomColumnDef<
           onView={actions.onView}
           onDelete={actions.onDelete}
           onChangeStatus={actions.onChangeStatus}
+          labels={labels.actions}
         />
       ),
     },

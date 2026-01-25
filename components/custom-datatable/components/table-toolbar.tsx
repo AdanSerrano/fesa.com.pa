@@ -19,6 +19,7 @@ import {
   Maximize,
   Minimize,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
@@ -61,12 +62,6 @@ const densityIcons: Record<DensityType, React.ElementType> = {
   compact: Rows2,
   default: Rows3,
   comfortable: Square,
-};
-
-const densityLabels: Record<DensityType, string> = {
-  compact: "Compacta",
-  default: "Normal",
-  comfortable: "Amplia",
 };
 
 const DENSITY_OPTIONS: DensityType[] = ["compact", "default", "comfortable"];
@@ -113,6 +108,7 @@ const SearchInput = memo(function SearchInput({
   onClear,
   onSubmit,
   showClearButton,
+  clearLabel,
 }: {
   inputRef: React.RefObject<HTMLInputElement | null>;
   value: string;
@@ -121,6 +117,7 @@ const SearchInput = memo(function SearchInput({
   onClear: () => void;
   onSubmit: () => void;
   showClearButton: boolean;
+  clearLabel: string;
 }) {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -151,7 +148,7 @@ const SearchInput = memo(function SearchInput({
           onClick={onClear}
         >
           <X className="h-3 w-3" />
-          <span className="sr-only">Limpiar búsqueda</span>
+          <span className="sr-only">{clearLabel}</span>
         </Button>
       )}
     </div>
@@ -162,10 +159,24 @@ const SearchInput = memo(function SearchInput({
 const DensityDropdown = memo(function DensityDropdown({
   currentDensity,
   onDensityChange,
+  labels,
 }: {
   currentDensity: DensityType;
   onDensityChange: (density: DensityType) => void;
+  labels: {
+    density: string;
+    densityRows: string;
+    compact: string;
+    default: string;
+    comfortable: string;
+  };
 }) {
+  const densityLabels: Record<DensityType, string> = {
+    compact: labels.compact,
+    default: labels.default,
+    comfortable: labels.comfortable,
+  };
+
   return (
     <DropdownMenu>
       <Tooltip>
@@ -173,14 +184,14 @@ const DensityDropdown = memo(function DensityDropdown({
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="h-9 w-9">
               <SlidersHorizontal className="h-4 w-4" />
-              <span className="sr-only">Densidad</span>
+              <span className="sr-only">{labels.density}</span>
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <TooltipContent>Densidad de filas</TooltipContent>
+        <TooltipContent>{labels.densityRows}</TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" className="w-40">
-        <DropdownMenuLabel>Densidad</DropdownMenuLabel>
+        <DropdownMenuLabel>{labels.density}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {DENSITY_OPTIONS.map((d) => {
           const Icon = densityIcons[d];
@@ -211,10 +222,16 @@ const ColumnVisibilityDropdown = memo(function ColumnVisibilityDropdown({
   columns,
   columnVisibility,
   onColumnVisibilityChange,
+  labels,
 }: {
   columns: ColumnInfo[];
   columnVisibility: ColumnVisibilityConfig;
   onColumnVisibilityChange: (columnId: string, visible: boolean) => void;
+  labels: {
+    columns: string;
+    showHideColumns: string;
+    visibleColumns: string;
+  };
 }) {
   return (
     <DropdownMenu>
@@ -223,14 +240,14 @@ const ColumnVisibilityDropdown = memo(function ColumnVisibilityDropdown({
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="gap-2">
               <Columns3 className="h-4 w-4" />
-              <span className="hidden sm:inline">Columnas</span>
+              <span className="hidden sm:inline">{labels.columns}</span>
             </Button>
           </DropdownMenuTrigger>
         </TooltipTrigger>
-        <TooltipContent>Mostrar/ocultar columnas</TooltipContent>
+        <TooltipContent>{labels.showHideColumns}</TooltipContent>
       </Tooltip>
       <DropdownMenuContent align="end" className="w-48 max-h-[300px] overflow-auto">
-        <DropdownMenuLabel>Columnas visibles</DropdownMenuLabel>
+        <DropdownMenuLabel>{labels.visibleColumns}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {columns.map((column) => {
           const isVisible = columnVisibility.columnVisibility[column.id] !== false;
@@ -257,20 +274,25 @@ const ColumnVisibilityDropdown = memo(function ColumnVisibilityDropdown({
 const ExportDropdown = memo(function ExportDropdown({
   formats,
   onExport,
+  labels,
 }: {
   formats: ExportFormat[];
   onExport: (format: ExportFormat) => void;
+  labels: {
+    export: string;
+    exportFormat: string;
+  };
 }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Download className="h-4 w-4" />
-          <span className="hidden sm:inline">Exportar</span>
+          <span className="hidden sm:inline">{labels.export}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-48">
-        <DropdownMenuLabel>Formato de exportación</DropdownMenuLabel>
+        <DropdownMenuLabel>{labels.exportFormat}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {formats.map((format) => {
           const Icon = exportIcons[format];
@@ -295,15 +317,21 @@ const BulkActionsBar = memo(function BulkActionsBar({
   selectedCount,
   bulkActions,
   onClearSelection,
+  labels,
 }: {
   selectedCount: number;
   bulkActions: React.ReactNode;
   onClearSelection: () => void;
+  labels: {
+    selected: string;
+    selectedPlural: string;
+    clearSelection: string;
+  };
 }) {
   return (
     <div className="flex items-center gap-3 rounded-md border bg-muted/50 px-4 py-2">
       <Badge variant="secondary" className="font-mono">
-        {selectedCount} seleccionado{selectedCount > 1 ? "s" : ""}
+        {selectedCount} {selectedCount > 1 ? labels.selectedPlural : labels.selected}
       </Badge>
       <div className="h-4 w-px bg-border" />
       <div className="flex items-center gap-2">{bulkActions}</div>
@@ -314,7 +342,7 @@ const BulkActionsBar = memo(function BulkActionsBar({
         onClick={onClearSelection}
         className="text-muted-foreground"
       >
-        Limpiar selección
+        {labels.clearSelection}
       </Button>
     </div>
   );
@@ -393,6 +421,7 @@ function TableToolbarInner<TData>({
   isFullscreenEnabled = false,
   className,
 }: TableToolbarProps<TData>) {
+  const t = useTranslations("DataTable.toolbar");
   const [localFilter, setLocalFilter] = useState(filter?.globalFilter ?? "");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -514,8 +543,34 @@ function TableToolbarInner<TData>({
   );
 
   // Memoize search input props
-  const searchPlaceholder = filter?.placeholder ?? "Buscar...";
+  const searchPlaceholder = filter?.placeholder ?? t("search");
   const showClearButton = filter?.showClearButton ?? true;
+
+  // Memoize translation labels for sub-components
+  const densityLabels = useMemo(() => ({
+    density: t("density"),
+    densityRows: t("densityRows"),
+    compact: t("densityCompact"),
+    default: t("densityDefault"),
+    comfortable: t("densityComfortable"),
+  }), [t]);
+
+  const columnLabels = useMemo(() => ({
+    columns: t("columns"),
+    showHideColumns: t("showHideColumns"),
+    visibleColumns: t("visibleColumns"),
+  }), [t]);
+
+  const exportLabels = useMemo(() => ({
+    export: t("export"),
+    exportFormat: t("exportFormat"),
+  }), [t]);
+
+  const bulkLabels = useMemo(() => ({
+    selected: t("selected"),
+    selectedPlural: t("selectedPlural"),
+    clearSelection: t("clearSelection"),
+  }), [t]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -550,6 +605,7 @@ function TableToolbarInner<TData>({
                 onClear={handleClearFilter}
                 onSubmit={handleSubmitFilter}
                 showClearButton={showClearButton}
+                clearLabel={t("clearSearch")}
               />
             )}
           </div>
@@ -563,7 +619,7 @@ function TableToolbarInner<TData>({
               <TooltipButton
                 onClick={onToggleFullscreen}
                 icon={isFullscreen ? Minimize : Maximize}
-                tooltip={isFullscreen ? "Salir de pantalla completa" : "Pantalla completa"}
+                tooltip={isFullscreen ? t("exitFullscreen") : t("fullscreen")}
               />
             )}
 
@@ -572,7 +628,7 @@ function TableToolbarInner<TData>({
               <TooltipButton
                 onClick={onCopy}
                 icon={Copy}
-                tooltip="Copiar datos al portapapeles"
+                tooltip={t("copy")}
               />
             )}
 
@@ -581,7 +637,7 @@ function TableToolbarInner<TData>({
               <TooltipButton
                 onClick={onPrint}
                 icon={Printer}
-                tooltip="Imprimir tabla"
+                tooltip={t("print")}
               />
             )}
 
@@ -591,7 +647,7 @@ function TableToolbarInner<TData>({
                 onClick={onRefresh}
                 disabled={isRefreshing}
                 icon={RefreshCw}
-                tooltip="Actualizar datos"
+                tooltip={t("refresh")}
                 iconClassName={isRefreshing ? "animate-spin" : undefined}
               />
             )}
@@ -601,6 +657,7 @@ function TableToolbarInner<TData>({
               <DensityDropdown
                 currentDensity={density}
                 onDensityChange={handleDensityChange}
+                labels={densityLabels}
               />
             )}
 
@@ -610,6 +667,7 @@ function TableToolbarInner<TData>({
                 columns={hideableColumnsInfo}
                 columnVisibility={columnVisibility}
                 onColumnVisibilityChange={handleColumnVisibilityChange}
+                labels={columnLabels}
               />
             )}
 
@@ -618,6 +676,7 @@ function TableToolbarInner<TData>({
               <ExportDropdown
                 formats={exportFormats}
                 onExport={handleExport}
+                labels={exportLabels}
               />
             )}
 
@@ -631,6 +690,7 @@ function TableToolbarInner<TData>({
             selectedCount={selectedCount}
             bulkActions={bulkActions}
             onClearSelection={onClearSelection}
+            labels={bulkLabels}
           />
         )}
       </div>

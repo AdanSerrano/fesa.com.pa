@@ -8,6 +8,7 @@ import {
   ChevronsRight,
   MoreHorizontal,
 } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -34,6 +35,8 @@ function TablePaginationInner({
   totalRows,
   className,
 }: TablePaginationProps) {
+  const t = useTranslations("DataTable.pagination");
+  const tToolbar = useTranslations("DataTable.toolbar");
   const {
     pageIndex,
     pageSize,
@@ -139,18 +142,18 @@ function TablePaginationInner({
         className
       )}
       role="navigation"
-      aria-label="Paginación de tabla"
+      aria-label={t("ariaLabel")}
     >
       {/* Left side: Info */}
       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
         {showRowsInfo && (
           <span className="text-sm text-muted-foreground">
-            Mostrando {pageInfo.start} - {pageInfo.end} de {total} registros
+            {t("showing", { start: pageInfo.start, end: pageInfo.end, total })}
           </span>
         )}
         {showSelectedInfo && selectedCount > 0 && (
           <span className="text-sm font-medium text-primary">
-            ({selectedCount} seleccionado{selectedCount > 1 ? "s" : ""})
+            ({selectedCount} {selectedCount > 1 ? tToolbar("selectedPlural") : tToolbar("selected")})
           </span>
         )}
       </div>
@@ -160,10 +163,10 @@ function TablePaginationInner({
         {/* Rows per page */}
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground whitespace-nowrap">
-            Filas por página
+            {t("rowsPerPage")}
           </span>
           <Select value={String(pageSize)} onValueChange={handlePageSizeChange}>
-            <SelectTrigger className="h-8 w-[70px]" aria-label="Seleccionar filas por página">
+            <SelectTrigger className="h-8 w-[70px]" aria-label={t("selectRowsPerPage")}>
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
@@ -187,7 +190,7 @@ function TablePaginationInner({
               onClick={handleFirstPage}
               disabled={!canPreviousPage}
             >
-              <span className="sr-only">Primera página</span>
+              <span className="sr-only">{t("firstPage")}</span>
               <ChevronsLeft className="h-4 w-4" />
             </Button>
           )}
@@ -200,13 +203,13 @@ function TablePaginationInner({
             onClick={handlePreviousPage}
             disabled={!canPreviousPage}
           >
-            <span className="sr-only">Página anterior</span>
+            <span className="sr-only">{t("previousPage")}</span>
             <ChevronLeft className="h-4 w-4" />
           </Button>
 
           {/* Page numbers */}
           {showPageNumbers && (
-            <div className="hidden sm:flex items-center gap-1" role="group" aria-label="Páginas">
+            <div className="hidden sm:flex items-center gap-1" role="group" aria-label={t("pages")}>
               {pageNumbers.map((page, index) =>
                 page === "ellipsis" ? (
                   <span
@@ -223,7 +226,7 @@ function TablePaginationInner({
                     size="icon"
                     className="h-8 w-8"
                     onClick={() => handlePageChange(page)}
-                    aria-label={`Ir a página ${page + 1}`}
+                    aria-label={t("goToPage", { page: page + 1 })}
                     aria-current={pageIndex === page ? "page" : undefined}
                   >
                     {page + 1}
@@ -248,7 +251,7 @@ function TablePaginationInner({
             onClick={handleNextPage}
             disabled={!canNextPage}
           >
-            <span className="sr-only">Página siguiente</span>
+            <span className="sr-only">{t("nextPage")}</span>
             <ChevronRight className="h-4 w-4" />
           </Button>
 
@@ -261,7 +264,7 @@ function TablePaginationInner({
               onClick={handleLastPage}
               disabled={!canNextPage}
             >
-              <span className="sr-only">Última página</span>
+              <span className="sr-only">{t("lastPage")}</span>
               <ChevronsRight className="h-4 w-4" />
             </Button>
           )}

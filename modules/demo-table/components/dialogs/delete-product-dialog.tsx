@@ -16,14 +16,24 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 
 import type { DemoProduct } from "../../types/demo-table.types";
 
+export interface DeleteDialogLabels {
+  title: string;
+  description: string;
+  warning: string;
+  cancel: string;
+  delete: string;
+  deleting: string;
+}
+
 interface Props {
   product: DemoProduct | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onConfirm: (id: string) => Promise<void>;
+  labels: DeleteDialogLabels;
 }
 
-function DeleteProductDialogComponent({ product, open, onOpenChange, onConfirm }: Props) {
+function DeleteProductDialogComponent({ product, open, onOpenChange, onConfirm, labels }: Props) {
   const [isPending, startTransition] = useTransition();
 
   const handleConfirm = useCallback(() => {
@@ -40,35 +50,36 @@ function DeleteProductDialogComponent({ product, open, onOpenChange, onConfirm }
 
   if (!product) return null;
 
+  const warningText = labels.warning
+    .replace("{name}", product.name)
+    .replace("{sku}", product.sku);
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-destructive">
             <Trash2 className="h-5 w-5" />
-            Eliminar producto
+            {labels.title}
           </DialogTitle>
           <DialogDescription>
-            Esta acción no se puede deshacer.
+            {labels.description}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <Alert variant="destructive">
             <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>
-              Estás a punto de eliminar el producto <strong>{product.name}</strong> (SKU: {product.sku}).
-              Esta acción es permanente.
-            </AlertDescription>
+            <AlertDescription>{warningText}</AlertDescription>
           </Alert>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
-            Cancelar
+            {labels.cancel}
           </Button>
           <Button variant="destructive" onClick={handleConfirm} disabled={isPending}>
-            {isPending ? "Eliminando..." : "Eliminar"}
+            {isPending ? labels.deleting : labels.delete}
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -16,9 +16,13 @@ import {
   Activity,
   KeyRound,
 } from "lucide-react";
+import { getTranslations } from "next-intl/server";
 
 export async function ServicesView() {
-  const result = await getUserSessionAction();
+  const [result, t] = await Promise.all([
+    getUserSessionAction(),
+    getTranslations("ServicesPage"),
+  ]);
 
   if (result.error || !result.user) {
     return (
@@ -32,30 +36,47 @@ export async function ServicesView() {
 
   const { user } = result;
 
+  const labels = {
+    yourProfile: t("yourProfile"),
+    accountStatus: t("accountStatus"),
+    role: t("role"),
+    email: t("email"),
+    verified: t("verified"),
+    status: t("status"),
+    active: t("active"),
+    security: t("security"),
+    protected: t("protected"),
+    unprotected: t("unprotected"),
+    twoFactorActive: t("twoFactorActive"),
+    twoFactorInactive: t("twoFactorInactive"),
+    activate2FA: t("activate2FA"),
+    defaultUser: t("defaultUser"),
+  };
+
   return (
     <ServicesClientWrapper>
-      <UserProfileCard user={user} />
-      <QuickStatsCard user={user} />
-      <SecurityStatusCard user={user} />
+      <UserProfileCard user={user} labels={labels} />
+      <QuickStatsCard user={user} labels={labels} />
+      <SecurityStatusCard user={user} labels={labels} />
       <QuickActionCard
         href="/dashboard/settings/profile"
         icon={<Settings className="h-5 w-5" />}
-        title="Configuración"
-        description="Edita tu perfil y preferencias de cuenta"
+        title={t("settingsTitle")}
+        description={t("settingsDescription")}
         color="blue"
       />
       <QuickActionCard
         href="/dashboard/settings/security"
         icon={<Shield className="h-5 w-5" />}
-        title="Seguridad"
-        description="2FA y gestión de sesiones activas"
+        title={t("securityTitle")}
+        description={t("securityDescription")}
         color="green"
       />
       <QuickActionCard
         href="/dashboard/settings/profile"
         icon={<KeyRound className="h-5 w-5" />}
-        title="Contraseña"
-        description="Actualiza tu contraseña de acceso"
+        title={t("passwordTitle")}
+        description={t("passwordDescription")}
         color="orange"
       />
     </ServicesClientWrapper>
@@ -72,16 +93,35 @@ interface UserData {
   isTwoFactorEnabled: boolean;
 }
 
+interface ServicesLabels {
+  yourProfile: string;
+  accountStatus: string;
+  role: string;
+  email: string;
+  verified: string;
+  status: string;
+  active: string;
+  security: string;
+  protected: string;
+  unprotected: string;
+  twoFactorActive: string;
+  twoFactorInactive: string;
+  activate2FA: string;
+  defaultUser: string;
+}
+
 const UserProfileCard = memo(function UserProfileCard({
   user,
+  labels,
 }: {
   user: UserData;
+  labels: ServicesLabels;
 }) {
   return (
     <Card className="md:col-span-2 lg:col-span-1 h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground">
-          Tu perfil
+          {labels.yourProfile}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -93,7 +133,7 @@ const UserProfileCard = memo(function UserProfileCard({
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0 text-center sm:text-left">
-            <p className="font-semibold truncate">{user.name ?? "Usuario"}</p>
+            <p className="font-semibold truncate">{user.name ?? labels.defaultUser}</p>
             {user.userName && (
               <p className="text-sm text-muted-foreground truncate">
                 @{user.userName}
@@ -111,40 +151,42 @@ const UserProfileCard = memo(function UserProfileCard({
 
 const QuickStatsCard = memo(function QuickStatsCard({
   user,
+  labels,
 }: {
   user: UserData;
+  labels: ServicesLabels;
 }) {
   return (
     <Card className="h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground">
-          Estado de cuenta
+          {labels.accountStatus}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3 sm:space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Crown className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">Rol</span>
+            <span className="text-sm">{labels.role}</span>
           </div>
           <Badge variant="secondary">{user.role}</Badge>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Mail className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">Email</span>
+            <span className="text-sm">{labels.email}</span>
           </div>
           <Badge variant="outline" className="text-green-600 border-green-200">
-            Verificado
+            {labels.verified}
           </Badge>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Activity className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm">Estado</span>
+            <span className="text-sm">{labels.status}</span>
           </div>
           <Badge variant="outline" className="text-green-600 border-green-200">
-            Activo
+            {labels.active}
           </Badge>
         </div>
       </CardContent>
@@ -154,8 +196,10 @@ const QuickStatsCard = memo(function QuickStatsCard({
 
 const SecurityStatusCard = memo(function SecurityStatusCard({
   user,
+  labels,
 }: {
   user: UserData;
+  labels: ServicesLabels;
 }) {
   const is2FAEnabled = user.isTwoFactorEnabled;
 
@@ -163,7 +207,7 @@ const SecurityStatusCard = memo(function SecurityStatusCard({
     <Card className="h-full">
       <CardHeader className="pb-3">
         <CardTitle className="text-sm font-medium text-muted-foreground">
-          Seguridad
+          {labels.security}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -181,12 +225,10 @@ const SecurityStatusCard = memo(function SecurityStatusCard({
           </div>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-sm sm:text-base">
-              {is2FAEnabled ? "Protegido" : "Sin protección"}
+              {is2FAEnabled ? labels.protected : labels.unprotected}
             </p>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              {is2FAEnabled
-                ? "2FA activado en tu cuenta"
-                : "Activa 2FA para mayor seguridad"}
+              {is2FAEnabled ? labels.twoFactorActive : labels.twoFactorInactive}
             </p>
           </div>
         </div>
@@ -195,7 +237,7 @@ const SecurityStatusCard = memo(function SecurityStatusCard({
             href="/dashboard/settings/security"
             className="mt-4 flex items-center justify-center gap-2 rounded-lg bg-primary/10 px-4 py-2.5 sm:py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
           >
-            Activar 2FA
+            {labels.activate2FA}
             <ArrowRight className="h-4 w-4" />
           </Link>
         )}

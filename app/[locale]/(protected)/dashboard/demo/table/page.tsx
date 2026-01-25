@@ -1,11 +1,16 @@
 import { DemoTableView } from "@/modules/demo-table/view/demo-table.view";
 import { DemoTableSkeleton } from "@/modules/demo-table/components/demo-table.skeleton";
 import { Suspense } from "react";
+import { getTranslations } from "next-intl/server";
+import type { Metadata } from "next";
 
-export const metadata = {
-  title: "Demo DataTable",
-  description: "Demostración de las funcionalidades del CustomDataTable",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("DemoTable");
+  return {
+    title: t("title"),
+    description: t("metaDescription"),
+  };
+}
 
 interface PageProps {
   searchParams: Promise<{

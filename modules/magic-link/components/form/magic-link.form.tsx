@@ -13,10 +13,13 @@ import { Input } from "@/components/ui/input";
 import { MagicLinkViewModel } from "@/modules/magic-link/view-model/magic-link.view-model";
 import { cn } from "@/lib/utils";
 import { Loader2, Wand2, CheckCircle, KeyRound } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 
 export const MagicLinkForm = memo(function MagicLinkForm() {
+  const t = useTranslations("MagicLink");
+  const tAuth = useTranslations("Auth");
   const { handleSubmit, form, isPending, error, success } = MagicLinkViewModel();
 
   if (success) {
@@ -26,13 +29,12 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
           <CheckCircle className="h-8 w-8 text-green-600 dark:text-green-400" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold">¡Enlace enviado!</h3>
+          <h3 className="text-lg font-semibold">{t("successTitle")}</h3>
           <p className="text-sm text-muted-foreground">
             {success}
           </p>
           <p className="text-xs text-muted-foreground">
-            Revisa tu bandeja de entrada y haz clic en el enlace para iniciar
-            sesión. El enlace expira en 15 minutos.
+            {t("successMessage")}
           </p>
         </div>
         <Button
@@ -41,7 +43,7 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
           onClick={() => form.reset()}
           className="mt-4"
         >
-          Enviar otro enlace
+          {t("sendAnother")}
         </Button>
       </div>
     );
@@ -52,8 +54,7 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-5">
         <div className="text-center space-y-2 pb-2">
           <p className="text-sm text-muted-foreground">
-            Te enviaremos un enlace mágico a tu correo para iniciar sesión sin
-            contraseña.
+            {t("subtitle")}
           </p>
         </div>
 
@@ -62,13 +63,13 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{tAuth("email")}</FormLabel>
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="tu@email.com"
+                  placeholder={tAuth("emailPlaceholder")}
                   autoComplete="email"
-                  aria-label="Email"
+                  aria-label={tAuth("email")}
                   {...field}
                   disabled={isPending}
                   className={cn(
@@ -100,12 +101,12 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-              Enviando enlace...
+              {t("sendingLink")}
             </>
           ) : (
             <>
               <Wand2 className="mr-2 h-4 w-4" aria-hidden="true" />
-              Enviar enlace mágico
+              {t("sendLink")}
             </>
           )}
         </Button>
@@ -115,16 +116,16 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
           className="w-full flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
         >
           <KeyRound className="h-4 w-4" />
-          Iniciar sesión con contraseña
+          {tAuth("loginWithPassword")}
         </Link>
 
         <p className="text-center text-sm text-muted-foreground">
-          ¿No tienes una cuenta?{" "}
+          {tAuth("noAccount")}{" "}
           <Link
             href="/register"
             className="font-medium text-primary underline-offset-4 hover:underline"
           >
-            Crear cuenta
+            {tAuth("createAccount")}
           </Link>
         </p>
       </form>

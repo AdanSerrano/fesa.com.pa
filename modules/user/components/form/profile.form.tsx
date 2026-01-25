@@ -15,6 +15,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2 } from "lucide-react";
 import { ProfileViewModel } from "../../view-model/user.view-model";
+import { useTranslations } from "next-intl";
 
 interface ProfileFormProps {
   defaultValues?: {
@@ -28,6 +29,8 @@ interface ProfileFormProps {
 export const ProfileForm = memo(function ProfileForm({
   defaultValues,
 }: ProfileFormProps) {
+  const t = useTranslations("Profile");
+  const tCommon = useTranslations("Common");
   const { handleSubmit, form, isPending, error } = ProfileViewModel({
     defaultValues: {
       name: defaultValues?.name ?? "",
@@ -65,11 +68,11 @@ export const ProfileForm = memo(function ProfileForm({
               name="image"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>URL de imagen de perfil</FormLabel>
+                  <FormLabel>{t("imageUrl")}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
-                      placeholder="https://ejemplo.com/tu-foto.jpg"
+                      placeholder={t("imageUrlPlaceholder")}
                       disabled={isPending}
                       className="bg-background"
                     />
@@ -87,11 +90,11 @@ export const ProfileForm = memo(function ProfileForm({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nombre completo</FormLabel>
+                <FormLabel>{t("fullName")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="Tu nombre"
+                    placeholder={t("fullNamePlaceholder")}
                     disabled={isPending}
                     className="bg-background"
                   />
@@ -106,17 +109,17 @@ export const ProfileForm = memo(function ProfileForm({
             name="userName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nombre de usuario</FormLabel>
+                <FormLabel>{t("username")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="usuario123"
+                    placeholder={t("usernamePlaceholder")}
                     disabled={isPending}
                     className="bg-background"
                   />
                 </FormControl>
                 <FormDescription className="text-xs">
-                  Solo letras, números, guiones y guiones bajos
+                  {t("usernameHint")}
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -135,10 +138,10 @@ export const ProfileForm = memo(function ProfileForm({
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Guardando...
+                {tCommon("saving")}
               </>
             ) : (
-              "Guardar cambios"
+              t("saveChanges")
             )}
           </Button>
         </div>

@@ -20,6 +20,7 @@ import {
   ChevronDown,
   AlertTriangle,
 } from "lucide-react";
+import { useTranslations, useLocale } from "next-intl";
 import { ProfileForm } from "../components/form/profile.form";
 import { EmailForm } from "../components/form/email.form";
 import { PasswordForm } from "../components/form/password.form";
@@ -79,14 +80,22 @@ const SectionCard = memo(function SectionCard({
 });
 SectionCard.displayName = "SectionCard";
 
+interface UserHeaderLabels {
+  noName: string;
+  emailVerified: string;
+  emailUnverified: string;
+}
+
 const UserHeaderCard = memo(function UserHeaderCard({
   user,
   initials,
   formattedDate,
+  labels,
 }: {
   user: UserProfileClientProps["user"];
   initials: string;
   formattedDate: string;
+  labels: UserHeaderLabels;
 }) {
   return (
     <Card className="overflow-hidden border-0 shadow-xl">
@@ -106,7 +115,7 @@ const UserHeaderCard = memo(function UserHeaderCard({
           </div>
           <div className="text-center sm:text-left flex-1 sm:mt-2 min-w-0">
             <h2 className="text-xl sm:text-2xl font-bold truncate">
-              {user.name || "Sin nombre"}
+              {user.name || labels.noName}
             </h2>
             {user.userName && (
               <p className="text-muted-foreground text-sm sm:text-base truncate">
@@ -120,12 +129,12 @@ const UserHeaderCard = memo(function UserHeaderCard({
                   className="gap-1 bg-green-500 hover:bg-green-500/90 text-xs sm:text-sm"
                 >
                   <CheckCircle2 className="h-3 w-3" />
-                  <span className="hidden xs:inline">Email </span>verificado
+                  <span className="hidden xs:inline">Email </span>{labels.emailVerified}
                 </Badge>
               ) : (
                 <Badge variant="destructive" className="gap-1 text-xs sm:text-sm">
                   <AlertCircle className="h-3 w-3" />
-                  <span className="hidden xs:inline">Email </span>sin verificar
+                  <span className="hidden xs:inline">Email </span>{labels.emailUnverified}
                 </Badge>
               )}
               {user.isTwoFactorEnabled && (
@@ -147,17 +156,32 @@ const UserHeaderCard = memo(function UserHeaderCard({
 });
 UserHeaderCard.displayName = "UserHeaderCard";
 
+interface SectionLabels {
+  profileInfo: string;
+  profileInfoDesc: string;
+  emailTitle: string;
+  emailDesc: string;
+  passwordTitle: string;
+  passwordDesc: string;
+  dangerZone: string;
+  dangerZoneDesc: string;
+  dangerWarning: string;
+  dangerWarningDesc: string;
+}
+
 const ProfileSection = memo(function ProfileSection({
   user,
+  labels,
 }: {
   user: UserProfileClientProps["user"];
+  labels: SectionLabels;
 }) {
   return (
     <SectionCard
       icon={<User className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />}
       iconBg="bg-primary/10"
-      title="Información del perfil"
-      description="Actualiza tu información personal"
+      title={labels.profileInfo}
+      description={labels.profileInfoDesc}
     >
       <ProfileForm
         defaultValues={{
@@ -175,16 +199,18 @@ ProfileSection.displayName = "ProfileSection";
 const EmailSection = memo(function EmailSection({
   email,
   isVerified,
+  labels,
 }: {
   email: string | null;
   isVerified: boolean;
+  labels: SectionLabels;
 }) {
   return (
     <SectionCard
       icon={<Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />}
       iconBg="bg-primary/10"
-      title="Correo electrónico"
-      description="Cambia tu dirección de correo"
+      title={labels.emailTitle}
+      description={labels.emailDesc}
     >
       <EmailForm currentEmail={email} isVerified={isVerified} />
     </SectionCard>
@@ -192,13 +218,17 @@ const EmailSection = memo(function EmailSection({
 });
 EmailSection.displayName = "EmailSection";
 
-const PasswordSection = memo(function PasswordSection() {
+const PasswordSection = memo(function PasswordSection({
+  labels,
+}: {
+  labels: SectionLabels;
+}) {
   return (
     <SectionCard
       icon={<Key className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />}
       iconBg="bg-primary/10"
-      title="Cambiar contraseña"
-      description="Actualiza tu contraseña para mantener tu cuenta segura"
+      title={labels.passwordTitle}
+      description={labels.passwordDesc}
     >
       <PasswordForm />
     </SectionCard>
@@ -206,7 +236,11 @@ const PasswordSection = memo(function PasswordSection() {
 });
 PasswordSection.displayName = "PasswordSection";
 
-const DangerSection = memo(function DangerSection() {
+const DangerSection = memo(function DangerSection({
+  labels,
+}: {
+  labels: SectionLabels;
+}) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenChange = useCallback((open: boolean) => {
@@ -225,10 +259,10 @@ const DangerSection = memo(function DangerSection() {
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-semibold text-destructive text-sm sm:text-base">
-                    Zona de peligro
+                    {labels.dangerZone}
                   </h3>
                   <p className="text-xs sm:text-sm text-muted-foreground">
-                    Eliminar cuenta permanentemente
+                    {labels.dangerZoneDesc}
                   </p>
                 </div>
               </div>
@@ -246,9 +280,9 @@ const DangerSection = memo(function DangerSection() {
               <div className="flex items-start gap-3 p-3 sm:p-4 rounded-lg bg-destructive/10 mb-4 sm:mb-6">
                 <AlertTriangle className="h-4 w-4 sm:h-5 sm:w-5 text-destructive shrink-0 mt-0.5" />
                 <div className="text-xs sm:text-sm text-destructive min-w-0">
-                  <p className="font-medium">Atención: Esta acción es irreversible</p>
+                  <p className="font-medium">{labels.dangerWarning}</p>
                   <p className="mt-1 text-destructive/80">
-                    Al eliminar tu cuenta, perderás acceso a todos tus datos.
+                    {labels.dangerWarningDesc}
                   </p>
                 </div>
               </div>
@@ -263,6 +297,9 @@ const DangerSection = memo(function DangerSection() {
 DangerSection.displayName = "DangerSection";
 
 export function UserProfileClient({ user }: UserProfileClientProps) {
+  const t = useTranslations("UserProfile");
+  const locale = useLocale();
+
   const initials = useMemo(() => {
     if (!user.name) return "U";
     return user.name
@@ -274,34 +311,53 @@ export function UserProfileClient({ user }: UserProfileClientProps) {
   }, [user.name]);
 
   const formattedDate = useMemo(() => {
-    return new Intl.DateTimeFormat("es", {
+    return new Intl.DateTimeFormat(locale, {
       year: "numeric",
       month: "long",
       day: "numeric",
     }).format(new Date(user.createdAt));
-  }, [user.createdAt]);
+  }, [user.createdAt, locale]);
+
+  const headerLabels = useMemo((): UserHeaderLabels => ({
+    noName: t("noName"),
+    emailVerified: t("emailVerified"),
+    emailUnverified: t("emailUnverified"),
+  }), [t]);
+
+  const sectionLabels = useMemo((): SectionLabels => ({
+    profileInfo: t("profileInfo"),
+    profileInfoDesc: t("profileInfoDesc"),
+    emailTitle: t("emailTitle"),
+    emailDesc: t("emailDesc"),
+    passwordTitle: t("passwordTitle"),
+    passwordDesc: t("passwordDesc"),
+    dangerZone: t("dangerZone"),
+    dangerZoneDesc: t("dangerZoneDesc"),
+    dangerWarning: t("dangerWarning"),
+    dangerWarningDesc: t("dangerWarningDesc"),
+  }), [t]);
 
   return (
     <div className="space-y-4 sm:space-y-6">
       <AnimatedSection animation="fade-down" delay={0}>
-        <UserHeaderCard user={user} initials={initials} formattedDate={formattedDate} />
+        <UserHeaderCard user={user} initials={initials} formattedDate={formattedDate} labels={headerLabels} />
       </AnimatedSection>
 
       <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 items-stretch">
         <AnimatedSection animation="fade-up" delay={100} className="h-full">
-          <ProfileSection user={user} />
+          <ProfileSection user={user} labels={sectionLabels} />
         </AnimatedSection>
         <AnimatedSection animation="fade-up" delay={200} className="h-full">
-          <EmailSection email={user.email} isVerified={!!user.emailVerified} />
+          <EmailSection email={user.email} isVerified={!!user.emailVerified} labels={sectionLabels} />
         </AnimatedSection>
       </div>
 
       <AnimatedSection animation="fade-up" delay={300}>
-        <PasswordSection />
+        <PasswordSection labels={sectionLabels} />
       </AnimatedSection>
 
       <AnimatedSection animation="fade-up" delay={400}>
-        <DangerSection />
+        <DangerSection labels={sectionLabels} />
       </AnimatedSection>
     </div>
   );

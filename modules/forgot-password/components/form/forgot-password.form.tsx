@@ -19,10 +19,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { ForgotPasswordViewModel } from "../../view-model/forgot-password.view-model";
 import { CheckCircle, KeyRound, Loader2, Mail } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { memo } from "react";
+import { useTranslations } from "next-intl";
 
 export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
+  const t = useTranslations("ForgotPassword");
+  const tAuth = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
   const { handleSubmit, form, isPending, sent } = ForgotPasswordViewModel();
 
   if (sent) {
@@ -36,11 +40,10 @@ export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
           <KeyRound className="h-6 w-6 text-primary" aria-hidden="true" />
         </div>
         <CardTitle className="text-xl font-bold sm:text-2xl">
-          ¿Olvidaste tu contraseña?
+          {t("title")}
         </CardTitle>
         <CardDescription className="text-sm sm:text-base">
-          Ingresa tu email y te enviaremos un enlace para restablecer tu
-          contraseña.
+          {t("subtitle")}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -51,14 +54,14 @@ export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{tAuth("email")}</FormLabel>
                   <FormControl>
                     <Input
                       {...field}
                       type="email"
-                      placeholder="tu@email.com"
+                      placeholder={tAuth("emailPlaceholder")}
                       autoComplete="email"
-                      aria-label="Correo electrónico"
+                      aria-label={tAuth("email")}
                       disabled={isPending}
                     />
                   </FormControl>
@@ -76,12 +79,12 @@ export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
               {isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                  Enviando...
+                  {tCommon("sending")}
                 </>
               ) : (
                 <>
                   <Mail className="mr-2 h-4 w-4" aria-hidden="true" />
-                  Enviar enlace de recuperación
+                  {t("sendLink")}
                 </>
               )}
             </Button>
@@ -92,7 +95,7 @@ export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
             href="/login"
             className="text-sm text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
           >
-            Volver al inicio de sesión
+            {t("backToLogin")}
           </Link>
         </div>
       </CardContent>
@@ -101,6 +104,8 @@ export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
 });
 
 function SuccessState() {
+  const t = useTranslations("ForgotPassword");
+
   return (
     <Card className="w-full max-w-md border-border/40 shadow-lg">
       <CardContent className="pt-6">
@@ -115,11 +120,10 @@ function SuccessState() {
 
           <div className="space-y-2">
             <h1 className="text-xl font-bold tracking-tight sm:text-2xl">
-              ¡Correo enviado!
+              {t("successTitle")}
             </h1>
             <p className="text-sm text-muted-foreground sm:text-base">
-              Si existe una cuenta con ese email, recibirás un enlace para
-              restablecer tu contraseña.
+              {t("successMessage")}
             </p>
           </div>
 
@@ -127,17 +131,16 @@ function SuccessState() {
             <div className="flex items-start gap-3">
               <Mail className="h-5 w-5 text-primary mt-0.5 shrink-0" aria-hidden="true" />
               <div className="text-left text-sm">
-                <p className="font-medium">Revisa tu bandeja de entrada</p>
+                <p className="font-medium">{t("checkInbox")}</p>
                 <p className="text-muted-foreground mt-1">
-                  El enlace expirará en 1 hora. Si no lo encuentras, revisa tu
-                  carpeta de spam.
+                  {t("linkExpiry")}
                 </p>
               </div>
             </div>
           </div>
 
           <Button asChild variant="outline" className="w-full">
-            <Link href="/login">Volver al inicio de sesión</Link>
+            <Link href="/login">{t("backToLogin")}</Link>
           </Button>
         </div>
       </CardContent>

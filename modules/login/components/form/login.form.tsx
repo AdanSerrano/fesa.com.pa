@@ -20,14 +20,17 @@ import { Input } from "@/components/ui/input";
 import { LoginViewModel } from "@/modules/login/view-model/login.view-model";
 import { cn } from "@/lib/utils";
 import { Loader2, LogIn, ShieldCheck, KeyRound, Wand2, AlertTriangle } from "lucide-react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { PasswordInput } from "@/components/ui/pasword-input";
 import { memo, Suspense } from "react";
 import { TwoFactorDialogContent } from "@/modules/two-factor/components/form/two-factor.form";
 import { TwoFactorSkeleton } from "@/modules/two-factor/components/two-factor.skeleton";
 import { ReactivateAccountDialog } from "../reactivate-account.dialog";
+import { useTranslations } from "next-intl";
 
 export const LoginForm = memo(function LoginForm() {
+  const t = useTranslations("Auth");
+  const tTwoFactor = useTranslations("TwoFactor");
   const {
     handleLogin,
     form,
@@ -62,9 +65,9 @@ export const LoginForm = memo(function LoginForm() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-linear-to-br from-primary/20 via-primary/10 to-primary/5 ring-4 ring-primary/10 shadow-lg mb-2">
               <ShieldCheck className="h-8 w-8 text-primary" aria-hidden="true" />
             </div>
-            <DialogTitle className="text-xl">Verificación en dos pasos</DialogTitle>
+            <DialogTitle className="text-xl">{tTwoFactor("title")}</DialogTitle>
             <DialogDescription>
-              Ingresa el código de seguridad enviado a tu correo
+              {tTwoFactor("subtitle")}
             </DialogDescription>
           </DialogHeader>
           <Suspense fallback={<TwoFactorSkeleton />}>
@@ -100,10 +103,10 @@ export const LoginForm = memo(function LoginForm() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">
-                  Sesión cerrada
+                  {t("sessionClosed")}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Tu sesión fue cerrada desde otro dispositivo
+                  {t("sessionClosedFromDevice")}
                 </p>
               </div>
             </div>
@@ -116,10 +119,10 @@ export const LoginForm = memo(function LoginForm() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">
-                  Verificación pendiente
+                  {t("verificationPending")}
                 </p>
                 <p className="text-xs text-muted-foreground truncate">
-                  Código enviado a {twoFactor.email?.replace(/(.{2})(.*)(@.*)/, "$1***$3")}
+                  {t("codeSentTo", { email: twoFactor.email?.replace(/(.{2})(.*)(@.*)/, "$1***$3") || "" })}
                 </p>
               </div>
               <Button
@@ -128,7 +131,7 @@ export const LoginForm = memo(function LoginForm() {
                 onClick={openTwoFactorDialog}
                 className="shrink-0"
               >
-                Continuar
+                {t("continue")}
               </Button>
             </div>
           )}
@@ -138,13 +141,13 @@ export const LoginForm = memo(function LoginForm() {
             name="identifier"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email o nombre de usuario</FormLabel>
+                <FormLabel>{t("emailOrUsername")}</FormLabel>
                 <FormControl>
                   <Input
                     type="text"
-                    placeholder="tu@email.com o nombre de usuario"
+                    placeholder={t("emailOrUsernamePlaceholder")}
                     autoComplete="username"
-                    aria-label="Email o nombre de usuario"
+                    aria-label={t("emailOrUsername")}
                     {...field}
                     disabled={isPending}
                     className={cn(
@@ -163,19 +166,19 @@ export const LoginForm = memo(function LoginForm() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel>Contraseña</FormLabel>
+                  <FormLabel>{t("password")}</FormLabel>
                   <Link
                     href="/forgot-password"
                     className="text-xs text-muted-foreground hover:text-primary underline-offset-4 hover:underline"
                   >
-                    ¿Olvidaste tu contraseña?
+                    {t("forgotPassword")}
                   </Link>
                 </div>
                 <FormControl>
                   <PasswordInput
-                    placeholder="••••••••"
+                    placeholder={t("passwordPlaceholder")}
                     autoComplete="current-password"
-                    aria-label="Contraseña"
+                    aria-label={t("password")}
                     {...field}
                     disabled={isPending}
                     className={cn(
@@ -208,12 +211,12 @@ export const LoginForm = memo(function LoginForm() {
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                Iniciando sesión...
+                {t("loggingIn")}
               </>
             ) : (
               <>
                 <LogIn className="mr-2 h-4 w-4" aria-hidden="true" />
-                Iniciar sesión
+                {t("login")}
               </>
             )}
           </Button>
@@ -223,16 +226,16 @@ export const LoginForm = memo(function LoginForm() {
             className="w-full flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
           >
             <Wand2 className="h-4 w-4" />
-            Iniciar sesión con Magic Link
+            {t("loginWithMagicLink")}
           </Link>
 
           <p className="text-center text-sm text-muted-foreground">
-            ¿No tienes una cuenta?{" "}
+            {t("noAccount")}{" "}
             <Link
               href="/register"
               className="font-medium text-primary underline-offset-4 hover:underline"
             >
-              Crear cuenta
+              {t("createAccount")}
             </Link>
           </p>
         </form>

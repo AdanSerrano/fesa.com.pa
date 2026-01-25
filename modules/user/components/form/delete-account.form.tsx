@@ -23,8 +23,11 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Loader2, Trash2, AlertTriangle } from "lucide-react";
 import { DeleteAccountViewModel } from "../../view-model/user.view-model";
+import { useTranslations } from "next-intl";
 
 export const DeleteAccountForm = memo(function DeleteAccountForm() {
+  const t = useTranslations("DeleteAccount");
+  const tCommon = useTranslations("Common");
   const { handleSubmit, form, isPending, error } = DeleteAccountViewModel();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -35,7 +38,8 @@ export const DeleteAccountForm = memo(function DeleteAccountForm() {
 
   const confirmation = form.watch("confirmation");
   const password = form.watch("password");
-  const canDelete = confirmation === "ELIMINAR" && password.length > 0;
+  const deleteWord = t("deleteWord");
+  const canDelete = confirmation === deleteWord && password.length > 0;
 
   return (
     <div className="space-y-6">
@@ -45,10 +49,9 @@ export const DeleteAccountForm = memo(function DeleteAccountForm() {
             <AlertTriangle className="h-4 w-4 text-destructive" />
           </div>
           <div>
-            <p className="font-medium text-destructive">Zona de peligro</p>
+            <p className="font-medium text-destructive">{t("title")}</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Una vez que elimines tu cuenta, no hay vuelta atrás. Por favor, asegúrate
-              de que realmente deseas hacer esto.
+              {t("warning")}
             </p>
           </div>
         </div>
@@ -61,7 +64,7 @@ export const DeleteAccountForm = memo(function DeleteAccountForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Confirma tu contraseña</FormLabel>
+                <FormLabel>{t("confirmPassword")}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -82,12 +85,12 @@ export const DeleteAccountForm = memo(function DeleteAccountForm() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>
-                  Escribe <span className="font-mono font-bold text-destructive">ELIMINAR</span> para confirmar
+                  {t("typeDelete")} <span className="font-mono font-bold text-destructive">{deleteWord}</span>
                 </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="ELIMINAR"
+                    placeholder={deleteWord}
                     disabled={isPending}
                     className="bg-background font-mono"
                   />
@@ -112,27 +115,27 @@ export const DeleteAccountForm = memo(function DeleteAccountForm() {
               onClick={() => setIsDialogOpen(true)}
             >
               <Trash2 className="mr-2 h-4 w-4" />
-              Eliminar mi cuenta permanentemente
+              {t("deleteButton")}
             </Button>
 
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle className="flex items-center gap-2">
                   <AlertTriangle className="h-5 w-5 text-destructive" />
-                  ¿Eliminar cuenta permanentemente?
+                  {t("dialogTitle")}
                 </AlertDialogTitle>
                 <AlertDialogDescription className="space-y-2">
-                  <p>Esta acción no se puede deshacer. Se eliminarán:</p>
+                  <p>{t("dialogDescription")}</p>
                   <ul className="list-disc list-inside text-sm space-y-1">
-                    <li>Tu perfil y datos personales</li>
-                    <li>Historial de actividad</li>
-                    <li>Acceso a todos los servicios</li>
+                    <li>{t("deleteProfile")}</li>
+                    <li>{t("deleteHistory")}</li>
+                    <li>{t("deleteAccess")}</li>
                   </ul>
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel disabled={isPending}>
-                  Cancelar
+                  {tCommon("cancel")}
                 </AlertDialogCancel>
                 <AlertDialogAction
                   onClick={onSubmit}
@@ -142,10 +145,10 @@ export const DeleteAccountForm = memo(function DeleteAccountForm() {
                   {isPending ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Eliminando...
+                      {tCommon("deleting")}
                     </>
                   ) : (
-                    "Sí, eliminar mi cuenta"
+                    t("confirmDelete")
                   )}
                 </AlertDialogAction>
               </AlertDialogFooter>

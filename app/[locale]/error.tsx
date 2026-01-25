@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 
 export default function Error({
   error,
@@ -11,6 +12,8 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  const t = useTranslations("Errors");
+
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -25,11 +28,10 @@ export default function Error({
 
           <div className="space-y-2">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              ¡Ups! Algo salió mal
+              {t("oops")}
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Lo sentimos, ha ocurrido un error inesperado. No te preocupes,
-              puedes intentarlo de nuevo.
+              {t("unexpectedError")}
             </p>
           </div>
         </div>
@@ -37,11 +39,11 @@ export default function Error({
         <div className="space-y-4">
           <Button onClick={() => reset()} className="w-full" size="lg">
             <RefreshCw className="w-4 h-4 mr-2" />
-            Intentar de nuevo
+            {t("tryAgain")}
           </Button>
 
           <p className="text-sm text-center text-gray-500 dark:text-gray-500">
-            Si el problema persiste, intenta recargar la página
+            {t("persistsProblem")}
           </p>
         </div>
       </div>

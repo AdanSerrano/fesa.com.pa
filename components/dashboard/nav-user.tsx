@@ -175,7 +175,7 @@ function NavUserComponent({ user }: NavUserProps) {
               onClick={handleLogout}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
-              {tCommon("yes")}, {t("logout").toLowerCase()}
+              {tAuth("yesLogout")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

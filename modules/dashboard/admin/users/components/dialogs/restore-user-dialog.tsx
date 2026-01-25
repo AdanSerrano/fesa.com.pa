@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { RotateCcw, CheckCircle } from "lucide-react";
+import { useTranslations } from "next-intl";
 import type { AdminUser } from "../../types/admin-users.types";
 
 interface RestoreUserDialogProps {
@@ -28,6 +29,9 @@ export const RestoreUserDialog = memo(function RestoreUserDialog({
   onClose,
   onRestore,
 }: RestoreUserDialogProps) {
+  const t = useTranslations("RestoreUserDialog");
+  const tCommon = useTranslations("Common");
+
   const handleConfirm = useCallback(() => {
     if (!user) return;
     onRestore(user.id);
@@ -35,17 +39,18 @@ export const RestoreUserDialog = memo(function RestoreUserDialog({
 
   if (!user) return null;
 
+  const userName = user.name || user.email || "";
+
   return (
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-green-600">
             <RotateCcw className="h-5 w-5" />
-            Restaurar Usuario
+            {t("title")}
           </DialogTitle>
           <DialogDescription>
-            ¿Deseas restaurar la cuenta de{" "}
-            <strong>{user.name || user.email}</strong>?
+            {t("confirmMessage", { user: userName })}
           </DialogDescription>
         </DialogHeader>
 
@@ -54,12 +59,12 @@ export const RestoreUserDialog = memo(function RestoreUserDialog({
             <CheckCircle className="mt-0.5 h-4 w-4 text-green-600" />
             <div className="text-sm">
               <p className="font-medium text-green-800 dark:text-green-200">
-                El usuario podrá acceder nuevamente
+                {t("info1")}
               </p>
               <ul className="mt-2 list-inside list-disc text-muted-foreground">
-                <li>La cuenta será reactivada inmediatamente</li>
-                <li>El usuario podrá iniciar sesión normalmente</li>
-                <li>Todos sus datos serán preservados</li>
+                <li>{t("info2")}</li>
+                <li>{t("info3")}</li>
+                <li>{t("info4")}</li>
               </ul>
             </div>
           </div>
@@ -67,10 +72,10 @@ export const RestoreUserDialog = memo(function RestoreUserDialog({
 
         <DialogFooter>
           <Button variant="outline" onClick={onClose} disabled={isPending}>
-            Cancelar
+            {tCommon("cancel")}
           </Button>
           <Button onClick={handleConfirm} disabled={isPending}>
-            {isPending ? "Restaurando..." : "Restaurar usuario"}
+            {isPending ? t("restoring") : t("restoreButton")}
           </Button>
         </DialogFooter>
       </DialogContent>
