@@ -1,7 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { memo, useMemo } from "react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import {
   LayoutDashboard,
   Settings,
@@ -28,45 +29,45 @@ import { NavUser } from "./nav-user";
 import { Role } from "@/app/prisma/enums";
 
 interface NavItem {
-  title: string;
+  titleKey: string;
   url: string;
   icon: React.ComponentType<{ className?: string }>;
 }
 
-const mainNavItems: NavItem[] = [
+const mainNavItemsConfig: NavItem[] = [
   {
-    title: "Inicio",
+    titleKey: "home",
     url: "/",
     icon: Home,
   },
   {
-    title: "Panel",
+    titleKey: "dashboard",
     url: "/dashboard/services",
     icon: LayoutDashboard,
   },
 ];
 
-const adminNavItems: NavItem[] = [
+const adminNavItemsConfig: NavItem[] = [
   {
-    title: "Usuarios",
+    titleKey: "users",
     url: "/dashboard/admin/users",
     icon: Users,
   },
 ];
 
-const settingsNavItems: NavItem[] = [
+const settingsNavItemsConfig: NavItem[] = [
   {
-    title: "Configuración",
+    titleKey: "settings",
     url: "/dashboard/settings/profile",
     icon: Settings,
   },
   {
-    title: "Seguridad",
+    titleKey: "security",
     url: "/dashboard/settings/security",
     icon: Shield,
   },
   {
-    title: "Datatable",
+    titleKey: "demoDataTable",
     url: "/dashboard/demo/table",
     icon: Table,
   },
@@ -81,9 +82,38 @@ interface AppSidebarProps {
   };
 }
 
-export function AppSidebar({ user }: AppSidebarProps) {
+function AppSidebarComponent({ user }: AppSidebarProps) {
   const pathname = usePathname();
+  const t = useTranslations("Navigation");
   const isAdmin = user.role === Role.ADMIN;
+
+  // Memoizar items de navegación con traducciones
+  const mainNavItems = useMemo(
+    () =>
+      mainNavItemsConfig.map((item) => ({
+        ...item,
+        title: t(item.titleKey),
+      })),
+    [t]
+  );
+
+  const adminNavItems = useMemo(
+    () =>
+      adminNavItemsConfig.map((item) => ({
+        ...item,
+        title: t(item.titleKey),
+      })),
+    [t]
+  );
+
+  const settingsNavItems = useMemo(
+    () =>
+      settingsNavItemsConfig.map((item) => ({
+        ...item,
+        title: t(item.titleKey),
+      })),
+    [t]
+  );
 
   return (
     <Sidebar collapsible="icon">
@@ -98,7 +128,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Nexus</span>
                   <span className="truncate text-xs text-muted-foreground">
-                    Dashboard
+                    {t("dashboard")}
                   </span>
                 </div>
               </Link>
@@ -109,7 +139,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navegación</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("home")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {mainNavItems.map((item) => (
@@ -132,7 +162,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 
         {isAdmin && (
           <SidebarGroup>
-            <SidebarGroupLabel>Administración</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("admin")}</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
                 {adminNavItems.map((item) => (
@@ -155,7 +185,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
         )}
 
         <SidebarGroup>
-          <SidebarGroupLabel>Cuenta</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("account")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {settingsNavItems.map((item) => (
@@ -185,3 +215,6 @@ export function AppSidebar({ user }: AppSidebarProps) {
     </Sidebar>
   );
 }
+
+export const AppSidebar = memo(AppSidebarComponent);
+AppSidebar.displayName = "AppSidebar";

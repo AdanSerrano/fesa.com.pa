@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
+import { memo, useState, useCallback } from "react";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import {
   ChevronsUpDown,
   LogOut,
@@ -45,18 +46,29 @@ interface NavUserProps {
   };
 }
 
-export function NavUser({ user }: NavUserProps) {
+function NavUserComponent({ user }: NavUserProps) {
   const { isMobile } = useSidebar();
+  const t = useTranslations("Navigation");
+  const tAuth = useTranslations("Auth");
+  const tCommon = useTranslations("Common");
+  // useState permitido para UI simple de dialog
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logoutAction();
-  };
+  }, []);
+
+  const handleOpenDialog = useCallback((e: Event) => {
+    e.preventDefault();
+    setShowConfirmDialog(true);
+  }, []);
 
   const userInitials =
     user.name?.charAt(0).toUpperCase() ||
     user.email?.charAt(0).toUpperCase() ||
     "U";
+
+  const userName = user.name || "User";
 
   return (
     <>
@@ -71,7 +83,7 @@ export function NavUser({ user }: NavUserProps) {
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
                     src={user.image || undefined}
-                    alt={user.name || "Usuario"}
+                    alt={userName}
                   />
                   <AvatarFallback className="rounded-lg">
                     {userInitials}
@@ -79,7 +91,7 @@ export function NavUser({ user }: NavUserProps) {
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
-                    {user.name || "Usuario"}
+                    {userName}
                   </span>
                   <span className="truncate text-xs text-muted-foreground">
                     {user.email}
@@ -99,7 +111,7 @@ export function NavUser({ user }: NavUserProps) {
                   <Avatar className="h-8 w-8 rounded-lg">
                     <AvatarImage
                       src={user.image || undefined}
-                      alt={user.name || "Usuario"}
+                      alt={userName}
                     />
                     <AvatarFallback className="rounded-lg">
                       {userInitials}
@@ -107,7 +119,7 @@ export function NavUser({ user }: NavUserProps) {
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">
-                      {user.name || "Usuario"}
+                      {userName}
                     </span>
                     <span className="truncate text-xs text-muted-foreground">
                       {user.email}
@@ -120,32 +132,29 @@ export function NavUser({ user }: NavUserProps) {
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/services" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    Mi cuenta
+                    {t("dashboard")}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings/profile" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
-                    Configuración
+                    {t("settings")}
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link href="/dashboard/settings/security" className="cursor-pointer">
                     <Shield className="mr-2 h-4 w-4" />
-                    Seguridad
+                    {t("security")}
                   </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 className="cursor-pointer text-destructive focus:text-destructive"
-                onSelect={(e) => {
-                  e.preventDefault();
-                  setShowConfirmDialog(true);
-                }}
+                onSelect={handleOpenDialog}
               >
                 <LogOut className="mr-2 h-4 w-4 text-destructive" />
-                Cerrar sesión
+                {t("logout")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -155,19 +164,18 @@ export function NavUser({ user }: NavUserProps) {
       <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>¿Cerrar sesión?</AlertDialogTitle>
+            <AlertDialogTitle>{tAuth("logoutConfirm")}</AlertDialogTitle>
             <AlertDialogDescription>
-              ¿Estás seguro de que deseas cerrar tu sesión? Tendrás que volver a
-              iniciar sesión para acceder a tu cuenta.
+              {tAuth("logoutDescription")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogCancel>{tCommon("cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogout}
               className="bg-destructive text-white hover:bg-destructive/90"
             >
-              Sí, cerrar sesión
+              {tCommon("yes")}, {t("logout").toLowerCase()}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -175,3 +183,6 @@ export function NavUser({ user }: NavUserProps) {
     </>
   );
 }
+
+export const NavUser = memo(NavUserComponent);
+NavUser.displayName = "NavUser";

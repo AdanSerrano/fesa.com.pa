@@ -1,4 +1,5 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,9 +13,13 @@ import { KeyRound, ArrowRight, User, Settings, Shield } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 import { currentUser } from "@/lib/user";
 import { ModeToggleWrapper } from "@/components/mode-toggle-wrapper";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { getTranslations } from "next-intl/server";
 
 export async function Header() {
   const user = await currentUser();
+  const t = await getTranslations("Header");
+  const tNav = await getTranslations("Navigation");
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
@@ -31,31 +36,32 @@ export async function Header() {
             href="#features"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            Características
+            {t("features")}
           </Link>
           <Link
             href="#tech"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            Tecnologías
+            {t("technologies")}
           </Link>
           <Link
             href="#benefits"
             className="text-sm text-muted-foreground transition-colors hover:text-foreground"
           >
-            Beneficios
+            {t("benefits")}
           </Link>
           {user && (
             <Link
               href="/dashboard/services"
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              Dashboard
+              {tNav("dashboard")}
             </Link>
           )}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <LocaleSwitcher compact />
           <ModeToggleWrapper />
           {user ? (
             <DropdownMenu>
@@ -82,22 +88,22 @@ export async function Header() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/services" className="cursor-pointer">
+                  <NextLink href="/dashboard/services" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
-                    Mi cuenta
-                  </Link>
+                    {t("myAccount")}
+                  </NextLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings/profile" className="cursor-pointer">
+                  <NextLink href="/dashboard/settings/profile" className="cursor-pointer">
                     <Settings className="mr-2 h-4 w-4" />
-                    Configuración
-                  </Link>
+                    {t("settings")}
+                  </NextLink>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/settings/security" className="cursor-pointer">
+                  <NextLink href="/dashboard/settings/security" className="cursor-pointer">
                     <Shield className="mr-2 h-4 w-4" />
-                    Seguridad - Auditoría
-                  </Link>
+                    {t("securityAudit")}
+                  </NextLink>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <LogoutButton />
@@ -106,11 +112,11 @@ export async function Header() {
           ) : (
             <>
               <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
-                <Link href="/login">Iniciar sesión</Link>
+                <Link href="/login">{t("login")}</Link>
               </Button>
               <Button size="sm" asChild>
                 <Link href="/register">
-                  Comenzar
+                  {t("getStarted")}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>

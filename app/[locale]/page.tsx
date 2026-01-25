@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/landing/header";
+import { setRequestLocale, getTranslations } from "next-intl/server";
+import type { Locale } from "@/i18n/routing";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -35,77 +37,80 @@ import {
   Shield,
 } from "lucide-react";
 
-const features = [
-  {
-    icon: UserCheck,
-    title: "Registro seguro",
-    description:
-      "Sistema de registro con validación de email y contraseñas seguras con indicador de fortaleza.",
-  },
-  {
-    icon: Mail,
-    title: "Verificación de email",
-    description:
-      "Flujo completo de verificación de correo electrónico con tokens seguros y reenvío automático.",
-  },
-  {
-    icon: Wand2,
-    title: "Magic Link",
-    description:
-      "Inicio de sesión sin contraseña mediante enlace seguro enviado por email.",
-  },
-  {
-    icon: Lock,
-    title: "Recuperación de contraseña",
-    description:
-      "Proceso seguro de recuperación con enlaces temporales y validación de tokens.",
-  },
-  {
-    icon: Smartphone,
-    title: "Autenticación 2FA",
-    description:
-      "Verificación en dos pasos mediante código OTP enviado por email para mayor seguridad.",
-  },
-  {
-    icon: Fingerprint,
-    title: "Gestión de sesiones",
-    description:
-      "Sesiones JWT con expiración configurable y protección de rutas automática.",
-  },
-  {
-    icon: Shield,
-    title: "Protección avanzada",
-    description:
-      "Rate limiting, bloqueo de cuentas por intentos fallidos y auditoría de accesos.",
-  },
-  {
-    icon: Cookie,
-    title: "Gestión de cookies GDPR",
-    description:
-      "Banner de consentimiento con preferencias personalizables: cookies necesarias, analíticas y funcionales.",
-  },
-];
+interface HomeProps {
+  params: Promise<{ locale: string }>;
+}
 
-const techStack = [
-  { name: "Next.js 16", description: "App Router + Turbopack" },
-  { name: "React 19", description: "Server Components" },
-  { name: "TypeScript", description: "Type-safe" },
-  { name: "Prisma", description: "ORM + PostgreSQL" },
-  { name: "Auth.js v5", description: "NextAuth Beta" },
-  { name: "Tailwind CSS", description: "shadcn/ui" },
-];
+export default async function Home({ params }: HomeProps) {
+  const { locale } = await params;
+  setRequestLocale(locale as Locale);
 
-const benefits = [
-  "Arquitectura limpia y modular",
-  "Validación con Zod en cliente y servidor",
-  "Emails transaccionales con React Email",
-  "Soporte para dark/light mode",
-  "Diseño responsive mobile-first",
-  "Cumplimiento GDPR con gestión de cookies",
-  "Listo para producción",
-];
+  const t = await getTranslations("HomePage");
+  const tAuth = await getTranslations("Auth");
+  const tCommon = await getTranslations("Common");
 
-export default function Home() {
+  const features = [
+    {
+      icon: UserCheck,
+      title: t("features.secureRegistration"),
+      description: t("features.secureRegistrationDesc"),
+    },
+    {
+      icon: Mail,
+      title: t("features.emailVerification"),
+      description: t("features.emailVerificationDesc"),
+    },
+    {
+      icon: Wand2,
+      title: t("features.magicLink"),
+      description: t("features.magicLinkDesc"),
+    },
+    {
+      icon: Lock,
+      title: t("features.passwordRecovery"),
+      description: t("features.passwordRecoveryDesc"),
+    },
+    {
+      icon: Smartphone,
+      title: t("features.twoFactorAuth"),
+      description: t("features.twoFactorAuthDesc"),
+    },
+    {
+      icon: Fingerprint,
+      title: t("features.sessionManagement"),
+      description: t("features.sessionManagementDesc"),
+    },
+    {
+      icon: Shield,
+      title: t("features.advancedProtection"),
+      description: t("features.advancedProtectionDesc"),
+    },
+    {
+      icon: Cookie,
+      title: t("features.cookieManagement"),
+      description: t("features.cookieManagementDesc"),
+    },
+  ];
+
+  const techStack = [
+    { name: t("techStack.nextjs"), description: t("techStack.nextjsDesc") },
+    { name: t("techStack.react"), description: t("techStack.reactDesc") },
+    { name: t("techStack.typescript"), description: t("techStack.typescriptDesc") },
+    { name: t("techStack.prisma"), description: t("techStack.prismaDesc") },
+    { name: t("techStack.authjs"), description: t("techStack.authjsDesc") },
+    { name: t("techStack.tailwind"), description: t("techStack.tailwindDesc") },
+  ];
+
+  const benefits = [
+    t("benefits.cleanArchitecture"),
+    t("benefits.zodValidation"),
+    t("benefits.transactionalEmails"),
+    t("benefits.darkLightMode"),
+    t("benefits.responsiveDesign"),
+    t("benefits.gdprCompliance"),
+    t("benefits.productionReady"),
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -121,23 +126,22 @@ export default function Home() {
               <AnimatedSection animation="fade-down" delay={0}>
                 <Badge variant="secondary" className="mb-4">
                   <Sparkles className="mr-1 h-3 w-3" />
-                  Next.js 16 + Auth.js v5
+                  {t("badge")}
                 </Badge>
               </AnimatedSection>
 
               <AnimatedSection animation="fade-up" delay={100}>
                 <h1 className="mb-4 sm:mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">
-                  Sistema de autenticación{" "}
-                  <span className="from-gray-100 to-gray-200 bg-clip-text  text-muted-foreground">
-                    completo y seguro
+                  {t("title")}{" "}
+                  <span className="from-gray-100 to-gray-200 bg-clip-text text-muted-foreground">
+                    {t("titleHighlight")}
                   </span>
                 </h1>
               </AnimatedSection>
 
               <AnimatedSection animation="fade-up" delay={200}>
                 <p className="mb-6 sm:mb-8 text-base sm:text-lg text-muted-foreground md:text-xl px-2">
-                  Boilerplate de autenticación production-ready con arquitectura limpia,
-                  verificación de email, 2FA, gestión de cookies GDPR y mucho más.
+                  {t("subtitle")}
                 </p>
               </AnimatedSection>
 
@@ -165,14 +169,13 @@ export default function Home() {
             <AnimatedSection animation="fade-up" delay={0}>
               <div className="mx-auto max-w-2xl text-center">
                 <Badge variant="outline" className="mb-4">
-                  Características
+                  {t("featuresSection.badge")}
                 </Badge>
                 <h2 className="mb-4 text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl">
-                  Todo lo que necesitas para autenticación
+                  {t("featuresSection.title")}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  Funcionalidades completas de autenticación implementadas siguiendo
-                  las mejores prácticas de seguridad.
+                  {t("featuresSection.subtitle")}
                 </p>
               </div>
             </AnimatedSection>
@@ -205,13 +208,13 @@ export default function Home() {
               <div className="mx-auto max-w-2xl text-center">
                 <Badge variant="outline" className="mb-4">
                   <Code2 className="mr-1 h-3 w-3" />
-                  Stack tecnológico
+                  {t("techSection.badge")}
                 </Badge>
                 <h2 className="mb-4 text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl">
-                  Construido con las mejores tecnologías
+                  {t("techSection.title")}
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground">
-                  Stack moderno y actualizado para desarrollo rápido y mantenible.
+                  {t("techSection.subtitle")}
                 </p>
               </div>
             </AnimatedSection>
@@ -247,14 +250,13 @@ export default function Home() {
                 <AnimatedSection animation="fade-right" delay={0}>
                   <Badge variant="outline" className="mb-4">
                     <Layers className="mr-1 h-3 w-3" />
-                    Arquitectura
+                    {t("benefitsSection.badge")}
                   </Badge>
                   <h2 className="mb-4 text-2xl sm:text-3xl font-bold tracking-tight md:text-4xl">
-                    Código limpio y escalable
+                    {t("benefitsSection.title")}
                   </h2>
                   <p className="mb-6 sm:mb-8 text-sm sm:text-base text-muted-foreground">
-                    Arquitectura modular con separación de responsabilidades clara.
-                    Cada módulo es independiente y fácil de mantener o extender.
+                    {t("benefitsSection.subtitle")}
                   </p>
                 </AnimatedSection>
 
@@ -318,11 +320,10 @@ export default function Home() {
             <AnimatedSection animation="slide-up" delay={0}>
               <div className="mx-auto max-w-3xl rounded-2xl border from-primary/5 via-background to-primary/5 p-6 sm:p-8 text-center shadow-lg md:p-12">
                 <h2 className="mb-3 sm:mb-4 text-xl sm:text-2xl font-bold md:text-3xl">
-                  Comienza a construir hoy
+                  {t("ctaSection.title")}
                 </h2>
                 <p className="mb-6 sm:mb-8 text-sm sm:text-base text-muted-foreground">
-                  Crea tu cuenta y explora todas las funcionalidades del sistema de
-                  autenticación.
+                  {t("ctaSection.subtitle")}
                 </p>
                 <CtaButtons />
               </div>
@@ -344,18 +345,18 @@ export default function Home() {
 
             <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
               <Link href="/login" className="transition-colors hover:text-foreground">
-                Iniciar sesión
+                {tAuth("login")}
               </Link>
               <Link href="/register" className="transition-colors hover:text-foreground">
-                Registrarse
+                {tAuth("register")}
               </Link>
               <Link href="/forgot-password" className="transition-colors hover:text-foreground">
-                Recuperar contraseña
+                {tAuth("recoverPassword")}
               </Link>
             </nav>
 
             <p className="text-xs sm:text-sm text-muted-foreground">
-              {new Date().getFullYear()} Nexus. Todos los derechos reservados.
+              {new Date().getFullYear()} Nexus. {tCommon("allRightsReserved")}.
             </p>
           </div>
         </div>

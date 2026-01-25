@@ -1,0 +1,222 @@
+{
+  "Metadata": {
+    "title": "Nexus - Authentication System",
+    "description": "Complete and secure authentication system with email verification, two-factor authentication (2FA), password recovery, and modular architecture."
+  },
+  "Common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "close": "Close",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit",
+    "yes": "Yes",
+    "no": "No",
+    "allRightsReserved": "All rights reserved"
+  },
+  "Header": {
+    "features": "Features",
+    "technologies": "Technologies",
+    "benefits": "Benefits",
+    "login": "Login",
+    "getStarted": "Get Started",
+    "myAccount": "My Account",
+    "settings": "Settings",
+    "securityAudit": "Security - Audit"
+  },
+  "Navigation": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "services": "Services",
+    "settings": "Settings",
+    "profile": "Profile",
+    "security": "Security",
+    "admin": "Administration",
+    "users": "Users",
+    "contact": "Contact",
+    "logout": "Logout",
+    "account": "Account",
+    "demoDataTable": "Demo DataTable",
+    "usersManagement": "User Management"
+  },
+  "Auth": {
+    "login": "Login",
+    "register": "Register",
+    "forgotPassword": "Forgot your password?",
+    "resetPassword": "Reset password",
+    "recoverPassword": "Recover password",
+    "verifyEmail": "Verify email",
+    "resendVerification": "Resend verification",
+    "magicLink": "Magic link",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "name": "Name",
+    "rememberMe": "Remember me",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "orContinueWith": "Or continue with",
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful. Check your email to verify your account.",
+    "logoutSuccess": "Logged out successfully",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutDescription": "Your current session will be closed.",
+    "invalidCredentials": "Invalid credentials",
+    "emailNotVerified": "Your email has not been verified",
+    "accountBlocked": "Your account has been blocked",
+    "twoFactorRequired": "Two-factor authentication required",
+    "twoFactorCode": "Verification code",
+    "enterTwoFactorCode": "Enter the code from your authenticator app"
+  },
+  "HomePage": {
+    "badge": "Next.js 16 + Auth.js v5",
+    "title": "Authentication system",
+    "titleHighlight": "complete and secure",
+    "subtitle": "Production-ready authentication boilerplate with clean architecture, email verification, 2FA, GDPR cookie management, and much more.",
+    "getStarted": "Get Started",
+    "viewDemo": "View Demo",
+    "learnMore": "Learn More",
+    "featuresSection": {
+      "badge": "Features",
+      "title": "Everything you need for authentication",
+      "subtitle": "Complete authentication features implemented following security best practices."
+    },
+    "techSection": {
+      "badge": "Tech Stack",
+      "title": "Built with the best technologies",
+      "subtitle": "Modern and up-to-date stack for fast and maintainable development."
+    },
+    "benefitsSection": {
+      "badge": "Architecture",
+      "title": "Clean and scalable code",
+      "subtitle": "Modular architecture with clear separation of concerns. Each module is independent and easy to maintain or extend.",
+      "button": "View Code"
+    },
+    "ctaSection": {
+      "title": "Start building today",
+      "subtitle": "Create your account and explore all the features of the authentication system."
+    },
+    "features": {
+      "secureRegistration": "Secure Registration",
+      "secureRegistrationDesc": "Registration system with email validation and secure passwords with strength indicator.",
+      "emailVerification": "Email Verification",
+      "emailVerificationDesc": "Complete email verification flow with secure tokens and automatic resending.",
+      "magicLink": "Magic Link",
+      "magicLinkDesc": "Passwordless login through secure link sent by email.",
+      "passwordRecovery": "Password Recovery",
+      "passwordRecoveryDesc": "Secure recovery process with temporary links and token validation.",
+      "twoFactorAuth": "2FA Authentication",
+      "twoFactorAuthDesc": "Two-step verification via OTP code sent by email for enhanced security.",
+      "sessionManagement": "Session Management",
+      "sessionManagementDesc": "JWT sessions with configurable expiration and automatic route protection.",
+      "advancedProtection": "Advanced Protection",
+      "advancedProtectionDesc": "Rate limiting, account lockout for failed attempts, and access auditing.",
+      "cookieManagement": "GDPR Cookie Management",
+      "cookieManagementDesc": "Consent banner with customizable preferences: necessary, analytics, and functional cookies."
+    },
+    "techStack": {
+      "nextjs": "Next.js 16",
+      "nextjsDesc": "App Router + Turbopack",
+      "react": "React 19",
+      "reactDesc": "Server Components",
+      "typescript": "TypeScript",
+      "typescriptDesc": "Type-safe",
+      "prisma": "Prisma",
+      "prismaDesc": "ORM + PostgreSQL",
+      "authjs": "Auth.js v5",
+      "authjsDesc": "NextAuth Beta",
+      "tailwind": "Tailwind CSS",
+      "tailwindDesc": "shadcn/ui"
+    },
+    "benefits": {
+      "cleanArchitecture": "Clean and modular architecture",
+      "zodValidation": "Zod validation on client and server",
+      "transactionalEmails": "Transactional emails with React Email",
+      "darkLightMode": "Dark/light mode support",
+      "responsiveDesign": "Mobile-first responsive design",
+      "gdprCompliance": "GDPR compliance with cookie management",
+      "productionReady": "Production ready"
+    }
+  },
+  "Dashboard": {
+    "welcome": "Welcome, {name}",
+    "overview": "Overview",
+    "recentActivity": "Recent Activity",
+    "statistics": "Statistics",
+    "quickActions": "Quick Actions"
+  },
+  "Settings": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile",
+      "description": "Manage your personal information",
+      "avatar": "Avatar",
+      "changeAvatar": "Change avatar",
+      "displayName": "Display name",
+      "bio": "Bio",
+      "updateSuccess": "Profile updated successfully"
+    },
+    "security": {
+      "title": "Security",
+      "description": "Manage your password and authentication",
+      "changePassword": "Change password",
+      "currentPassword": "Current password",
+      "newPassword": "New password",
+      "enable2FA": "Enable 2FA",
+      "disable2FA": "Disable 2FA",
+      "activeSessions": "Active sessions",
+      "revokeSession": "Revoke session",
+      "passwordChanged": "Password changed successfully"
+    }
+  },
+  "Admin": {
+    "title": "Administration",
+    "users": {
+      "title": "User Management",
+      "description": "Manage system users",
+      "totalUsers": "Total users",
+      "activeUsers": "Active users",
+      "blockedUsers": "Blocked users",
+      "newUsers": "New users",
+      "actions": {
+        "block": "Block",
+        "unblock": "Unblock",
+        "delete": "Delete",
+        "resetPassword": "Reset password",
+        "viewDetails": "View details"
+      }
+    }
+  },
+  "Errors": {
+    "generic": "An error occurred. Please try again.",
+    "notFound": "Page not found",
+    "notFoundDescription": "Sorry, we couldn't find the page you're looking for.",
+    "goHome": "Go back home",
+    "unauthorized": "Unauthorized",
+    "forbidden": "Access denied",
+    "serverError": "Server error",
+    "networkError": "Connection error",
+    "validationError": "Validation error",
+    "sessionExpired": "Your session has expired. Please login again.",
+    "rateLimited": "Too many attempts. Please wait a moment."
+  },
+  "Validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "minLength": "Minimum {min} characters",
+    "maxLength": "Maximum {max} characters",
+    "passwordMismatch": "Passwords do not match",
+    "passwordWeak": "Password is too weak"
+  }
+}

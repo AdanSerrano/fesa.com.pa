@@ -8,6 +8,7 @@ import { CookieConsentWrapper } from "@/components/cookie-consent/cookie-consent
 import { SessionGuard } from "@/components/auth/session-guard";
 import { ThemeProvider } from "@/components/theme-provider";
 import { RootJsonLd } from "@/lib/seo/json-ld";
+import { getLocale } from "next-intl/server";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -148,9 +149,10 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const locale = await getLocale();
 
   return (
-    <html lang="es" suppressHydrationWarning>
+    <html lang={locale} suppressHydrationWarning>
       <head>
         {/* DNS Prefetch para conexiones más rápidas */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />

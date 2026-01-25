@@ -1,6 +1,8 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { memo, useMemo } from "react";
+import { usePathname } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import {
@@ -12,19 +14,28 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ModeToggleWrapper } from "../mode-toggle-wrapper";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 
-const routeLabels: Record<string, string> = {
-  "/dashboard/services": "Panel",
-  "/dashboard/settings/profile": "Configuración",
-  "/dashboard/settings/security": "Seguridad",
-  "/dashboard/admin/users": "Gestión de Usuarios",
-  "/dashboard/demo/table": "Demo DataTable",
-};
-
-export function DashboardHeader() {
+function DashboardHeaderComponent() {
   const pathname = usePathname();
+  const t = useTranslations("Navigation");
 
-  const currentLabel = routeLabels[pathname] || "Dashboard";
+  // Memoizar las etiquetas de ruta traducidas
+  const routeLabels = useMemo(
+    () => ({
+      "/dashboard/services": t("dashboard"),
+      "/dashboard/settings/profile": t("settings"),
+      "/dashboard/settings/security": t("security"),
+      "/dashboard/admin/users": t("usersManagement"),
+      "/dashboard/demo/table": t("demoDataTable"),
+    }),
+    [t]
+  );
+
+  const currentLabel = useMemo(() => {
+    return routeLabels[pathname as keyof typeof routeLabels] || t("dashboard");
+  }, [pathname, routeLabels, t]);
+
   const isSettingsPage = pathname.startsWith("/dashboard/settings");
   const isAdminPage = pathname.startsWith("/dashboard/admin");
 
@@ -35,14 +46,14 @@ export function DashboardHeader() {
       <Breadcrumb className="flex-1">
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
-            <BreadcrumbLink href="/dashboard/services">Dashboard</BreadcrumbLink>
+            <BreadcrumbLink href="/dashboard/services">{t("dashboard")}</BreadcrumbLink>
           </BreadcrumbItem>
           {isSettingsPage && (
             <>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="/dashboard/settings/profile">
-                  Cuenta
+                  {t("account")}
                 </BreadcrumbLink>
               </BreadcrumbItem>
             </>
@@ -52,7 +63,7 @@ export function DashboardHeader() {
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="/dashboard/admin/users">
-                  Administración
+                  {t("admin")}
                 </BreadcrumbLink>
               </BreadcrumbItem>
             </>
@@ -61,7 +72,8 @@ export function DashboardHeader() {
           <BreadcrumbItem>
             <BreadcrumbPage>{currentLabel}</BreadcrumbPage>
           </BreadcrumbItem>
-          <BreadcrumbItem className="ml-auto">
+          <BreadcrumbItem className="ml-auto flex items-center gap-2">
+            <LocaleSwitcher compact />
             <ModeToggleWrapper />
           </BreadcrumbItem>
         </BreadcrumbList>
@@ -69,3 +81,6 @@ export function DashboardHeader() {
     </header>
   );
 }
+
+export const DashboardHeader = memo(DashboardHeaderComponent);
+DashboardHeader.displayName = "DashboardHeader";

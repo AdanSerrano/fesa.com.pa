@@ -1,0 +1,222 @@
+{
+  "Metadata": {
+    "title": "Nexus - Sistema de Autenticación",
+    "description": "Sistema de autenticación completo y seguro con verificación de email, autenticación de dos factores (2FA), recuperación de contraseña y arquitectura modular."
+  },
+  "Common": {
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "filter": "Filtrar",
+    "clear": "Limpiar",
+    "close": "Cerrar",
+    "back": "Volver",
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "submit": "Enviar",
+    "yes": "Sí",
+    "no": "No",
+    "allRightsReserved": "Todos los derechos reservados"
+  },
+  "Header": {
+    "features": "Características",
+    "technologies": "Tecnologías",
+    "benefits": "Beneficios",
+    "login": "Iniciar sesión",
+    "getStarted": "Comenzar",
+    "myAccount": "Mi cuenta",
+    "settings": "Configuración",
+    "securityAudit": "Seguridad - Auditoría"
+  },
+  "Navigation": {
+    "home": "Inicio",
+    "dashboard": "Panel",
+    "services": "Servicios",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "security": "Seguridad",
+    "admin": "Administración",
+    "users": "Usuarios",
+    "contact": "Contacto",
+    "logout": "Cerrar sesión",
+    "account": "Cuenta",
+    "demoDataTable": "Demo DataTable",
+    "usersManagement": "Gestión de Usuarios"
+  },
+  "Auth": {
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetPassword": "Restablecer contraseña",
+    "recoverPassword": "Recuperar contraseña",
+    "verifyEmail": "Verificar email",
+    "resendVerification": "Reenviar verificación",
+    "magicLink": "Enlace mágico",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "name": "Nombre",
+    "rememberMe": "Recordarme",
+    "noAccount": "¿No tienes cuenta?",
+    "hasAccount": "¿Ya tienes cuenta?",
+    "orContinueWith": "O continuar con",
+    "loginSuccess": "Inicio de sesión exitoso",
+    "registerSuccess": "Registro exitoso. Revisa tu correo para verificar tu cuenta.",
+    "logoutSuccess": "Sesión cerrada exitosamente",
+    "logoutConfirm": "¿Estás seguro que deseas cerrar sesión?",
+    "logoutDescription": "Tu sesión actual será cerrada.",
+    "invalidCredentials": "Credenciales inválidas",
+    "emailNotVerified": "Tu email no ha sido verificado",
+    "accountBlocked": "Tu cuenta ha sido bloqueada",
+    "twoFactorRequired": "Se requiere autenticación de dos factores",
+    "twoFactorCode": "Código de verificación",
+    "enterTwoFactorCode": "Ingresa el código de tu aplicación de autenticación"
+  },
+  "HomePage": {
+    "badge": "Next.js 16 + Auth.js v5",
+    "title": "Sistema de autenticación",
+    "titleHighlight": "completo y seguro",
+    "subtitle": "Boilerplate de autenticación production-ready con arquitectura limpia, verificación de email, 2FA, gestión de cookies GDPR y mucho más.",
+    "getStarted": "Comenzar",
+    "viewDemo": "Ver demo",
+    "learnMore": "Más información",
+    "featuresSection": {
+      "badge": "Características",
+      "title": "Todo lo que necesitas para autenticación",
+      "subtitle": "Funcionalidades completas de autenticación implementadas siguiendo las mejores prácticas de seguridad."
+    },
+    "techSection": {
+      "badge": "Stack tecnológico",
+      "title": "Construido con las mejores tecnologías",
+      "subtitle": "Stack moderno y actualizado para desarrollo rápido y mantenible."
+    },
+    "benefitsSection": {
+      "badge": "Arquitectura",
+      "title": "Código limpio y escalable",
+      "subtitle": "Arquitectura modular con separación de responsabilidades clara. Cada módulo es independiente y fácil de mantener o extender.",
+      "button": "Ver código"
+    },
+    "ctaSection": {
+      "title": "Comienza a construir hoy",
+      "subtitle": "Crea tu cuenta y explora todas las funcionalidades del sistema de autenticación."
+    },
+    "features": {
+      "secureRegistration": "Registro seguro",
+      "secureRegistrationDesc": "Sistema de registro con validación de email y contraseñas seguras con indicador de fortaleza.",
+      "emailVerification": "Verificación de email",
+      "emailVerificationDesc": "Flujo completo de verificación de correo electrónico con tokens seguros y reenvío automático.",
+      "magicLink": "Magic Link",
+      "magicLinkDesc": "Inicio de sesión sin contraseña mediante enlace seguro enviado por email.",
+      "passwordRecovery": "Recuperación de contraseña",
+      "passwordRecoveryDesc": "Proceso seguro de recuperación con enlaces temporales y validación de tokens.",
+      "twoFactorAuth": "Autenticación 2FA",
+      "twoFactorAuthDesc": "Verificación en dos pasos mediante código OTP enviado por email para mayor seguridad.",
+      "sessionManagement": "Gestión de sesiones",
+      "sessionManagementDesc": "Sesiones JWT con expiración configurable y protección de rutas automática.",
+      "advancedProtection": "Protección avanzada",
+      "advancedProtectionDesc": "Rate limiting, bloqueo de cuentas por intentos fallidos y auditoría de accesos.",
+      "cookieManagement": "Gestión de cookies GDPR",
+      "cookieManagementDesc": "Banner de consentimiento con preferencias personalizables: cookies necesarias, analíticas y funcionales."
+    },
+    "techStack": {
+      "nextjs": "Next.js 16",
+      "nextjsDesc": "App Router + Turbopack",
+      "react": "React 19",
+      "reactDesc": "Server Components",
+      "typescript": "TypeScript",
+      "typescriptDesc": "Type-safe",
+      "prisma": "Prisma",
+      "prismaDesc": "ORM + PostgreSQL",
+      "authjs": "Auth.js v5",
+      "authjsDesc": "NextAuth Beta",
+      "tailwind": "Tailwind CSS",
+      "tailwindDesc": "shadcn/ui"
+    },
+    "benefits": {
+      "cleanArchitecture": "Arquitectura limpia y modular",
+      "zodValidation": "Validación con Zod en cliente y servidor",
+      "transactionalEmails": "Emails transaccionales con React Email",
+      "darkLightMode": "Soporte para dark/light mode",
+      "responsiveDesign": "Diseño responsive mobile-first",
+      "gdprCompliance": "Cumplimiento GDPR con gestión de cookies",
+      "productionReady": "Listo para producción"
+    }
+  },
+  "Dashboard": {
+    "welcome": "Bienvenido, {name}",
+    "overview": "Resumen",
+    "recentActivity": "Actividad reciente",
+    "statistics": "Estadísticas",
+    "quickActions": "Acciones rápidas"
+  },
+  "Settings": {
+    "title": "Configuración",
+    "profile": {
+      "title": "Perfil",
+      "description": "Administra tu información personal",
+      "avatar": "Avatar",
+      "changeAvatar": "Cambiar avatar",
+      "displayName": "Nombre para mostrar",
+      "bio": "Biografía",
+      "updateSuccess": "Perfil actualizado exitosamente"
+    },
+    "security": {
+      "title": "Seguridad",
+      "description": "Administra tu contraseña y autenticación",
+      "changePassword": "Cambiar contraseña",
+      "currentPassword": "Contraseña actual",
+      "newPassword": "Nueva contraseña",
+      "enable2FA": "Habilitar 2FA",
+      "disable2FA": "Deshabilitar 2FA",
+      "activeSessions": "Sesiones activas",
+      "revokeSession": "Revocar sesión",
+      "passwordChanged": "Contraseña actualizada exitosamente"
+    }
+  },
+  "Admin": {
+    "title": "Administración",
+    "users": {
+      "title": "Gestión de Usuarios",
+      "description": "Administra los usuarios del sistema",
+      "totalUsers": "Total de usuarios",
+      "activeUsers": "Usuarios activos",
+      "blockedUsers": "Usuarios bloqueados",
+      "newUsers": "Nuevos usuarios",
+      "actions": {
+        "block": "Bloquear",
+        "unblock": "Desbloquear",
+        "delete": "Eliminar",
+        "resetPassword": "Restablecer contraseña",
+        "viewDetails": "Ver detalles"
+      }
+    }
+  },
+  "Errors": {
+    "generic": "Ha ocurrido un error. Por favor, inténtalo de nuevo.",
+    "notFound": "Página no encontrada",
+    "notFoundDescription": "Lo sentimos, no pudimos encontrar la página que buscas.",
+    "goHome": "Volver al inicio",
+    "unauthorized": "No autorizado",
+    "forbidden": "Acceso denegado",
+    "serverError": "Error del servidor",
+    "networkError": "Error de conexión",
+    "validationError": "Error de validación",
+    "sessionExpired": "Tu sesión ha expirado. Por favor, inicia sesión de nuevo.",
+    "rateLimited": "Demasiados intentos. Por favor, espera un momento."
+  },
+  "Validation": {
+    "required": "Este campo es requerido",
+    "email": "Ingresa un email válido",
+    "minLength": "Mínimo {min} caracteres",
+    "maxLength": "Máximo {max} caracteres",
+    "passwordMismatch": "Las contraseñas no coinciden",
+    "passwordWeak": "La contraseña es muy débil"
+  }
+}

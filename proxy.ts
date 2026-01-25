@@ -8,10 +8,12 @@
  * - Sistema de alertas
  * - Detección de ataques
  * - Bloqueo automático de IPs maliciosas
+ * - Internacionalización con next-intl
  */
 
 import NextAuth from "next-auth";
 import { NextResponse, type NextRequest } from "next/server";
+import createIntlMiddleware from "next-intl/middleware";
 import authConfig from "./auth.config";
 import {
   DEFAULT_LOGIN_REDIRECT,
@@ -19,6 +21,7 @@ import {
   authRoutes,
   publicRoutes,
 } from "./routes";
+import { routing } from "./i18n/routing";
 
 // ============================================================================
 // IMPORTACIÓN DINÁMICA DE SERVICIOS DE SEGURIDAD
@@ -202,11 +205,40 @@ if (typeof setInterval !== "undefined") {
 }
 
 // ============================================================================
-// FUNCIONES DE ROUTING
+// MIDDLEWARE DE INTERNACIONALIZACIÓN
 // ============================================================================
 
-const isPublicRoute = (pathname: string): boolean => publicRoutes.includes(pathname);
-const isAuthRoute = (pathname: string): boolean => authRoutes.includes(pathname);
+const intlMiddleware = createIntlMiddleware(routing);
+
+// ============================================================================
+// FUNCIONES DE ROUTING (con soporte para locales)
+// ============================================================================
+
+/**
+ * Extrae el pathname sin el prefijo de locale
+ * Ej: /en/dashboard -> /dashboard, /es/login -> /login, /dashboard -> /dashboard
+ */
+function getPathnameWithoutLocale(pathname: string): string {
+  const localePrefix = routing.locales.find(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
+  );
+  if (localePrefix) {
+    const pathnameWithoutLocale = pathname.slice(`/${localePrefix}`.length) || "/";
+    return pathnameWithoutLocale;
+  }
+  return pathname;
+}
+
+const isPublicRoute = (pathname: string): boolean => {
+  const cleanPath = getPathnameWithoutLocale(pathname);
+  return publicRoutes.includes(cleanPath);
+};
+
+const isAuthRoute = (pathname: string): boolean => {
+  const cleanPath = getPathnameWithoutLocale(pathname);
+  return authRoutes.includes(cleanPath);
+};
+
 const isApiAuthRoute = (pathname: string): boolean => pathname.startsWith(apiAuthPrefix);
 const isApiRoute = (pathname: string): boolean => pathname.startsWith("/api/");
 const isHealthRoute = (pathname: string): boolean => pathname === "/api/health";
@@ -332,18 +364,17 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
   // 3. ROUTING DE AUTENTICACIÓN
   // ========================================================================
 
-  // Rutas de API de autenticación - permitir siempre
+  // Rutas de API de autenticación - permitir siempre (sin i18n)
   if (isApiAuthRoute(pathname)) {
     return NextResponse.next();
   }
 
-  // Rutas públicas - permitir siempre
+  // Rutas públicas - aplicar i18n y permitir
   if (isPublicRoute(pathname)) {
-    return NextResponse.next();
+    // Continuar al paso de i18n al final
   }
-
   // Rutas de autenticación (login, register, etc.)
-  if (isAuthRoute(pathname)) {
+  else if (isAuthRoute(pathname)) {
     if (isLoggedIn) {
       const callbackUrl = nextUrl.searchParams.get("callbackUrl");
       const redirectUrl =
@@ -361,11 +392,10 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
 
       return Response.redirect(new URL(redirectUrl, nextUrl.origin));
     }
-    return NextResponse.next();
+    // Continuar al paso de i18n al final
   }
-
   // Rutas protegidas - requieren autenticación
-  if (!isLoggedIn) {
+  else if (!isLoggedIn) {
     const loginUrl = new URL("/login", nextUrl.origin);
     if (!isAuthRoute(pathname) && !isPublicRoute(pathname)) {
       loginUrl.searchParams.set("callbackUrl", pathname);
@@ -382,10 +412,13 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
   }
 
   // ========================================================================
-  // 4. HEADERS DE RESPUESTA
+  // 4. INTERNACIONALIZACIÓN + HEADERS DE RESPUESTA
   // ========================================================================
 
-  const response = NextResponse.next();
+  // Aplicar middleware de i18n para rutas que no son API
+  const response = isApiRoute(pathname)
+    ? NextResponse.next()
+    : intlMiddleware(req);
 
   // Request ID para trazabilidad
   response.headers.set("X-Request-ID", requestId);

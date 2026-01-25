@@ -1,11 +1,14 @@
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Github, LayoutDashboard, Settings, CheckCircle2 } from "lucide-react";
+import { ArrowRight, Github, LayoutDashboard, Settings } from "lucide-react";
 import { auth } from "@/auth";
+import { getTranslations } from "next-intl/server";
 
 export async function CtaButtons() {
   const session = await auth();
   const isLoggedIn = !!session?.user;
+  const t = await getTranslations("HomePage");
+  const tNav = await getTranslations("Navigation");
 
   if (isLoggedIn) {
     return (
@@ -13,13 +16,13 @@ export async function CtaButtons() {
         <Button size="lg" asChild>
           <Link href="/dashboard/services">
             <LayoutDashboard className="mr-2 h-4 w-4" />
-            Ir al panel
+            {tNav("dashboard")}
           </Link>
         </Button>
         <Button variant="outline" size="lg" asChild>
           <Link href="/dashboard/settings/profile">
             <Settings className="mr-2 h-4 w-4" />
-            Configuración
+            {tNav("settings")}
           </Link>
         </Button>
       </div>
@@ -30,7 +33,7 @@ export async function CtaButtons() {
     <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
       <Button size="lg" asChild>
         <Link href="/register">
-          Crear cuenta gratis
+          {t("getStarted")}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Link>
       </Button>
@@ -41,7 +44,7 @@ export async function CtaButtons() {
           rel="noopener noreferrer"
         >
           <Github className="mr-2 h-4 w-4" />
-          Ver en GitHub
+          GitHub
         </Link>
       </Button>
     </div>
@@ -51,13 +54,15 @@ export async function CtaButtons() {
 export async function BenefitsButton() {
   const session = await auth();
   const isLoggedIn = !!session?.user;
+  const t = await getTranslations("HomePage");
+  const tNav = await getTranslations("Navigation");
 
   if (isLoggedIn) {
     return (
       <Button asChild>
         <Link href="/dashboard/services">
           <LayoutDashboard className="mr-2 h-4 w-4" />
-          Ir al panel
+          {tNav("dashboard")}
         </Link>
       </Button>
     );
@@ -66,7 +71,7 @@ export async function BenefitsButton() {
   return (
     <Button asChild>
       <Link href="/register">
-        Empezar ahora
+        {t("getStarted")}
         <ArrowRight className="ml-2 h-4 w-4" />
       </Link>
     </Button>
