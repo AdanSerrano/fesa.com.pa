@@ -230,7 +230,7 @@ const FileManagerClientComponent = ({
   const toolbarLabels = useMemo(() => ({
     refresh: t("refresh"),
     createFolder: t("createFolder"),
-    uploadFile: t("uploadFile"),
+    uploadFiles: t("uploadFiles"),
     folderNamePlaceholder: t("folderNamePlaceholder"),
     creating: t("creating"),
     uploading: t("uploading"),
@@ -608,7 +608,7 @@ const FileManagerClientComponent = ({
                   isPending={isPending}
                   onRefresh={handleRefresh}
                   onCreateFolder={handleCreateFolder}
-                  onUploadFile={(file) => handleUploadFiles([file])}
+                  onUploadFiles={handleUploadFiles}
                 />
               </div>
 

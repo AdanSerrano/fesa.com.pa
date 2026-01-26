@@ -23,7 +23,7 @@ import { toast } from "sonner";
 interface FileManagerToolbarLabels {
   refresh: string;
   createFolder: string;
-  uploadFile: string;
+  uploadFiles: string;
   folderNamePlaceholder: string;
   creating: string;
   uploading: string;
@@ -38,7 +38,7 @@ interface FileManagerToolbarProps {
   isPending: boolean;
   onRefresh: () => void;
   onCreateFolder: (name: string) => Promise<void>;
-  onUploadFile: (file: File) => Promise<void>;
+  onUploadFiles: (files: File[]) => void;
 }
 
 type DialogState = { isOpen: boolean };
@@ -60,12 +60,11 @@ const FileManagerToolbarComponent = ({
   isPending,
   onRefresh,
   onCreateFolder,
-  onUploadFile,
+  onUploadFiles,
 }: FileManagerToolbarProps) => {
   const folderInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isCreating, startCreateTransition] = useTransition();
-  const [isUploading, startUploadTransition] = useTransition();
   const [dialogState, dispatchDialog] = useReducer(dialogReducer, { isOpen: false });
 
   const handleOpenDialog = useCallback(() => {
@@ -94,24 +93,24 @@ const FileManagerToolbarComponent = ({
 
   const handleFileChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+      const files = e.target.files;
+      if (!files || files.length === 0) return;
 
-      startUploadTransition(async () => {
-        await onUploadFile(file);
-        if (fileInputRef.current) {
-          fileInputRef.current.value = "";
-        }
-      });
+      const fileArray = Array.from(files);
+      onUploadFiles(fileArray);
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
     },
-    [onUploadFile]
+    [onUploadFiles]
   );
 
   const handleUploadClick = useCallback(() => {
     fileInputRef.current?.click();
   }, []);
 
-  const isDisabled = isPending || isCreating || isUploading;
+  const isDisabled = isPending || isCreating;
 
   return (
     <>
@@ -142,6 +141,7 @@ const FileManagerToolbarComponent = ({
           <input
             ref={fileInputRef}
             type="file"
+            multiple
             className="hidden"
             onChange={handleFileChange}
             disabled={isDisabled}
@@ -153,17 +153,8 @@ const FileManagerToolbarComponent = ({
             onClick={handleUploadClick}
             className="h-9"
           >
-            {isUploading ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                {labels.uploading}
-              </>
-            ) : (
-              <>
-                <Upload className="h-4 w-4 mr-2" />
-                {labels.uploadFile}
-              </>
-            )}
+            <Upload className="h-4 w-4 mr-2" />
+            {labels.uploadFiles}
           </Button>
         </div>
 
@@ -182,14 +173,15 @@ const FileManagerToolbarComponent = ({
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleUploadClick}>
                 <Upload className="h-4 w-4 mr-2" />
-                {labels.uploadFile}
+                {labels.uploadFiles}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
           <input
             ref={fileInputRef}
             type="file"
-            className="hidden sm:block"
+            multiple
+            className="hidden"
             onChange={handleFileChange}
             disabled={isDisabled}
           />

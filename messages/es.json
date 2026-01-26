@@ -849,7 +849,7 @@
     "actions": "Acciones",
     "refresh": "Actualizar",
     "createFolder": "Nueva carpeta",
-    "uploadFile": "Subir archivo",
+    "uploadFiles": "Subir archivos",
     "newItem": "Nuevo",
     "folderNamePlaceholder": "Nombre de la carpeta",
     "creating": "Creando...",
