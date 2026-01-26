@@ -10,6 +10,8 @@ import {
 import { generateVerificationToken } from "@/lib/tokens";
 import { logAuditEvent } from "@/lib/audit";
 import { AuditAction } from "@/app/prisma/enums";
+import { FileUploadS3Service } from "@/modules/file-upload/services/file-upload.s3.service";
+import { FileVisibility } from "@/modules/file-upload/types/file-upload.types";
 
 export interface UserResult {
   success?: string;
@@ -35,13 +37,18 @@ export interface DeletionStatusResult {
 
 const BCRYPT_SALT_ROUNDS = 10;
 
+const ALLOWED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 MB
+
 export class UserService {
   private repository: UserRepository;
   private domainService: UserDomainService;
+  private s3Service: FileUploadS3Service;
 
   constructor() {
     this.repository = new UserRepository();
     this.domainService = new UserDomainService();
+    this.s3Service = new FileUploadS3Service();
   }
 
   public async getProfile(userId: string): Promise<GetProfileResult> {
@@ -105,6 +112,99 @@ export class UserService {
     } catch (error) {
       console.error("Error updating profile image:", error);
       return { error: "Error al actualizar la imagen de perfil" };
+    }
+  }
+
+  private getFileExtension(mimeType: string): string {
+    const extensions: Record<string, string> = {
+      "image/jpeg": ".jpg",
+      "image/png": ".png",
+      "image/gif": ".gif",
+      "image/webp": ".webp",
+    };
+    return extensions[mimeType] || ".jpg";
+  }
+
+  public async getAvatarUploadUrl(
+    userId: string,
+    input: { fileType: string; fileSize: number }
+  ): Promise<UserResult> {
+    try {
+      // Validate file type
+      if (!ALLOWED_AVATAR_TYPES.includes(input.fileType)) {
+        return { error: "Tipo de archivo no permitido. Usa JPG, PNG, GIF o WebP" };
+      }
+
+      // Validate file size
+      if (input.fileSize > MAX_AVATAR_SIZE) {
+        return { error: "El archivo es muy grande. Máximo 5MB" };
+      }
+
+      // Generate predictable file key: users/avatars/[userId].[ext]
+      const extension = this.getFileExtension(input.fileType);
+      const fileKey = `users/avatars/${userId}${extension}`;
+
+      const { url, expiresAt } = await this.s3Service.generateUploadUrl({
+        fileKey,
+        mimeType: input.fileType,
+        fileSize: input.fileSize,
+        visibility: FileVisibility.PUBLIC,
+      });
+
+      return {
+        success: "URL de subida generada",
+        data: {
+          uploadUrl: url,
+          fileKey,
+          expiresAt,
+        },
+      };
+    } catch (error) {
+      console.error("Error generating avatar upload URL:", error);
+      return { error: "Error al generar URL de subida" };
+    }
+  }
+
+  public async confirmAvatarUpload(
+    userId: string,
+    input: { fileKey: string; mimeType: string; fileSize: number }
+  ): Promise<UserResult> {
+    try {
+      // Verify file exists in S3
+      const exists = await this.s3Service.verifyFileExists(
+        input.fileKey,
+        FileVisibility.PUBLIC
+      );
+
+      if (!exists) {
+        return { error: "Archivo no encontrado en el servidor" };
+      }
+
+      // Get public URL with cache-busting parameter
+      const baseUrl = this.s3Service.getPublicUrl(input.fileKey);
+
+      if (!baseUrl) {
+        return { error: "Error al obtener URL pública" };
+      }
+
+      // Add timestamp to prevent browser caching
+      const publicUrl = `${baseUrl}?v=${Date.now()}`;
+
+      // Update user profile with new image URL
+      const updatedUser = await this.repository.updateProfile(userId, {
+        image: publicUrl,
+      });
+
+      return {
+        success: "Imagen de perfil actualizada",
+        data: {
+          publicUrl,
+          user: updatedUser,
+        },
+      };
+    } catch (error) {
+      console.error("Error confirming avatar upload:", error);
+      return { error: "Error al confirmar subida de avatar" };
     }
   }
 

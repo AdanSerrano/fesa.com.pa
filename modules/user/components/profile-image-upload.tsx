@@ -7,11 +7,9 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
-  getUploadPresignedUrlAction,
-  confirmFileUploadAction,
-} from "@/modules/file-upload/actions/file-upload.actions";
-import { updateProfileImageAction } from "../actions/user.actions";
-import { FileVisibility } from "@/modules/file-upload/types/file-upload.types";
+  uploadAvatarAction,
+  confirmAvatarUploadAction,
+} from "../actions/user.actions";
 
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024; // 5 MB for profile images
 const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
@@ -77,20 +75,21 @@ const ProfileImageUploadComponent = ({
 
       startTransition(async () => {
         try {
-          // Get presigned URL for PUBLIC upload
-          const presignedResult = await getUploadPresignedUrlAction({
-            fileName: file.name,
+          // Get presigned URL for avatar upload (uses userId as filename)
+          const uploadResult = await uploadAvatarAction({
             fileType: file.type,
             fileSize: file.size,
-            visibility: FileVisibility.PUBLIC,
           });
 
-          if (presignedResult.error || !presignedResult.data) {
-            toast.error(presignedResult.error || labels.errorUpload);
+          if (uploadResult.error || !uploadResult.data) {
+            toast.error(uploadResult.error || labels.errorUpload);
             return;
           }
 
-          const { uploadUrl, fileKey } = presignedResult.data;
+          const { uploadUrl, fileKey } = uploadResult.data as {
+            uploadUrl: string;
+            fileKey: string;
+          };
 
           // Upload to R2
           const uploadResponse = await fetch(uploadUrl, {
@@ -105,13 +104,11 @@ const ProfileImageUploadComponent = ({
             throw new Error("Upload failed");
           }
 
-          // Confirm upload and get public URL
-          const confirmResult = await confirmFileUploadAction({
+          // Confirm upload and update user profile
+          const confirmResult = await confirmAvatarUploadAction({
             fileKey,
-            fileName: file.name,
-            fileSize: file.size,
             mimeType: file.type,
-            visibility: FileVisibility.PUBLIC,
+            fileSize: file.size,
           });
 
           if (confirmResult.error || !confirmResult.data) {
@@ -119,20 +116,7 @@ const ProfileImageUploadComponent = ({
             return;
           }
 
-          const publicUrl = confirmResult.data.publicUrl;
-
-          if (!publicUrl) {
-            toast.error(labels.errorUpload);
-            return;
-          }
-
-          // Save image URL to user profile directly
-          const updateResult = await updateProfileImageAction(publicUrl);
-
-          if (updateResult.error) {
-            toast.error(updateResult.error);
-            return;
-          }
+          const { publicUrl } = confirmResult.data as { publicUrl: string };
 
           // Notify parent component if callback provided
           onImageChange?.(publicUrl);

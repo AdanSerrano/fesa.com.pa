@@ -25,6 +25,20 @@ export class UserController {
     return await this.service.updateProfileImage(userId, imageUrl);
   }
 
+  public async getAvatarUploadUrl(
+    userId: string,
+    input: { fileType: string; fileSize: number }
+  ) {
+    return await this.service.getAvatarUploadUrl(userId, input);
+  }
+
+  public async confirmAvatarUpload(
+    userId: string,
+    input: { fileKey: string; mimeType: string; fileSize: number }
+  ) {
+    return await this.service.confirmAvatarUpload(userId, input);
+  }
+
   public async updateEmail(userId: string, input: UpdateEmailInput) {
     return await this.service.updateEmail(userId, input);
   }
