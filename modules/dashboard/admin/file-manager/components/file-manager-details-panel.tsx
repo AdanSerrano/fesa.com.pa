@@ -253,23 +253,23 @@ const FileManagerDetailsPanelComponent = ({
 
       <div className="p-4 border-t space-y-2">
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" size="sm" onClick={handleRename}>
-            <Edit className="h-4 w-4 mr-2" />
-            {labels.rename}
+          <Button variant="outline" size="sm" className="min-w-0" onClick={handleRename}>
+            <Edit className="h-4 w-4 shrink-0" />
+            <span className="truncate">{labels.rename}</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={handleCopyLink}>
-            <Link2 className="h-4 w-4 mr-2" />
-            {labels.copyLink}
+          <Button variant="outline" size="sm" className="min-w-0" onClick={handleCopyLink}>
+            <Link2 className="h-4 w-4 shrink-0" />
+            <span className="truncate">{labels.copyLink}</span>
           </Button>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          <Button variant="outline" size="sm" onClick={handleOpenInNewTab}>
-            <ExternalLink className="h-4 w-4 mr-2" />
-            {labels.openInNewTab}
+          <Button variant="outline" size="sm" className="min-w-0" onClick={handleOpenInNewTab} title={labels.openInNewTab}>
+            <ExternalLink className="h-4 w-4 shrink-0" />
+            <span className="truncate">{labels.openInNewTab}</span>
           </Button>
-          <Button variant="outline" size="sm" onClick={handleDownload}>
-            <Download className="h-4 w-4 mr-2" />
-            {labels.download}
+          <Button variant="outline" size="sm" className="min-w-0" onClick={handleDownload}>
+            <Download className="h-4 w-4 shrink-0" />
+            <span className="truncate">{labels.download}</span>
           </Button>
         </div>
         <Button
@@ -278,7 +278,7 @@ const FileManagerDetailsPanelComponent = ({
           className="w-full"
           onClick={handleDelete}
         >
-          <Trash2 className="h-4 w-4 mr-2" />
+          <Trash2 className="h-4 w-4 shrink-0" />
           {labels.delete}
         </Button>
       </div>

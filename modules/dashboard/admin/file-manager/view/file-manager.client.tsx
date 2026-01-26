@@ -34,6 +34,8 @@ import {
   deleteR2FolderAction,
   createR2FolderAction,
   getR2UploadUrlAction,
+  renameR2ObjectAction,
+  renameR2FolderAction,
 } from "../actions/file-manager.actions";
 import type {
   R2ListResult,
@@ -495,9 +497,35 @@ const FileManagerClientComponent = ({
   }, []);
 
   const handleRenameConfirm = useCallback(async (newName: string) => {
-    toast.info(t("renameNotImplemented"));
-    dispatch({ type: "SET_RENAME_TARGET", payload: null });
-  }, [t]);
+    if (!state.renameTarget) return;
+
+    startTransition(async () => {
+      if (state.renameTarget!.type === "folder") {
+        const folder = state.renameTarget!.item as R2Folder;
+        const result = await renameR2FolderAction(folder.prefix, newName);
+
+        if (result.error) {
+          toast.error(result.error);
+        } else {
+          toast.success(result.success);
+          router.refresh();
+        }
+      } else {
+        const file = state.renameTarget!.item as R2Object;
+        const result = await renameR2ObjectAction(file.key, newName);
+
+        if (result.error) {
+          toast.error(result.error);
+        } else {
+          toast.success(result.success);
+          router.refresh();
+        }
+      }
+
+      dispatch({ type: "SET_RENAME_TARGET", payload: null });
+      dispatch({ type: "SET_DETAILS_FILE", payload: null });
+    });
+  }, [state.renameTarget, router]);
 
   const handleRenameCancel = useCallback(() => {
     dispatch({ type: "SET_RENAME_TARGET", payload: null });

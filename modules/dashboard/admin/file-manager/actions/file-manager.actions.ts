@@ -96,3 +96,45 @@ export async function getR2UploadUrlAction(
 
   return await controller.getUploadUrl(path, fileName, contentType);
 }
+
+export async function renameR2ObjectAction(oldKey: string, newName: string) {
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return { error: authResult.error };
+  }
+
+  if (!newName || newName.trim() === "") {
+    return { error: "El nombre es requerido" };
+  }
+
+  const sanitizedName = newName.trim();
+
+  const result = await controller.renameObject(oldKey, sanitizedName);
+
+  if (result.success) {
+    revalidatePath("/dashboard/admin/files-manager");
+  }
+
+  return result;
+}
+
+export async function renameR2FolderAction(oldPrefix: string, newName: string) {
+  const authResult = await requireAdmin();
+  if (authResult.error) {
+    return { error: authResult.error };
+  }
+
+  if (!newName || newName.trim() === "") {
+    return { error: "El nombre es requerido" };
+  }
+
+  const sanitizedName = newName.trim().replace(/[^a-zA-Z0-9-_]/g, "-");
+
+  const result = await controller.renameFolder(oldPrefix, sanitizedName);
+
+  if (result.success) {
+    revalidatePath("/dashboard/admin/files-manager");
+  }
+
+  return result;
+}

@@ -2,6 +2,7 @@ import {
   ListObjectsV2Command,
   DeleteObjectCommand,
   PutObjectCommand,
+  CopyObjectCommand,
   _Object,
   CommonPrefix,
 } from "@aws-sdk/client-s3";
@@ -132,6 +133,109 @@ export class FileManagerService {
     const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
 
     return { url, key };
+  }
+
+  public async renameObject(
+    oldKey: string,
+    newName: string
+  ): Promise<{ success: boolean; newKey?: string; error?: string }> {
+    const parts = oldKey.split("/");
+    parts[parts.length - 1] = newName;
+    const newKey = parts.join("/");
+
+    if (oldKey === newKey) {
+      return { success: true, newKey };
+    }
+
+    try {
+      const copyCommand = new CopyObjectCommand({
+        Bucket: this.bucket,
+        CopySource: `${this.bucket}/${oldKey}`,
+        Key: newKey,
+      });
+
+      await s3Client.send(copyCommand);
+
+      const deleteCommand = new DeleteObjectCommand({
+        Bucket: this.bucket,
+        Key: oldKey,
+      });
+
+      await s3Client.send(deleteCommand);
+
+      return { success: true, newKey };
+    } catch (error) {
+      console.error("Error renaming object:", error);
+      return { success: false, error: "RENAME_FAILED" };
+    }
+  }
+
+  public async renameFolder(
+    oldPrefix: string,
+    newName: string
+  ): Promise<{ success: boolean; newPrefix?: string; error?: string }> {
+    const normalizedOldPrefix = oldPrefix.endsWith("/") ? oldPrefix : `${oldPrefix}/`;
+
+    const parts = normalizedOldPrefix.slice(0, -1).split("/");
+    parts[parts.length - 1] = newName;
+    const newPrefix = parts.join("/") + "/";
+
+    if (normalizedOldPrefix === newPrefix) {
+      return { success: true, newPrefix };
+    }
+
+    try {
+      const allObjects = await this.listAllObjectsInFolder(normalizedOldPrefix);
+
+      for (const obj of allObjects) {
+        const newKey = obj.Key!.replace(normalizedOldPrefix, newPrefix);
+
+        const copyCommand = new CopyObjectCommand({
+          Bucket: this.bucket,
+          CopySource: `${this.bucket}/${obj.Key}`,
+          Key: newKey,
+        });
+
+        await s3Client.send(copyCommand);
+      }
+
+      for (const obj of allObjects) {
+        const deleteCommand = new DeleteObjectCommand({
+          Bucket: this.bucket,
+          Key: obj.Key!,
+        });
+
+        await s3Client.send(deleteCommand);
+      }
+
+      return { success: true, newPrefix };
+    } catch (error) {
+      console.error("Error renaming folder:", error);
+      return { success: false, error: "RENAME_FOLDER_FAILED" };
+    }
+  }
+
+  private async listAllObjectsInFolder(prefix: string): Promise<_Object[]> {
+    const allObjects: _Object[] = [];
+    let continuationToken: string | undefined;
+
+    do {
+      const command = new ListObjectsV2Command({
+        Bucket: this.bucket,
+        Prefix: prefix,
+        ContinuationToken: continuationToken,
+      });
+
+      const response = await s3Client.send(command);
+
+      if (response.Contents) {
+        allObjects.push(...response.Contents);
+      }
+
+      continuationToken = response.NextContinuationToken;
+    } while (continuationToken);
+
+    return allObjects;
   }
 
   private getFileName(key: string, prefix: string): string {

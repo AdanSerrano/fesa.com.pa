@@ -11,6 +11,7 @@ import {
   Home,
   Table,
   Users,
+  FolderOpen,
 } from "lucide-react";
 import {
   Sidebar,
@@ -52,6 +53,11 @@ const adminNavItemsConfig: NavItem[] = [
     titleKey: "users",
     url: "/dashboard/admin/users",
     icon: Users,
+  },
+  {
+    titleKey: "files",
+    url: "/dashboard/admin/files-manager",
+    icon: FolderOpen,
   },
 ];
 

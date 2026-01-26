@@ -81,4 +81,40 @@ export class FileManagerController {
       return { error: "Error al obtener URL de subida" };
     }
   }
+
+  public async renameObject(
+    oldKey: string,
+    newName: string
+  ): Promise<ActionResult<{ newKey: string }>> {
+    try {
+      const result = await this.service.renameObject(oldKey, newName);
+
+      if (!result.success) {
+        return { error: "Error al renombrar archivo" };
+      }
+
+      return { success: "Archivo renombrado correctamente", data: { newKey: result.newKey! } };
+    } catch (error) {
+      console.error("Error renaming object:", error);
+      return { error: "Error al renombrar archivo" };
+    }
+  }
+
+  public async renameFolder(
+    oldPrefix: string,
+    newName: string
+  ): Promise<ActionResult<{ newPrefix: string }>> {
+    try {
+      const result = await this.service.renameFolder(oldPrefix, newName);
+
+      if (!result.success) {
+        return { error: "Error al renombrar carpeta" };
+      }
+
+      return { success: "Carpeta renombrada correctamente", data: { newPrefix: result.newPrefix! } };
+    } catch (error) {
+      console.error("Error renaming folder:", error);
+      return { error: "Error al renombrar carpeta" };
+    }
+  }
 }
