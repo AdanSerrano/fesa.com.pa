@@ -1,3 +1,4 @@
+import { render } from "@react-email/components";
 import { resend } from "@/utils/resend";
 import { TwoFactorCodeEmail } from "../components/emails/two-factor-code.email";
 
@@ -9,7 +10,7 @@ export const sendTwoFactorEmail = async (email: string, code: string) => {
       from: fromEmail,
       to: email,
       subject: `Tu código de verificación: ${code}`,
-      react: TwoFactorCodeEmail({ code }),
+      react: <TwoFactorCodeEmail code={code} />,
     });
 
     return { success: true };

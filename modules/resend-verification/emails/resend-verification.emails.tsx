@@ -1,3 +1,4 @@
+import { render } from "@react-email/components";
 import { resend } from "@/utils/resend";
 import { VerificationEmail } from "../components/emails/verification.email";
 
@@ -12,7 +13,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
       from: fromEmail,
       to: email,
       subject: "Reenvío: Confirma tu correo electrónico",
-      react: VerificationEmail({ confirmLink }),
+      react: <VerificationEmail confirmLink={confirmLink} />,
     });
 
     return { success: true };

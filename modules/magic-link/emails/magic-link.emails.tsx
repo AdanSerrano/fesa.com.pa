@@ -1,3 +1,4 @@
+import { render } from "@react-email/components";
 import { resend } from "@/utils/resend";
 import { MagicLinkEmail } from "../components/emails/magic-link.email";
 
@@ -8,11 +9,12 @@ export const sendMagicLinkEmail = async (email: string, token: string) => {
   const magicLink = `${domain}/magic-link?token=${token}`;
 
   try {
+
     await resend.emails.send({
       from: fromEmail,
       to: email,
       subject: "Tu enlace de inicio de sesión",
-      react: MagicLinkEmail({ magicLink }),
+      react: <MagicLinkEmail magicLink={magicLink} />,
     });
 
     return { success: true };

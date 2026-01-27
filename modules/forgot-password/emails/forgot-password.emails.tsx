@@ -1,3 +1,4 @@
+import { render } from "@react-email/components";
 import { resend } from "@/utils/resend";
 import { PasswordResetEmail } from "../components/emails/password-reset.email";
 
@@ -12,7 +13,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
       from: fromEmail,
       to: email,
       subject: "Recupera tu contraseña",
-      react: PasswordResetEmail({ resetLink }),
+      react: <PasswordResetEmail resetLink={resetLink} />,
     });
 
     return { success: true };
