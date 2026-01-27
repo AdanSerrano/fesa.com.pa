@@ -93,6 +93,27 @@ export interface FormEmojiFieldProps<
   onRecentChange?: (emojis: string[]) => void;
 }
 
+interface EmojiButtonProps {
+  emoji: string;
+  onSelect: (emoji: string) => void;
+}
+
+const EmojiButton = memo(function EmojiButton({ emoji, onSelect }: EmojiButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(emoji);
+  }, [emoji, onSelect]);
+
+  return (
+    <button
+      type="button"
+      className="h-8 w-8 flex items-center justify-center text-xl hover:bg-accent rounded transition-colors"
+      onClick={handleClick}
+    >
+      {emoji}
+    </button>
+  );
+});
+
 const EmojiGrid = memo(function EmojiGrid({
   emojis,
   onSelect,
@@ -103,15 +124,206 @@ const EmojiGrid = memo(function EmojiGrid({
   return (
     <div className="grid grid-cols-8 gap-1 p-2">
       {emojis.map((emoji, index) => (
-        <button
-          key={`${emoji}-${index}`}
-          type="button"
-          className="h-8 w-8 flex items-center justify-center text-xl hover:bg-accent rounded transition-colors"
-          onClick={() => onSelect(emoji)}
-        >
-          {emoji}
-        </button>
+        <EmojiButton key={`${emoji}-${index}`} emoji={emoji} onSelect={onSelect} />
       ))}
+    </div>
+  );
+});
+
+interface SelectedEmojiButtonProps {
+  emoji: string;
+  onRemove: (emoji: string) => void;
+}
+
+const SelectedEmojiButton = memo(function SelectedEmojiButton({
+  emoji,
+  onRemove,
+}: SelectedEmojiButtonProps) {
+  const handleClick = useCallback(() => {
+    onRemove(emoji);
+  }, [emoji, onRemove]);
+
+  return (
+    <button
+      type="button"
+      className="h-8 w-8 text-lg flex items-center justify-center border rounded hover:bg-destructive/10 hover:border-destructive transition-colors"
+      onClick={handleClick}
+      title="Remove"
+    >
+      {emoji}
+    </button>
+  );
+});
+
+interface EmojiContentProps {
+  field: {
+    value: string | string[] | undefined;
+    onChange: (value: string | string[]) => void;
+  };
+  hasError: boolean;
+  disabled?: boolean;
+  placeholder: string;
+  multiple: boolean;
+  maxEmojis: number;
+  showSearch: boolean;
+  showPreview: boolean;
+  categoriesWithRecent: EmojiCategory[];
+  recentEmojis: string[];
+  addToRecent: (emoji: string) => void;
+  searchEmojis: (query: string) => string[];
+}
+
+const EmojiContent = memo(function EmojiContent({
+  field,
+  hasError,
+  disabled,
+  placeholder,
+  multiple,
+  maxEmojis,
+  showSearch,
+  showPreview,
+  categoriesWithRecent,
+  recentEmojis,
+  addToRecent,
+  searchEmojis,
+}: EmojiContentProps) {
+  const searchRef = useRef("");
+
+  const selectedEmojis: string[] = useMemo(() => {
+    if (multiple) {
+      return Array.isArray(field.value) ? field.value : [];
+    }
+    return field.value ? [field.value as string] : [];
+  }, [multiple, field.value]);
+
+  const handleSelect = useCallback(
+    (emoji: string) => {
+      addToRecent(emoji);
+
+      if (multiple) {
+        const isSelected = selectedEmojis.includes(emoji);
+        if (isSelected) {
+          field.onChange(selectedEmojis.filter((e) => e !== emoji));
+        } else if (selectedEmojis.length < maxEmojis) {
+          field.onChange([...selectedEmojis, emoji]);
+        }
+      } else {
+        field.onChange(emoji);
+      }
+    },
+    [addToRecent, multiple, selectedEmojis, maxEmojis, field]
+  );
+
+  const handleRemove = useCallback(
+    (emoji: string) => {
+      if (multiple) {
+        field.onChange(selectedEmojis.filter((e) => e !== emoji));
+      } else {
+        field.onChange("");
+      }
+    },
+    [multiple, selectedEmojis, field]
+  );
+
+  const handleSearchChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    searchRef.current = e.target.value;
+  }, []);
+
+  const triggerClasses = useMemo(
+    () =>
+      cn("w-full justify-start font-normal", hasError && "border-destructive"),
+    [hasError]
+  );
+
+  const searchResults = useMemo(
+    () => (searchRef.current ? searchEmojis(searchRef.current) : []),
+    [searchEmojis]
+  );
+
+  const defaultTab = useMemo(
+    () => (recentEmojis.length > 0 ? "recent" : "smileys"),
+    [recentEmojis.length]
+  );
+
+  return (
+    <div className="space-y-2">
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled}
+            className={triggerClasses}
+          >
+            <Smile className="h-4 w-4 mr-2 text-foreground/60" />
+            {selectedEmojis.length > 0 ? (
+              <span className="text-lg">{selectedEmojis.join(" ")}</span>
+            ) : (
+              <span className="text-muted-foreground">{placeholder}</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-80 p-0" align="start">
+          {showSearch && (
+            <div className="p-2 border-b">
+              <div className="relative">
+                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
+                <Input
+                  placeholder="Search emojis..."
+                  className="h-8 pl-8"
+                  onChange={handleSearchChange}
+                />
+              </div>
+            </div>
+          )}
+
+          {searchRef.current ? (
+            <ScrollArea className="h-[250px]">
+              <EmojiGrid emojis={searchResults} onSelect={handleSelect} />
+            </ScrollArea>
+          ) : (
+            <Tabs defaultValue={defaultTab}>
+              <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto">
+                {categoriesWithRecent.map((cat) => {
+                  if (cat.id === "recent" && cat.emojis.length === 0) return null;
+                  const Icon = cat.icon;
+                  return (
+                    <TabsTrigger
+                      key={cat.id}
+                      value={cat.id}
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2"
+                    >
+                      <Icon className="h-4 w-4" />
+                    </TabsTrigger>
+                  );
+                })}
+              </TabsList>
+              {categoriesWithRecent.map((cat) => {
+                if (cat.id === "recent" && cat.emojis.length === 0) return null;
+                return (
+                  <TabsContent key={cat.id} value={cat.id} className="mt-0">
+                    <ScrollArea className="h-[200px]">
+                      <EmojiGrid emojis={cat.emojis} onSelect={handleSelect} />
+                    </ScrollArea>
+                  </TabsContent>
+                );
+              })}
+            </Tabs>
+          )}
+        </PopoverContent>
+      </Popover>
+
+      {showPreview && selectedEmojis.length > 0 && multiple && (
+        <div className="flex flex-wrap gap-1">
+          {selectedEmojis.map((emoji, index) => (
+            <SelectedEmojiButton
+              key={`${emoji}-${index}`}
+              emoji={emoji}
+              onRemove={handleRemove}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 });
@@ -135,8 +347,6 @@ function FormEmojiFieldComponent<
   recentEmojis = [],
   onRecentChange,
 }: FormEmojiFieldProps<TFieldValues, TName>) {
-  const searchRef = useRef("");
-
   const categoriesWithRecent = useMemo(() => {
     const cats = [...EMOJI_CATEGORIES];
     cats[0] = { ...cats[0], emojis: recentEmojis };
@@ -152,165 +362,52 @@ function FormEmojiFieldComponent<
     [recentEmojis, onRecentChange]
   );
 
-  const searchEmojis = useCallback(
-    (query: string): string[] => {
-      if (!query) return [];
-      const q = query.toLowerCase();
-      const results: string[] = [];
+  const searchEmojis = useCallback((query: string): string[] => {
+    if (!query) return [];
+    const q = query.toLowerCase();
+    const results: string[] = [];
 
-      EMOJI_CATEGORIES.forEach((cat) => {
-        if (cat.name.toLowerCase().includes(q)) {
-          results.push(...cat.emojis.slice(0, 10));
-        }
-      });
+    EMOJI_CATEGORIES.forEach((cat) => {
+      if (cat.name.toLowerCase().includes(q)) {
+        results.push(...cat.emojis.slice(0, 10));
+      }
+    });
 
-      return results.slice(0, 50);
-    },
-    []
-  );
+    return results.slice(0, 50);
+  }, []);
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const selectedEmojis: string[] = multiple
-          ? Array.isArray(field.value)
-            ? field.value
-            : []
-          : field.value
-          ? [field.value]
-          : [];
-
-        const handleSelect = (emoji: string) => {
-          addToRecent(emoji);
-
-          if (multiple) {
-            const isSelected = selectedEmojis.includes(emoji);
-            if (isSelected) {
-              field.onChange(selectedEmojis.filter((e) => e !== emoji));
-            } else if (selectedEmojis.length < maxEmojis) {
-              field.onChange([...selectedEmojis, emoji]);
-            }
-          } else {
-            field.onChange(emoji);
-          }
-        };
-
-        const handleRemove = (emoji: string) => {
-          if (multiple) {
-            field.onChange(selectedEmojis.filter((e) => e !== emoji));
-          } else {
-            field.onChange("");
-          }
-        };
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div className="space-y-2">
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={disabled}
-                      className={cn(
-                        "w-full justify-start font-normal",
-                        fieldState.error && "border-destructive"
-                      )}
-                    >
-                      <Smile className="h-4 w-4 mr-2 text-foreground/60" />
-                      {selectedEmojis.length > 0 ? (
-                        <span className="text-lg">{selectedEmojis.join(" ")}</span>
-                      ) : (
-                        <span className="text-muted-foreground">{placeholder}</span>
-                      )}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-80 p-0" align="start">
-                    {showSearch && (
-                      <div className="p-2 border-b">
-                        <div className="relative">
-                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
-                          <Input
-                            placeholder="Search emojis..."
-                            className="h-8 pl-8"
-                            onChange={(e) => {
-                              searchRef.current = e.target.value;
-                            }}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {searchRef.current ? (
-                      <ScrollArea className="h-[250px]">
-                        <EmojiGrid
-                          emojis={searchEmojis(searchRef.current)}
-                          onSelect={handleSelect}
-                        />
-                      </ScrollArea>
-                    ) : (
-                      <Tabs defaultValue={recentEmojis.length > 0 ? "recent" : "smileys"}>
-                        <TabsList className="w-full justify-start rounded-none border-b bg-transparent p-0 h-auto">
-                          {categoriesWithRecent.map((cat) => {
-                            if (cat.id === "recent" && cat.emojis.length === 0) return null;
-                            const Icon = cat.icon;
-                            return (
-                              <TabsTrigger
-                                key={cat.id}
-                                value={cat.id}
-                                className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-3 py-2"
-                              >
-                                <Icon className="h-4 w-4" />
-                              </TabsTrigger>
-                            );
-                          })}
-                        </TabsList>
-                        {categoriesWithRecent.map((cat) => {
-                          if (cat.id === "recent" && cat.emojis.length === 0) return null;
-                          return (
-                            <TabsContent key={cat.id} value={cat.id} className="mt-0">
-                              <ScrollArea className="h-[200px]">
-                                <EmojiGrid emojis={cat.emojis} onSelect={handleSelect} />
-                              </ScrollArea>
-                            </TabsContent>
-                          );
-                        })}
-                      </Tabs>
-                    )}
-                  </PopoverContent>
-                </Popover>
-
-                {showPreview && selectedEmojis.length > 0 && multiple && (
-                  <div className="flex flex-wrap gap-1">
-                    {selectedEmojis.map((emoji, index) => (
-                      <button
-                        key={`${emoji}-${index}`}
-                        type="button"
-                        className="h-8 w-8 text-lg flex items-center justify-center border rounded hover:bg-destructive/10 hover:border-destructive transition-colors"
-                        onClick={() => handleRemove(emoji)}
-                        title="Remove"
-                      >
-                        {emoji}
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <EmojiContent
+              field={field}
+              hasError={!!fieldState.error}
+              disabled={disabled}
+              placeholder={placeholder}
+              multiple={multiple}
+              maxEmojis={maxEmojis}
+              showSearch={showSearch}
+              showPreview={showPreview}
+              categoriesWithRecent={categoriesWithRecent}
+              recentEmojis={recentEmojis}
+              addToRecent={addToRecent}
+              searchEmojis={searchEmojis}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

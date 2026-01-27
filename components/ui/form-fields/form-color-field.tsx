@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useMemo } from "react";
 import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
@@ -43,6 +43,40 @@ const DEFAULT_PRESET_COLORS = [
   "#000000",
 ];
 
+interface ColorButtonProps {
+  color: string;
+  isSelected: boolean;
+  onSelect: (color: string) => void;
+}
+
+const ColorButton = memo(function ColorButton({
+  color,
+  isSelected,
+  onSelect,
+}: ColorButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(color);
+  }, [color, onSelect]);
+
+  const buttonClasses = useMemo(
+    () =>
+      cn(
+        "h-8 w-8 rounded-md border-2 transition-transform hover:scale-110",
+        isSelected ? "border-primary ring-2 ring-primary/20" : "border-transparent"
+      ),
+    [isSelected]
+  );
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      className={buttonClasses}
+      style={{ backgroundColor: color }}
+    />
+  );
+});
+
 interface ColorContentProps {
   field: ControllerRenderProps<FieldValues, string>;
   presetColors: string[];
@@ -67,6 +101,24 @@ const ColorContent = memo(function ColorContent({
     [field]
   );
 
+  const handleColorInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      field.onChange(e.target.value);
+    },
+    [field]
+  );
+
+  const triggerClasses = useMemo(
+    () =>
+      cn(
+        "w-full justify-start bg-background font-normal",
+        !field.value && "text-muted-foreground",
+        hasError && "border-destructive",
+        triggerClassName
+      ),
+    [field.value, hasError, triggerClassName]
+  );
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -75,12 +127,7 @@ const ColorContent = memo(function ColorContent({
             type="button"
             variant="outline"
             disabled={disabled}
-            className={cn(
-              "w-full justify-start bg-background font-normal",
-              !field.value && "text-muted-foreground",
-              hasError && "border-destructive",
-              triggerClassName
-            )}
+            className={triggerClasses}
           >
             <div
               className="mr-2 h-5 w-5 rounded border"
@@ -94,17 +141,11 @@ const ColorContent = memo(function ColorContent({
         <div className="space-y-3">
           <div className="grid grid-cols-5 gap-2">
             {presetColors.map((color) => (
-              <button
+              <ColorButton
                 key={color}
-                type="button"
-                onClick={() => handleColorChange(color)}
-                className={cn(
-                  "h-8 w-8 rounded-md border-2 transition-transform hover:scale-110",
-                  field.value === color
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-transparent"
-                )}
-                style={{ backgroundColor: color }}
+                color={color}
+                isSelected={field.value === color}
+                onSelect={handleColorChange}
               />
             ))}
           </div>
@@ -114,13 +155,13 @@ const ColorContent = memo(function ColorContent({
               <input
                 type="color"
                 value={field.value ?? "#000000"}
-                onChange={(e) => handleColorChange(e.target.value)}
+                onChange={handleColorInputChange}
                 className="h-9 w-9 cursor-pointer rounded border p-0"
               />
               <Input
                 type="text"
                 value={field.value ?? ""}
-                onChange={(e) => handleColorChange(e.target.value)}
+                onChange={handleColorInputChange}
                 placeholder="#000000"
                 className="flex-1"
               />

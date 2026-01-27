@@ -110,6 +110,126 @@ function validateIBAN(iban: string): { valid: boolean; error?: string } {
   return { valid: true };
 }
 
+interface IBANContentProps {
+  field: {
+    value: string | undefined;
+    onChange: (value: string) => void;
+  };
+  hasError: boolean;
+  disabled?: boolean;
+  placeholder: string;
+  showValidation: boolean;
+  showCountry: boolean;
+  showCopy: boolean;
+}
+
+const IBANContent = memo(function IBANContent({
+  field,
+  hasError,
+  disabled,
+  placeholder,
+  showValidation,
+  showCountry,
+  showCopy,
+}: IBANContentProps) {
+  const validation = useMemo(
+    () => validateIBAN(field.value || ""),
+    [field.value]
+  );
+
+  const countryCode = useMemo(
+    () => getCountryCode(field.value || ""),
+    [field.value]
+  );
+
+  const countryName = COUNTRY_NAMES[countryCode];
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const formatted = formatIBAN(e.target.value);
+      field.onChange(formatted);
+    },
+    [field]
+  );
+
+  const handleCopy = useCallback(() => {
+    if (field.value) {
+      navigator.clipboard.writeText(field.value.replace(/\s/g, ""));
+    }
+  }, [field.value]);
+
+  const inputClasses = useMemo(
+    () =>
+      cn(
+        "bg-background pl-10 pr-10 font-mono uppercase tracking-wider",
+        hasError && "border-destructive"
+      ),
+    [hasError]
+  );
+
+  const validationBadgeClasses = useMemo(
+    () =>
+      cn(
+        "text-xs",
+        validation.valid
+          ? "text-green-600 border-green-600/30"
+          : "text-destructive border-destructive/30"
+      ),
+    [validation.valid]
+  );
+
+  return (
+    <div className="space-y-2">
+      <div className="relative">
+        <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
+        <Input
+          value={field.value ?? ""}
+          onChange={handleChange}
+          placeholder={placeholder}
+          disabled={disabled}
+          className={inputClasses}
+          autoComplete="off"
+        />
+        {showCopy && field.value && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
+            onClick={handleCopy}
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+      {(showValidation || showCountry) && field.value && (
+        <div className="flex flex-wrap items-center gap-2">
+          {showValidation && (
+            <Badge variant="outline" className={validationBadgeClasses}>
+              {validation.valid ? (
+                <>
+                  <Check className="h-3 w-3 mr-1" />
+                  Valid IBAN
+                </>
+              ) : (
+                <>
+                  <X className="h-3 w-3 mr-1" />
+                  {validation.error || "Invalid"}
+                </>
+              )}
+            </Badge>
+          )}
+          {showCountry && countryName && (
+            <Badge variant="secondary" className="text-xs">
+              {countryCode} - {countryName}
+            </Badge>
+          )}
+        </div>
+      )}
+    </div>
+  );
+});
+
 function FormIBANFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -126,102 +246,33 @@ function FormIBANFieldComponent<
   showCountry = true,
   showCopy = true,
 }: FormIBANFieldProps<TFieldValues, TName>) {
-  const handleCopy = useCallback((value: string) => {
-    navigator.clipboard.writeText(value.replace(/\s/g, ""));
-  }, []);
-
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const validation = useMemo(
-          () => validateIBAN(field.value || ""),
-          [field.value]
-        );
-        const countryCode = getCountryCode(field.value || "");
-        const countryName = COUNTRY_NAMES[countryCode];
-
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const formatted = formatIBAN(e.target.value);
-          field.onChange(formatted);
-        };
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div className="space-y-2">
-                <div className="relative">
-                  <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
-                  <Input
-                    {...field}
-                    value={field.value ?? ""}
-                    onChange={handleChange}
-                    placeholder={placeholder}
-                    disabled={disabled}
-                    className={cn(
-                      "bg-background pl-10 pr-10 font-mono uppercase tracking-wider",
-                      fieldState.error && "border-destructive"
-                    )}
-                    autoComplete="off"
-                  />
-                  {showCopy && field.value && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8"
-                      onClick={() => handleCopy(field.value)}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
-                {(showValidation || showCountry) && field.value && (
-                  <div className="flex flex-wrap items-center gap-2">
-                    {showValidation && (
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-xs",
-                          validation.valid
-                            ? "text-green-600 border-green-600/30"
-                            : "text-destructive border-destructive/30"
-                        )}
-                      >
-                        {validation.valid ? (
-                          <>
-                            <Check className="h-3 w-3 mr-1" />
-                            Valid IBAN
-                          </>
-                        ) : (
-                          <>
-                            <X className="h-3 w-3 mr-1" />
-                            {validation.error || "Invalid"}
-                          </>
-                        )}
-                      </Badge>
-                    )}
-                    {showCountry && countryName && (
-                      <Badge variant="secondary" className="text-xs">
-                        {countryCode} - {countryName}
-                      </Badge>
-                    )}
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <IBANContent
+              field={field}
+              hasError={!!fieldState.error}
+              disabled={disabled}
+              placeholder={placeholder}
+              showValidation={showValidation}
+              showCountry={showCountry}
+              showCopy={showCopy}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

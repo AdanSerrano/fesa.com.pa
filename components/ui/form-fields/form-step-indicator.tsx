@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useMemo, type ReactNode } from "react";
+import { memo, useMemo, useCallback, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import { Check, Circle, Loader2 } from "lucide-react";
 
@@ -25,6 +25,102 @@ export interface FormStepIndicatorProps {
   className?: string;
 }
 
+type StepStatus = "completed" | "current" | "upcoming";
+
+interface CompactStepButtonProps {
+  index: number;
+  status: StepStatus;
+  allowNavigation: boolean;
+  onStepClick: (index: number) => void;
+}
+
+const CompactStepButton = memo(function CompactStepButton({
+  index,
+  status,
+  allowNavigation,
+  onStepClick,
+}: CompactStepButtonProps) {
+  const handleClick = useCallback(() => {
+    onStepClick(index);
+  }, [onStepClick, index]);
+
+  const buttonClasses = useMemo(
+    () =>
+      cn(
+        "h-2 rounded-full transition-all",
+        status === "completed" && "w-8 bg-primary",
+        status === "current" && "w-8 bg-primary",
+        status === "upcoming" && "w-2 bg-muted-foreground/30",
+        allowNavigation && status !== "upcoming" && "cursor-pointer hover:opacity-80"
+      ),
+    [status, allowNavigation]
+  );
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={!allowNavigation}
+      className={buttonClasses}
+    />
+  );
+});
+
+interface StepCircleButtonProps {
+  index: number;
+  step: FormStep;
+  status: StepStatus;
+  allowNavigation: boolean;
+  isLoading: boolean;
+  variant: "default" | "compact" | "numbered";
+  onStepClick: (index: number) => void;
+}
+
+const StepCircleButton = memo(function StepCircleButton({
+  index,
+  step,
+  status,
+  allowNavigation,
+  isLoading,
+  variant,
+  onStepClick,
+}: StepCircleButtonProps) {
+  const handleClick = useCallback(() => {
+    onStepClick(index);
+  }, [onStepClick, index]);
+
+  const buttonClasses = useMemo(
+    () =>
+      cn(
+        "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
+        status === "completed" && "border-primary bg-primary text-primary-foreground",
+        status === "current" && "border-primary bg-background text-primary",
+        status === "upcoming" && "border-muted-foreground/30 bg-background text-muted-foreground",
+        allowNavigation && status !== "upcoming" && "cursor-pointer hover:opacity-80"
+      ),
+    [status, allowNavigation]
+  );
+
+  return (
+    <button
+      type="button"
+      onClick={handleClick}
+      disabled={!allowNavigation}
+      className={buttonClasses}
+    >
+      {isLoading && status === "current" ? (
+        <Loader2 className="h-5 w-5 animate-spin" />
+      ) : status === "completed" ? (
+        <Check className="h-5 w-5" />
+      ) : variant === "numbered" ? (
+        <span className="text-sm font-semibold">{index + 1}</span>
+      ) : (
+        step.icon ?? <Circle className="h-3 w-3 fill-current" />
+      )}
+    </button>
+  );
+});
+
 function FormStepIndicatorComponent({
   steps,
   currentStep,
@@ -38,43 +134,38 @@ function FormStepIndicatorComponent({
   allowNavigation = false,
   className,
 }: FormStepIndicatorProps) {
-  const getStepStatus = useMemo(() => {
-    return (index: number): "completed" | "current" | "upcoming" => {
+  const getStepStatus = useCallback(
+    (index: number): StepStatus => {
       if (completedSteps.includes(index)) return "completed";
       if (index === currentStep) return "current";
       return "upcoming";
-    };
-  }, [currentStep, completedSteps]);
+    },
+    [currentStep, completedSteps]
+  );
 
-  const handleStepClick = (index: number) => {
-    if (!allowNavigation || !onStepClick) return;
-    const status = getStepStatus(index);
-    if (status === "completed" || (status === "upcoming" && index < currentStep)) {
-      onStepClick(index);
-    }
-  };
+  const handleStepClick = useCallback(
+    (index: number) => {
+      if (!allowNavigation || !onStepClick) return;
+      const status = getStepStatus(index);
+      if (status === "completed" || (status === "upcoming" && index < currentStep)) {
+        onStepClick(index);
+      }
+    },
+    [allowNavigation, onStepClick, getStepStatus, currentStep]
+  );
 
   if (variant === "compact") {
     return (
       <div className={cn("flex items-center justify-center gap-2", className)}>
-        {steps.map((_, index) => {
-          const status = getStepStatus(index);
-          return (
-            <button
-              key={index}
-              type="button"
-              onClick={() => handleStepClick(index)}
-              disabled={!allowNavigation}
-              className={cn(
-                "h-2 rounded-full transition-all",
-                status === "completed" && "w-8 bg-primary",
-                status === "current" && "w-8 bg-primary",
-                status === "upcoming" && "w-2 bg-muted-foreground/30",
-                allowNavigation && status !== "upcoming" && "cursor-pointer hover:opacity-80"
-              )}
-            />
-          );
-        })}
+        {steps.map((_, index) => (
+          <CompactStepButton
+            key={index}
+            index={index}
+            status={getStepStatus(index)}
+            allowNavigation={allowNavigation}
+            onStepClick={handleStepClick}
+          />
+        ))}
       </div>
     );
   }
@@ -89,28 +180,15 @@ function FormStepIndicatorComponent({
           return (
             <div key={step.id} className="flex">
               <div className="flex flex-col items-center mr-4">
-                <button
-                  type="button"
-                  onClick={() => handleStepClick(index)}
-                  disabled={!allowNavigation}
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
-                    status === "completed" && "border-primary bg-primary text-primary-foreground",
-                    status === "current" && "border-primary bg-background text-primary",
-                    status === "upcoming" && "border-muted-foreground/30 bg-background text-muted-foreground",
-                    allowNavigation && status !== "upcoming" && "cursor-pointer hover:opacity-80"
-                  )}
-                >
-                  {isLoading && status === "current" ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : status === "completed" ? (
-                    <Check className="h-5 w-5" />
-                  ) : variant === "numbered" ? (
-                    <span className="text-sm font-semibold">{index + 1}</span>
-                  ) : (
-                    step.icon ?? <Circle className="h-3 w-3 fill-current" />
-                  )}
-                </button>
+                <StepCircleButton
+                  index={index}
+                  step={step}
+                  status={status}
+                  allowNavigation={allowNavigation}
+                  isLoading={isLoading}
+                  variant={variant}
+                  onStepClick={handleStepClick}
+                />
                 {!isLast && (
                   <div
                     className={cn(
@@ -160,28 +238,15 @@ function FormStepIndicatorComponent({
               className={cn("flex items-center", !isLast && "flex-1")}
             >
               <div className="flex flex-col items-center">
-                <button
-                  type="button"
-                  onClick={() => handleStepClick(index)}
-                  disabled={!allowNavigation}
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all",
-                    status === "completed" && "border-primary bg-primary text-primary-foreground",
-                    status === "current" && "border-primary bg-background text-primary",
-                    status === "upcoming" && "border-muted-foreground/30 bg-background text-muted-foreground",
-                    allowNavigation && status !== "upcoming" && "cursor-pointer hover:opacity-80"
-                  )}
-                >
-                  {isLoading && status === "current" ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : status === "completed" ? (
-                    <Check className="h-5 w-5" />
-                  ) : variant === "numbered" ? (
-                    <span className="text-sm font-semibold">{index + 1}</span>
-                  ) : (
-                    step.icon ?? <Circle className="h-3 w-3 fill-current" />
-                  )}
-                </button>
+                <StepCircleButton
+                  index={index}
+                  step={step}
+                  status={status}
+                  allowNavigation={allowNavigation}
+                  isLoading={isLoading}
+                  variant={variant}
+                  onStepClick={handleStepClick}
+                />
                 {showLabels && (
                   <span
                     className={cn(

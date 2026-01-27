@@ -80,6 +80,15 @@ const DEFAULT_SCHEDULE: WeekSchedule = {
   sunday: { enabled: false, slots: [{ start: "09:00", end: "17:00" }] },
 };
 
+interface TimeSlotInputProps {
+  slot: TimeSlot;
+  index: number;
+  showDelete: boolean;
+  onChange: (index: number, field: "start" | "end", value: string) => void;
+  onDelete: (index: number) => void;
+  disabled?: boolean;
+}
+
 const TimeSlotInput = memo(function TimeSlotInput({
   slot,
   index,
@@ -87,20 +96,31 @@ const TimeSlotInput = memo(function TimeSlotInput({
   onChange,
   onDelete,
   disabled,
-}: {
-  slot: TimeSlot;
-  index: number;
-  showDelete: boolean;
-  onChange: (index: number, field: "start" | "end", value: string) => void;
-  onDelete: (index: number) => void;
-  disabled?: boolean;
-}) {
+}: TimeSlotInputProps) {
+  const handleStartChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(index, "start", e.target.value);
+    },
+    [onChange, index]
+  );
+
+  const handleEndChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(index, "end", e.target.value);
+    },
+    [onChange, index]
+  );
+
+  const handleDelete = useCallback(() => {
+    onDelete(index);
+  }, [onDelete, index]);
+
   return (
     <div className="flex items-center gap-2">
       <Input
         type="time"
         value={slot.start}
-        onChange={(e) => onChange(index, "start", e.target.value)}
+        onChange={handleStartChange}
         disabled={disabled}
         className="w-[100px] bg-background"
       />
@@ -108,7 +128,7 @@ const TimeSlotInput = memo(function TimeSlotInput({
       <Input
         type="time"
         value={slot.end}
-        onChange={(e) => onChange(index, "end", e.target.value)}
+        onChange={handleEndChange}
         disabled={disabled}
         className="w-[100px] bg-background"
       />
@@ -117,7 +137,7 @@ const TimeSlotInput = memo(function TimeSlotInput({
           type="button"
           variant="ghost"
           size="icon"
-          onClick={() => onDelete(index)}
+          onClick={handleDelete}
           disabled={disabled}
           className="h-8 w-8 text-muted-foreground hover:text-destructive"
         >

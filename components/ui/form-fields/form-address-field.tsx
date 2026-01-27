@@ -96,6 +96,17 @@ const DEFAULT_COUNTRIES = [
   { value: "CO", label: "Colombia" },
 ];
 
+interface AddressInputProps {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  placeholder: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
+  error?: boolean;
+}
+
 const AddressInput = memo(function AddressInput({
   icon: Icon,
   label,
@@ -105,16 +116,19 @@ const AddressInput = memo(function AddressInput({
   disabled,
   className,
   error,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  placeholder: string;
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  className?: string;
-  error?: boolean;
-}) {
+}: AddressInputProps) {
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(e.target.value);
+    },
+    [onChange]
+  );
+
+  const inputClasses = useMemo(
+    () => cn("bg-background", error && "border-destructive"),
+    [error]
+  );
+
   return (
     <div className={cn("space-y-1", className)}>
       <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
@@ -123,14 +137,26 @@ const AddressInput = memo(function AddressInput({
       </label>
       <Input
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={handleChange}
         placeholder={placeholder}
         disabled={disabled}
-        className={cn("bg-background", error && "border-destructive")}
+        className={inputClasses}
       />
     </div>
   );
 });
+
+interface AddressSelectProps {
+  icon: React.ElementType;
+  label: string;
+  value: string;
+  placeholder: string;
+  options: { value: string; label: string }[];
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  className?: string;
+  error?: boolean;
+}
 
 const AddressSelect = memo(function AddressSelect({
   icon: Icon,
@@ -142,17 +168,12 @@ const AddressSelect = memo(function AddressSelect({
   disabled,
   className,
   error,
-}: {
-  icon: React.ElementType;
-  label: string;
-  value: string;
-  placeholder: string;
-  options: { value: string; label: string }[];
-  onChange: (value: string) => void;
-  disabled?: boolean;
-  className?: string;
-  error?: boolean;
-}) {
+}: AddressSelectProps) {
+  const triggerClasses = useMemo(
+    () => cn("bg-background", error && "border-destructive"),
+    [error]
+  );
+
   return (
     <div className={cn("space-y-1", className)}>
       <label className="text-xs font-medium text-muted-foreground flex items-center gap-1">
@@ -160,7 +181,7 @@ const AddressSelect = memo(function AddressSelect({
         {label}
       </label>
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className={cn("bg-background", error && "border-destructive")}>
+        <SelectTrigger className={triggerClasses}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
@@ -186,12 +207,6 @@ interface AddressContentProps {
   layout: "stacked" | "inline";
   labels: typeof DEFAULT_LABELS;
   placeholders: typeof DEFAULT_PLACEHOLDERS;
-  updateField: (
-    currentValue: AddressValue | undefined,
-    key: keyof AddressValue,
-    newValue: string,
-    onChange: (value: AddressValue) => void
-  ) => void;
 }
 
 const AddressContent = memo(function AddressContent({
@@ -205,7 +220,6 @@ const AddressContent = memo(function AddressContent({
   layout,
   labels,
   placeholders,
-  updateField,
 }: AddressContentProps) {
   const value = (field.value || {}) as AddressValue;
 
@@ -217,6 +231,41 @@ const AddressContent = memo(function AddressContent({
     [value.country, states]
   );
 
+  const handleStreetChange = useCallback(
+    (v: string) => field.onChange({ ...value, street: v }),
+    [field, value]
+  );
+
+  const handleNumberChange = useCallback(
+    (v: string) => field.onChange({ ...value, number: v }),
+    [field, value]
+  );
+
+  const handleApartmentChange = useCallback(
+    (v: string) => field.onChange({ ...value, apartment: v }),
+    [field, value]
+  );
+
+  const handleCityChange = useCallback(
+    (v: string) => field.onChange({ ...value, city: v }),
+    [field, value]
+  );
+
+  const handleStateChange = useCallback(
+    (v: string) => field.onChange({ ...value, state: v }),
+    [field, value]
+  );
+
+  const handlePostalCodeChange = useCallback(
+    (v: string) => field.onChange({ ...value, postalCode: v }),
+    [field, value]
+  );
+
+  const handleCountryChange = useCallback(
+    (v: string) => field.onChange({ ...value, country: v }),
+    [field, value]
+  );
+
   if (layout === "inline") {
     return (
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -225,7 +274,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.street}
           value={value.street || ""}
           placeholder={placeholders.street}
-          onChange={(v) => updateField(value, "street", v, field.onChange)}
+          onChange={handleStreetChange}
           disabled={disabled}
           className="col-span-2"
           error={hasError}
@@ -235,7 +284,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.number}
           value={value.number || ""}
           placeholder={placeholders.number}
-          onChange={(v) => updateField(value, "number", v, field.onChange)}
+          onChange={handleNumberChange}
           disabled={disabled}
           error={hasError}
         />
@@ -245,7 +294,7 @@ const AddressContent = memo(function AddressContent({
             label={labels.apartment}
             value={value.apartment || ""}
             placeholder={placeholders.apartment}
-            onChange={(v) => updateField(value, "apartment", v, field.onChange)}
+            onChange={handleApartmentChange}
             disabled={disabled}
             error={hasError}
           />
@@ -255,7 +304,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.city}
           value={value.city || ""}
           placeholder={placeholders.city}
-          onChange={(v) => updateField(value, "city", v, field.onChange)}
+          onChange={handleCityChange}
           disabled={disabled}
           error={hasError}
         />
@@ -265,7 +314,7 @@ const AddressContent = memo(function AddressContent({
             label={labels.state}
             value={value.state || ""}
             placeholder={placeholders.state}
-            onChange={(v) => updateField(value, "state", v, field.onChange)}
+            onChange={handleStateChange}
             disabled={disabled}
             error={hasError}
           />
@@ -275,7 +324,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.postalCode}
           value={value.postalCode || ""}
           placeholder={placeholders.postalCode}
-          onChange={(v) => updateField(value, "postalCode", v, field.onChange)}
+          onChange={handlePostalCodeChange}
           disabled={disabled}
           error={hasError}
         />
@@ -285,7 +334,7 @@ const AddressContent = memo(function AddressContent({
           value={value.country || ""}
           placeholder={placeholders.country}
           options={countries}
-          onChange={(v) => updateField(value, "country", v, field.onChange)}
+          onChange={handleCountryChange}
           disabled={disabled}
           error={hasError}
         />
@@ -301,7 +350,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.street}
           value={value.street || ""}
           placeholder={placeholders.street}
-          onChange={(v) => updateField(value, "street", v, field.onChange)}
+          onChange={handleStreetChange}
           disabled={disabled}
           className="sm:col-span-2"
           error={hasError}
@@ -311,7 +360,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.number}
           value={value.number || ""}
           placeholder={placeholders.number}
-          onChange={(v) => updateField(value, "number", v, field.onChange)}
+          onChange={handleNumberChange}
           disabled={disabled}
           error={hasError}
         />
@@ -322,7 +371,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.apartment}
           value={value.apartment || ""}
           placeholder={placeholders.apartment}
-          onChange={(v) => updateField(value, "apartment", v, field.onChange)}
+          onChange={handleApartmentChange}
           disabled={disabled}
           error={hasError}
         />
@@ -333,7 +382,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.city}
           value={value.city || ""}
           placeholder={placeholders.city}
-          onChange={(v) => updateField(value, "city", v, field.onChange)}
+          onChange={handleCityChange}
           disabled={disabled}
           error={hasError}
         />
@@ -345,7 +394,7 @@ const AddressContent = memo(function AddressContent({
               value={value.state || ""}
               placeholder={placeholders.state}
               options={filteredStates}
-              onChange={(v) => updateField(value, "state", v, field.onChange)}
+              onChange={handleStateChange}
               disabled={disabled}
               error={hasError}
             />
@@ -355,7 +404,7 @@ const AddressContent = memo(function AddressContent({
               label={labels.state}
               value={value.state || ""}
               placeholder={placeholders.state}
-              onChange={(v) => updateField(value, "state", v, field.onChange)}
+              onChange={handleStateChange}
               disabled={disabled}
               error={hasError}
             />
@@ -367,7 +416,7 @@ const AddressContent = memo(function AddressContent({
           label={labels.postalCode}
           value={value.postalCode || ""}
           placeholder={placeholders.postalCode}
-          onChange={(v) => updateField(value, "postalCode", v, field.onChange)}
+          onChange={handlePostalCodeChange}
           disabled={disabled}
           error={hasError}
         />
@@ -377,7 +426,7 @@ const AddressContent = memo(function AddressContent({
           value={value.country || ""}
           placeholder={placeholders.country}
           options={countries}
-          onChange={(v) => updateField(value, "country", v, field.onChange)}
+          onChange={handleCountryChange}
           disabled={disabled}
           error={hasError}
         />
@@ -411,21 +460,6 @@ function FormAddressFieldComponent<
     [customPlaceholders]
   );
 
-  const updateField = useCallback(
-    (
-      currentValue: AddressValue | undefined,
-      key: keyof AddressValue,
-      newValue: string,
-      onChange: (value: AddressValue) => void
-    ) => {
-      onChange({
-        ...currentValue,
-        [key]: newValue,
-      });
-    },
-    []
-  );
-
   return (
     <FormField
       control={control}
@@ -456,7 +490,6 @@ function FormAddressFieldComponent<
                 layout={layout}
                 labels={labels}
                 placeholders={placeholders}
-                updateField={updateField}
               />
             </div>
           </FormControl>

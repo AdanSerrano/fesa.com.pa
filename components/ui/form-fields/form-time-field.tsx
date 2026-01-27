@@ -79,6 +79,98 @@ function isTimeDisabled(
   return false;
 }
 
+interface HourButtonProps {
+  hour: number;
+  isSelected: boolean;
+  computedHour: number;
+  currentMinutes: number;
+  onSelect: (h: number, m: number) => void;
+}
+
+const HourButton = memo(function HourButton({
+  hour,
+  isSelected,
+  computedHour,
+  currentMinutes,
+  onSelect,
+}: HourButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(computedHour, currentMinutes);
+  }, [computedHour, currentMinutes, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant={isSelected ? "default" : "ghost"}
+      size="sm"
+      className="w-full mb-1"
+      onClick={handleClick}
+    >
+      {hour.toString().padStart(2, "0")}
+    </Button>
+  );
+});
+
+interface MinuteButtonProps {
+  minute: number;
+  isSelected: boolean;
+  isDisabled: boolean;
+  currentHours: number;
+  onSelect: (h: number, m: number) => void;
+}
+
+const MinuteButton = memo(function MinuteButton({
+  minute,
+  isSelected,
+  isDisabled,
+  currentHours,
+  onSelect,
+}: MinuteButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(currentHours, minute);
+  }, [currentHours, minute, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant={isSelected ? "default" : "ghost"}
+      size="sm"
+      className="w-full mb-1"
+      disabled={isDisabled}
+      onClick={handleClick}
+    >
+      {minute.toString().padStart(2, "0")}
+    </Button>
+  );
+});
+
+interface PeriodButtonProps {
+  period: "AM" | "PM";
+  isSelected: boolean;
+  onSelect: (period: "AM" | "PM") => void;
+}
+
+const PeriodButton = memo(function PeriodButton({
+  period,
+  isSelected,
+  onSelect,
+}: PeriodButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(period);
+  }, [period, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant={isSelected ? "default" : "ghost"}
+      size="sm"
+      onClick={handleClick}
+    >
+      {period}
+    </Button>
+  );
+});
+
 interface TimeContentProps {
   field: ControllerRenderProps<FieldValues, string>;
   placeholder: string;
@@ -143,6 +235,33 @@ const TimeContent = memo(function TimeContent({
       : value.hours
     : null;
 
+  const currentMinutes = value?.minutes ?? 0;
+  const currentHours = value?.hours ?? 0;
+
+  const triggerClasses = useMemo(
+    () =>
+      cn(
+        "w-full justify-start text-left font-normal bg-background",
+        !value && "text-muted-foreground",
+        hasError && "border-destructive",
+        triggerClassName
+      ),
+    [value, hasError, triggerClassName]
+  );
+
+  const computeHour = useCallback(
+    (h: number) => {
+      if (format === "12h" && currentPeriod === "PM" && h !== 12) {
+        return h + 12;
+      }
+      if (format === "12h" && currentPeriod === "AM" && h === 12) {
+        return 0;
+      }
+      return h;
+    },
+    [format, currentPeriod]
+  );
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -151,12 +270,7 @@ const TimeContent = memo(function TimeContent({
             type="button"
             variant="outline"
             disabled={disabled}
-            className={cn(
-              "w-full justify-start text-left font-normal bg-background",
-              !value && "text-muted-foreground",
-              hasError && "border-destructive",
-              triggerClassName
-            )}
+            className={triggerClasses}
           >
             <Clock className="mr-2 h-4 w-4" />
             {value ? formatTime(value, format) : placeholder}
@@ -167,75 +281,44 @@ const TimeContent = memo(function TimeContent({
         <div className="flex">
           <ScrollArea className="h-[200px] w-[70px] border-r">
             <div className="p-2">
-              {hours.map((h) => {
-                const isSelected = displayHours === h;
-                return (
-                  <Button
-                    key={h}
-                    type="button"
-                    variant={isSelected ? "default" : "ghost"}
-                    size="sm"
-                    className="w-full mb-1"
-                    onClick={() =>
-                      handleSelect(
-                        format === "12h" && currentPeriod === "PM" && h !== 12
-                          ? h + 12
-                          : format === "12h" && currentPeriod === "AM" && h === 12
-                            ? 0
-                            : h,
-                        value?.minutes ?? 0
-                      )
-                    }
-                  >
-                    {h.toString().padStart(2, "0")}
-                  </Button>
-                );
-              })}
+              {hours.map((h) => (
+                <HourButton
+                  key={h}
+                  hour={h}
+                  isSelected={displayHours === h}
+                  computedHour={computeHour(h)}
+                  currentMinutes={currentMinutes}
+                  onSelect={handleSelect}
+                />
+              ))}
             </div>
           </ScrollArea>
           <ScrollArea className="h-[200px] w-[70px] border-r">
             <div className="p-2">
-              {minutes.map((m) => {
-                const isSelected = value?.minutes === m;
-                const isDisabled =
-                  value &&
-                  isTimeDisabled(value.hours, m, minTime, maxTime);
-                return (
-                  <Button
-                    key={m}
-                    type="button"
-                    variant={isSelected ? "default" : "ghost"}
-                    size="sm"
-                    className="w-full mb-1"
-                    disabled={isDisabled}
-                    onClick={() =>
-                      handleSelect(value?.hours ?? 0, m)
-                    }
-                  >
-                    {m.toString().padStart(2, "0")}
-                  </Button>
-                );
-              })}
+              {minutes.map((m) => (
+                <MinuteButton
+                  key={m}
+                  minute={m}
+                  isSelected={value?.minutes === m}
+                  isDisabled={Boolean(value && isTimeDisabled(value.hours, m, minTime, maxTime))}
+                  currentHours={currentHours}
+                  onSelect={handleSelect}
+                />
+              ))}
             </div>
           </ScrollArea>
           {format === "12h" && (
             <div className="p-2 flex flex-col gap-1">
-              <Button
-                type="button"
-                variant={currentPeriod === "AM" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => handlePeriodChange("AM")}
-              >
-                AM
-              </Button>
-              <Button
-                type="button"
-                variant={currentPeriod === "PM" ? "default" : "ghost"}
-                size="sm"
-                onClick={() => handlePeriodChange("PM")}
-              >
-                PM
-              </Button>
+              <PeriodButton
+                period="AM"
+                isSelected={currentPeriod === "AM"}
+                onSelect={handlePeriodChange}
+              />
+              <PeriodButton
+                period="PM"
+                isSelected={currentPeriod === "PM"}
+                onSelect={handlePeriodChange}
+              />
             </div>
           )}
         </div>
@@ -321,6 +404,66 @@ export interface FormTimeRangeFieldProps<
   };
 }
 
+interface RangeHourButtonProps {
+  hour: number;
+  isSelected: boolean;
+  currentMinutes: number;
+  onSelect: (h: number, m: number) => void;
+}
+
+const RangeHourButton = memo(function RangeHourButton({
+  hour,
+  isSelected,
+  currentMinutes,
+  onSelect,
+}: RangeHourButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(hour, currentMinutes);
+  }, [hour, currentMinutes, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant={isSelected ? "default" : "ghost"}
+      size="sm"
+      className="w-full mb-1"
+      onClick={handleClick}
+    >
+      {hour.toString().padStart(2, "0")}
+    </Button>
+  );
+});
+
+interface RangeMinuteButtonProps {
+  minute: number;
+  isSelected: boolean;
+  currentHours: number;
+  onSelect: (h: number, m: number) => void;
+}
+
+const RangeMinuteButton = memo(function RangeMinuteButton({
+  minute,
+  isSelected,
+  currentHours,
+  onSelect,
+}: RangeMinuteButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(currentHours, minute);
+  }, [currentHours, minute, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant={isSelected ? "default" : "ghost"}
+      size="sm"
+      className="w-full mb-1"
+      onClick={handleClick}
+    >
+      {minute.toString().padStart(2, "0")}
+    </Button>
+  );
+});
+
 interface TimeRangePickerProps {
   selectedTime: TimeValue | undefined;
   onSelect: (hours: number, minutes: number) => void;
@@ -342,6 +485,19 @@ const TimeRangePicker = memo(function TimeRangePicker({
   hours,
   minutes,
 }: TimeRangePickerProps) {
+  const currentHours = selectedTime?.hours ?? 0;
+  const currentMinutes = selectedTime?.minutes ?? 0;
+
+  const triggerClasses = useMemo(
+    () =>
+      cn(
+        "flex-1 justify-start text-left font-normal bg-background",
+        !selectedTime && "text-muted-foreground",
+        hasError && "border-destructive"
+      ),
+    [selectedTime, hasError]
+  );
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -349,11 +505,7 @@ const TimeRangePicker = memo(function TimeRangePicker({
           type="button"
           variant="outline"
           disabled={disabled}
-          className={cn(
-            "flex-1 justify-start text-left font-normal bg-background",
-            !selectedTime && "text-muted-foreground",
-            hasError && "border-destructive"
-          )}
+          className={triggerClasses}
         >
           <Clock className="mr-2 h-4 w-4" />
           {selectedTime ? formatTime(selectedTime, format) : placeholder}
@@ -364,36 +516,26 @@ const TimeRangePicker = memo(function TimeRangePicker({
           <ScrollArea className="h-[200px] w-[70px] border-r">
             <div className="p-2">
               {hours.map((h) => (
-                <Button
+                <RangeHourButton
                   key={h}
-                  type="button"
-                  variant={
-                    selectedTime?.hours === h ? "default" : "ghost"
-                  }
-                  size="sm"
-                  className="w-full mb-1"
-                  onClick={() => onSelect(h, selectedTime?.minutes ?? 0)}
-                >
-                  {h.toString().padStart(2, "0")}
-                </Button>
+                  hour={h}
+                  isSelected={selectedTime?.hours === h}
+                  currentMinutes={currentMinutes}
+                  onSelect={onSelect}
+                />
               ))}
             </div>
           </ScrollArea>
           <ScrollArea className="h-[200px] w-[70px]">
             <div className="p-2">
               {minutes.map((m) => (
-                <Button
+                <RangeMinuteButton
                   key={m}
-                  type="button"
-                  variant={
-                    selectedTime?.minutes === m ? "default" : "ghost"
-                  }
-                  size="sm"
-                  className="w-full mb-1"
-                  onClick={() => onSelect(selectedTime?.hours ?? 0, m)}
-                >
-                  {m.toString().padStart(2, "0")}
-                </Button>
+                  minute={m}
+                  isSelected={selectedTime?.minutes === m}
+                  currentHours={currentHours}
+                  onSelect={onSelect}
+                />
               ))}
             </div>
           </ScrollArea>

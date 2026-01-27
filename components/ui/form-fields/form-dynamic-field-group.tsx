@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, type ReactNode } from "react";
+import { memo, useCallback, useMemo, type ReactNode } from "react";
 import {
   useFieldArray,
   type Control,
@@ -55,6 +55,104 @@ const DEFAULT_LABELS = {
   moveDown: "Move down",
   empty: "No items added yet",
 };
+
+interface MoveUpButtonProps {
+  index: number;
+  onMoveUp: (index: number) => void;
+  disabled: boolean;
+}
+
+const MoveUpButton = memo(function MoveUpButton({
+  index,
+  onMoveUp,
+  disabled,
+}: MoveUpButtonProps) {
+  const handleClick = useCallback(() => {
+    onMoveUp(index);
+  }, [onMoveUp, index]);
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="h-6 w-6"
+      onClick={handleClick}
+      disabled={disabled}
+    >
+      <ChevronUp className="h-4 w-4" />
+    </Button>
+  );
+});
+
+interface MoveDownButtonProps {
+  index: number;
+  onMoveDown: (index: number) => void;
+  disabled: boolean;
+}
+
+const MoveDownButton = memo(function MoveDownButton({
+  index,
+  onMoveDown,
+  disabled,
+}: MoveDownButtonProps) {
+  const handleClick = useCallback(() => {
+    onMoveDown(index);
+  }, [onMoveDown, index]);
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="h-6 w-6"
+      onClick={handleClick}
+      disabled={disabled}
+    >
+      <ChevronDown className="h-4 w-4" />
+    </Button>
+  );
+});
+
+interface RemoveButtonProps {
+  index: number;
+  onRemove: (index: number) => void;
+  disabled: boolean;
+  variant: "default" | "card" | "compact";
+}
+
+const RemoveButton = memo(function RemoveButton({
+  index,
+  onRemove,
+  disabled,
+  variant,
+}: RemoveButtonProps) {
+  const handleClick = useCallback(() => {
+    onRemove(index);
+  }, [onRemove, index]);
+
+  const buttonClasses = useMemo(
+    () =>
+      cn(
+        "h-8 w-8 text-muted-foreground hover:text-destructive shrink-0",
+        variant === "default" && "opacity-0 group-hover:opacity-100 transition-opacity"
+      ),
+    [variant]
+  );
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className={buttonClasses}
+      onClick={handleClick}
+      disabled={disabled}
+    >
+      <Trash2 className="h-4 w-4" />
+    </Button>
+  );
+});
 
 function FormDynamicFieldGroupComponent<
   TFieldValues extends FieldValues = FieldValues,
@@ -191,26 +289,16 @@ function FormDynamicFieldGroupComponent<
 
                 {showMoveButtons && (
                   <div className="flex flex-col gap-1 mt-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() => handleMoveUp(index)}
+                    <MoveUpButton
+                      index={index}
+                      onMoveUp={handleMoveUp}
                       disabled={disabled || index === 0}
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-6 w-6"
-                      onClick={() => handleMoveDown(index)}
+                    />
+                    <MoveDownButton
+                      index={index}
+                      onMoveDown={handleMoveDown}
                       disabled={disabled || index === fields.length - 1}
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
+                    />
                   </div>
                 )}
 
@@ -218,19 +306,12 @@ function FormDynamicFieldGroupComponent<
                   {renderField(index, fieldArray)}
                 </div>
 
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={cn(
-                    "h-8 w-8 text-muted-foreground hover:text-destructive shrink-0",
-                    variant === "default" && "opacity-0 group-hover:opacity-100 transition-opacity"
-                  )}
-                  onClick={() => handleRemove(index)}
+                <RemoveButton
+                  index={index}
+                  onRemove={handleRemove}
                   disabled={disabled || !canRemove}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                  variant={variant}
+                />
               </div>
             </div>
           ))

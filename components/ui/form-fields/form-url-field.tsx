@@ -113,6 +113,154 @@ const UrlPreview = memo(function UrlPreview({
   );
 });
 
+interface UrlContentProps {
+  field: {
+    value: string | undefined;
+    onChange: (value: string) => void;
+    onBlur: () => void;
+  };
+  hasError: boolean;
+  disabled?: boolean;
+  placeholder: string;
+  showValidation: boolean;
+  showOpenLink: boolean;
+  showCopy: boolean;
+  showFavicon: boolean;
+  allowedProtocols: string[];
+  autoAddProtocol: boolean;
+}
+
+const UrlContent = memo(function UrlContent({
+  field,
+  hasError,
+  disabled,
+  placeholder,
+  showValidation,
+  showOpenLink,
+  showCopy,
+  showFavicon,
+  allowedProtocols,
+  autoAddProtocol,
+}: UrlContentProps) {
+  const validation = useMemo(
+    () => validateUrl(field.value || "", allowedProtocols),
+    [field.value, allowedProtocols]
+  );
+
+  const faviconUrl = useMemo(
+    () => (showFavicon && validation.valid ? getFaviconUrl(field.value || "") : null),
+    [field.value, validation.valid, showFavicon]
+  );
+
+  const handleBlur = useCallback(() => {
+    field.onBlur();
+    if (autoAddProtocol && field.value && !/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(field.value)) {
+      field.onChange(`https://${field.value}`);
+    }
+  }, [field, autoAddProtocol]);
+
+  const handleCopy = useCallback(() => {
+    if (field.value) {
+      navigator.clipboard.writeText(field.value);
+    }
+  }, [field.value]);
+
+  const handleOpen = useCallback(() => {
+    if (!field.value) return;
+    let urlToOpen = field.value;
+    if (autoAddProtocol && !/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(field.value)) {
+      urlToOpen = `https://${field.value}`;
+    }
+    window.open(urlToOpen, "_blank", "noopener,noreferrer");
+  }, [field.value, autoAddProtocol]);
+
+  const inputClasses = useMemo(
+    () => cn("bg-background pl-10", hasError && "border-destructive"),
+    [hasError]
+  );
+
+  const validationBadgeClasses = useMemo(
+    () =>
+      cn(
+        "text-xs",
+        validation.valid
+          ? "text-green-600 border-green-600/30"
+          : "text-destructive border-destructive/30"
+      ),
+    [validation.valid]
+  );
+
+  return (
+    <div className="space-y-2">
+      <div className="relative flex gap-2">
+        <div className="relative flex-1">
+          <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
+          <Input
+            value={field.value ?? ""}
+            onChange={(e) => field.onChange(e.target.value)}
+            onBlur={handleBlur}
+            placeholder={placeholder}
+            disabled={disabled}
+            className={inputClasses}
+            type="url"
+          />
+        </div>
+        {(showOpenLink || showCopy) && field.value && validation.valid && (
+          <div className="flex gap-1">
+            {showCopy && (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={handleCopy}
+                disabled={disabled}
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            )}
+            {showOpenLink && (
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={handleOpen}
+                disabled={disabled}
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+
+      {field.value && (
+        <div className="flex flex-wrap items-center gap-2">
+          {showValidation && (
+            <Badge variant="outline" className={validationBadgeClasses}>
+              {validation.valid ? (
+                <>
+                  <Check className="h-3 w-3 mr-1" />
+                  Valid URL
+                </>
+              ) : (
+                <>
+                  <X className="h-3 w-3 mr-1" />
+                  {validation.error || "Invalid"}
+                </>
+              )}
+            </Badge>
+          )}
+          <UrlPreview
+            validation={validation}
+            faviconUrl={faviconUrl}
+            showFavicon={showFavicon}
+          />
+        </div>
+      )}
+    </div>
+  );
+});
+
 function FormUrlFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -132,133 +280,36 @@ function FormUrlFieldComponent<
   allowedProtocols = ["http", "https"],
   autoAddProtocol = true,
 }: FormUrlFieldProps<TFieldValues, TName>) {
-  const handleCopy = useCallback((url: string) => {
-    navigator.clipboard.writeText(url);
-  }, []);
-
-  const handleOpen = useCallback((url: string) => {
-    let urlToOpen = url;
-    if (autoAddProtocol && !/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(url)) {
-      urlToOpen = `https://${url}`;
-    }
-    window.open(urlToOpen, "_blank", "noopener,noreferrer");
-  }, [autoAddProtocol]);
-
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const validation = useMemo(
-          () => validateUrl(field.value || "", allowedProtocols),
-          [field.value]
-        );
-
-        const faviconUrl = useMemo(
-          () => (showFavicon && validation.valid ? getFaviconUrl(field.value || "") : null),
-          [field.value, validation.valid]
-        );
-
-        const handleBlur = () => {
-          field.onBlur();
-          if (autoAddProtocol && field.value && !/^[a-zA-Z][a-zA-Z\d+\-.]*:/.test(field.value)) {
-            field.onChange(`https://${field.value}`);
-          }
-        };
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div className="space-y-2">
-                <div className="relative flex gap-2">
-                  <div className="relative flex-1">
-                    <Link2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
-                    <Input
-                      {...field}
-                      value={field.value ?? ""}
-                      onBlur={handleBlur}
-                      placeholder={placeholder}
-                      disabled={disabled}
-                      className={cn(
-                        "bg-background pl-10",
-                        fieldState.error && "border-destructive"
-                      )}
-                      type="url"
-                    />
-                  </div>
-                  {(showOpenLink || showCopy) && field.value && validation.valid && (
-                    <div className="flex gap-1">
-                      {showCopy && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleCopy(field.value)}
-                          disabled={disabled}
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      )}
-                      {showOpenLink && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="icon"
-                          onClick={() => handleOpen(field.value)}
-                          disabled={disabled}
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                {field.value && (
-                  <div className="flex flex-wrap items-center gap-2">
-                    {showValidation && (
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "text-xs",
-                          validation.valid
-                            ? "text-green-600 border-green-600/30"
-                            : "text-destructive border-destructive/30"
-                        )}
-                      >
-                        {validation.valid ? (
-                          <>
-                            <Check className="h-3 w-3 mr-1" />
-                            Valid URL
-                          </>
-                        ) : (
-                          <>
-                            <X className="h-3 w-3 mr-1" />
-                            {validation.error || "Invalid"}
-                          </>
-                        )}
-                      </Badge>
-                    )}
-                    <UrlPreview
-                      validation={validation}
-                      faviconUrl={faviconUrl}
-                      showFavicon={showFavicon}
-                    />
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <UrlContent
+              field={field}
+              hasError={!!fieldState.error}
+              disabled={disabled}
+              placeholder={placeholder}
+              showValidation={showValidation}
+              showOpenLink={showOpenLink}
+              showCopy={showCopy}
+              showFavicon={showFavicon}
+              allowedProtocols={allowedProtocols}
+              autoAddProtocol={autoAddProtocol}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }
