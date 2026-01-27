@@ -1,0 +1,300 @@
+"use client";
+
+import { memo, useCallback, useMemo, useRef } from "react";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import type { BaseFormFieldProps } from "./form-field.types";
+
+export interface MaskDefinition {
+  pattern: string;
+  placeholder?: string;
+  definitions?: Record<string, RegExp>;
+}
+
+export type PresetMask =
+  | "phone-us"
+  | "phone-mx"
+  | "ssn"
+  | "zip-us"
+  | "zip-mx"
+  | "credit-card"
+  | "date"
+  | "time"
+  | "percentage"
+  | "currency";
+
+const PRESET_MASKS: Record<PresetMask, MaskDefinition> = {
+  "phone-us": { pattern: "(999) 999-9999", placeholder: "(___) ___-____" },
+  "phone-mx": { pattern: "+52 99 9999 9999", placeholder: "+52 __ ____ ____" },
+  ssn: { pattern: "999-99-9999", placeholder: "___-__-____" },
+  "zip-us": { pattern: "99999", placeholder: "_____" },
+  "zip-mx": { pattern: "99999", placeholder: "_____" },
+  "credit-card": { pattern: "9999 9999 9999 9999", placeholder: "____ ____ ____ ____" },
+  date: { pattern: "99/99/9999", placeholder: "__/__/____" },
+  time: { pattern: "99:99", placeholder: "__:__" },
+  percentage: { pattern: "999%", placeholder: "___%", definitions: { 9: /[0-9]/ } },
+  currency: { pattern: "$9,999,999.99", placeholder: "$_,___,___.___" },
+};
+
+const DEFAULT_DEFINITIONS: Record<string, RegExp> = {
+  "9": /[0-9]/,
+  a: /[a-zA-Z]/,
+  A: /[A-Z]/,
+  "*": /[a-zA-Z0-9]/,
+};
+
+export interface FormMaskFieldProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> extends BaseFormFieldProps<TFieldValues, TName> {
+  mask?: string | MaskDefinition;
+  preset?: PresetMask;
+  showMask?: boolean;
+  maskChar?: string;
+  alwaysShowMask?: boolean;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+}
+
+function applyMask(
+  value: string,
+  pattern: string,
+  definitions: Record<string, RegExp>
+): string {
+  let result = "";
+  let valueIndex = 0;
+
+  for (let i = 0; i < pattern.length && valueIndex < value.length; i++) {
+    const patternChar = pattern[i];
+    const definition = definitions[patternChar];
+
+    if (definition) {
+      while (valueIndex < value.length) {
+        const inputChar = value[valueIndex];
+        valueIndex++;
+
+        if (definition.test(inputChar)) {
+          result += inputChar;
+          break;
+        }
+      }
+    } else {
+      result += patternChar;
+      if (value[valueIndex] === patternChar) {
+        valueIndex++;
+      }
+    }
+  }
+
+  return result;
+}
+
+function getRawValue(value: string, pattern: string, definitions: Record<string, RegExp>): string {
+  let result = "";
+
+  for (let i = 0; i < value.length && i < pattern.length; i++) {
+    const patternChar = pattern[i];
+    const definition = definitions[patternChar];
+
+    if (definition && definition.test(value[i])) {
+      result += value[i];
+    }
+  }
+
+  return result;
+}
+
+function getMaskedPlaceholder(
+  pattern: string,
+  maskChar: string,
+  definitions: Record<string, RegExp>,
+  filledLength: number
+): string {
+  let result = "";
+
+  for (let i = 0; i < pattern.length; i++) {
+    const patternChar = pattern[i];
+    const definition = definitions[patternChar];
+
+    if (definition) {
+      result += maskChar;
+    } else {
+      result += patternChar;
+    }
+  }
+
+  return result;
+}
+
+function FormMaskFieldComponent<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  label,
+  description,
+  placeholder,
+  disabled,
+  className,
+  required,
+  mask,
+  preset,
+  showMask = true,
+  maskChar = "_",
+  alwaysShowMask = false,
+  leftIcon,
+  rightIcon,
+}: FormMaskFieldProps<TFieldValues, TName>) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const maskDefinition = useMemo((): MaskDefinition => {
+    if (preset) {
+      return PRESET_MASKS[preset];
+    }
+    if (typeof mask === "string") {
+      return { pattern: mask };
+    }
+    return mask || { pattern: "" };
+  }, [mask, preset]);
+
+  const definitions = useMemo(
+    () => ({ ...DEFAULT_DEFINITIONS, ...maskDefinition.definitions }),
+    [maskDefinition.definitions]
+  );
+
+  const pattern = maskDefinition.pattern;
+
+  const displayPlaceholder = useMemo(
+    () => placeholder || maskDefinition.placeholder || getMaskedPlaceholder(pattern, maskChar, definitions, 0),
+    [placeholder, maskDefinition.placeholder, pattern, maskChar, definitions]
+  );
+
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => {
+        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+          const inputValue = e.target.value;
+          const rawInput = inputValue.replace(/[^a-zA-Z0-9]/g, "");
+          const maskedValue = applyMask(rawInput, pattern, definitions);
+          field.onChange(maskedValue);
+        };
+
+        const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === "Backspace") {
+            const input = inputRef.current;
+            if (!input) return;
+
+            const selStart = input.selectionStart ?? 0;
+            const currentValue = field.value || "";
+
+            if (selStart > 0 && selStart <= currentValue.length) {
+              let deleteIndex = selStart - 1;
+
+              while (deleteIndex >= 0) {
+                const patternChar = pattern[deleteIndex];
+                if (definitions[patternChar]) {
+                  break;
+                }
+                deleteIndex--;
+              }
+
+              if (deleteIndex >= 0) {
+                const newValue =
+                  currentValue.slice(0, deleteIndex) + currentValue.slice(selStart);
+                const remasked = applyMask(
+                  getRawValue(newValue, pattern, definitions),
+                  pattern,
+                  definitions
+                );
+                field.onChange(remasked);
+
+                e.preventDefault();
+                requestAnimationFrame(() => {
+                  input.setSelectionRange(deleteIndex, deleteIndex);
+                });
+              }
+            }
+          }
+        };
+
+        const displayValue = useMemo(() => {
+          const value = field.value || "";
+          if (!showMask || (!alwaysShowMask && !value)) {
+            return value;
+          }
+
+          const masked = applyMask(value, pattern, definitions);
+          const placeholder = getMaskedPlaceholder(pattern, maskChar, definitions, 0);
+
+          let display = "";
+          for (let i = 0; i < pattern.length; i++) {
+            if (i < masked.length) {
+              display += masked[i];
+            } else if (alwaysShowMask) {
+              display += placeholder[i] || "";
+            }
+          }
+
+          return display || masked;
+        }, [field.value, showMask, alwaysShowMask, pattern, definitions, maskChar]);
+
+        return (
+          <FormItem className={className}>
+            {label && (
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+            )}
+            <FormControl>
+              <div className="relative">
+                {leftIcon && (
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    {leftIcon}
+                  </div>
+                )}
+                <Input
+                  ref={inputRef}
+                  value={displayValue}
+                  onChange={handleChange}
+                  onKeyDown={handleKeyDown}
+                  placeholder={displayPlaceholder}
+                  disabled={disabled}
+                  className={cn(
+                    "bg-background font-mono",
+                    leftIcon && "pl-10",
+                    rightIcon && "pr-10",
+                    fieldState.error && "border-destructive"
+                  )}
+                />
+                {rightIcon && (
+                  <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    {rightIcon}
+                  </div>
+                )}
+              </div>
+            </FormControl>
+            {description && <FormDescription>{description}</FormDescription>}
+            <FormMessage />
+          </FormItem>
+        );
+      }}
+    />
+  );
+}
+
+export const FormMaskField = memo(
+  FormMaskFieldComponent
+) as typeof FormMaskFieldComponent;

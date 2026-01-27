@@ -1,0 +1,239 @@
+"use client";
+
+import { memo, useCallback, useRef, useMemo } from "react";
+import type { FieldPath, FieldValues } from "react-hook-form";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Toggle } from "@/components/ui/toggle";
+import { Separator } from "@/components/ui/separator";
+import {
+  Bold,
+  Italic,
+  Underline,
+  Strikethrough,
+  List,
+  ListOrdered,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Link,
+  Undo,
+  Redo,
+  Code,
+  Quote,
+  Heading1,
+  Heading2,
+  Heading3,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import type { BaseFormFieldProps } from "./form-field.types";
+
+type ToolbarAction =
+  | "bold"
+  | "italic"
+  | "underline"
+  | "strikeThrough"
+  | "insertUnorderedList"
+  | "insertOrderedList"
+  | "justifyLeft"
+  | "justifyCenter"
+  | "justifyRight"
+  | "createLink"
+  | "undo"
+  | "redo"
+  | "formatBlock";
+
+interface ToolbarButton {
+  action: ToolbarAction;
+  icon: React.ElementType;
+  label: string;
+  arg?: string;
+}
+
+const TOOLBAR_GROUPS: ToolbarButton[][] = [
+  [
+    { action: "bold", icon: Bold, label: "Bold" },
+    { action: "italic", icon: Italic, label: "Italic" },
+    { action: "underline", icon: Underline, label: "Underline" },
+    { action: "strikeThrough", icon: Strikethrough, label: "Strikethrough" },
+  ],
+  [
+    { action: "formatBlock", icon: Heading1, label: "Heading 1", arg: "h1" },
+    { action: "formatBlock", icon: Heading2, label: "Heading 2", arg: "h2" },
+    { action: "formatBlock", icon: Heading3, label: "Heading 3", arg: "h3" },
+  ],
+  [
+    { action: "insertUnorderedList", icon: List, label: "Bullet List" },
+    { action: "insertOrderedList", icon: ListOrdered, label: "Numbered List" },
+    { action: "formatBlock", icon: Quote, label: "Quote", arg: "blockquote" },
+    { action: "formatBlock", icon: Code, label: "Code", arg: "pre" },
+  ],
+  [
+    { action: "justifyLeft", icon: AlignLeft, label: "Align Left" },
+    { action: "justifyCenter", icon: AlignCenter, label: "Align Center" },
+    { action: "justifyRight", icon: AlignRight, label: "Align Right" },
+  ],
+  [
+    { action: "createLink", icon: Link, label: "Insert Link" },
+  ],
+  [
+    { action: "undo", icon: Undo, label: "Undo" },
+    { action: "redo", icon: Redo, label: "Redo" },
+  ],
+];
+
+export interface FormRichTextFieldProps<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+> extends BaseFormFieldProps<TFieldValues, TName> {
+  minHeight?: number;
+  maxHeight?: number;
+  showToolbar?: boolean;
+  toolbarGroups?: (keyof typeof TOOLBAR_GROUPS)[];
+}
+
+const ToolbarButtonComponent = memo(function ToolbarButton({
+  button,
+  onAction,
+}: {
+  button: ToolbarButton;
+  onAction: (action: ToolbarAction, arg?: string) => void;
+}) {
+  const Icon = button.icon;
+  return (
+    <Toggle
+      size="sm"
+      aria-label={button.label}
+      onPressedChange={() => onAction(button.action, button.arg)}
+      className="h-8 w-8 p-0"
+    >
+      <Icon className="h-4 w-4" />
+    </Toggle>
+  );
+});
+
+const Toolbar = memo(function Toolbar({
+  onAction,
+}: {
+  onAction: (action: ToolbarAction, arg?: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1 border-b bg-muted/30 p-1">
+      {TOOLBAR_GROUPS.map((group, groupIndex) => (
+        <div key={groupIndex} className="flex items-center">
+          {groupIndex > 0 && (
+            <Separator orientation="vertical" className="mx-1 h-6" />
+          )}
+          {group.map((button, buttonIndex) => (
+            <ToolbarButtonComponent
+              key={`${groupIndex}-${buttonIndex}`}
+              button={button}
+              onAction={onAction}
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+});
+
+function FormRichTextFieldComponent<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  label,
+  description,
+  placeholder,
+  disabled,
+  className,
+  required,
+  minHeight = 200,
+  maxHeight = 400,
+  showToolbar = true,
+}: FormRichTextFieldProps<TFieldValues, TName>) {
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  const handleAction = useCallback((action: ToolbarAction, arg?: string) => {
+    if (!editorRef.current) return;
+    editorRef.current.focus();
+
+    if (action === "createLink") {
+      const url = window.prompt("Enter URL:");
+      if (url) {
+        document.execCommand(action, false, url);
+      }
+    } else if (action === "formatBlock" && arg) {
+      document.execCommand(action, false, `<${arg}>`);
+    } else {
+      document.execCommand(action, false);
+    }
+  }, []);
+
+  const editorStyle = useMemo(
+    () => ({
+      minHeight: `${minHeight}px`,
+      maxHeight: `${maxHeight}px`,
+    }),
+    [minHeight, maxHeight]
+  );
+
+  return (
+    <FormField
+      control={control}
+      name={name}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <div
+              className={cn(
+                "rounded-md border bg-background",
+                fieldState.error && "border-destructive",
+                disabled && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {showToolbar && <Toolbar onAction={handleAction} />}
+              <div
+                ref={editorRef}
+                contentEditable={!disabled}
+                className={cn(
+                  "prose prose-sm dark:prose-invert max-w-none p-3 focus:outline-none overflow-y-auto",
+                  !field.value && "text-muted-foreground"
+                )}
+                style={editorStyle}
+                onInput={(e) => {
+                  const target = e.currentTarget;
+                  field.onChange(target.innerHTML);
+                }}
+                onBlur={field.onBlur}
+                dangerouslySetInnerHTML={{
+                  __html: field.value || placeholder || "",
+                }}
+                suppressContentEditableWarning
+              />
+            </div>
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
+    />
+  );
+}
+
+export const FormRichTextField = memo(
+  FormRichTextFieldComponent
+) as typeof FormRichTextFieldComponent;
