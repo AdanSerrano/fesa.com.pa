@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertCircle, RefreshCw, LayoutDashboard } from "lucide-react";
@@ -12,12 +12,8 @@ interface ErrorProps {
   reset: () => void;
 }
 
-const DashboardError = memo(function DashboardError({ error, reset }: ErrorProps) {
+const DashboardError = memo(function DashboardError({ reset }: ErrorProps) {
   const t = useTranslations("DashboardError");
-
-  useEffect(() => {
-    console.error("Dashboard error:", error);
-  }, [error]);
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] p-6">

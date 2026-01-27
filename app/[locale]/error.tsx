@@ -1,22 +1,17 @@
 "use client";
 
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw } from "lucide-react";
-import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 
-export default function Error({
-  error,
-  reset,
-}: {
+interface ErrorProps {
   error: Error & { digest?: string };
   reset: () => void;
-}) {
-  const t = useTranslations("Errors");
+}
 
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
+const GlobalError = memo(function GlobalError({ reset }: ErrorProps) {
+  const t = useTranslations("Errors");
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white dark:bg-gray-950">
@@ -49,4 +44,6 @@ export default function Error({
       </div>
     </div>
   );
-}
+});
+
+export default GlobalError;

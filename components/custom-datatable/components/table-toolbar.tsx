@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState, useEffect, useRef, useMemo } from "react";
+import { memo, useCallback, useRef, useMemo, useEffect } from "react";
 import {
   Search,
   X,
@@ -99,10 +99,10 @@ const TooltipButton = memo(function TooltipButton({
   );
 });
 
-// Memoized search input
+// Memoized search input - uses uncontrolled input with ref
 const SearchInput = memo(function SearchInput({
   inputRef,
-  value,
+  defaultValue,
   placeholder,
   onChange,
   onClear,
@@ -111,7 +111,7 @@ const SearchInput = memo(function SearchInput({
   clearLabel,
 }: {
   inputRef: React.RefObject<HTMLInputElement | null>;
-  value: string;
+  defaultValue: string;
   placeholder: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClear: () => void;
@@ -129,23 +129,27 @@ const SearchInput = memo(function SearchInput({
     [onSubmit]
   );
 
+  const handleClearClick = useCallback(() => {
+    onClear();
+  }, [onClear]);
+
   return (
-    <div className="relative w-full sm:max-w-xs">
+    <div className="relative w-full sm:max-w-xs group">
       <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
       <Input
         ref={inputRef}
         placeholder={placeholder}
-        value={value}
+        defaultValue={defaultValue}
         onChange={onChange}
         onKeyDown={handleKeyDown}
-        className="pl-9 pr-9"
+        className="peer pl-9 pr-9"
       />
-      {value && showClearButton && (
+      {showClearButton && (
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2"
-          onClick={onClear}
+          className="absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 opacity-0 transition-opacity peer-[:not(:placeholder-shown)]:opacity-100"
+          onClick={handleClearClick}
         >
           <X className="h-3 w-3" />
           <span className="sr-only">{clearLabel}</span>
@@ -422,31 +426,31 @@ function TableToolbarInner<TData>({
   className,
 }: TableToolbarProps<TData>) {
   const t = useTranslations("DataTable.toolbar");
-  const [localFilter, setLocalFilter] = useState(filter?.globalFilter ?? "");
   const inputRef = useRef<HTMLInputElement | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const localFilterRef = useRef(filter?.globalFilter ?? "");
 
-  // Refs for stable callbacks
   const filterRef = useRef(filter);
   const onExportRef = useRef(onExport);
   const exportConfigRef = useRef(exportConfig);
   const columnVisibilityRef = useRef(columnVisibility);
 
-  // Update refs on every render
   filterRef.current = filter;
   onExportRef.current = onExport;
   exportConfigRef.current = exportConfig;
   columnVisibilityRef.current = columnVisibility;
 
-  // Sync with external filter value
-  useEffect(() => {
-    setLocalFilter(filter?.globalFilter ?? "");
-  }, [filter?.globalFilter]);
+  const externalFilter = filter?.globalFilter ?? "";
+  if (localFilterRef.current !== externalFilter && inputRef.current !== document.activeElement) {
+    localFilterRef.current = externalFilter;
+    if (inputRef.current) {
+      inputRef.current.value = externalFilter;
+    }
+  }
 
-  // Debounced filter change - stable callback using refs
   const handleFilterChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    setLocalFilter(value);
+    localFilterRef.current = value;
 
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -458,21 +462,22 @@ function TableToolbarInner<TData>({
     }, debounceMs);
   }, []);
 
-  // Clear filter - stable callback using refs
   const handleClearFilter = useCallback(() => {
-    setLocalFilter("");
+    localFilterRef.current = "";
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
     filterRef.current?.onGlobalFilterChange?.("");
     inputRef.current?.focus();
   }, []);
 
-  // Submit filter immediately (on Enter key) - clears debounce
   const handleSubmitFilter = useCallback(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
       debounceRef.current = null;
     }
-    filterRef.current?.onGlobalFilterChange?.(localFilter);
-  }, [localFilter]);
+    filterRef.current?.onGlobalFilterChange?.(localFilterRef.current);
+  }, []);
 
   // Export handler - stable callback using refs
   const handleExport = useCallback((format: ExportFormat) => {
@@ -599,7 +604,7 @@ function TableToolbarInner<TData>({
             {filter && showFlags.search && (
               <SearchInput
                 inputRef={inputRef}
-                value={localFilter}
+                defaultValue={externalFilter}
                 placeholder={searchPlaceholder}
                 onChange={handleFilterChange}
                 onClear={handleClearFilter}

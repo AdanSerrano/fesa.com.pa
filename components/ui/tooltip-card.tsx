@@ -1,9 +1,27 @@
 "use client";
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useCallback, memo, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 
-export const Tooltip = ({
+const TOOLTIP_WIDTH = 240;
+const TOOLTIP_OFFSET = 12;
+const TOUCH_HIDE_DELAY = 2000;
+
+interface TooltipState {
+  isVisible: boolean;
+  mouse: { x: number; y: number };
+  position: { x: number; y: number };
+  height: number;
+}
+
+const initialState: TooltipState = {
+  isVisible: false,
+  mouse: { x: 0, y: 0 },
+  position: { x: 0, y: 0 },
+  height: 0,
+};
+
+export const Tooltip = memo(function Tooltip({
   content,
   children,
   containerClassName,
@@ -11,138 +29,139 @@ export const Tooltip = ({
   content: string | React.ReactNode;
   children: React.ReactNode;
   containerClassName?: string;
-}) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [mouse, setMouse] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
-  const [height, setHeight] = useState(0);
-  const [position, setPosition] = useState<{ x: number; y: number }>({
-    x: 0,
-    y: 0,
-  });
+}) {
+  const [state, setState] = useState<TooltipState>(initialState);
   const contentRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const touchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (isVisible && contentRef.current) {
-      setHeight(contentRef.current.scrollHeight);
+    return () => {
+      if (touchTimeoutRef.current) {
+        clearTimeout(touchTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const calculatePosition = useCallback((mouseX: number, mouseY: number): { x: number; y: number } => {
+    if (!contentRef.current || !containerRef.current) {
+      return { x: mouseX + TOOLTIP_OFFSET, y: mouseY + TOOLTIP_OFFSET };
     }
-  }, [isVisible, content]);
 
-  const calculatePosition = (mouseX: number, mouseY: number) => {
-    if (!contentRef.current || !containerRef.current)
-      return { x: mouseX + 12, y: mouseY + 12 };
-
-    const tooltip = contentRef.current;
     const container = containerRef.current;
     const containerRect = container.getBoundingClientRect();
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
+    const tooltipHeight = contentRef.current.scrollHeight;
 
-    // Get tooltip dimensions
-    const tooltipWidth = 240; // min-w-[15rem] = 240px
-    const tooltipHeight = tooltip.scrollHeight;
-
-    // Calculate absolute position relative to viewport
     const absoluteX = containerRect.left + mouseX;
     const absoluteY = containerRect.top + mouseY;
 
-    let finalX = mouseX + 12;
-    let finalY = mouseY + 12;
+    let finalX = mouseX + TOOLTIP_OFFSET;
+    let finalY = mouseY + TOOLTIP_OFFSET;
 
-    // Check if tooltip goes beyond right edge
-    if (absoluteX + 12 + tooltipWidth > viewportWidth) {
-      finalX = mouseX - tooltipWidth - 12;
+    if (absoluteX + TOOLTIP_OFFSET + TOOLTIP_WIDTH > viewportWidth) {
+      finalX = mouseX - TOOLTIP_WIDTH - TOOLTIP_OFFSET;
     }
 
-    // Check if tooltip goes beyond left edge
     if (absoluteX + finalX < 0) {
-      finalX = -containerRect.left + 12;
+      finalX = -containerRect.left + TOOLTIP_OFFSET;
     }
 
-    // Check if tooltip goes beyond bottom edge
-    if (absoluteY + 12 + tooltipHeight > viewportHeight) {
-      finalY = mouseY - tooltipHeight - 12;
+    if (absoluteY + TOOLTIP_OFFSET + tooltipHeight > viewportHeight) {
+      finalY = mouseY - tooltipHeight - TOOLTIP_OFFSET;
     }
 
-    // Check if tooltip goes beyond top edge
     if (absoluteY + finalY < 0) {
-      finalY = -containerRect.top + 12;
+      finalY = -containerRect.top + TOOLTIP_OFFSET;
     }
 
     return { x: finalX, y: finalY };
-  };
+  }, []);
 
-  const updateMousePosition = (mouseX: number, mouseY: number) => {
-    setMouse({ x: mouseX, y: mouseY });
-    const newPosition = calculatePosition(mouseX, mouseY);
-    setPosition(newPosition);
-  };
+  const updateState = useCallback((mouseX: number, mouseY: number, visible: boolean) => {
+    setState(prev => {
+      const newPosition = calculatePosition(mouseX, mouseY);
+      const newHeight = contentRef.current?.scrollHeight ?? prev.height;
+      return {
+        isVisible: visible,
+        mouse: { x: mouseX, y: mouseY },
+        position: newPosition,
+        height: newHeight,
+      };
+    });
+  }, [calculatePosition]);
 
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    setIsVisible(true);
+  const resetState = useCallback(() => {
+    setState(initialState);
+  }, []);
+
+  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    updateMousePosition(mouseX, mouseY);
-  };
+    updateState(mouseX, mouseY, true);
+  }, [updateState]);
 
-  const handleMouseLeave = () => {
-    setMouse({ x: 0, y: 0 });
-    setPosition({ x: 0, y: 0 });
-    setIsVisible(false);
-  };
+  const handleMouseLeave = useCallback(() => {
+    resetState();
+  }, [resetState]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!isVisible) return;
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseX = e.clientX - rect.left;
     const mouseY = e.clientY - rect.top;
-    updateMousePosition(mouseX, mouseY);
-  };
+    setState(prev => {
+      if (!prev.isVisible) return prev;
+      const newPosition = calculatePosition(mouseX, mouseY);
+      return {
+        ...prev,
+        mouse: { x: mouseX, y: mouseY },
+        position: newPosition,
+      };
+    });
+  }, [calculatePosition]);
 
-  const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (touchTimeoutRef.current) {
+      clearTimeout(touchTimeoutRef.current);
+      touchTimeoutRef.current = null;
+    }
     const touch = e.touches[0];
     const rect = e.currentTarget.getBoundingClientRect();
     const mouseX = touch.clientX - rect.left;
     const mouseY = touch.clientY - rect.top;
-    updateMousePosition(mouseX, mouseY);
-    setIsVisible(true);
-  };
+    updateState(mouseX, mouseY, true);
+  }, [updateState]);
 
-  const handleTouchEnd = () => {
-    // Delay hiding to allow for tap interaction
-    setTimeout(() => {
-      setIsVisible(false);
-      setMouse({ x: 0, y: 0 });
-      setPosition({ x: 0, y: 0 });
-    }, 2000);
-  };
+  const handleTouchEnd = useCallback(() => {
+    touchTimeoutRef.current = setTimeout(() => {
+      resetState();
+      touchTimeoutRef.current = null;
+    }, TOUCH_HIDE_DELAY);
+  }, [resetState]);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    // Toggle visibility on click for mobile devices
-    if (window.matchMedia("(hover: none)").matches) {
+  const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    if (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches) {
       e.preventDefault();
-      if (isVisible) {
-        setIsVisible(false);
-        setMouse({ x: 0, y: 0 });
-        setPosition({ x: 0, y: 0 });
-      } else {
+      setState(prev => {
+        if (prev.isVisible) {
+          return initialState;
+        }
         const rect = e.currentTarget.getBoundingClientRect();
         const mouseX = e.clientX - rect.left;
         const mouseY = e.clientY - rect.top;
-        updateMousePosition(mouseX, mouseY);
-        setIsVisible(true);
-      }
+        const newPosition = calculatePosition(mouseX, mouseY);
+        const newHeight = contentRef.current?.scrollHeight ?? 0;
+        return {
+          isVisible: true,
+          mouse: { x: mouseX, y: mouseY },
+          position: newPosition,
+          height: newHeight,
+        };
+      });
     }
-  };
-
-  // Update position when tooltip becomes visible or content changes
-  useEffect(() => {
-    if (isVisible && contentRef.current) {
-      const newPosition = calculatePosition(mouse.x, mouse.y);
-      setPosition(newPosition);
-    }
-  }, [isVisible, height, mouse.x, mouse.y]);
+  }, [calculatePosition]);
 
   return (
     <div
@@ -157,11 +176,11 @@ export const Tooltip = ({
     >
       {children}
       <AnimatePresence>
-        {isVisible && (
+        {state.isVisible && (
           <motion.div
-            key={String(isVisible)}
+            key={String(state.isVisible)}
             initial={{ height: 0, opacity: 1 }}
-            animate={{ height, opacity: 1 }}
+            animate={{ height: state.height, opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{
               type: "spring",
@@ -170,8 +189,8 @@ export const Tooltip = ({
             }}
             className="pointer-events-none absolute z-50 min-w-[15rem] overflow-hidden rounded-md border border-transparent bg-white shadow-sm ring-1 shadow-black/5 ring-black/5 dark:bg-neutral-900 dark:shadow-white/10 dark:ring-white/5"
             style={{
-              top: position.y,
-              left: position.x,
+              top: state.position.y,
+              left: state.position.x,
             }}
           >
             <div
@@ -185,4 +204,4 @@ export const Tooltip = ({
       </AnimatePresence>
     </div>
   );
-};
+});

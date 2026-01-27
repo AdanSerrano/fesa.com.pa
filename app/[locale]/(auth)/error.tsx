@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect } from "react";
+import { memo } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle, RefreshCw, Home } from "lucide-react";
 import Link from "next/link";
@@ -11,13 +11,9 @@ interface ErrorProps {
   reset: () => void;
 }
 
-const AuthError = memo(function AuthError({ error, reset }: ErrorProps) {
+const AuthError = memo(function AuthError({ reset }: ErrorProps) {
   const t = useTranslations("AuthError");
   const tErrors = useTranslations("Errors");
-
-  useEffect(() => {
-    console.error("Auth error:", error);
-  }, [error]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-background">
