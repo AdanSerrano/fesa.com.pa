@@ -124,6 +124,32 @@ const defaultFormatDate = (date: Date, locale = "en-US") =>
     day: "numeric",
   });
 
+interface PresetButtonProps {
+  preset: DatePreset;
+  onSelect: (preset: DatePreset) => void;
+}
+
+const PresetButton = memo(function PresetButton({
+  preset,
+  onSelect,
+}: PresetButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(preset);
+  }, [preset, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="justify-start text-left"
+      onClick={handleClick}
+    >
+      {preset.label}
+    </Button>
+  );
+});
+
 interface DateContentProps {
   field: ControllerRenderProps<FieldValues, string>;
   placeholder: string;
@@ -133,7 +159,6 @@ interface DateContentProps {
   format: (date: Date) => string;
   isDateDisabled: (date: Date) => boolean;
   activePresets: DatePreset[];
-  onPresetClick: (preset: DatePreset) => void;
 }
 
 const DateContent = memo(function DateContent({
@@ -145,8 +170,26 @@ const DateContent = memo(function DateContent({
   format,
   isDateDisabled,
   activePresets,
-  onPresetClick,
 }: DateContentProps) {
+  const handlePresetSelect = useCallback(
+    (preset: DatePreset) => {
+      const date = preset.getValue();
+      field.onChange(date);
+    },
+    [field]
+  );
+
+  const buttonClasses = useMemo(
+    () =>
+      cn(
+        "w-full justify-start text-left font-normal bg-background",
+        !field.value && "text-muted-foreground",
+        hasError && "border-destructive",
+        triggerClassName
+      ),
+    [field.value, hasError, triggerClassName]
+  );
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -155,12 +198,7 @@ const DateContent = memo(function DateContent({
             type="button"
             variant="outline"
             disabled={disabled}
-            className={cn(
-              "w-full justify-start text-left font-normal bg-background",
-              !field.value && "text-muted-foreground",
-              hasError && "border-destructive",
-              triggerClassName
-            )}
+            className={buttonClasses}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {field.value ? format(field.value) : placeholder}
@@ -172,16 +210,11 @@ const DateContent = memo(function DateContent({
           {activePresets.length > 0 && (
             <div className="flex flex-col gap-1 p-3 border-r">
               {activePresets.map((preset) => (
-                <Button
+                <PresetButton
                   key={preset.label}
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start text-left"
-                  onClick={() => onPresetClick(preset)}
-                >
-                  {preset.label}
-                </Button>
+                  preset={preset}
+                  onSelect={handlePresetSelect}
+                />
               ))}
             </div>
           )}
@@ -247,43 +280,35 @@ function FormDateFieldComponent<
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const handlePresetClick = (preset: DatePreset) => {
-          const date = preset.getValue();
-          field.onChange(date);
-        };
-
-        return (
-          <FormItem className={cn("flex flex-col", className)}>
-            {label && (
-              <div className="flex items-center gap-1.5">
-                <FormLabel>
-                  {label}
-                  {required && <span className="text-destructive ml-1">*</span>}
-                </FormLabel>
-                {tooltip && <FormFieldTooltip tooltip={tooltip} />}
-              </div>
-            )}
-            <DateContent
-              field={field as unknown as ControllerRenderProps<FieldValues, string>}
-              placeholder={placeholder}
-              disabled={disabled}
-              hasError={!!fieldState.error}
-              triggerClassName={triggerClassName}
-              format={format}
-              isDateDisabled={isDateDisabled}
-              activePresets={activePresets}
-              onPresetClick={handlePresetClick}
-            />
-            {description && (
-              <FormDescription className="text-xs">
-                {description}
-              </FormDescription>
-            )}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={cn("flex flex-col", className)}>
+          {label && (
+            <div className="flex items-center gap-1.5">
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+              {tooltip && <FormFieldTooltip tooltip={tooltip} />}
+            </div>
+          )}
+          <DateContent
+            field={field as unknown as ControllerRenderProps<FieldValues, string>}
+            placeholder={placeholder}
+            disabled={disabled}
+            hasError={!!fieldState.error}
+            triggerClassName={triggerClassName}
+            format={format}
+            isDateDisabled={isDateDisabled}
+            activePresets={activePresets}
+          />
+          {description && (
+            <FormDescription className="text-xs">
+              {description}
+            </FormDescription>
+          )}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }
@@ -308,6 +333,32 @@ export interface FormDateRangeFieldProps<
   showPresets?: boolean;
 }
 
+interface DateRangePresetButtonProps {
+  preset: DateRangePreset;
+  onSelect: (preset: DateRangePreset) => void;
+}
+
+const DateRangePresetButton = memo(function DateRangePresetButton({
+  preset,
+  onSelect,
+}: DateRangePresetButtonProps) {
+  const handleClick = useCallback(() => {
+    onSelect(preset);
+  }, [preset, onSelect]);
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="sm"
+      className="justify-start text-left"
+      onClick={handleClick}
+    >
+      {preset.label}
+    </Button>
+  );
+});
+
 interface DateRangeContentProps {
   field: ControllerRenderProps<FieldValues, string>;
   placeholder: string;
@@ -318,7 +369,6 @@ interface DateRangeContentProps {
   isDateDisabled: (date: Date) => boolean;
   activePresets: DateRangePreset[];
   numberOfMonths: 1 | 2;
-  onPresetClick: (preset: DateRangePreset) => void;
 }
 
 const DateRangeContent = memo(function DateRangeContent({
@@ -331,15 +381,37 @@ const DateRangeContent = memo(function DateRangeContent({
   isDateDisabled,
   activePresets,
   numberOfMonths,
-  onPresetClick,
 }: DateRangeContentProps) {
   const range = field.value as DateRange | undefined;
 
-  const displayValue = range?.from
-    ? range.to
-      ? `${format(range.from)} - ${format(range.to)}`
-      : format(range.from)
-    : placeholder;
+  const handlePresetSelect = useCallback(
+    (preset: DateRangePreset) => {
+      const rangeValue = preset.getValue();
+      field.onChange(rangeValue);
+    },
+    [field]
+  );
+
+  const displayValue = useMemo(
+    () =>
+      range?.from
+        ? range.to
+          ? `${format(range.from)} - ${format(range.to)}`
+          : format(range.from)
+        : placeholder,
+    [range, format, placeholder]
+  );
+
+  const buttonClasses = useMemo(
+    () =>
+      cn(
+        "w-full justify-start text-left font-normal bg-background",
+        !range?.from && "text-muted-foreground",
+        hasError && "border-destructive",
+        triggerClassName
+      ),
+    [range?.from, hasError, triggerClassName]
+  );
 
   return (
     <Popover>
@@ -349,12 +421,7 @@ const DateRangeContent = memo(function DateRangeContent({
             type="button"
             variant="outline"
             disabled={disabled}
-            className={cn(
-              "w-full justify-start text-left font-normal bg-background",
-              !range?.from && "text-muted-foreground",
-              hasError && "border-destructive",
-              triggerClassName
-            )}
+            className={buttonClasses}
           >
             <CalendarIcon className="mr-2 h-4 w-4" />
             {displayValue}
@@ -366,16 +433,11 @@ const DateRangeContent = memo(function DateRangeContent({
           {activePresets.length > 0 && (
             <div className="flex flex-col gap-1 p-3 border-r">
               {activePresets.map((preset) => (
-                <Button
+                <DateRangePresetButton
                   key={preset.label}
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="justify-start text-left"
-                  onClick={() => onPresetClick(preset)}
-                >
-                  {preset.label}
-                </Button>
+                  preset={preset}
+                  onSelect={handlePresetSelect}
+                />
               ))}
             </div>
           )}
@@ -443,44 +505,36 @@ function FormDateRangeFieldComponent<
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const handlePresetClick = (preset: DateRangePreset) => {
-          const range = preset.getValue();
-          field.onChange(range);
-        };
-
-        return (
-          <FormItem className={cn("flex flex-col", className)}>
-            {label && (
-              <div className="flex items-center gap-1.5">
-                <FormLabel>
-                  {label}
-                  {required && <span className="text-destructive ml-1">*</span>}
-                </FormLabel>
-                {tooltip && <FormFieldTooltip tooltip={tooltip} />}
-              </div>
-            )}
-            <DateRangeContent
-              field={field as unknown as ControllerRenderProps<FieldValues, string>}
-              placeholder={placeholder}
-              disabled={disabled}
-              hasError={!!fieldState.error}
-              triggerClassName={triggerClassName}
-              format={format}
-              isDateDisabled={isDateDisabled}
-              activePresets={activePresets}
-              numberOfMonths={numberOfMonths}
-              onPresetClick={handlePresetClick}
-            />
-            {description && (
-              <FormDescription className="text-xs">
-                {description}
-              </FormDescription>
-            )}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={cn("flex flex-col", className)}>
+          {label && (
+            <div className="flex items-center gap-1.5">
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+              {tooltip && <FormFieldTooltip tooltip={tooltip} />}
+            </div>
+          )}
+          <DateRangeContent
+            field={field as unknown as ControllerRenderProps<FieldValues, string>}
+            placeholder={placeholder}
+            disabled={disabled}
+            hasError={!!fieldState.error}
+            triggerClassName={triggerClassName}
+            format={format}
+            isDateDisabled={isDateDisabled}
+            activePresets={activePresets}
+            numberOfMonths={numberOfMonths}
+          />
+          {description && (
+            <FormDescription className="text-xs">
+              {description}
+            </FormDescription>
+          )}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { memo, useCallback, useRef, useEffect } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import { memo, useCallback, useRef, useMemo } from "react";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -30,6 +30,119 @@ export interface FormTextareaFieldProps<
   inputClassName?: string;
 }
 
+interface TextareaContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  hasError: boolean;
+  placeholder?: string;
+  disabled?: boolean;
+  rows: number;
+  maxLength?: number;
+  minLength?: number;
+  resizable: boolean;
+  autoResize: boolean;
+  minRows: number;
+  maxRows: number;
+  inputClassName?: string;
+}
+
+const TextareaContent = memo(function TextareaContent({
+  field,
+  hasError,
+  placeholder,
+  disabled,
+  rows,
+  maxLength,
+  minLength,
+  resizable,
+  autoResize,
+  minRows,
+  maxRows,
+  inputClassName,
+}: TextareaContentProps) {
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const lastHeightRef = useRef<number | null>(null);
+
+  const adjustHeight = useCallback(
+    (element: HTMLTextAreaElement | null) => {
+      if (!element || !autoResize) return;
+
+      element.style.height = "auto";
+      const lineHeight = parseInt(getComputedStyle(element).lineHeight) || 20;
+      const minHeight = minRows * lineHeight;
+      const maxHeight = maxRows * lineHeight;
+      const scrollHeight = element.scrollHeight;
+      const newHeight = Math.min(Math.max(scrollHeight, minHeight), maxHeight);
+
+      if (lastHeightRef.current !== newHeight) {
+        lastHeightRef.current = newHeight;
+        element.style.height = `${newHeight}px`;
+      }
+    },
+    [autoResize, minRows, maxRows]
+  );
+
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+      field.onChange(e);
+      adjustHeight(e.target);
+    },
+    [field, adjustHeight]
+  );
+
+  const setRef = useCallback(
+    (element: HTMLTextAreaElement | null) => {
+      textareaRef.current = element;
+      if (typeof field.ref === "function") {
+        field.ref(element);
+      }
+      if (element && autoResize) {
+        adjustHeight(element);
+      }
+    },
+    [field, autoResize, adjustHeight]
+  );
+
+  const textareaClassName = useMemo(
+    () =>
+      cn(
+        "bg-background",
+        (!resizable || autoResize) && "resize-none",
+        autoResize && "overflow-hidden",
+        hasError && "border-destructive",
+        inputClassName
+      ),
+    [resizable, autoResize, hasError, inputClassName]
+  );
+
+  return (
+    <Textarea
+      {...field}
+      ref={setRef}
+      onChange={handleChange}
+      placeholder={placeholder}
+      disabled={disabled}
+      rows={autoResize ? minRows : rows}
+      maxLength={maxLength}
+      minLength={minLength}
+      value={field.value ?? ""}
+      className={textareaClassName}
+    />
+  );
+});
+
+interface CharCountProps {
+  currentLength: number;
+  maxLength: number;
+}
+
+const CharCount = memo(function CharCount({ currentLength, maxLength }: CharCountProps) {
+  return (
+    <span className="text-xs text-muted-foreground">
+      {currentLength}/{maxLength}
+    </span>
+  );
+});
+
 function FormTextareaFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -53,97 +166,53 @@ function FormTextareaFieldComponent<
   maxRows = 10,
   inputClassName,
 }: FormTextareaFieldProps<TFieldValues, TName>) {
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  const adjustHeight = useCallback(
-    (element: HTMLTextAreaElement | null) => {
-      if (!element || !autoResize) return;
-
-      element.style.height = "auto";
-      const lineHeight = parseInt(getComputedStyle(element).lineHeight) || 20;
-      const minHeight = minRows * lineHeight;
-      const maxHeight = maxRows * lineHeight;
-      const scrollHeight = element.scrollHeight;
-
-      element.style.height = `${Math.min(Math.max(scrollHeight, minHeight), maxHeight)}px`;
-    },
-    [autoResize, minRows, maxRows]
-  );
-
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        useEffect(() => {
-          adjustHeight(textareaRef.current);
-        }, [field.value, adjustHeight]);
-
-        const handleChange = useCallback(
-          (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-            field.onChange(e);
-            adjustHeight(e.target);
-          },
-          [field, adjustHeight]
-        );
-
-        const setRef = useCallback(
-          (element: HTMLTextAreaElement | null) => {
-            textareaRef.current = element;
-            if (typeof field.ref === "function") {
-              field.ref(element);
-            }
-          },
-          [field]
-        );
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <div className="flex items-center gap-1.5">
-                <FormLabel>
-                  {label}
-                  {required && <span className="text-destructive ml-1">*</span>}
-                </FormLabel>
-                {tooltip && <FormFieldTooltip tooltip={tooltip} />}
-              </div>
-            )}
-            <FormControl>
-              <Textarea
-                {...field}
-                ref={setRef}
-                onChange={handleChange}
-                placeholder={placeholder}
-                disabled={disabled}
-                rows={autoResize ? minRows : rows}
-                maxLength={maxLength}
-                minLength={minLength}
-                value={field.value ?? ""}
-                className={cn(
-                  "bg-background",
-                  (!resizable || autoResize) && "resize-none",
-                  autoResize && "overflow-hidden",
-                  fieldState.error && "border-destructive",
-                  inputClassName
-                )}
-              />
-            </FormControl>
-            <div className="flex items-center justify-between gap-2">
-              {description && (
-                <FormDescription className="text-xs flex-1">
-                  {description}
-                </FormDescription>
-              )}
-              {showCharCount && maxLength && (
-                <span className="text-xs text-muted-foreground">
-                  {(field.value?.length ?? 0)}/{maxLength}
-                </span>
-              )}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <div className="flex items-center gap-1.5">
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+              {tooltip && <FormFieldTooltip tooltip={tooltip} />}
             </div>
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+          )}
+          <FormControl>
+            <TextareaContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              hasError={!!fieldState.error}
+              placeholder={placeholder}
+              disabled={disabled}
+              rows={rows}
+              maxLength={maxLength}
+              minLength={minLength}
+              resizable={resizable}
+              autoResize={autoResize}
+              minRows={minRows}
+              maxRows={maxRows}
+              inputClassName={inputClassName}
+            />
+          </FormControl>
+          <div className="flex items-center justify-between gap-2">
+            {description && (
+              <FormDescription className="text-xs flex-1">
+                {description}
+              </FormDescription>
+            )}
+            {showCharCount && maxLength && (
+              <CharCount
+                currentLength={field.value?.length ?? 0}
+                maxLength={maxLength}
+              />
+            )}
+          </div>
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

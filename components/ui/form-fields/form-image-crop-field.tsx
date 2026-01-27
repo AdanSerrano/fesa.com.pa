@@ -1,7 +1,7 @@
 "use client";
 
-import { memo, useCallback, useRef, useMemo, useState } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import { memo, useCallback, useRef, useMemo, useReducer, useTransition } from "react";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -27,6 +27,7 @@ import {
   X,
   Move,
   Check,
+  Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { BaseFormFieldProps } from "./form-field.types";
@@ -80,29 +81,33 @@ const DEFAULT_LABELS = {
   rotate: "Rotate",
 };
 
-const CropDialog = memo(function CropDialog({
-  open,
-  imageState,
-  aspectRatio,
-  cropShape,
-  labels,
-  onZoomChange,
-  onRotate,
-  onPositionChange,
-  onApply,
-  onCancel,
-}: {
+interface CropDialogProps {
   open: boolean;
-  imageState: ImageState | null;
+  imageStateRef: React.MutableRefObject<ImageState | null>;
   aspectRatio: number;
   cropShape: "rect" | "round";
   labels: typeof DEFAULT_LABELS;
+  isPending: boolean;
   onZoomChange: (zoom: number) => void;
   onRotate: () => void;
   onPositionChange: (x: number, y: number) => void;
   onApply: () => void;
   onCancel: () => void;
-}) {
+}
+
+const CropDialog = memo(function CropDialog({
+  open,
+  imageStateRef,
+  aspectRatio,
+  cropShape,
+  labels,
+  isPending,
+  onZoomChange,
+  onRotate,
+  onPositionChange,
+  onApply,
+  onCancel,
+}: CropDialogProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
   const startPos = useRef({ x: 0, y: 0 });
@@ -114,19 +119,28 @@ const CropDialog = memo(function CropDialog({
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
+      const imageState = imageStateRef.current;
       if (!isDragging.current || !imageState) return;
       const dx = e.clientX - startPos.current.x;
       const dy = e.clientY - startPos.current.y;
       startPos.current = { x: e.clientX, y: e.clientY };
       onPositionChange(imageState.position.x + dx, imageState.position.y + dy);
     },
-    [imageState, onPositionChange]
+    [imageStateRef, onPositionChange]
   );
 
   const handleMouseUp = useCallback(() => {
     isDragging.current = false;
   }, []);
 
+  const handleSliderChange = useCallback(
+    ([v]: number[]) => {
+      onZoomChange(v);
+    },
+    [onZoomChange]
+  );
+
+  const imageState = imageStateRef.current;
   if (!imageState) return null;
 
   const cropAreaStyle = (() => {
@@ -183,7 +197,7 @@ const CropDialog = memo(function CropDialog({
               <ZoomOut className="h-4 w-4 text-muted-foreground" />
               <Slider
                 value={[imageState.zoom]}
-                onValueChange={([v]) => onZoomChange(v)}
+                onValueChange={handleSliderChange}
                 min={0.5}
                 max={3}
                 step={0.1}
@@ -205,11 +219,15 @@ const CropDialog = memo(function CropDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="outline" onClick={onCancel}>
+          <Button type="button" variant="outline" onClick={onCancel} disabled={isPending}>
             {labels.cancel}
           </Button>
-          <Button type="button" onClick={onApply}>
-            <Check className="h-4 w-4 mr-2" />
+          <Button type="button" onClick={onApply} disabled={isPending}>
+            {isPending ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Check className="h-4 w-4 mr-2" />
+            )}
             {labels.apply}
           </Button>
         </DialogFooter>
@@ -218,33 +236,37 @@ const CropDialog = memo(function CropDialog({
   );
 });
 
-function FormImageCropFieldComponent<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  control,
-  name,
-  label,
-  description,
-  disabled,
-  className,
-  required,
-  aspectRatio = 1,
-  maxFileSize = 5 * 1024 * 1024,
-  accept = "image/*",
-  outputFormat = "jpeg",
-  outputQuality = 0.9,
-  cropShape = "rect",
-  labels: customLabels,
-}: FormImageCropFieldProps<TFieldValues, TName>) {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [imageState, setImageState] = useState<ImageState | null>(null);
+interface ImageCropContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  hasError: boolean;
+  disabled?: boolean;
+  aspectRatio: number;
+  maxFileSize: number;
+  accept: string;
+  outputFormat: "jpeg" | "png" | "webp";
+  outputQuality: number;
+  cropShape: "rect" | "round";
+  labels: typeof DEFAULT_LABELS;
+}
 
-  const labels = useMemo(
-    () => ({ ...DEFAULT_LABELS, ...customLabels }),
-    [customLabels]
-  );
+const ImageCropContent = memo(function ImageCropContent({
+  field,
+  hasError,
+  disabled,
+  aspectRatio,
+  maxFileSize,
+  accept,
+  outputFormat,
+  outputQuality,
+  cropShape,
+  labels,
+}: ImageCropContentProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dialogOpenRef = useRef(false);
+  const imageStateRef = useRef<ImageState | null>(null);
+
+  const [isPending, startTransition] = useTransition();
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
   const processImage = useCallback(
     async (state: ImageState): Promise<string> => {
@@ -285,156 +307,226 @@ function FormImageCropFieldComponent<
   );
 
   const handleZoomChange = useCallback((zoom: number) => {
-    setImageState((prev) => prev ? { ...prev, zoom } : null);
+    if (imageStateRef.current) {
+      imageStateRef.current = { ...imageStateRef.current, zoom };
+      forceUpdate();
+    }
   }, []);
 
   const handleRotate = useCallback(() => {
-    setImageState((prev) => prev ? { ...prev, rotation: (prev.rotation + 90) % 360 } : null);
+    if (imageStateRef.current) {
+      imageStateRef.current = {
+        ...imageStateRef.current,
+        rotation: (imageStateRef.current.rotation + 90) % 360,
+      };
+      forceUpdate();
+    }
   }, []);
 
   const handlePositionChange = useCallback((x: number, y: number) => {
-    setImageState((prev) => prev ? { ...prev, position: { x, y } } : null);
+    if (imageStateRef.current) {
+      imageStateRef.current = { ...imageStateRef.current, position: { x, y } };
+      forceUpdate();
+    }
   }, []);
+
+  const handleFileSelect = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      if (file.size > maxFileSize) {
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const src = event.target?.result as string;
+        imageStateRef.current = {
+          src,
+          zoom: 1,
+          rotation: 0,
+          position: { x: 0, y: 0 },
+        };
+        dialogOpenRef.current = true;
+        forceUpdate();
+      };
+      reader.readAsDataURL(file);
+    },
+    [maxFileSize]
+  );
+
+  const handleApply = useCallback(() => {
+    const imageState = imageStateRef.current;
+    if (!imageState) return;
+
+    startTransition(async () => {
+      const result = await processImage(imageState);
+      field.onChange(result);
+      dialogOpenRef.current = false;
+      imageStateRef.current = null;
+      forceUpdate();
+    });
+  }, [field, processImage]);
+
+  const handleCancel = useCallback(() => {
+    dialogOpenRef.current = false;
+    imageStateRef.current = null;
+    forceUpdate();
+  }, []);
+
+  const handleRemove = useCallback(() => {
+    field.onChange("");
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
+  }, [field]);
+
+  const handleUploadClick = useCallback(() => {
+    inputRef.current?.click();
+  }, []);
+
+  const previewStyle = useMemo(
+    () => ({
+      width: aspectRatio >= 1 ? 150 : 150 * aspectRatio,
+      height: aspectRatio >= 1 ? 150 / aspectRatio : 150,
+    }),
+    [aspectRatio]
+  );
+
+  return (
+    <div className="space-y-3">
+      <input
+        ref={inputRef}
+        type="file"
+        accept={accept}
+        onChange={handleFileSelect}
+        disabled={disabled}
+        className="hidden"
+      />
+      {field.value ? (
+        <div className="relative inline-block">
+          <div
+            className={cn(
+              "overflow-hidden border-2 border-dashed border-muted-foreground/25",
+              cropShape === "round" ? "rounded-full" : "rounded-lg"
+            )}
+            style={previewStyle}
+          >
+            <img
+              src={field.value}
+              alt="Preview"
+              className="w-full h-full object-cover"
+            />
+          </div>
+          <Button
+            type="button"
+            variant="destructive"
+            size="icon"
+            className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
+            onClick={handleRemove}
+            disabled={disabled}
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        </div>
+      ) : (
+        <Button
+          type="button"
+          variant="outline"
+          onClick={handleUploadClick}
+          disabled={disabled}
+          className={cn(
+            "h-auto flex-col gap-2 p-6",
+            hasError && "border-destructive"
+          )}
+        >
+          <Upload className="h-8 w-8 text-muted-foreground" />
+          <span>{labels.upload}</span>
+        </Button>
+      )}
+      {field.value && (
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={handleUploadClick}
+          disabled={disabled}
+        >
+          {labels.change}
+        </Button>
+      )}
+      <CropDialog
+        open={dialogOpenRef.current}
+        imageStateRef={imageStateRef}
+        aspectRatio={aspectRatio}
+        cropShape={cropShape}
+        labels={labels}
+        isPending={isPending}
+        onZoomChange={handleZoomChange}
+        onRotate={handleRotate}
+        onPositionChange={handlePositionChange}
+        onApply={handleApply}
+        onCancel={handleCancel}
+      />
+    </div>
+  );
+});
+
+function FormImageCropFieldComponent<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  label,
+  description,
+  disabled,
+  className,
+  required,
+  aspectRatio = 1,
+  maxFileSize = 5 * 1024 * 1024,
+  accept = "image/*",
+  outputFormat = "jpeg",
+  outputQuality = 0.9,
+  cropShape = "rect",
+  labels: customLabels,
+}: FormImageCropFieldProps<TFieldValues, TName>) {
+  const labels = useMemo(
+    () => ({ ...DEFAULT_LABELS, ...customLabels }),
+    [customLabels]
+  );
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-          const file = e.target.files?.[0];
-          if (!file) return;
-
-          if (file.size > maxFileSize) {
-            return;
-          }
-
-          const reader = new FileReader();
-          reader.onload = (event) => {
-            const src = event.target?.result as string;
-            setImageState({
-              src,
-              zoom: 1,
-              rotation: 0,
-              position: { x: 0, y: 0 },
-            });
-            setDialogOpen(true);
-          };
-          reader.readAsDataURL(file);
-        };
-
-        const handleApply = async () => {
-          if (!imageState) return;
-          const result = await processImage(imageState);
-          field.onChange(result);
-          setDialogOpen(false);
-          setImageState(null);
-        };
-
-        const handleCancel = () => {
-          setDialogOpen(false);
-          setImageState(null);
-        };
-
-        const handleRemove = () => {
-          field.onChange("");
-          if (inputRef.current) {
-            inputRef.current.value = "";
-          }
-        };
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div className="space-y-3">
-                <input
-                  ref={inputRef}
-                  type="file"
-                  accept={accept}
-                  onChange={handleFileSelect}
-                  disabled={disabled}
-                  className="hidden"
-                />
-                {field.value ? (
-                  <div className="relative inline-block">
-                    <div
-                      className={cn(
-                        "overflow-hidden border-2 border-dashed border-muted-foreground/25",
-                        cropShape === "round" ? "rounded-full" : "rounded-lg"
-                      )}
-                      style={{
-                        width: aspectRatio >= 1 ? 150 : 150 * aspectRatio,
-                        height: aspectRatio >= 1 ? 150 / aspectRatio : 150,
-                      }}
-                    >
-                      <img
-                        src={field.value}
-                        alt="Preview"
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <Button
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                      onClick={handleRemove}
-                      disabled={disabled}
-                    >
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => inputRef.current?.click()}
-                    disabled={disabled}
-                    className={cn(
-                      "h-auto flex-col gap-2 p-6",
-                      fieldState.error && "border-destructive"
-                    )}
-                  >
-                    <Upload className="h-8 w-8 text-muted-foreground" />
-                    <span>{labels.upload}</span>
-                  </Button>
-                )}
-                {field.value && (
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() => inputRef.current?.click()}
-                    disabled={disabled}
-                  >
-                    {labels.change}
-                  </Button>
-                )}
-                <CropDialog
-                  open={dialogOpen}
-                  imageState={imageState}
-                  aspectRatio={aspectRatio}
-                  cropShape={cropShape}
-                  labels={labels}
-                  onZoomChange={handleZoomChange}
-                  onRotate={handleRotate}
-                  onPositionChange={handlePositionChange}
-                  onApply={handleApply}
-                  onCancel={handleCancel}
-                />
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <ImageCropContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              hasError={!!fieldState.error}
+              disabled={disabled}
+              aspectRatio={aspectRatio}
+              maxFileSize={maxFileSize}
+              accept={accept}
+              outputFormat={outputFormat}
+              outputQuality={outputQuality}
+              cropShape={cropShape}
+              labels={labels}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

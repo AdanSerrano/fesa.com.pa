@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -128,6 +128,23 @@ const TimeSlotInput = memo(function TimeSlotInput({
   );
 });
 
+interface DayRowProps {
+  day: DayOfWeek;
+  dayLabel: string;
+  schedule: DaySchedule;
+  allowMultipleSlots: boolean;
+  maxSlots: number;
+  addSlotLabel: string;
+  showCopyButton: boolean;
+  copyLabel: string;
+  onToggle: (day: DayOfWeek) => void;
+  onSlotChange: (day: DayOfWeek, index: number, field: "start" | "end", value: string) => void;
+  onSlotDelete: (day: DayOfWeek, index: number) => void;
+  onSlotAdd: (day: DayOfWeek) => void;
+  onCopyToAll: (day: DayOfWeek) => void;
+  disabled?: boolean;
+}
+
 const DayRow = memo(function DayRow({
   day,
   dayLabel,
@@ -143,28 +160,39 @@ const DayRow = memo(function DayRow({
   onSlotAdd,
   onCopyToAll,
   disabled,
-}: {
-  day: DayOfWeek;
-  dayLabel: string;
-  schedule: DaySchedule;
-  allowMultipleSlots: boolean;
-  maxSlots: number;
-  addSlotLabel: string;
-  showCopyButton: boolean;
-  copyLabel: string;
-  onToggle: (day: DayOfWeek) => void;
-  onSlotChange: (day: DayOfWeek, index: number, field: "start" | "end", value: string) => void;
-  onSlotDelete: (day: DayOfWeek, index: number) => void;
-  onSlotAdd: (day: DayOfWeek) => void;
-  onCopyToAll: (day: DayOfWeek) => void;
-  disabled?: boolean;
-}) {
+}: DayRowProps) {
+  const handleToggle = useCallback(() => {
+    onToggle(day);
+  }, [onToggle, day]);
+
+  const handleSlotAdd = useCallback(() => {
+    onSlotAdd(day);
+  }, [onSlotAdd, day]);
+
+  const handleCopyToAll = useCallback(() => {
+    onCopyToAll(day);
+  }, [onCopyToAll, day]);
+
+  const handleSlotChange = useCallback(
+    (index: number, field: "start" | "end", value: string) => {
+      onSlotChange(day, index, field, value);
+    },
+    [onSlotChange, day]
+  );
+
+  const handleSlotDelete = useCallback(
+    (index: number) => {
+      onSlotDelete(day, index);
+    },
+    [onSlotDelete, day]
+  );
+
   return (
     <div className="flex items-start gap-4 py-3 border-b last:border-0">
       <div className="w-20 flex items-center gap-2 pt-1">
         <Switch
           checked={schedule.enabled}
-          onCheckedChange={() => onToggle(day)}
+          onCheckedChange={handleToggle}
           disabled={disabled}
         />
         <span className={cn("text-sm font-medium", !schedule.enabled && "text-muted-foreground")}>
@@ -181,8 +209,8 @@ const DayRow = memo(function DayRow({
                 slot={slot}
                 index={index}
                 showDelete={schedule.slots.length > 1}
-                onChange={(i, f, v) => onSlotChange(day, i, f, v)}
-                onDelete={(i) => onSlotDelete(day, i)}
+                onChange={handleSlotChange}
+                onDelete={handleSlotDelete}
                 disabled={disabled}
               />
             ))}
@@ -192,7 +220,7 @@ const DayRow = memo(function DayRow({
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => onSlotAdd(day)}
+                  onClick={handleSlotAdd}
                   disabled={disabled}
                   className="text-xs"
                 >
@@ -204,7 +232,7 @@ const DayRow = memo(function DayRow({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => onCopyToAll(day)}
+                  onClick={handleCopyToAll}
                   disabled={disabled}
                   className="text-xs text-muted-foreground"
                 >
@@ -218,6 +246,123 @@ const DayRow = memo(function DayRow({
           <span className="text-sm text-muted-foreground pt-1 block">Closed</span>
         )}
       </div>
+    </div>
+  );
+});
+
+interface ScheduleContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  hasError: boolean;
+  disabled?: boolean;
+  allowMultipleSlots: boolean;
+  maxSlotsPerDay: number;
+  showCopyButton: boolean;
+  labels: {
+    days: Record<DayOfWeek, string>;
+    addSlot: string;
+    copyToAll: string;
+  };
+}
+
+const ScheduleContent = memo(function ScheduleContent({
+  field,
+  hasError,
+  disabled,
+  allowMultipleSlots,
+  maxSlotsPerDay,
+  showCopyButton,
+  labels,
+}: ScheduleContentProps) {
+  const schedule = (field.value || DEFAULT_SCHEDULE) as WeekSchedule;
+
+  const handleToggle = useCallback(
+    (day: DayOfWeek) => {
+      field.onChange({
+        ...schedule,
+        [day]: { ...schedule[day], enabled: !schedule[day].enabled },
+      });
+    },
+    [field, schedule]
+  );
+
+  const handleSlotChange = useCallback(
+    (day: DayOfWeek, index: number, slotField: "start" | "end", value: string) => {
+      const newSlots = [...schedule[day].slots];
+      newSlots[index] = { ...newSlots[index], [slotField]: value };
+      field.onChange({
+        ...schedule,
+        [day]: { ...schedule[day], slots: newSlots },
+      });
+    },
+    [field, schedule]
+  );
+
+  const handleSlotDelete = useCallback(
+    (day: DayOfWeek, index: number) => {
+      const newSlots = schedule[day].slots.filter((_, i) => i !== index);
+      field.onChange({
+        ...schedule,
+        [day]: { ...schedule[day], slots: newSlots },
+      });
+    },
+    [field, schedule]
+  );
+
+  const handleSlotAdd = useCallback(
+    (day: DayOfWeek) => {
+      const lastSlot = schedule[day].slots[schedule[day].slots.length - 1];
+      const newSlot: TimeSlot = { start: lastSlot?.end || "09:00", end: "17:00" };
+      field.onChange({
+        ...schedule,
+        [day]: { ...schedule[day], slots: [...schedule[day].slots, newSlot] },
+      });
+    },
+    [field, schedule]
+  );
+
+  const handleCopyToAll = useCallback(
+    (sourceDay: DayOfWeek) => {
+      const sourceSchedule = schedule[sourceDay];
+      const newSchedule = { ...schedule };
+      DAYS_ORDER.forEach((day) => {
+        if (day !== sourceDay) {
+          newSchedule[day] = {
+            enabled: sourceSchedule.enabled,
+            slots: sourceSchedule.slots.map((s) => ({ ...s })),
+          };
+        }
+      });
+      field.onChange(newSchedule);
+    },
+    [field, schedule]
+  );
+
+  const containerClasses = useMemo(
+    () => cn("rounded-lg border p-4", hasError && "border-destructive"),
+    [hasError]
+  );
+
+  return (
+    <div className={containerClasses}>
+      {DAYS_ORDER.map((day) => (
+        <DayRow
+          key={day}
+          day={day}
+          dayLabel={labels.days[day]}
+          schedule={schedule[day]}
+          allowMultipleSlots={allowMultipleSlots}
+          maxSlots={maxSlotsPerDay}
+          addSlotLabel={labels.addSlot}
+          showCopyButton={showCopyButton}
+          copyLabel={labels.copyToAll}
+          onToggle={handleToggle}
+          onSlotChange={handleSlotChange}
+          onSlotDelete={handleSlotDelete}
+          onSlotAdd={handleSlotAdd}
+          onCopyToAll={handleCopyToAll}
+          disabled={disabled}
+        />
+      ))}
     </div>
   );
 });
@@ -247,114 +392,33 @@ function FormScheduleFieldComponent<
     [customLabels]
   );
 
-  const updateSchedule = useCallback(
-    (
-      schedule: WeekSchedule,
-      day: DayOfWeek,
-      update: Partial<DaySchedule>,
-      onChange: (value: WeekSchedule) => void
-    ) => {
-      onChange({
-        ...schedule,
-        [day]: { ...schedule[day], ...update },
-      });
-    },
-    []
-  );
-
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const schedule = (field.value || DEFAULT_SCHEDULE) as WeekSchedule;
-
-        const handleToggle = (day: DayOfWeek) => {
-          updateSchedule(schedule, day, { enabled: !schedule[day].enabled }, field.onChange);
-        };
-
-        const handleSlotChange = (
-          day: DayOfWeek,
-          index: number,
-          slotField: "start" | "end",
-          value: string
-        ) => {
-          const newSlots = [...schedule[day].slots];
-          newSlots[index] = { ...newSlots[index], [slotField]: value };
-          updateSchedule(schedule, day, { slots: newSlots }, field.onChange);
-        };
-
-        const handleSlotDelete = (day: DayOfWeek, index: number) => {
-          const newSlots = schedule[day].slots.filter((_, i) => i !== index);
-          updateSchedule(schedule, day, { slots: newSlots }, field.onChange);
-        };
-
-        const handleSlotAdd = (day: DayOfWeek) => {
-          const lastSlot = schedule[day].slots[schedule[day].slots.length - 1];
-          const newSlot: TimeSlot = { start: lastSlot?.end || "09:00", end: "17:00" };
-          updateSchedule(
-            schedule,
-            day,
-            { slots: [...schedule[day].slots, newSlot] },
-            field.onChange
-          );
-        };
-
-        const handleCopyToAll = (sourceDay: DayOfWeek) => {
-          const sourceSchedule = schedule[sourceDay];
-          const newSchedule = { ...schedule };
-          DAYS_ORDER.forEach((day) => {
-            if (day !== sourceDay) {
-              newSchedule[day] = {
-                enabled: sourceSchedule.enabled,
-                slots: sourceSchedule.slots.map((s) => ({ ...s })),
-              };
-            }
-          });
-          field.onChange(newSchedule);
-        };
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div
-                className={cn(
-                  "rounded-lg border p-4",
-                  fieldState.error && "border-destructive"
-                )}
-              >
-                {DAYS_ORDER.map((day) => (
-                  <DayRow
-                    key={day}
-                    day={day}
-                    dayLabel={labels.days[day]}
-                    schedule={schedule[day]}
-                    allowMultipleSlots={allowMultipleSlots}
-                    maxSlots={maxSlotsPerDay}
-                    addSlotLabel={labels.addSlot}
-                    showCopyButton={showCopyButton}
-                    copyLabel={labels.copyToAll}
-                    onToggle={handleToggle}
-                    onSlotChange={handleSlotChange}
-                    onSlotDelete={handleSlotDelete}
-                    onSlotAdd={handleSlotAdd}
-                    onCopyToAll={handleCopyToAll}
-                    disabled={disabled}
-                  />
-                ))}
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <ScheduleContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              hasError={!!fieldState.error}
+              disabled={disabled}
+              allowMultipleSlots={allowMultipleSlots}
+              maxSlotsPerDay={maxSlotsPerDay}
+              showCopyButton={showCopyButton}
+              labels={labels}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

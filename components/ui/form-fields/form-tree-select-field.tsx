@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useState } from "react";
+import { memo, useCallback, useMemo, useRef, useReducer } from "react";
 import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
@@ -68,59 +68,79 @@ function getNodePath(nodes: TreeNode[], value: string, path: string[] = []): str
   return null;
 }
 
-const TreeItem = memo(function TreeItem({
-  node,
-  level,
-  expanded,
-  selected,
-  multiple,
-  showCheckboxes,
-  expandedSet,
-  selectedSet,
-  onToggleExpand,
-  onSelect,
-  disabled,
-}: {
+interface TreeItemProps {
   node: TreeNode;
   level: number;
-  expanded: boolean;
-  selected: boolean;
+  isExpanded: boolean;
+  isSelected: boolean;
   multiple: boolean;
   showCheckboxes: boolean;
-  expandedSet: Set<string>;
+  expandedRef: React.MutableRefObject<Set<string>>;
   selectedSet: Set<string>;
   onToggleExpand: (value: string) => void;
   onSelect: (value: string) => void;
   disabled?: boolean;
-}) {
+}
+
+const TreeItem = memo(function TreeItem({
+  node,
+  level,
+  isExpanded,
+  isSelected,
+  multiple,
+  showCheckboxes,
+  expandedRef,
+  selectedSet,
+  onToggleExpand,
+  onSelect,
+  disabled,
+}: TreeItemProps) {
   const hasChildren = node.children && node.children.length > 0;
   const Icon = node.icon;
+
+  const handleItemClick = useCallback(() => {
+    if (node.disabled || disabled) return;
+    onSelect(node.value);
+  }, [node.disabled, node.value, disabled, onSelect]);
+
+  const handleExpandClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onToggleExpand(node.value);
+    },
+    [node.value, onToggleExpand]
+  );
+
+  const handleCheckboxClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+    },
+    []
+  );
+
+  const handleCheckedChange = useCallback(() => {
+    onSelect(node.value);
+  }, [node.value, onSelect]);
 
   return (
     <div>
       <div
         className={cn(
           "flex items-center gap-1 py-1 px-2 rounded-md cursor-pointer hover:bg-accent/50",
-          selected && !multiple && "bg-accent",
-          selected && multiple && "bg-accent/50",
+          isSelected && !multiple && "bg-accent",
+          isSelected && multiple && "bg-accent/50",
           node.disabled && "opacity-50 cursor-not-allowed"
         )}
         style={{ paddingLeft: `${level * 16 + 8}px` }}
-        onClick={() => {
-          if (node.disabled || disabled) return;
-          onSelect(node.value);
-        }}
+        onClick={handleItemClick}
       >
         {hasChildren ? (
           <button
             type="button"
             className="p-0.5 hover:bg-accent rounded"
-            onClick={(e) => {
-              e.stopPropagation();
-              onToggleExpand(node.value);
-            }}
+            onClick={handleExpandClick}
           >
-            {expanded ? (
+            {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
             ) : (
               <ChevronRight className="h-4 w-4" />
@@ -132,11 +152,11 @@ const TreeItem = memo(function TreeItem({
 
         {showCheckboxes && multiple && (
           <Checkbox
-            checked={selected}
+            checked={isSelected}
             disabled={node.disabled || disabled}
             className="mr-1"
-            onClick={(e) => e.stopPropagation()}
-            onCheckedChange={() => onSelect(node.value)}
+            onClick={handleCheckboxClick}
+            onCheckedChange={handleCheckedChange}
           />
         )}
 
@@ -145,18 +165,18 @@ const TreeItem = memo(function TreeItem({
         <span className="text-sm flex-1 truncate">{node.label}</span>
       </div>
 
-      {hasChildren && expanded && (
+      {hasChildren && isExpanded && (
         <div>
           {node.children!.map((child) => (
             <TreeItem
               key={child.value}
               node={child}
               level={level + 1}
-              expanded={expandedSet.has(child.value)}
-              selected={selectedSet.has(child.value)}
+              isExpanded={expandedRef.current.has(child.value)}
+              isSelected={selectedSet.has(child.value)}
               multiple={multiple}
               showCheckboxes={showCheckboxes}
-              expandedSet={expandedSet}
+              expandedRef={expandedRef}
               selectedSet={selectedSet}
               onToggleExpand={onToggleExpand}
               onSelect={onSelect}
@@ -180,6 +200,24 @@ const SelectedBadge = memo(function SelectedBadge({
   label,
   onRemove,
 }: SelectedBadgeProps) {
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      onRemove(value, e);
+    },
+    [value, onRemove]
+  );
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onRemove(value, e as unknown as React.MouseEvent);
+      }
+    },
+    [value, onRemove]
+  );
+
   return (
     <Badge variant="secondary" className="text-xs">
       {label}
@@ -187,16 +225,8 @@ const SelectedBadge = memo(function SelectedBadge({
         role="button"
         tabIndex={0}
         className="ml-1 hover:text-destructive cursor-pointer"
-        onClick={(e) => {
-          e.stopPropagation();
-          onRemove(value, e);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            onRemove(value, e as unknown as React.MouseEvent);
-          }
-        }}
+        onClick={handleClick}
+        onKeyDown={handleKeyDown}
       >
         <X className="h-3 w-3" />
       </span>
@@ -230,12 +260,12 @@ const TreeSelectContent = memo(function TreeSelectContent({
   emptyMessage,
 }: TreeSelectContentProps) {
   const allValues = useMemo(() => getAllValues(options), [options]);
-  const initialExpanded = useMemo(
-    () => (expandAll ? new Set(allValues) : new Set<string>()),
-    [expandAll, allValues]
+
+  const expandedRef = useRef<Set<string>>(
+    expandAll ? new Set(allValues) : new Set()
   );
 
-  const [expandedSet, setExpandedSet] = useState<Set<string>>(initialExpanded);
+  const [, forceUpdate] = useReducer((x: number) => x + 1, 0);
 
   const selectedValues: string[] = useMemo(() => {
     if (multiple) {
@@ -247,15 +277,13 @@ const TreeSelectContent = memo(function TreeSelectContent({
   const selectedSet = useMemo(() => new Set(selectedValues), [selectedValues]);
 
   const handleToggleExpand = useCallback((value: string) => {
-    setExpandedSet((prev) => {
-      const next = new Set(prev);
-      if (next.has(value)) {
-        next.delete(value);
-      } else {
-        next.add(value);
-      }
-      return next;
-    });
+    const set = expandedRef.current;
+    if (set.has(value)) {
+      set.delete(value);
+    } else {
+      set.add(value);
+    }
+    forceUpdate();
   }, []);
 
   const handleSelect = useCallback(
@@ -351,11 +379,11 @@ const TreeSelectContent = memo(function TreeSelectContent({
                   key={node.value}
                   node={node}
                   level={0}
-                  expanded={expandedSet.has(node.value)}
-                  selected={selectedSet.has(node.value)}
+                  isExpanded={expandedRef.current.has(node.value)}
+                  isSelected={selectedSet.has(node.value)}
                   multiple={multiple}
                   showCheckboxes={showCheckboxes}
-                  expandedSet={expandedSet}
+                  expandedRef={expandedRef}
                   selectedSet={selectedSet}
                   onToggleExpand={handleToggleExpand}
                   onSelect={handleSelect}

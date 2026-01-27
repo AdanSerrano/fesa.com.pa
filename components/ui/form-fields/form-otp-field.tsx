@@ -1,7 +1,7 @@
 "use client";
 
-import { memo } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import { memo, useCallback, useMemo } from "react";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -33,6 +33,104 @@ export interface FormOTPFieldProps<
   inputClassName?: string;
 }
 
+interface OTPContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  hasError: boolean;
+  disabled?: boolean;
+  length: number;
+  patternRegex: string;
+  showSeparator: boolean;
+  separatorPosition: number;
+  autoSubmit: boolean;
+  onComplete?: (value: string) => void;
+  inputClassName?: string;
+}
+
+const OTPContent = memo(function OTPContent({
+  field,
+  hasError,
+  disabled,
+  length,
+  patternRegex,
+  showSeparator,
+  separatorPosition,
+  autoSubmit,
+  onComplete,
+  inputClassName,
+}: OTPContentProps) {
+  const handleComplete = useCallback(
+    (value: string) => {
+      if (autoSubmit && onComplete) {
+        onComplete(value);
+      }
+    },
+    [autoSubmit, onComplete]
+  );
+
+  const containerClasses = useMemo(
+    () =>
+      cn(
+        "justify-center",
+        hasError && "[&_[data-slot=input-otp-slot]]:border-destructive"
+      ),
+    [hasError]
+  );
+
+  const firstGroupSlots = useMemo(
+    () => Array.from({ length: separatorPosition }, (_, i) => i),
+    [separatorPosition]
+  );
+
+  const secondGroupSlots = useMemo(
+    () =>
+      Array.from(
+        { length: length - separatorPosition },
+        (_, i) => separatorPosition + i
+      ),
+    [length, separatorPosition]
+  );
+
+  const allSlots = useMemo(
+    () => Array.from({ length }, (_, i) => i),
+    [length]
+  );
+
+  return (
+    <InputOTP
+      maxLength={length}
+      pattern={patternRegex}
+      disabled={disabled}
+      value={field.value ?? ""}
+      onChange={field.onChange}
+      onComplete={handleComplete}
+      containerClassName={containerClasses}
+      className={inputClassName}
+    >
+      {showSeparator ? (
+        <>
+          <InputOTPGroup>
+            {firstGroupSlots.map((i) => (
+              <InputOTPSlot key={i} index={i} />
+            ))}
+          </InputOTPGroup>
+          <InputOTPSeparator />
+          <InputOTPGroup>
+            {secondGroupSlots.map((i) => (
+              <InputOTPSlot key={i} index={i} />
+            ))}
+          </InputOTPGroup>
+        </>
+      ) : (
+        <InputOTPGroup>
+          {allSlots.map((i) => (
+            <InputOTPSlot key={i} index={i} />
+          ))}
+        </InputOTPGroup>
+      )}
+    </InputOTP>
+  );
+});
+
 function FormOTPFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -52,9 +150,16 @@ function FormOTPFieldComponent<
   onComplete,
   inputClassName,
 }: FormOTPFieldProps<TFieldValues, TName>) {
-  const separatorPosition = separatorAfter ?? Math.floor(length / 2);
-  const patternRegex =
-    pattern === "digits" ? REGEXP_ONLY_DIGITS : REGEXP_ONLY_DIGITS_AND_CHARS;
+  const separatorPosition = useMemo(
+    () => separatorAfter ?? Math.floor(length / 2),
+    [separatorAfter, length]
+  );
+
+  const patternRegex = useMemo(
+    () =>
+      pattern === "digits" ? REGEXP_ONLY_DIGITS : REGEXP_ONLY_DIGITS_AND_CHARS,
+    [pattern]
+  );
 
   return (
     <FormField
@@ -69,50 +174,18 @@ function FormOTPFieldComponent<
             </FormLabel>
           )}
           <FormControl>
-            <InputOTP
-              maxLength={length}
-              pattern={patternRegex}
+            <OTPContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              hasError={!!fieldState.error}
               disabled={disabled}
-              value={field.value ?? ""}
-              onChange={field.onChange}
-              onComplete={(value) => {
-                if (autoSubmit && onComplete) {
-                  onComplete(value);
-                }
-              }}
-              containerClassName={cn(
-                "justify-center",
-                fieldState.error && "[&_[data-slot=input-otp-slot]]:border-destructive"
-              )}
-              className={inputClassName}
-            >
-              {showSeparator ? (
-                <>
-                  <InputOTPGroup>
-                    {Array.from({ length: separatorPosition }).map((_, i) => (
-                      <InputOTPSlot key={i} index={i} />
-                    ))}
-                  </InputOTPGroup>
-                  <InputOTPSeparator />
-                  <InputOTPGroup>
-                    {Array.from({ length: length - separatorPosition }).map(
-                      (_, i) => (
-                        <InputOTPSlot
-                          key={separatorPosition + i}
-                          index={separatorPosition + i}
-                        />
-                      )
-                    )}
-                  </InputOTPGroup>
-                </>
-              ) : (
-                <InputOTPGroup>
-                  {Array.from({ length }).map((_, i) => (
-                    <InputOTPSlot key={i} index={i} />
-                  ))}
-                </InputOTPGroup>
-              )}
-            </InputOTP>
+              length={length}
+              patternRegex={patternRegex}
+              showSeparator={showSeparator}
+              separatorPosition={separatorPosition}
+              autoSubmit={autoSubmit}
+              onComplete={onComplete}
+              inputClassName={inputClassName}
+            />
           </FormControl>
           {description && (
             <FormDescription className="text-xs text-center">

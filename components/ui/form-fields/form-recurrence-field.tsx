@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -135,11 +135,18 @@ const WeekdaySelector = memo(function WeekdaySelector({
   labels: Record<RecurrenceDayOfWeek, string>;
   disabled?: boolean;
 }) {
+  const handleChange = useCallback(
+    (v: string[]) => {
+      onChange(v as RecurrenceDayOfWeek[]);
+    },
+    [onChange]
+  );
+
   return (
     <ToggleGroup
       type="multiple"
       value={selected}
-      onValueChange={(v) => onChange(v as RecurrenceDayOfWeek[])}
+      onValueChange={handleChange}
       disabled={disabled}
       className="justify-start"
     >
@@ -154,6 +161,215 @@ const WeekdaySelector = memo(function WeekdaySelector({
         </ToggleGroupItem>
       ))}
     </ToggleGroup>
+  );
+});
+
+interface RecurrenceContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  hasError: boolean;
+  disabled?: boolean;
+  showPreview: boolean;
+  maxInterval: number;
+  labels: typeof DEFAULT_LABELS;
+}
+
+const RecurrenceContent = memo(function RecurrenceContent({
+  field,
+  hasError,
+  disabled,
+  showPreview,
+  maxInterval,
+  labels,
+}: RecurrenceContentProps) {
+  const value = (field.value || DEFAULT_VALUE) as RecurrenceValue;
+
+  const handleIntervalChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      field.onChange({
+        ...value,
+        interval: Math.max(1, parseInt(e.target.value, 10) || 1),
+      });
+    },
+    [field, value]
+  );
+
+  const handleFrequencyChange = useCallback(
+    (v: string) => {
+      field.onChange({ ...value, frequency: v as RecurrenceFrequency });
+    },
+    [field, value]
+  );
+
+  const handleDaysChange = useCallback(
+    (days: RecurrenceDayOfWeek[]) => {
+      field.onChange({ ...value, daysOfWeek: days });
+    },
+    [field, value]
+  );
+
+  const handleEndTypeChange = useCallback(
+    (v: string) => {
+      field.onChange({ ...value, endType: v as EndType });
+    },
+    [field, value]
+  );
+
+  const handleEndDateChange = useCallback(
+    (date: Date | undefined) => {
+      field.onChange({ ...value, endDate: date });
+    },
+    [field, value]
+  );
+
+  const handleEndCountChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      field.onChange({
+        ...value,
+        endCount: Math.max(1, parseInt(e.target.value, 10) || 1),
+      });
+    },
+    [field, value]
+  );
+
+  const containerClasses = useMemo(
+    () => cn("rounded-lg border p-4 space-y-4", hasError && "border-destructive"),
+    [hasError]
+  );
+
+  return (
+    <div className={containerClasses}>
+      <div className="flex flex-wrap items-center gap-3">
+        <Repeat className="h-5 w-5 text-foreground/60" />
+
+        <div className="flex items-center gap-2">
+          <span className="text-sm">{labels.interval}</span>
+          <Input
+            type="number"
+            min={1}
+            max={maxInterval}
+            value={value.interval}
+            onChange={handleIntervalChange}
+            disabled={disabled}
+            className="w-16 bg-background"
+          />
+        </div>
+
+        <Select
+          value={value.frequency}
+          onValueChange={handleFrequencyChange}
+          disabled={disabled}
+        >
+          <SelectTrigger className="w-28">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="daily">
+              {value.interval === 1 ? "day" : "days"}
+            </SelectItem>
+            <SelectItem value="weekly">
+              {value.interval === 1 ? "week" : "weeks"}
+            </SelectItem>
+            <SelectItem value="monthly">
+              {value.interval === 1 ? "month" : "months"}
+            </SelectItem>
+            <SelectItem value="yearly">
+              {value.interval === 1 ? "year" : "years"}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {value.frequency === "weekly" && (
+        <div className="pl-9">
+          <WeekdaySelector
+            selected={value.daysOfWeek || []}
+            onChange={handleDaysChange}
+            labels={labels.days}
+            disabled={disabled}
+          />
+        </div>
+      )}
+
+      <div className="space-y-3 pl-9">
+        <span className="text-sm font-medium">{labels.ends}</span>
+        <RadioGroup
+          value={value.endType}
+          onValueChange={handleEndTypeChange}
+          disabled={disabled}
+          className="space-y-2"
+        >
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="never" id="never" />
+            <Label htmlFor="never" className="font-normal">
+              {labels.never}
+            </Label>
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="date" id="date" />
+            <Label htmlFor="date" className="font-normal">
+              {labels.onDate}
+            </Label>
+            {value.endType === "date" && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    disabled={disabled}
+                    className="ml-2"
+                  >
+                    <CalendarIcon className="h-4 w-4 mr-2" />
+                    {value.endDate
+                      ? format(value.endDate, "MMM d, yyyy")
+                      : "Pick date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={value.endDate}
+                    onSelect={handleEndDateChange}
+                    disabled={(date) => date < new Date()}
+                  />
+                </PopoverContent>
+              </Popover>
+            )}
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <RadioGroupItem value="count" id="count" />
+            <Label htmlFor="count" className="font-normal">
+              {labels.afterOccurrences}
+            </Label>
+            {value.endType === "count" && (
+              <>
+                <Input
+                  type="number"
+                  min={1}
+                  max={999}
+                  value={value.endCount || 1}
+                  onChange={handleEndCountChange}
+                  disabled={disabled}
+                  className="w-16 ml-2 bg-background"
+                />
+                <span className="text-sm text-muted-foreground">
+                  {labels.occurrences}
+                </span>
+              </>
+            )}
+          </div>
+        </RadioGroup>
+      </div>
+
+      {showPreview && (
+        <div className="pl-9 pt-2 border-t">
+          <p className="text-sm text-muted-foreground">
+            {getRecurrenceDescription(value)}
+          </p>
+        </div>
+      )}
+    </div>
   );
 });
 
@@ -181,198 +397,32 @@ function FormRecurrenceFieldComponent<
     [customLabels]
   );
 
-  const updateValue = useCallback(
-    (
-      currentValue: RecurrenceValue,
-      updates: Partial<RecurrenceValue>,
-      onChange: (value: RecurrenceValue) => void
-    ) => {
-      onChange({ ...currentValue, ...updates });
-    },
-    []
-  );
-
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const value = (field.value || DEFAULT_VALUE) as RecurrenceValue;
-        const freqLabel = FREQUENCY_LABELS[value.frequency];
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div
-                className={cn(
-                  "rounded-lg border p-4 space-y-4",
-                  fieldState.error && "border-destructive"
-                )}
-              >
-                <div className="flex flex-wrap items-center gap-3">
-                  <Repeat className="h-5 w-5 text-foreground/60" />
-
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm">{labels.interval}</span>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={maxInterval}
-                      value={value.interval}
-                      onChange={(e) =>
-                        updateValue(
-                          value,
-                          { interval: Math.max(1, parseInt(e.target.value, 10) || 1) },
-                          field.onChange
-                        )
-                      }
-                      disabled={disabled}
-                      className="w-16 bg-background"
-                    />
-                  </div>
-
-                  <Select
-                    value={value.frequency}
-                    onValueChange={(v) =>
-                      updateValue(value, { frequency: v as RecurrenceFrequency }, field.onChange)
-                    }
-                    disabled={disabled}
-                  >
-                    <SelectTrigger className="w-28">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="daily">
-                        {value.interval === 1 ? "day" : "days"}
-                      </SelectItem>
-                      <SelectItem value="weekly">
-                        {value.interval === 1 ? "week" : "weeks"}
-                      </SelectItem>
-                      <SelectItem value="monthly">
-                        {value.interval === 1 ? "month" : "months"}
-                      </SelectItem>
-                      <SelectItem value="yearly">
-                        {value.interval === 1 ? "year" : "years"}
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {value.frequency === "weekly" && (
-                  <div className="pl-9">
-                    <WeekdaySelector
-                      selected={value.daysOfWeek || []}
-                      onChange={(days) =>
-                        updateValue(value, { daysOfWeek: days }, field.onChange)
-                      }
-                      labels={labels.days}
-                      disabled={disabled}
-                    />
-                  </div>
-                )}
-
-                <div className="space-y-3 pl-9">
-                  <span className="text-sm font-medium">{labels.ends}</span>
-                  <RadioGroup
-                    value={value.endType}
-                    onValueChange={(v) =>
-                      updateValue(value, { endType: v as EndType }, field.onChange)
-                    }
-                    disabled={disabled}
-                    className="space-y-2"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="never" id="never" />
-                      <Label htmlFor="never" className="font-normal">
-                        {labels.never}
-                      </Label>
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="date" id="date" />
-                      <Label htmlFor="date" className="font-normal">
-                        {labels.onDate}
-                      </Label>
-                      {value.endType === "date" && (
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              disabled={disabled}
-                              className="ml-2"
-                            >
-                              <CalendarIcon className="h-4 w-4 mr-2" />
-                              {value.endDate
-                                ? format(value.endDate, "MMM d, yyyy")
-                                : "Pick date"}
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={value.endDate}
-                              onSelect={(date) =>
-                                updateValue(value, { endDate: date }, field.onChange)
-                              }
-                              disabled={(date) => date < new Date()}
-                            />
-                          </PopoverContent>
-                        </Popover>
-                      )}
-                    </div>
-
-                    <div className="flex items-center space-x-2">
-                      <RadioGroupItem value="count" id="count" />
-                      <Label htmlFor="count" className="font-normal">
-                        {labels.afterOccurrences}
-                      </Label>
-                      {value.endType === "count" && (
-                        <>
-                          <Input
-                            type="number"
-                            min={1}
-                            max={999}
-                            value={value.endCount || 1}
-                            onChange={(e) =>
-                              updateValue(
-                                value,
-                                { endCount: Math.max(1, parseInt(e.target.value, 10) || 1) },
-                                field.onChange
-                              )
-                            }
-                            disabled={disabled}
-                            className="w-16 ml-2 bg-background"
-                          />
-                          <span className="text-sm text-muted-foreground">
-                            {labels.occurrences}
-                          </span>
-                        </>
-                      )}
-                    </div>
-                  </RadioGroup>
-                </div>
-
-                {showPreview && (
-                  <div className="pl-9 pt-2 border-t">
-                    <p className="text-sm text-muted-foreground">
-                      {getRecurrenceDescription(value)}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <RecurrenceContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              hasError={!!fieldState.error}
+              disabled={disabled}
+              showPreview={showPreview}
+              maxInterval={maxInterval}
+              labels={labels}
+            />
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }
