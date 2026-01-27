@@ -270,7 +270,7 @@ function FormSocialFieldComponent<
 
                 <div className="relative flex-1">
                   {config.prefix && (
-                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60 z-10 pointer-events-none">
                       {config.prefix === "@" ? (
                         <AtSign className="h-4 w-4" />
                       ) : (

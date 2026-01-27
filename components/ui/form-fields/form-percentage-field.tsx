@@ -114,7 +114,7 @@ function FormPercentageFieldComponent<
                         fieldState.error && "border-destructive"
                       )}
                     />
-                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/60 z-10 pointer-events-none">
                       <Percent className="h-4 w-4" />
                     </div>
                   </div>

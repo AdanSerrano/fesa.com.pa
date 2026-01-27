@@ -192,7 +192,7 @@ function FormAutoCompleteFieldComponent<
                 <FormControl>
                   <div className="relative">
                     {showIcon && (
-                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60 z-10 pointer-events-none">
                         {isLoading ? (
                           <Loader2 className="h-4 w-4 animate-spin" />
                         ) : (

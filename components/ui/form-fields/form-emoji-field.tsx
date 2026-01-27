@@ -226,7 +226,7 @@ function FormEmojiFieldComponent<
                         fieldState.error && "border-destructive"
                       )}
                     >
-                      <Smile className="h-4 w-4 mr-2 text-muted-foreground" />
+                      <Smile className="h-4 w-4 mr-2 text-foreground/60" />
                       {selectedEmojis.length > 0 ? (
                         <span className="text-lg">{selectedEmojis.join(" ")}</span>
                       ) : (
@@ -238,7 +238,7 @@ function FormEmojiFieldComponent<
                     {showSearch && (
                       <div className="p-2 border-b">
                         <div className="relative">
-                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
                           <Input
                             placeholder="Search emojis..."
                             className="h-8 pl-8"

@@ -1,7 +1,7 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import { memo, useCallback, useMemo } from "react";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -87,6 +87,146 @@ function formatPhoneNumber(number: string): string {
   return `${cleaned.slice(0, 3)} ${cleaned.slice(3, 6)} ${cleaned.slice(6, 10)}`;
 }
 
+interface PhoneContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  countries: CountryCode[];
+  defaultCountry: string;
+  showCountrySelect: boolean;
+  formatOnBlur: boolean;
+  placeholder: string;
+  disabled?: boolean;
+  hasError: boolean;
+  inputClassName?: string;
+  mergedLabels: { searchCountry: string; noCountryFound: string };
+}
+
+const PhoneContent = memo(function PhoneContent({
+  field,
+  countries,
+  defaultCountry,
+  showCountrySelect,
+  formatOnBlur,
+  placeholder,
+  disabled,
+  hasError,
+  inputClassName,
+  mergedLabels,
+}: PhoneContentProps) {
+  const value: PhoneValue = field.value ?? {
+    countryCode: defaultCountry,
+    dialCode: countries.find((c) => c.code === defaultCountry)?.dialCode ?? "+1",
+    number: "",
+    formatted: "",
+  };
+
+  const selectedCountry = useMemo(
+    () => countries.find((c) => c.code === value.countryCode) ?? countries[0],
+    [countries, value.countryCode]
+  );
+
+  const handleCountryChange = useCallback(
+    (country: CountryCode) => {
+      const formatted = `${country.dialCode} ${formatPhoneNumber(value.number)}`;
+      field.onChange({
+        ...value,
+        countryCode: country.code,
+        dialCode: country.dialCode,
+        formatted,
+      });
+    },
+    [field, value]
+  );
+
+  const handleNumberChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const rawNumber = e.target.value.replace(/\D/g, "");
+      const formatted = `${value.dialCode} ${formatPhoneNumber(rawNumber)}`;
+      field.onChange({
+        ...value,
+        number: rawNumber,
+        formatted,
+      });
+    },
+    [field, value]
+  );
+
+  const handleBlur = useCallback(() => {
+    if (formatOnBlur && value.number) {
+      const formatted = `${value.dialCode} ${formatPhoneNumber(value.number)}`;
+      field.onChange({
+        ...value,
+        formatted,
+      });
+    }
+  }, [field, value, formatOnBlur]);
+
+  return (
+    <div className="flex gap-2">
+      {showCountrySelect && (
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="outline"
+              role="combobox"
+              disabled={disabled}
+              className={cn(
+                "w-[110px] justify-between px-3 shrink-0",
+                hasError && "border-destructive"
+              )}
+            >
+              <span className="flex items-center gap-2 truncate">
+                <span>{selectedCountry.flag}</span>
+                <span>{selectedCountry.dialCode}</span>
+              </span>
+              <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[250px] p-0" align="start">
+            <Command>
+              <CommandInput placeholder={mergedLabels.searchCountry} />
+              <CommandList>
+                <CommandEmpty>{mergedLabels.noCountryFound}</CommandEmpty>
+                <CommandGroup>
+                  {countries.map((country) => (
+                    <CommandItem
+                      key={country.code}
+                      value={`${country.name} ${country.dialCode}`}
+                      onSelect={() => handleCountryChange(country)}
+                    >
+                      <span className="mr-2">{country.flag}</span>
+                      <span className="flex-1">{country.name}</span>
+                      <span className="text-muted-foreground">
+                        {country.dialCode}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
+      )}
+      <div className="relative flex-1">
+        <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
+        <Input
+          type="tel"
+          placeholder={placeholder}
+          disabled={disabled}
+          value={formatPhoneNumber(value.number)}
+          onChange={handleNumberChange}
+          onBlur={handleBlur}
+          className={cn(
+            "pl-10 bg-background",
+            hasError && "border-destructive",
+            inputClassName
+          )}
+        />
+      </div>
+    </div>
+  );
+});
+
 function FormPhoneFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -107,158 +247,52 @@ function FormPhoneFieldComponent<
   inputClassName,
   labels,
 }: FormPhoneFieldProps<TFieldValues, TName>) {
-  const openRef = useRef(false);
-
-  const mergedLabels = {
-    searchCountry: "Search country...",
-    noCountryFound: "No country found",
-    ...labels,
-  };
+  const mergedLabels = useMemo(
+    () => ({
+      searchCountry: "Search country...",
+      noCountryFound: "No country found",
+      ...labels,
+    }),
+    [labels]
+  );
 
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const value: PhoneValue = field.value ?? {
-          countryCode: defaultCountry,
-          dialCode: countries.find((c) => c.code === defaultCountry)?.dialCode ?? "+1",
-          number: "",
-          formatted: "",
-        };
-
-        const selectedCountry = useMemo(
-          () => countries.find((c) => c.code === value.countryCode) ?? countries[0],
-          [countries, value.countryCode]
-        );
-
-        const handleCountryChange = useCallback(
-          (country: CountryCode) => {
-            const formatted = `${country.dialCode} ${formatPhoneNumber(value.number)}`;
-            field.onChange({
-              ...value,
-              countryCode: country.code,
-              dialCode: country.dialCode,
-              formatted,
-            });
-            openRef.current = false;
-          },
-          [field, value]
-        );
-
-        const handleNumberChange = useCallback(
-          (e: React.ChangeEvent<HTMLInputElement>) => {
-            const rawNumber = e.target.value.replace(/\D/g, "");
-            const formatted = `${value.dialCode} ${formatPhoneNumber(rawNumber)}`;
-            field.onChange({
-              ...value,
-              number: rawNumber,
-              formatted,
-            });
-          },
-          [field, value]
-        );
-
-        const handleBlur = useCallback(() => {
-          if (formatOnBlur && value.number) {
-            const formatted = `${value.dialCode} ${formatPhoneNumber(value.number)}`;
-            field.onChange({
-              ...value,
-              formatted,
-            });
-          }
-        }, [field, value, formatOnBlur]);
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <div className="flex items-center gap-1.5">
-                <FormLabel>
-                  {label}
-                  {required && <span className="text-destructive ml-1">*</span>}
-                </FormLabel>
-                {tooltip && <FormFieldTooltip tooltip={tooltip} />}
-              </div>
-            )}
-            <FormControl>
-              <div className="flex gap-2">
-                {showCountrySelect && (
-                  <Popover
-                    open={openRef.current}
-                    onOpenChange={(open) => {
-                      openRef.current = open;
-                    }}
-                  >
-                    <PopoverTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        role="combobox"
-                        disabled={disabled}
-                        className={cn(
-                          "w-[110px] justify-between px-3 shrink-0",
-                          fieldState.error && "border-destructive"
-                        )}
-                      >
-                        <span className="flex items-center gap-2 truncate">
-                          <span>{selectedCountry.flag}</span>
-                          <span>{selectedCountry.dialCode}</span>
-                        </span>
-                        <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-[250px] p-0" align="start">
-                      <Command>
-                        <CommandInput placeholder={mergedLabels.searchCountry} />
-                        <CommandList>
-                          <CommandEmpty>{mergedLabels.noCountryFound}</CommandEmpty>
-                          <CommandGroup>
-                            {countries.map((country) => (
-                              <CommandItem
-                                key={country.code}
-                                value={`${country.name} ${country.dialCode}`}
-                                onSelect={() => handleCountryChange(country)}
-                              >
-                                <span className="mr-2">{country.flag}</span>
-                                <span className="flex-1">{country.name}</span>
-                                <span className="text-muted-foreground">
-                                  {country.dialCode}
-                                </span>
-                              </CommandItem>
-                            ))}
-                          </CommandGroup>
-                        </CommandList>
-                      </Command>
-                    </PopoverContent>
-                  </Popover>
-                )}
-                <div className="relative flex-1">
-                  <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    type="tel"
-                    placeholder={placeholder}
-                    disabled={disabled}
-                    value={formatPhoneNumber(value.number)}
-                    onChange={handleNumberChange}
-                    onBlur={handleBlur}
-                    className={cn(
-                      "pl-10 bg-background",
-                      fieldState.error && "border-destructive",
-                      inputClassName
-                    )}
-                  />
-                </div>
-              </div>
-            </FormControl>
-            {description && (
-              <FormDescription className="text-xs">
-                {description}
-              </FormDescription>
-            )}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <div className="flex items-center gap-1.5">
+              <FormLabel>
+                {label}
+                {required && <span className="text-destructive ml-1">*</span>}
+              </FormLabel>
+              {tooltip && <FormFieldTooltip tooltip={tooltip} />}
+            </div>
+          )}
+          <FormControl>
+            <PhoneContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              countries={countries}
+              defaultCountry={defaultCountry}
+              showCountrySelect={showCountrySelect}
+              formatOnBlur={formatOnBlur}
+              placeholder={placeholder}
+              disabled={disabled}
+              hasError={!!fieldState.error}
+              inputClassName={inputClassName}
+              mergedLabels={mergedLabels}
+            />
+          </FormControl>
+          {description && (
+            <FormDescription className="text-xs">
+              {description}
+            </FormDescription>
+          )}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
-import { memo, useRef, useCallback, useMemo } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import { memo, useCallback, useMemo } from "react";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -124,6 +124,80 @@ const defaultFormatDate = (date: Date, locale = "en-US") =>
     day: "numeric",
   });
 
+interface DateContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  placeholder: string;
+  disabled?: boolean;
+  hasError: boolean;
+  triggerClassName?: string;
+  format: (date: Date) => string;
+  isDateDisabled: (date: Date) => boolean;
+  activePresets: DatePreset[];
+  onPresetClick: (preset: DatePreset) => void;
+}
+
+const DateContent = memo(function DateContent({
+  field,
+  placeholder,
+  disabled,
+  hasError,
+  triggerClassName,
+  format,
+  isDateDisabled,
+  activePresets,
+  onPresetClick,
+}: DateContentProps) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <FormControl>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled}
+            className={cn(
+              "w-full justify-start text-left font-normal bg-background",
+              !field.value && "text-muted-foreground",
+              hasError && "border-destructive",
+              triggerClassName
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {field.value ? format(field.value) : placeholder}
+          </Button>
+        </FormControl>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <div className="flex">
+          {activePresets.length > 0 && (
+            <div className="flex flex-col gap-1 p-3 border-r">
+              {activePresets.map((preset) => (
+                <Button
+                  key={preset.label}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start text-left"
+                  onClick={() => onPresetClick(preset)}
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+          )}
+          <Calendar
+            mode="single"
+            selected={field.value}
+            onSelect={field.onChange}
+            disabled={isDateDisabled}
+            defaultMonth={field.value}
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+});
+
 function FormDateFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -147,8 +221,6 @@ function FormDateFieldComponent<
   presets,
   showPresets = false,
 }: FormDateFieldProps<TFieldValues, TName>) {
-  const openRef = useRef(false);
-
   const activePresets = useMemo(
     () => (showPresets ? (presets ?? DEFAULT_DATE_PRESETS) : []),
     [showPresets, presets]
@@ -176,14 +248,10 @@ function FormDateFieldComponent<
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const handlePresetClick = useCallback(
-          (preset: DatePreset) => {
-            const date = preset.getValue();
-            field.onChange(date);
-            openRef.current = false;
-          },
-          [field]
-        );
+        const handlePresetClick = (preset: DatePreset) => {
+          const date = preset.getValue();
+          field.onChange(date);
+        };
 
         return (
           <FormItem className={cn("flex flex-col", className)}>
@@ -196,60 +264,17 @@ function FormDateFieldComponent<
                 {tooltip && <FormFieldTooltip tooltip={tooltip} />}
               </div>
             )}
-            <Popover
-              open={openRef.current}
-              onOpenChange={(open) => {
-                openRef.current = open;
-              }}
-            >
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    disabled={disabled}
-                    className={cn(
-                      "w-full justify-start text-left font-normal bg-background",
-                      !field.value && "text-muted-foreground",
-                      fieldState.error && "border-destructive",
-                      triggerClassName
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {field.value ? format(field.value) : placeholder}
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <div className="flex">
-                  {activePresets.length > 0 && (
-                    <div className="flex flex-col gap-1 p-3 border-r">
-                      {activePresets.map((preset) => (
-                        <Button
-                          key={preset.label}
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="justify-start text-left"
-                          onClick={() => handlePresetClick(preset)}
-                        >
-                          {preset.label}
-                        </Button>
-                      ))}
-                    </div>
-                  )}
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={(date) => {
-                      field.onChange(date);
-                      openRef.current = false;
-                    }}
-                    disabled={isDateDisabled}
-                    defaultMonth={field.value}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
+            <DateContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              placeholder={placeholder}
+              disabled={disabled}
+              hasError={!!fieldState.error}
+              triggerClassName={triggerClassName}
+              format={format}
+              isDateDisabled={isDateDisabled}
+              activePresets={activePresets}
+              onPresetClick={handlePresetClick}
+            />
             {description && (
               <FormDescription className="text-xs">
                 {description}
@@ -283,6 +308,91 @@ export interface FormDateRangeFieldProps<
   showPresets?: boolean;
 }
 
+interface DateRangeContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  placeholder: string;
+  disabled?: boolean;
+  hasError: boolean;
+  triggerClassName?: string;
+  format: (date: Date) => string;
+  isDateDisabled: (date: Date) => boolean;
+  activePresets: DateRangePreset[];
+  numberOfMonths: 1 | 2;
+  onPresetClick: (preset: DateRangePreset) => void;
+}
+
+const DateRangeContent = memo(function DateRangeContent({
+  field,
+  placeholder,
+  disabled,
+  hasError,
+  triggerClassName,
+  format,
+  isDateDisabled,
+  activePresets,
+  numberOfMonths,
+  onPresetClick,
+}: DateRangeContentProps) {
+  const range = field.value as DateRange | undefined;
+
+  const displayValue = range?.from
+    ? range.to
+      ? `${format(range.from)} - ${format(range.to)}`
+      : format(range.from)
+    : placeholder;
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <FormControl>
+          <Button
+            type="button"
+            variant="outline"
+            disabled={disabled}
+            className={cn(
+              "w-full justify-start text-left font-normal bg-background",
+              !range?.from && "text-muted-foreground",
+              hasError && "border-destructive",
+              triggerClassName
+            )}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {displayValue}
+          </Button>
+        </FormControl>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <div className="flex">
+          {activePresets.length > 0 && (
+            <div className="flex flex-col gap-1 p-3 border-r">
+              {activePresets.map((preset) => (
+                <Button
+                  key={preset.label}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start text-left"
+                  onClick={() => onPresetClick(preset)}
+                >
+                  {preset.label}
+                </Button>
+              ))}
+            </div>
+          )}
+          <Calendar
+            mode="range"
+            selected={range}
+            onSelect={field.onChange}
+            disabled={isDateDisabled}
+            numberOfMonths={numberOfMonths}
+            defaultMonth={range?.from}
+          />
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+});
+
 function FormDateRangeFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -307,8 +417,6 @@ function FormDateRangeFieldComponent<
   presets,
   showPresets = false,
 }: FormDateRangeFieldProps<TFieldValues, TName>) {
-  const openRef = useRef(false);
-
   const activePresets = useMemo(
     () => (showPresets ? (presets ?? DEFAULT_DATE_RANGE_PRESETS) : []),
     [showPresets, presets]
@@ -336,22 +444,10 @@ function FormDateRangeFieldComponent<
       control={control}
       name={name}
       render={({ field, fieldState }) => {
-        const range = field.value as DateRange | undefined;
-
-        const displayValue = range?.from
-          ? range.to
-            ? `${format(range.from)} - ${format(range.to)}`
-            : format(range.from)
-          : placeholder;
-
-        const handlePresetClick = useCallback(
-          (preset: DateRangePreset) => {
-            const range = preset.getValue();
-            field.onChange(range);
-            openRef.current = false;
-          },
-          [field]
-        );
+        const handlePresetClick = (preset: DateRangePreset) => {
+          const range = preset.getValue();
+          field.onChange(range);
+        };
 
         return (
           <FormItem className={cn("flex flex-col", className)}>
@@ -364,63 +460,18 @@ function FormDateRangeFieldComponent<
                 {tooltip && <FormFieldTooltip tooltip={tooltip} />}
               </div>
             )}
-            <Popover
-              open={openRef.current}
-              onOpenChange={(open) => {
-                openRef.current = open;
-              }}
-            >
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    disabled={disabled}
-                    className={cn(
-                      "w-full justify-start text-left font-normal bg-background",
-                      !range?.from && "text-muted-foreground",
-                      fieldState.error && "border-destructive",
-                      triggerClassName
-                    )}
-                  >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {displayValue}
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <div className="flex">
-                  {activePresets.length > 0 && (
-                    <div className="flex flex-col gap-1 p-3 border-r">
-                      {activePresets.map((preset) => (
-                        <Button
-                          key={preset.label}
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          className="justify-start text-left"
-                          onClick={() => handlePresetClick(preset)}
-                        >
-                          {preset.label}
-                        </Button>
-                      ))}
-                    </div>
-                  )}
-                  <Calendar
-                    mode="range"
-                    selected={range}
-                    onSelect={(newRange) => {
-                      field.onChange(newRange);
-                      if (newRange?.from && newRange?.to) {
-                        openRef.current = false;
-                      }
-                    }}
-                    disabled={isDateDisabled}
-                    numberOfMonths={numberOfMonths}
-                    defaultMonth={range?.from}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
+            <DateRangeContent
+              field={field as unknown as ControllerRenderProps<FieldValues, string>}
+              placeholder={placeholder}
+              disabled={disabled}
+              hasError={!!fieldState.error}
+              triggerClassName={triggerClassName}
+              format={format}
+              isDateDisabled={isDateDisabled}
+              activePresets={activePresets}
+              numberOfMonths={numberOfMonths}
+              onPresetClick={handlePresetClick}
+            />
             {description && (
               <FormDescription className="text-xs">
                 {description}

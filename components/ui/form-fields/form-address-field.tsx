@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useCallback, useMemo } from "react";
-import type { FieldPath, FieldValues, PathValue } from "react-hook-form";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -175,6 +175,217 @@ const AddressSelect = memo(function AddressSelect({
   );
 });
 
+interface AddressContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  hasError: boolean;
+  disabled?: boolean;
+  showApartment: boolean;
+  showState: boolean;
+  countries: { value: string; label: string }[];
+  states: { value: string; label: string; country?: string }[];
+  layout: "stacked" | "inline";
+  labels: typeof DEFAULT_LABELS;
+  placeholders: typeof DEFAULT_PLACEHOLDERS;
+  updateField: (
+    currentValue: AddressValue | undefined,
+    key: keyof AddressValue,
+    newValue: string,
+    onChange: (value: AddressValue) => void
+  ) => void;
+}
+
+const AddressContent = memo(function AddressContent({
+  field,
+  hasError,
+  disabled,
+  showApartment,
+  showState,
+  countries,
+  states,
+  layout,
+  labels,
+  placeholders,
+  updateField,
+}: AddressContentProps) {
+  const value = (field.value || {}) as AddressValue;
+
+  const filteredStates = useMemo(
+    () =>
+      value.country
+        ? states.filter((s) => !s.country || s.country === value.country)
+        : states,
+    [value.country, states]
+  );
+
+  if (layout === "inline") {
+    return (
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <AddressInput
+          icon={Home}
+          label={labels.street}
+          value={value.street || ""}
+          placeholder={placeholders.street}
+          onChange={(v) => updateField(value, "street", v, field.onChange)}
+          disabled={disabled}
+          className="col-span-2"
+          error={hasError}
+        />
+        <AddressInput
+          icon={Hash}
+          label={labels.number}
+          value={value.number || ""}
+          placeholder={placeholders.number}
+          onChange={(v) => updateField(value, "number", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+        {showApartment && (
+          <AddressInput
+            icon={Building2}
+            label={labels.apartment}
+            value={value.apartment || ""}
+            placeholder={placeholders.apartment}
+            onChange={(v) => updateField(value, "apartment", v, field.onChange)}
+            disabled={disabled}
+            error={hasError}
+          />
+        )}
+        <AddressInput
+          icon={MapPin}
+          label={labels.city}
+          value={value.city || ""}
+          placeholder={placeholders.city}
+          onChange={(v) => updateField(value, "city", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+        {showState && (
+          <AddressInput
+            icon={Map}
+            label={labels.state}
+            value={value.state || ""}
+            placeholder={placeholders.state}
+            onChange={(v) => updateField(value, "state", v, field.onChange)}
+            disabled={disabled}
+            error={hasError}
+          />
+        )}
+        <AddressInput
+          icon={Hash}
+          label={labels.postalCode}
+          value={value.postalCode || ""}
+          placeholder={placeholders.postalCode}
+          onChange={(v) => updateField(value, "postalCode", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+        <AddressSelect
+          icon={Globe}
+          label={labels.country}
+          value={value.country || ""}
+          placeholder={placeholders.country}
+          options={countries}
+          onChange={(v) => updateField(value, "country", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <AddressInput
+          icon={Home}
+          label={labels.street}
+          value={value.street || ""}
+          placeholder={placeholders.street}
+          onChange={(v) => updateField(value, "street", v, field.onChange)}
+          disabled={disabled}
+          className="sm:col-span-2"
+          error={hasError}
+        />
+        <AddressInput
+          icon={Hash}
+          label={labels.number}
+          value={value.number || ""}
+          placeholder={placeholders.number}
+          onChange={(v) => updateField(value, "number", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+      </div>
+      {showApartment && (
+        <AddressInput
+          icon={Building2}
+          label={labels.apartment}
+          value={value.apartment || ""}
+          placeholder={placeholders.apartment}
+          onChange={(v) => updateField(value, "apartment", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+      )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <AddressInput
+          icon={MapPin}
+          label={labels.city}
+          value={value.city || ""}
+          placeholder={placeholders.city}
+          onChange={(v) => updateField(value, "city", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+        {showState &&
+          (filteredStates.length > 0 ? (
+            <AddressSelect
+              icon={Map}
+              label={labels.state}
+              value={value.state || ""}
+              placeholder={placeholders.state}
+              options={filteredStates}
+              onChange={(v) => updateField(value, "state", v, field.onChange)}
+              disabled={disabled}
+              error={hasError}
+            />
+          ) : (
+            <AddressInput
+              icon={Map}
+              label={labels.state}
+              value={value.state || ""}
+              placeholder={placeholders.state}
+              onChange={(v) => updateField(value, "state", v, field.onChange)}
+              disabled={disabled}
+              error={hasError}
+            />
+          ))}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <AddressInput
+          icon={Hash}
+          label={labels.postalCode}
+          value={value.postalCode || ""}
+          placeholder={placeholders.postalCode}
+          onChange={(v) => updateField(value, "postalCode", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+        <AddressSelect
+          icon={Globe}
+          label={labels.country}
+          value={value.country || ""}
+          placeholder={placeholders.country}
+          options={countries}
+          onChange={(v) => updateField(value, "country", v, field.onChange)}
+          disabled={disabled}
+          error={hasError}
+        />
+      </div>
+    </>
+  );
+});
+
 function FormAddressFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -219,203 +430,40 @@ function FormAddressFieldComponent<
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const value = (field.value || {}) as AddressValue;
-        const hasError = !!fieldState.error;
-
-        const filteredStates = useMemo(
-          () =>
-            value.country
-              ? states.filter((s) => !s.country || s.country === value.country)
-              : states,
-          [value.country]
-        );
-
-        return (
-          <FormItem className={className}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <FormControl>
-              <div
-                className={cn(
-                  "rounded-lg border p-4 space-y-4",
-                  hasError && "border-destructive"
-                )}
-              >
-                {layout === "stacked" ? (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                      <AddressInput
-                        icon={Home}
-                        label={labels.street}
-                        value={value.street || ""}
-                        placeholder={placeholders.street}
-                        onChange={(v) => updateField(value, "street", v, field.onChange)}
-                        disabled={disabled}
-                        className="sm:col-span-2"
-                        error={hasError}
-                      />
-                      <AddressInput
-                        icon={Hash}
-                        label={labels.number}
-                        value={value.number || ""}
-                        placeholder={placeholders.number}
-                        onChange={(v) => updateField(value, "number", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                    </div>
-                    {showApartment && (
-                      <AddressInput
-                        icon={Building2}
-                        label={labels.apartment}
-                        value={value.apartment || ""}
-                        placeholder={placeholders.apartment}
-                        onChange={(v) => updateField(value, "apartment", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                    )}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <AddressInput
-                        icon={MapPin}
-                        label={labels.city}
-                        value={value.city || ""}
-                        placeholder={placeholders.city}
-                        onChange={(v) => updateField(value, "city", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                      {showState &&
-                        (filteredStates.length > 0 ? (
-                          <AddressSelect
-                            icon={Map}
-                            label={labels.state}
-                            value={value.state || ""}
-                            placeholder={placeholders.state}
-                            options={filteredStates}
-                            onChange={(v) => updateField(value, "state", v, field.onChange)}
-                            disabled={disabled}
-                            error={hasError}
-                          />
-                        ) : (
-                          <AddressInput
-                            icon={Map}
-                            label={labels.state}
-                            value={value.state || ""}
-                            placeholder={placeholders.state}
-                            onChange={(v) => updateField(value, "state", v, field.onChange)}
-                            disabled={disabled}
-                            error={hasError}
-                          />
-                        ))}
-                    </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <AddressInput
-                        icon={Hash}
-                        label={labels.postalCode}
-                        value={value.postalCode || ""}
-                        placeholder={placeholders.postalCode}
-                        onChange={(v) => updateField(value, "postalCode", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                      <AddressSelect
-                        icon={Globe}
-                        label={labels.country}
-                        value={value.country || ""}
-                        placeholder={placeholders.country}
-                        options={countries}
-                        onChange={(v) => updateField(value, "country", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <AddressInput
-                      icon={Home}
-                      label={labels.street}
-                      value={value.street || ""}
-                      placeholder={placeholders.street}
-                      onChange={(v) => updateField(value, "street", v, field.onChange)}
-                      disabled={disabled}
-                      className="col-span-2"
-                      error={hasError}
-                    />
-                    <AddressInput
-                      icon={Hash}
-                      label={labels.number}
-                      value={value.number || ""}
-                      placeholder={placeholders.number}
-                      onChange={(v) => updateField(value, "number", v, field.onChange)}
-                      disabled={disabled}
-                      error={hasError}
-                    />
-                    {showApartment && (
-                      <AddressInput
-                        icon={Building2}
-                        label={labels.apartment}
-                        value={value.apartment || ""}
-                        placeholder={placeholders.apartment}
-                        onChange={(v) => updateField(value, "apartment", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                    )}
-                    <AddressInput
-                      icon={MapPin}
-                      label={labels.city}
-                      value={value.city || ""}
-                      placeholder={placeholders.city}
-                      onChange={(v) => updateField(value, "city", v, field.onChange)}
-                      disabled={disabled}
-                      error={hasError}
-                    />
-                    {showState && (
-                      <AddressInput
-                        icon={Map}
-                        label={labels.state}
-                        value={value.state || ""}
-                        placeholder={placeholders.state}
-                        onChange={(v) => updateField(value, "state", v, field.onChange)}
-                        disabled={disabled}
-                        error={hasError}
-                      />
-                    )}
-                    <AddressInput
-                      icon={Hash}
-                      label={labels.postalCode}
-                      value={value.postalCode || ""}
-                      placeholder={placeholders.postalCode}
-                      onChange={(v) => updateField(value, "postalCode", v, field.onChange)}
-                      disabled={disabled}
-                      error={hasError}
-                    />
-                    <AddressSelect
-                      icon={Globe}
-                      label={labels.country}
-                      value={value.country || ""}
-                      placeholder={placeholders.country}
-                      options={countries}
-                      onChange={(v) => updateField(value, "country", v, field.onChange)}
-                      disabled={disabled}
-                      error={hasError}
-                    />
-                  </div>
-                )}
-              </div>
-            </FormControl>
-            {description && <FormDescription>{description}</FormDescription>}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={className}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <FormControl>
+            <div
+              className={cn(
+                "rounded-lg border p-4 space-y-4",
+                fieldState.error && "border-destructive"
+              )}
+            >
+              <AddressContent
+                field={field as unknown as ControllerRenderProps<FieldValues, string>}
+                hasError={!!fieldState.error}
+                disabled={disabled}
+                showApartment={showApartment}
+                showState={showState}
+                countries={countries}
+                states={states}
+                layout={layout}
+                labels={labels}
+                placeholders={placeholders}
+                updateField={updateField}
+              />
+            </div>
+          </FormControl>
+          {description && <FormDescription>{description}</FormDescription>}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

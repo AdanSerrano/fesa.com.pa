@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useRef, useMemo } from "react";
+import { memo, useCallback, useRef, useMemo, useLayoutEffect } from "react";
 import type { FieldPath, FieldValues } from "react-hook-form";
 import {
   FormControl,
@@ -143,23 +143,38 @@ const Toolbar = memo(function Toolbar({
   );
 });
 
-function FormRichTextFieldComponent<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  control,
-  name,
-  label,
-  description,
+interface RichTextEditorProps {
+  value: string;
+  onChange: (value: string) => void;
+  onBlur: () => void;
+  placeholder?: string;
+  disabled?: boolean;
+  hasError: boolean;
+  minHeight: number;
+  maxHeight: number;
+  showToolbar: boolean;
+}
+
+const RichTextEditor = memo(function RichTextEditor({
+  value,
+  onChange,
+  onBlur,
   placeholder,
   disabled,
-  className,
-  required,
-  minHeight = 200,
-  maxHeight = 400,
-  showToolbar = true,
-}: FormRichTextFieldProps<TFieldValues, TName>) {
+  hasError,
+  minHeight,
+  maxHeight,
+  showToolbar,
+}: RichTextEditorProps) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const isInitializedRef = useRef(false);
+
+  useLayoutEffect(() => {
+    if (editorRef.current && !isInitializedRef.current && value) {
+      editorRef.current.innerHTML = value;
+      isInitializedRef.current = true;
+    }
+  }, [value]);
 
   const handleAction = useCallback((action: ToolbarAction, arg?: string) => {
     if (!editorRef.current) return;
@@ -177,6 +192,12 @@ function FormRichTextFieldComponent<
     }
   }, []);
 
+  const handleInput = useCallback(() => {
+    if (editorRef.current) {
+      onChange(editorRef.current.innerHTML);
+    }
+  }, [onChange]);
+
   const editorStyle = useMemo(
     () => ({
       minHeight: `${minHeight}px`,
@@ -185,6 +206,48 @@ function FormRichTextFieldComponent<
     [minHeight, maxHeight]
   );
 
+  return (
+    <div
+      className={cn(
+        "rounded-md border bg-background",
+        hasError && "border-destructive",
+        disabled && "opacity-50 cursor-not-allowed"
+      )}
+    >
+      {showToolbar && <Toolbar onAction={handleAction} />}
+      <div
+        ref={editorRef}
+        contentEditable={!disabled}
+        className={cn(
+          "prose prose-sm dark:prose-invert max-w-none p-3 focus:outline-none overflow-y-auto",
+          !value && "text-muted-foreground"
+        )}
+        style={editorStyle}
+        onInput={handleInput}
+        onBlur={onBlur}
+        data-placeholder={placeholder}
+        suppressContentEditableWarning
+      />
+    </div>
+  );
+});
+
+function FormRichTextFieldComponent<
+  TFieldValues extends FieldValues = FieldValues,
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
+>({
+  control,
+  name,
+  label,
+  description,
+  placeholder,
+  disabled,
+  className,
+  required,
+  minHeight = 200,
+  maxHeight = 400,
+  showToolbar = true,
+}: FormRichTextFieldProps<TFieldValues, TName>) {
   return (
     <FormField
       control={control}
@@ -198,33 +261,17 @@ function FormRichTextFieldComponent<
             </FormLabel>
           )}
           <FormControl>
-            <div
-              className={cn(
-                "rounded-md border bg-background",
-                fieldState.error && "border-destructive",
-                disabled && "opacity-50 cursor-not-allowed"
-              )}
-            >
-              {showToolbar && <Toolbar onAction={handleAction} />}
-              <div
-                ref={editorRef}
-                contentEditable={!disabled}
-                className={cn(
-                  "prose prose-sm dark:prose-invert max-w-none p-3 focus:outline-none overflow-y-auto",
-                  !field.value && "text-muted-foreground"
-                )}
-                style={editorStyle}
-                onInput={(e) => {
-                  const target = e.currentTarget;
-                  field.onChange(target.innerHTML);
-                }}
-                onBlur={field.onBlur}
-                dangerouslySetInnerHTML={{
-                  __html: field.value || placeholder || "",
-                }}
-                suppressContentEditableWarning
-              />
-            </div>
+            <RichTextEditor
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              placeholder={placeholder}
+              disabled={disabled}
+              hasError={!!fieldState.error}
+              minHeight={minHeight}
+              maxHeight={maxHeight}
+              showToolbar={showToolbar}
+            />
           </FormControl>
           {description && <FormDescription>{description}</FormDescription>}
           <FormMessage />

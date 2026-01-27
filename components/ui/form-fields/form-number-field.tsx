@@ -138,7 +138,7 @@ function FormNumberFieldComponent<
 
                 <div className="relative flex-1">
                   {prefix && (
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60 text-sm z-10 pointer-events-none">
                       {prefix}
                     </span>
                   )}
@@ -164,7 +164,7 @@ function FormNumberFieldComponent<
                     )}
                   />
                   {suffix && !showControls && (
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/60 text-sm z-10 pointer-events-none">
                       {suffix}
                     </span>
                   )}

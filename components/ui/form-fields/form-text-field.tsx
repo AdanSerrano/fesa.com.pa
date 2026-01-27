@@ -73,7 +73,7 @@ function FormTextFieldComponent<
           <FormControl>
             <div className="relative">
               {leftIcon && (
-                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/60 z-10 pointer-events-none">
                   {leftIcon}
                 </div>
               )}
@@ -96,7 +96,7 @@ function FormTextFieldComponent<
                 )}
               />
               {rightIcon && (
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/60 z-10 pointer-events-none">
                   {rightIcon}
                 </div>
               )}

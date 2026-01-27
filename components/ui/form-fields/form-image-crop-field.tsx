@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useRef, useMemo } from "react";
+import { memo, useCallback, useRef, useMemo, useState } from "react";
 import type { FieldPath, FieldValues } from "react-hook-form";
 import {
   FormControl,
@@ -129,12 +129,12 @@ const CropDialog = memo(function CropDialog({
 
   if (!imageState) return null;
 
-  const cropAreaStyle = useMemo(() => {
+  const cropAreaStyle = (() => {
     const size = 250;
     const width = aspectRatio >= 1 ? size : size * aspectRatio;
     const height = aspectRatio >= 1 ? size / aspectRatio : size;
     return { width, height };
-  }, [aspectRatio]);
+  })();
 
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onCancel()}>
@@ -238,8 +238,8 @@ function FormImageCropFieldComponent<
   labels: customLabels,
 }: FormImageCropFieldProps<TFieldValues, TName>) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const imageStateRef = useRef<ImageState | null>(null);
-  const dialogOpenRef = useRef(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [imageState, setImageState] = useState<ImageState | null>(null);
 
   const labels = useMemo(
     () => ({ ...DEFAULT_LABELS, ...customLabels }),
@@ -247,7 +247,7 @@ function FormImageCropFieldComponent<
   );
 
   const processImage = useCallback(
-    async (imageState: ImageState): Promise<string> => {
+    async (state: ImageState): Promise<string> => {
       return new Promise((resolve) => {
         const img = new Image();
         img.onload = () => {
@@ -261,7 +261,7 @@ function FormImageCropFieldComponent<
 
           const ctx = canvas.getContext("2d");
           if (!ctx) {
-            resolve(imageState.src);
+            resolve(state.src);
             return;
           }
 
@@ -270,19 +270,31 @@ function FormImageCropFieldComponent<
 
           ctx.save();
           ctx.translate(width / 2, height / 2);
-          ctx.rotate((imageState.rotation * Math.PI) / 180);
-          ctx.scale(imageState.zoom, imageState.zoom);
-          ctx.translate(imageState.position.x / imageState.zoom, imageState.position.y / imageState.zoom);
+          ctx.rotate((state.rotation * Math.PI) / 180);
+          ctx.scale(state.zoom, state.zoom);
+          ctx.translate(state.position.x / state.zoom, state.position.y / state.zoom);
           ctx.drawImage(img, -img.width / 2, -img.height / 2);
           ctx.restore();
 
           resolve(canvas.toDataURL(`image/${outputFormat}`, outputQuality));
         };
-        img.src = imageState.src;
+        img.src = state.src;
       });
     },
     [aspectRatio, outputFormat, outputQuality]
   );
+
+  const handleZoomChange = useCallback((zoom: number) => {
+    setImageState((prev) => prev ? { ...prev, zoom } : null);
+  }, []);
+
+  const handleRotate = useCallback(() => {
+    setImageState((prev) => prev ? { ...prev, rotation: (prev.rotation + 90) % 360 } : null);
+  }, []);
+
+  const handlePositionChange = useCallback((x: number, y: number) => {
+    setImageState((prev) => prev ? { ...prev, position: { x, y } } : null);
+  }, []);
 
   return (
     <FormField
@@ -300,28 +312,28 @@ function FormImageCropFieldComponent<
           const reader = new FileReader();
           reader.onload = (event) => {
             const src = event.target?.result as string;
-            imageStateRef.current = {
+            setImageState({
               src,
               zoom: 1,
               rotation: 0,
               position: { x: 0, y: 0 },
-            };
-            dialogOpenRef.current = true;
-            field.onChange(src);
+            });
+            setDialogOpen(true);
           };
           reader.readAsDataURL(file);
         };
 
         const handleApply = async () => {
-          if (!imageStateRef.current) return;
-          const result = await processImage(imageStateRef.current);
+          if (!imageState) return;
+          const result = await processImage(imageState);
           field.onChange(result);
-          dialogOpenRef.current = false;
+          setDialogOpen(false);
+          setImageState(null);
         };
 
         const handleCancel = () => {
-          dialogOpenRef.current = false;
-          imageStateRef.current = null;
+          setDialogOpen(false);
+          setImageState(null);
         };
 
         const handleRemove = () => {
@@ -405,26 +417,14 @@ function FormImageCropFieldComponent<
                   </Button>
                 )}
                 <CropDialog
-                  open={dialogOpenRef.current}
-                  imageState={imageStateRef.current}
+                  open={dialogOpen}
+                  imageState={imageState}
                   aspectRatio={aspectRatio}
                   cropShape={cropShape}
                   labels={labels}
-                  onZoomChange={(zoom) => {
-                    if (imageStateRef.current) {
-                      imageStateRef.current.zoom = zoom;
-                    }
-                  }}
-                  onRotate={() => {
-                    if (imageStateRef.current) {
-                      imageStateRef.current.rotation = (imageStateRef.current.rotation + 90) % 360;
-                    }
-                  }}
-                  onPositionChange={(x, y) => {
-                    if (imageStateRef.current) {
-                      imageStateRef.current.position = { x, y };
-                    }
-                  }}
+                  onZoomChange={handleZoomChange}
+                  onRotate={handleRotate}
+                  onPositionChange={handlePositionChange}
                   onApply={handleApply}
                   onCancel={handleCancel}
                 />

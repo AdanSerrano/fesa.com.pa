@@ -1,7 +1,7 @@
 "use client";
 
-import { memo, useMemo, useRef } from "react";
-import type { FieldPath, FieldValues } from "react-hook-form";
+import { memo, useMemo, useCallback } from "react";
+import type { FieldPath, FieldValues, ControllerRenderProps } from "react-hook-form";
 import {
   FormControl,
   FormDescription,
@@ -39,6 +39,104 @@ export interface FormComboboxFieldProps<
   contentClassName?: string;
 }
 
+interface ComboboxContentProps {
+  field: ControllerRenderProps<FieldValues, string>;
+  options: SelectOption[];
+  emptyMessage: string;
+  searchPlaceholder: string;
+  placeholder?: string;
+  disabled?: boolean;
+  hasError: boolean;
+  triggerClassName?: string;
+  contentClassName?: string;
+}
+
+const ComboboxContent = memo(function ComboboxContent({
+  field,
+  options,
+  emptyMessage,
+  searchPlaceholder,
+  placeholder,
+  disabled,
+  hasError,
+  triggerClassName,
+  contentClassName,
+}: ComboboxContentProps) {
+  const selectedOption = useMemo(
+    () => options.find((opt) => opt.value === field.value),
+    [field.value, options]
+  );
+
+  const handleSelect = useCallback(
+    (value: string) => {
+      field.onChange(value === field.value ? "" : value);
+    },
+    [field]
+  );
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <FormControl>
+          <Button
+            type="button"
+            variant="outline"
+            role="combobox"
+            disabled={disabled}
+            className={cn(
+              "w-full justify-between bg-background font-normal",
+              !field.value && "text-muted-foreground",
+              hasError && "border-destructive",
+              triggerClassName
+            )}
+          >
+            {selectedOption?.label ?? placeholder ?? "Select..."}
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          </Button>
+        </FormControl>
+      </PopoverTrigger>
+      <PopoverContent
+        className={cn("w-[--radix-popover-trigger-width] p-0", contentClassName)}
+        align="start"
+      >
+        <Command>
+          <CommandInput placeholder={searchPlaceholder} />
+          <CommandList>
+            <CommandEmpty>{emptyMessage}</CommandEmpty>
+            <CommandGroup>
+              {options.map((option) => (
+                <CommandItem
+                  key={option.value}
+                  value={option.value}
+                  disabled={option.disabled}
+                  onSelect={() => handleSelect(option.value)}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      field.value === option.value
+                        ? "opacity-100"
+                        : "opacity-0"
+                    )}
+                  />
+                  <div className="flex flex-col">
+                    <span>{option.label}</span>
+                    {option.description && (
+                      <span className="text-xs text-muted-foreground">
+                        {option.description}
+                      </span>
+                    )}
+                  </div>
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+});
+
 function FormComboboxFieldComponent<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
@@ -57,103 +155,37 @@ function FormComboboxFieldComponent<
   triggerClassName,
   contentClassName,
 }: FormComboboxFieldProps<TFieldValues, TName>) {
-  const openRef = useRef(false);
-
   return (
     <FormField
       control={control}
       name={name}
-      render={({ field, fieldState }) => {
-        const selectedOption = useMemo(
-          () => options.find((opt) => opt.value === field.value),
-          [field.value, options]
-        );
-
-        return (
-          <FormItem className={cn("flex flex-col", className)}>
-            {label && (
-              <FormLabel>
-                {label}
-                {required && <span className="text-destructive ml-1">*</span>}
-              </FormLabel>
-            )}
-            <Popover
-              open={openRef.current}
-              onOpenChange={(open) => {
-                openRef.current = open;
-              }}
-            >
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant="outline"
-                    role="combobox"
-                    disabled={disabled}
-                    className={cn(
-                      "w-full justify-between bg-background font-normal",
-                      !field.value && "text-muted-foreground",
-                      fieldState.error && "border-destructive",
-                      triggerClassName
-                    )}
-                  >
-                    {selectedOption?.label ?? placeholder ?? "Select..."}
-                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent
-                className={cn("w-[--radix-popover-trigger-width] p-0", contentClassName)}
-                align="start"
-              >
-                <Command>
-                  <CommandInput placeholder={searchPlaceholder} />
-                  <CommandList>
-                    <CommandEmpty>{emptyMessage}</CommandEmpty>
-                    <CommandGroup>
-                      {options.map((option) => (
-                        <CommandItem
-                          key={option.value}
-                          value={option.value}
-                          disabled={option.disabled}
-                          onSelect={() => {
-                            field.onChange(
-                              option.value === field.value ? "" : option.value
-                            );
-                            openRef.current = false;
-                          }}
-                        >
-                          <Check
-                            className={cn(
-                              "mr-2 h-4 w-4",
-                              field.value === option.value
-                                ? "opacity-100"
-                                : "opacity-0"
-                            )}
-                          />
-                          <div className="flex flex-col">
-                            <span>{option.label}</span>
-                            {option.description && (
-                              <span className="text-xs text-muted-foreground">
-                                {option.description}
-                              </span>
-                            )}
-                          </div>
-                        </CommandItem>
-                      ))}
-                    </CommandGroup>
-                  </CommandList>
-                </Command>
-              </PopoverContent>
-            </Popover>
-            {description && (
-              <FormDescription className="text-xs">
-                {description}
-              </FormDescription>
-            )}
-            <FormMessage />
-          </FormItem>
-        );
-      }}
+      render={({ field, fieldState }) => (
+        <FormItem className={cn("flex flex-col", className)}>
+          {label && (
+            <FormLabel>
+              {label}
+              {required && <span className="text-destructive ml-1">*</span>}
+            </FormLabel>
+          )}
+          <ComboboxContent
+            field={field as unknown as ControllerRenderProps<FieldValues, string>}
+            options={options}
+            emptyMessage={emptyMessage}
+            searchPlaceholder={searchPlaceholder}
+            placeholder={placeholder}
+            disabled={disabled}
+            hasError={!!fieldState.error}
+            triggerClassName={triggerClassName}
+            contentClassName={contentClassName}
+          />
+          {description && (
+            <FormDescription className="text-xs">
+              {description}
+            </FormDescription>
+          )}
+          <FormMessage />
+        </FormItem>
+      )}
     />
   );
 }

@@ -219,7 +219,7 @@ function FormMentionFieldComponent<
               <Popover open={mentionStateRef.current.isActive && filteredUsers.length > 0}>
                 <PopoverAnchor asChild>
                   <div className="relative">
-                    <AtSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <AtSign className="absolute left-3 top-3 h-4 w-4 text-foreground/60 z-10 pointer-events-none" />
                     <Textarea
                       {...field}
                       ref={(el) => {

@@ -927,5 +927,10 @@
     "previous": "Previous",
     "next": "Next",
     "imageCount": "{current} of {total}"
+  },
+  "FormDemoPage": {
+    "title": "Form Components Demo",
+    "description": "Demonstration of all available form components",
+    "subtitle": "Explore all form field components with interactive examples."
   }
 }

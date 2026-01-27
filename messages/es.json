@@ -926,5 +926,10 @@
     "previous": "Anterior",
     "next": "Siguiente",
     "imageCount": "{current} de {total}"
+  },
+  "FormDemoPage": {
+    "title": "Demo de Componentes de Formulario",
+    "description": "Demostración de todos los componentes de formulario disponibles",
+    "subtitle": "Explora todos los componentes de campos de formulario con ejemplos interactivos."
   }
 }

@@ -216,7 +216,7 @@ function FormRecurrenceFieldComponent<
                 )}
               >
                 <div className="flex flex-wrap items-center gap-3">
-                  <Repeat className="h-5 w-5 text-muted-foreground" />
+                  <Repeat className="h-5 w-5 text-foreground/60" />
 
                   <div className="flex items-center gap-2">
                     <span className="text-sm">{labels.interval}</span>
