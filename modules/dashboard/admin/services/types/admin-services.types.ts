@@ -142,10 +142,14 @@ export interface UpdateItemParams {
   isActive?: boolean;
 }
 
+export interface CreateResult {
+  id: string;
+}
+
 export interface AdminServicesActionResult {
   success?: string;
   error?: string;
-  data?: GetCategoriesResult | GetItemsResult;
+  data?: GetCategoriesResult | GetItemsResult | CreateResult;
 }
 
 export interface CategoryForSelect {

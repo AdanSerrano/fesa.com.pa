@@ -12,13 +12,8 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import {
-  getCategoriesAction,
   getItemsAction,
-  createCategoryAction,
-  updateCategoryAction,
   deleteCategoryAction,
-  createItemAction,
-  updateItemAction,
   deleteItemAction,
   toggleCategoryStatusAction,
   toggleItemStatusAction,
@@ -39,10 +34,6 @@ import type {
   AdminServicesDialogType,
   AdminServiceStatus,
   CategoryForSelect,
-  CreateCategoryParams,
-  UpdateCategoryParams,
-  CreateItemParams,
-  UpdateItemParams,
   GetItemsResult,
 } from "../types/admin-services.types";
 import type {
@@ -292,19 +283,23 @@ export function AdminServicesClient({
   const [selectedItem, setSelectedItem] = useState<ServiceItem | null>(null);
   const [isPending, startActionTransition] = useTransition();
   const [isNavigating, startNavigationTransition] = useTransition();
+  const [isLoadingItems, startItemsTransition] = useTransition();
 
-  const { categories, stats, pagination, error, activeTab, items: initialItems, itemsPagination: initialItemsPagination } = initialData;
+  const { categories, stats, pagination, error, items: initialItems, itemsPagination: initialItemsPagination } = initialData;
 
-  const [items, setItems] = useState<ServiceItem[]>(initialItems);
-  const [itemsPagination, setItemsPagination] = useState<AdminServicesPagination>(
-    initialItemsPagination || {
+  const itemsStateRef = useRef({
+    items: initialItems,
+    pagination: initialItemsPagination || {
       pageIndex: 0,
       pageSize: DEFAULT_PAGE_SIZE,
       totalRows: 0,
       totalPages: 0,
-    }
-  );
-  const [isLoadingItems, setIsLoadingItems] = useState(false);
+    },
+  });
+  const [itemsVersion, setItemsVersion] = useState(0);
+
+  const items = itemsStateRef.current.items;
+  const itemsPagination = itemsStateRef.current.pagination;
 
   const urlState = useMemo(() => {
     const getParam = (key: string) => searchParams.get(`${PREFIX}_${key}`);
@@ -361,34 +356,37 @@ export function AdminServicesClient({
     [searchParams, pathname, router, urlState]
   );
 
-  const loadItems = useCallback(async (
-    page: number = 1,
-    pageSize: number = DEFAULT_PAGE_SIZE,
-    filters: AdminServicesFilters = { search: "", status: "all", categoryId: "all" },
-    sorting: AdminServicesSorting[] = []
-  ) => {
-    setIsLoadingItems(true);
-    try {
-      const result = await getItemsAction({
-        page,
-        limit: pageSize,
-        filters,
-        sorting,
-      });
-      if (result.data && "items" in result.data) {
-        const data = result.data as GetItemsResult;
-        setItems(data.items);
-        setItemsPagination({
-          pageIndex: page - 1,
-          pageSize,
-          totalRows: data.pagination.total,
-          totalPages: data.pagination.totalPages,
+  const loadItems = useCallback(
+    (
+      page: number = 1,
+      pageSize: number = DEFAULT_PAGE_SIZE,
+      filters: AdminServicesFilters = { search: "", status: "all", categoryId: "all" },
+      sorting: AdminServicesSorting[] = []
+    ) => {
+      startItemsTransition(async () => {
+        const result = await getItemsAction({
+          page,
+          limit: pageSize,
+          filters,
+          sorting,
         });
-      }
-    } finally {
-      setIsLoadingItems(false);
-    }
-  }, []);
+        if (result.data && "items" in result.data) {
+          const data = result.data as GetItemsResult;
+          itemsStateRef.current = {
+            items: data.items,
+            pagination: {
+              pageIndex: page - 1,
+              pageSize,
+              totalRows: data.pagination.total,
+              totalPages: data.pagination.totalPages,
+            },
+          };
+          setItemsVersion((v) => v + 1);
+        }
+      });
+    },
+    []
+  );
 
   const handleTabChange = useCallback(
     (tab: string) => {
@@ -542,37 +540,10 @@ export function AdminServicesClient({
     setSelectedItem(null);
   }, []);
 
-  const handleCreateCategory = useCallback(
-    (data: CreateCategoryParams) => {
-      startActionTransition(async () => {
-        const result = await createCategoryAction(data);
-        if (result.error) {
-          toast.error(result.error);
-        } else if (result.success) {
-          toast.success(result.success);
-          closeDialog();
-          router.refresh();
-        }
-      });
-    },
-    [closeDialog, router]
-  );
-
-  const handleUpdateCategory = useCallback(
-    (data: UpdateCategoryParams) => {
-      startActionTransition(async () => {
-        const result = await updateCategoryAction(data);
-        if (result.error) {
-          toast.error(result.error);
-        } else if (result.success) {
-          toast.success(result.success);
-          closeDialog();
-          router.refresh();
-        }
-      });
-    },
-    [closeDialog, router]
-  );
+  const handleCategorySuccess = useCallback(() => {
+    closeDialog();
+    router.refresh();
+  }, [closeDialog, router]);
 
   const handleDeleteCategory = useCallback(() => {
     if (!selectedCategory) return;
@@ -588,39 +559,16 @@ export function AdminServicesClient({
     });
   }, [selectedCategory, closeDialog, router]);
 
-  const handleCreateItem = useCallback(
-    (data: CreateItemParams) => {
-      startActionTransition(async () => {
-        const result = await createItemAction(data);
-        if (result.error) {
-          toast.error(result.error);
-        } else if (result.success) {
-          toast.success(result.success);
-          closeDialog();
-          router.refresh();
-          loadItems();
-        }
-      });
-    },
-    [closeDialog, router, loadItems]
-  );
-
-  const handleUpdateItem = useCallback(
-    (data: UpdateItemParams) => {
-      startActionTransition(async () => {
-        const result = await updateItemAction(data);
-        if (result.error) {
-          toast.error(result.error);
-        } else if (result.success) {
-          toast.success(result.success);
-          closeDialog();
-          router.refresh();
-          loadItems();
-        }
-      });
-    },
-    [closeDialog, router, loadItems]
-  );
+  const handleItemSuccess = useCallback(() => {
+    closeDialog();
+    router.refresh();
+    loadItems(
+      urlState.page,
+      urlState.pageSize,
+      { search: urlState.search, status: urlState.status, categoryId: urlState.categoryId },
+      urlState.sort ? [{ id: urlState.sort, desc: urlState.sortDir === "desc" }] : []
+    );
+  }, [closeDialog, router, loadItems, urlState]);
 
   const handleDeleteItem = useCallback(() => {
     if (!selectedItem) return;
@@ -908,10 +856,8 @@ export function AdminServicesClient({
         key={`category-form-${activeDialog === "category-edit" ? selectedCategory?.id : "create"}`}
         open={activeDialog === "category-create" || activeDialog === "category-edit"}
         category={activeDialog === "category-edit" ? selectedCategory : null}
-        isPending={isPending}
         onClose={closeDialog}
-        onCreate={handleCreateCategory}
-        onUpdate={handleUpdateCategory}
+        onSuccess={handleCategorySuccess}
         labels={labels.categoryForm}
       />
 
@@ -920,10 +866,8 @@ export function AdminServicesClient({
         open={activeDialog === "item-create" || activeDialog === "item-edit"}
         item={activeDialog === "item-edit" ? selectedItem : null}
         categories={categoriesForSelect}
-        isPending={isPending}
         onClose={closeDialog}
-        onCreate={handleCreateItem}
-        onUpdate={handleUpdateItem}
+        onSuccess={handleItemSuccess}
         labels={labels.itemForm}
       />
 

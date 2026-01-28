@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import {
   Dialog,
@@ -15,7 +15,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import type { ServiceCategory, CreateCategoryParams, UpdateCategoryParams } from "../../types/admin-services.types";
+import { ImageUpload } from "../image-upload";
+import {
+  getServiceImageUploadUrlAction,
+  createCategoryAction,
+  updateCategoryAction,
+} from "../../actions/admin-services.actions";
+import type { ServiceCategory } from "../../types/admin-services.types";
 
 interface FormData {
   name: string;
@@ -28,10 +34,8 @@ interface FormData {
 interface CategoryFormDialogProps {
   open: boolean;
   category: ServiceCategory | null;
-  isPending: boolean;
   onClose: () => void;
-  onCreate: (data: CreateCategoryParams) => void;
-  onUpdate: (data: UpdateCategoryParams) => void;
+  onSuccess: () => void;
   labels: {
     createTitle: string;
     editTitle: string;
@@ -49,16 +53,33 @@ interface CategoryFormDialogProps {
   };
 }
 
+async function uploadImage(
+  type: "category" | "item",
+  id: string,
+  file: File
+): Promise<string | null> {
+  const result = await getServiceImageUploadUrlAction(type, id, file.name, file.type);
+  if ("error" in result) return null;
+
+  const response = await fetch(result.url, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+
+  return response.ok ? result.publicUrl : null;
+}
+
 export const CategoryFormDialog = memo(function CategoryFormDialog({
   open,
   category,
-  isPending,
   onClose,
-  onCreate,
-  onUpdate,
+  onSuccess,
   labels,
 }: CategoryFormDialogProps) {
   const isEditing = !!category;
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<FormData>({
     defaultValues: {
@@ -72,25 +93,74 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
 
   const handleSubmit = useCallback(
     (data: FormData) => {
-      const params = {
-        name: data.name,
-        description: data.description || null,
-        image: data.image || null,
-        isActive: data.isActive,
-        isFeatured: data.isFeatured,
-      };
+      startTransition(async () => {
+        try {
+          if (isEditing && category) {
+            let imageUrl = data.image;
 
-      if (isEditing && category) {
-        onUpdate({ id: category.id, ...params });
-      } else {
-        onCreate(params);
-      }
+            if (pendingFile) {
+              const uploadedUrl = await uploadImage("category", category.id, pendingFile);
+              if (uploadedUrl) imageUrl = uploadedUrl;
+            }
+
+            const result = await updateCategoryAction({
+              id: category.id,
+              name: data.name,
+              description: data.description || null,
+              image: imageUrl || null,
+              isActive: data.isActive,
+              isFeatured: data.isFeatured,
+            });
+
+            if (result.error) {
+              return;
+            }
+          } else {
+            const createResult = await createCategoryAction({
+              name: data.name,
+              description: data.description || null,
+              image: null,
+              isActive: data.isActive,
+              isFeatured: data.isFeatured,
+            });
+
+            if (createResult.error) {
+              return;
+            }
+
+            const createdId = (createResult.data as { id: string } | undefined)?.id;
+
+            if (createdId && pendingFile) {
+              const uploadedUrl = await uploadImage("category", createdId, pendingFile);
+
+              if (uploadedUrl) {
+                await updateCategoryAction({
+                  id: createdId,
+                  image: uploadedUrl,
+                });
+              }
+            }
+          }
+
+          setPendingFile(null);
+          onSuccess();
+        } catch {
+          // Error handling
+        }
+      });
     },
-    [isEditing, category, onCreate, onUpdate]
+    [isEditing, category, pendingFile, onSuccess]
   );
 
+  const handleClose = useCallback(() => {
+    if (!isPending) {
+      setPendingFile(null);
+      onClose();
+    }
+  }, [isPending, onClose]);
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -104,6 +174,7 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
             <Input
               id="name"
               placeholder={labels.namePlaceholder}
+              disabled={isPending}
               {...form.register("name", { required: true })}
             />
             {form.formState.errors.name && (
@@ -118,19 +189,20 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
             <Textarea
               id="description"
               placeholder={labels.descriptionPlaceholder}
+              disabled={isPending}
               {...form.register("description")}
               rows={3}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="image">{labels.image}</Label>
-            <Input
-              id="image"
-              placeholder={labels.imagePlaceholder}
-              {...form.register("image")}
-            />
-          </div>
+          <ImageUpload
+            label={labels.image}
+            value={form.watch("image")}
+            pendingFile={pendingFile}
+            onChange={(url) => form.setValue("image", url)}
+            onFileSelect={setPendingFile}
+            disabled={isPending}
+          />
 
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
@@ -138,6 +210,7 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
                 id="isActive"
                 checked={form.watch("isActive")}
                 onCheckedChange={(checked) => form.setValue("isActive", checked)}
+                disabled={isPending}
               />
               <Label htmlFor="isActive">{labels.isActive}</Label>
             </div>
@@ -146,13 +219,14 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
                 id="isFeatured"
                 checked={form.watch("isFeatured")}
                 onCheckedChange={(checked) => form.setValue("isFeatured", checked)}
+                disabled={isPending}
               />
               <Label htmlFor="isFeatured">{labels.isFeatured}</Label>
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isPending}>
               {labels.cancel}
             </Button>
             <Button type="submit" disabled={isPending}>

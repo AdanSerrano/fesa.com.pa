@@ -85,8 +85,8 @@ export class AdminServicesService {
 
   public async createCategory(params: CreateCategoryParams): Promise<AdminServicesActionResult> {
     try {
-      await this.repository.createCategory(params);
-      return { success: "Categoría creada correctamente" };
+      const category = await this.repository.createCategory(params);
+      return { success: "Categoría creada correctamente", data: { id: category.id } };
     } catch (error) {
       console.error("Error creating category:", error);
       return { error: "Error al crear categoría" };
@@ -136,8 +136,8 @@ export class AdminServicesService {
         }
       }
 
-      await this.repository.createItem(params);
-      return { success: "Servicio creado correctamente" };
+      const item = await this.repository.createItem(params);
+      return { success: "Servicio creado correctamente", data: { id: item.id } };
     } catch (error) {
       console.error("Error creating item:", error);
       return { error: "Error al crear servicio" };

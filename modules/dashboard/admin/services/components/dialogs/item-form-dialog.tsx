@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback } from "react";
+import { memo, useCallback, useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import {
   Dialog,
@@ -22,12 +22,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import type {
-  ServiceItem,
-  CreateItemParams,
-  UpdateItemParams,
-  CategoryForSelect,
-} from "../../types/admin-services.types";
+import { ImageUpload } from "../image-upload";
+import {
+  getServiceImageUploadUrlAction,
+  createItemAction,
+  updateItemAction,
+} from "../../actions/admin-services.actions";
+import type { ServiceItem, CategoryForSelect } from "../../types/admin-services.types";
 
 interface FormData {
   categoryId: string;
@@ -41,10 +42,8 @@ interface ItemFormDialogProps {
   open: boolean;
   item: ServiceItem | null;
   categories: CategoryForSelect[];
-  isPending: boolean;
   onClose: () => void;
-  onCreate: (data: CreateItemParams) => void;
-  onUpdate: (data: UpdateItemParams) => void;
+  onSuccess: () => void;
   labels: {
     createTitle: string;
     editTitle: string;
@@ -64,17 +63,34 @@ interface ItemFormDialogProps {
   };
 }
 
+async function uploadImage(
+  type: "category" | "item",
+  id: string,
+  file: File
+): Promise<string | null> {
+  const result = await getServiceImageUploadUrlAction(type, id, file.name, file.type);
+  if ("error" in result) return null;
+
+  const response = await fetch(result.url, {
+    method: "PUT",
+    headers: { "Content-Type": file.type },
+    body: file,
+  });
+
+  return response.ok ? result.publicUrl : null;
+}
+
 export const ItemFormDialog = memo(function ItemFormDialog({
   open,
   item,
   categories,
-  isPending,
   onClose,
-  onCreate,
-  onUpdate,
+  onSuccess,
   labels,
 }: ItemFormDialogProps) {
   const isEditing = !!item;
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm<FormData>({
     defaultValues: {
@@ -88,25 +104,74 @@ export const ItemFormDialog = memo(function ItemFormDialog({
 
   const handleSubmit = useCallback(
     (data: FormData) => {
-      const params = {
-        categoryId: data.categoryId || null,
-        name: data.name,
-        description: data.description || null,
-        image: data.image || null,
-        isActive: data.isActive,
-      };
+      startTransition(async () => {
+        try {
+          if (isEditing && item) {
+            let imageUrl = data.image;
 
-      if (isEditing && item) {
-        onUpdate({ id: item.id, ...params });
-      } else {
-        onCreate(params);
-      }
+            if (pendingFile) {
+              const uploadedUrl = await uploadImage("item", item.id, pendingFile);
+              if (uploadedUrl) imageUrl = uploadedUrl;
+            }
+
+            const result = await updateItemAction({
+              id: item.id,
+              categoryId: data.categoryId || null,
+              name: data.name,
+              description: data.description || null,
+              image: imageUrl || null,
+              isActive: data.isActive,
+            });
+
+            if (result.error) {
+              return;
+            }
+          } else {
+            const createResult = await createItemAction({
+              categoryId: data.categoryId || null,
+              name: data.name,
+              description: data.description || null,
+              image: null,
+              isActive: data.isActive,
+            });
+
+            if (createResult.error) {
+              return;
+            }
+
+            const createdId = (createResult.data as { id: string } | undefined)?.id;
+
+            if (createdId && pendingFile) {
+              const uploadedUrl = await uploadImage("item", createdId, pendingFile);
+
+              if (uploadedUrl) {
+                await updateItemAction({
+                  id: createdId,
+                  image: uploadedUrl,
+                });
+              }
+            }
+          }
+
+          setPendingFile(null);
+          onSuccess();
+        } catch {
+          // Error handling
+        }
+      });
     },
-    [isEditing, item, onCreate, onUpdate]
+    [isEditing, item, pendingFile, onSuccess]
   );
 
+  const handleClose = useCallback(() => {
+    if (!isPending) {
+      setPendingFile(null);
+      onClose();
+    }
+  }, [isPending, onClose]);
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
@@ -120,6 +185,7 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             <Select
               value={form.watch("categoryId")}
               onValueChange={(value) => form.setValue("categoryId", value === "none" ? "" : value)}
+              disabled={isPending}
             >
               <SelectTrigger>
                 <SelectValue placeholder={labels.selectCategory} />
@@ -140,6 +206,7 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             <Input
               id="name"
               placeholder={labels.namePlaceholder}
+              disabled={isPending}
               {...form.register("name", { required: true })}
             />
             {form.formState.errors.name && (
@@ -154,31 +221,33 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             <Textarea
               id="description"
               placeholder={labels.descriptionPlaceholder}
+              disabled={isPending}
               {...form.register("description")}
               rows={3}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="image">{labels.image}</Label>
-            <Input
-              id="image"
-              placeholder={labels.imagePlaceholder}
-              {...form.register("image")}
-            />
-          </div>
+          <ImageUpload
+            label={labels.image}
+            value={form.watch("image")}
+            pendingFile={pendingFile}
+            onChange={(url) => form.setValue("image", url)}
+            onFileSelect={setPendingFile}
+            disabled={isPending}
+          />
 
           <div className="flex items-center gap-2">
             <Switch
               id="isActive"
               checked={form.watch("isActive")}
               onCheckedChange={(checked) => form.setValue("isActive", checked)}
+              disabled={isPending}
             />
             <Label htmlFor="isActive">{labels.isActive}</Label>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isPending}>
               {labels.cancel}
             </Button>
             <Button type="submit" disabled={isPending}>

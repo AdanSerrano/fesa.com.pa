@@ -3,6 +3,9 @@
 import { currentUser } from "@/lib/user";
 import { Role } from "@/app/prisma/client";
 import { AdminServicesController } from "../controllers/admin-services.controllers";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { s3Client, R2_CONFIG } from "@/lib/aws/s3-client";
 import {
   getCategoriesParamsSchema,
   getItemsParamsSchema,
@@ -241,4 +244,31 @@ export async function getCategoriesForSelectAction(): Promise<CategoryForSelect[
   }
 
   return await controller.getCategoriesForSelect();
+}
+
+export async function getServiceImageUploadUrlAction(
+  type: "category" | "item",
+  id: string,
+  fileName: string,
+  contentType: string
+): Promise<{ url: string; publicUrl: string } | { error: string }> {
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid) {
+    return { error: accessValidation.error || "No autorizado" };
+  }
+
+  const folder = type === "category" ? "services-categories" : "services-items";
+  const extension = fileName.split(".").pop() || "jpg";
+  const key = `public/services/${folder}/${id}.${extension}`;
+
+  const command = new PutObjectCommand({
+    Bucket: R2_CONFIG.bucket,
+    Key: key,
+    ContentType: contentType,
+  });
+
+  const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
+  const publicUrl = R2_CONFIG.publicUrl ? `${R2_CONFIG.publicUrl}/${key}` : "";
+
+  return { url, publicUrl };
 }

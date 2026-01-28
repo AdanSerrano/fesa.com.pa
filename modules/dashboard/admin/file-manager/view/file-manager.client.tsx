@@ -401,7 +401,7 @@ const FileManagerClientComponent = ({
           };
           xhr.onerror = () => reject(new Error("Upload failed"));
           xhr.open("PUT", urlResult.data!.url);
-          xhr.setRequestHeader("Content-Type", file.type);
+          xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
           xhr.send(file);
         });
       } catch {
