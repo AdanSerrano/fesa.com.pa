@@ -4,6 +4,8 @@ import { Badge } from "@/components/ui/badge";
 import { Header } from "@/components/landing/header";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
+import { getServicesPageDataAction } from "@/modules/services/actions/services.actions";
+import { HomeServicesSection } from "@/modules/services/components/home-services-section";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -53,6 +55,9 @@ export default async function Home({ params }: HomeProps) {
   const t = await getTranslations("HomePage");
   const tAuth = await getTranslations("Auth");
   const tCommon = await getTranslations("Common");
+  const tServices = await getTranslations("PublicServices");
+
+  const { categories, featuredServices } = await getServicesPageDataAction();
 
   const features = [
     {
@@ -351,6 +356,21 @@ export default async function Home({ params }: HomeProps) {
             </div>
           </div>
         </section>
+
+        {/* Services Section */}
+        <HomeServicesSection
+          categories={categories}
+          featuredServices={featuredServices}
+          locale={locale}
+          labels={{
+            sectionTitle: tServices("homeSectionTitle"),
+            sectionSubtitle: tServices("homeSectionSubtitle"),
+            categoriesTitle: tServices("categoriesTitle"),
+            featuredTitle: tServices("featuredTitle"),
+            viewAll: tServices("viewAll"),
+            viewMore: tServices("viewMore"),
+          }}
+        />
 
         {/* CTA Section */}
         <section className="py-16 sm:py-24">

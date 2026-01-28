@@ -307,6 +307,7 @@ export type FileUploadOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  _relevance?: Prisma.FileUploadOrderByRelevanceInput
 }
 
 export type FileUploadWhereUniqueInput = Prisma.AtLeast<{
@@ -498,6 +499,12 @@ export type FileUploadListRelationFilter = {
 
 export type FileUploadOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
+}
+
+export type FileUploadOrderByRelevanceInput = {
+  fields: Prisma.FileUploadOrderByRelevanceFieldEnum | Prisma.FileUploadOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type FileUploadCountOrderByAggregateInput = {
@@ -763,41 +770,7 @@ export type FileUploadSelect<ExtArgs extends runtime.Types.Extensions.InternalAr
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["fileUpload"]>
 
-export type FileUploadSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  fileName?: boolean
-  fileKey?: boolean
-  fileSize?: boolean
-  mimeType?: boolean
-  fileExtension?: boolean
-  visibility?: boolean
-  category?: boolean
-  status?: boolean
-  publicUrl?: boolean
-  deletedAt?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["fileUpload"]>
 
-export type FileUploadSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  fileName?: boolean
-  fileKey?: boolean
-  fileSize?: boolean
-  mimeType?: boolean
-  fileExtension?: boolean
-  visibility?: boolean
-  category?: boolean
-  status?: boolean
-  publicUrl?: boolean
-  deletedAt?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["fileUpload"]>
 
 export type FileUploadSelectScalar = {
   id?: boolean
@@ -818,12 +791,6 @@ export type FileUploadSelectScalar = {
 
 export type FileUploadOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "fileName" | "fileKey" | "fileSize" | "mimeType" | "fileExtension" | "visibility" | "category" | "status" | "publicUrl" | "deletedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["fileUpload"]>
 export type FileUploadInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type FileUploadIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type FileUploadIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
@@ -965,30 +932,6 @@ export interface FileUploadDelegate<ExtArgs extends runtime.Types.Extensions.Int
   createMany<T extends FileUploadCreateManyArgs>(args?: Prisma.SelectSubset<T, FileUploadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many FileUploads and returns the data saved in the database.
-   * @param {FileUploadCreateManyAndReturnArgs} args - Arguments to create many FileUploads.
-   * @example
-   * // Create many FileUploads
-   * const fileUpload = await prisma.fileUpload.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many FileUploads and only return the `id`
-   * const fileUploadWithIdOnly = await prisma.fileUpload.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends FileUploadCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, FileUploadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileUploadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a FileUpload.
    * @param {FileUploadDeleteArgs} args - Arguments to delete one FileUpload.
    * @example
@@ -1051,36 +994,6 @@ export interface FileUploadDelegate<ExtArgs extends runtime.Types.Extensions.Int
    * 
    */
   updateMany<T extends FileUploadUpdateManyArgs>(args: Prisma.SelectSubset<T, FileUploadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more FileUploads and returns the data updated in the database.
-   * @param {FileUploadUpdateManyAndReturnArgs} args - Arguments to update many FileUploads.
-   * @example
-   * // Update many FileUploads
-   * const fileUpload = await prisma.fileUpload.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more FileUploads and only return the `id`
-   * const fileUploadWithIdOnly = await prisma.fileUpload.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends FileUploadUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, FileUploadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FileUploadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one FileUpload.
@@ -1518,29 +1431,6 @@ export type FileUploadCreateManyArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * FileUpload createManyAndReturn
- */
-export type FileUploadCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FileUpload
-   */
-  select?: Prisma.FileUploadSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the FileUpload
-   */
-  omit?: Prisma.FileUploadOmit<ExtArgs> | null
-  /**
-   * The data used to create many FileUploads.
-   */
-  data: Prisma.FileUploadCreateManyInput | Prisma.FileUploadCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FileUploadIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * FileUpload update
  */
 export type FileUploadUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1582,36 +1472,6 @@ export type FileUploadUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.In
    * Limit how many FileUploads to update.
    */
   limit?: number
-}
-
-/**
- * FileUpload updateManyAndReturn
- */
-export type FileUploadUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the FileUpload
-   */
-  select?: Prisma.FileUploadSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the FileUpload
-   */
-  omit?: Prisma.FileUploadOmit<ExtArgs> | null
-  /**
-   * The data used to update FileUploads.
-   */
-  data: Prisma.XOR<Prisma.FileUploadUpdateManyMutationInput, Prisma.FileUploadUncheckedUpdateManyInput>
-  /**
-   * Filter which FileUploads to update
-   */
-  where?: Prisma.FileUploadWhereInput
-  /**
-   * Limit how many FileUploads to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.FileUploadIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

@@ -1,21 +1,21 @@
 import { Suspense } from "react";
-import { ServicesView } from "@/modules/services/view/services.view";
-import { ServicesSkeleton } from "@/modules/services/components/services.skeleton";
+import { OverviewView } from "@/modules/overview/view/overview.view";
+import { OverviewSkeleton } from "@/modules/overview/components/overview.skeleton";
 import { auth } from "@/auth";
 import { getTranslations } from "next-intl/server";
 
 export async function generateMetadata() {
-  const t = await getTranslations("ServicesPage");
+  const t = await getTranslations("OverviewPage");
   return {
     title: t("title"),
     description: t("description"),
   };
 }
 
-export default async function ServicesPage() {
+export default async function OverviewPage() {
   const [session, t] = await Promise.all([
     auth(),
-    getTranslations("ServicesPage"),
+    getTranslations("OverviewPage"),
   ]);
   const firstName = session?.user?.name?.split(" ")[0] || t("defaultUser");
 
@@ -30,8 +30,8 @@ export default async function ServicesPage() {
         </p>
       </div>
 
-      <Suspense fallback={<ServicesSkeleton />}>
-        <ServicesView />
+      <Suspense fallback={<OverviewSkeleton />}>
+        <OverviewView />
       </Suspense>
     </div>
   );

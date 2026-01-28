@@ -181,6 +181,7 @@ export type TwoFactorTokenOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   token?: Prisma.SortOrder
   expires?: Prisma.SortOrder
+  _relevance?: Prisma.TwoFactorTokenOrderByRelevanceInput
 }
 
 export type TwoFactorTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +264,12 @@ export type TwoFactorTokenUncheckedUpdateManyInput = {
   expires?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type TwoFactorTokenOrderByRelevanceInput = {
+  fields: Prisma.TwoFactorTokenOrderByRelevanceFieldEnum | Prisma.TwoFactorTokenOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
+}
+
 export type TwoFactorTokenEmailTokenCompoundUniqueInput = {
   email: string
   token: string
@@ -298,19 +305,7 @@ export type TwoFactorTokenSelect<ExtArgs extends runtime.Types.Extensions.Intern
   expires?: boolean
 }, ExtArgs["result"]["twoFactorToken"]>
 
-export type TwoFactorTokenSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  email?: boolean
-  token?: boolean
-  expires?: boolean
-}, ExtArgs["result"]["twoFactorToken"]>
 
-export type TwoFactorTokenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  email?: boolean
-  token?: boolean
-  expires?: boolean
-}, ExtArgs["result"]["twoFactorToken"]>
 
 export type TwoFactorTokenSelectScalar = {
   id?: boolean
@@ -447,30 +442,6 @@ export interface TwoFactorTokenDelegate<ExtArgs extends runtime.Types.Extensions
   createMany<T extends TwoFactorTokenCreateManyArgs>(args?: Prisma.SelectSubset<T, TwoFactorTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many TwoFactorTokens and returns the data saved in the database.
-   * @param {TwoFactorTokenCreateManyAndReturnArgs} args - Arguments to create many TwoFactorTokens.
-   * @example
-   * // Create many TwoFactorTokens
-   * const twoFactorToken = await prisma.twoFactorToken.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many TwoFactorTokens and only return the `id`
-   * const twoFactorTokenWithIdOnly = await prisma.twoFactorToken.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends TwoFactorTokenCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, TwoFactorTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TwoFactorTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a TwoFactorToken.
    * @param {TwoFactorTokenDeleteArgs} args - Arguments to delete one TwoFactorToken.
    * @example
@@ -533,36 +504,6 @@ export interface TwoFactorTokenDelegate<ExtArgs extends runtime.Types.Extensions
    * 
    */
   updateMany<T extends TwoFactorTokenUpdateManyArgs>(args: Prisma.SelectSubset<T, TwoFactorTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more TwoFactorTokens and returns the data updated in the database.
-   * @param {TwoFactorTokenUpdateManyAndReturnArgs} args - Arguments to update many TwoFactorTokens.
-   * @example
-   * // Update many TwoFactorTokens
-   * const twoFactorToken = await prisma.twoFactorToken.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more TwoFactorTokens and only return the `id`
-   * const twoFactorTokenWithIdOnly = await prisma.twoFactorToken.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends TwoFactorTokenUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, TwoFactorTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TwoFactorTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one TwoFactorToken.
@@ -965,25 +906,6 @@ export type TwoFactorTokenCreateManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * TwoFactorToken createManyAndReturn
- */
-export type TwoFactorTokenCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TwoFactorToken
-   */
-  select?: Prisma.TwoFactorTokenSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the TwoFactorToken
-   */
-  omit?: Prisma.TwoFactorTokenOmit<ExtArgs> | null
-  /**
-   * The data used to create many TwoFactorTokens.
-   */
-  data: Prisma.TwoFactorTokenCreateManyInput | Prisma.TwoFactorTokenCreateManyInput[]
-  skipDuplicates?: boolean
-}
-
-/**
  * TwoFactorToken update
  */
 export type TwoFactorTokenUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1009,32 +931,6 @@ export type TwoFactorTokenUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
  * TwoFactorToken updateMany
  */
 export type TwoFactorTokenUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * The data used to update TwoFactorTokens.
-   */
-  data: Prisma.XOR<Prisma.TwoFactorTokenUpdateManyMutationInput, Prisma.TwoFactorTokenUncheckedUpdateManyInput>
-  /**
-   * Filter which TwoFactorTokens to update
-   */
-  where?: Prisma.TwoFactorTokenWhereInput
-  /**
-   * Limit how many TwoFactorTokens to update.
-   */
-  limit?: number
-}
-
-/**
- * TwoFactorToken updateManyAndReturn
- */
-export type TwoFactorTokenUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the TwoFactorToken
-   */
-  select?: Prisma.TwoFactorTokenSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the TwoFactorToken
-   */
-  omit?: Prisma.TwoFactorTokenOmit<ExtArgs> | null
   /**
    * The data used to update TwoFactorTokens.
    */

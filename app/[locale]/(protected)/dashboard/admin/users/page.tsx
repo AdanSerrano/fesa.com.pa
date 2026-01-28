@@ -30,7 +30,7 @@ export default async function AdminUsersPage({ searchParams }: PageProps) {
   }
 
   if (session.user.role !== Role.ADMIN) {
-    redirect("/dashboard/services");
+    redirect("/dashboard/overview");
   }
 
   const params = await searchParams;

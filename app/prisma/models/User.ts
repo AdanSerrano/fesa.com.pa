@@ -287,7 +287,7 @@ export type UserGroupByOutputType = {
   isBlocked: boolean
   blockedAt: Date | null
   blockedReason: string | null
-  blockedServices: string[]
+  blockedServices: runtime.JsonValue
   deletedAt: Date | null
   scheduledDeletionDate: Date | null
   deletionReason: string | null
@@ -334,7 +334,7 @@ export type UserWhereInput = {
   isBlocked?: Prisma.BoolFilter<"User"> | boolean
   blockedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   blockedReason?: Prisma.StringNullableFilter<"User"> | string | null
-  blockedServices?: Prisma.StringNullableListFilter<"User">
+  blockedServices?: Prisma.JsonFilter<"User">
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   scheduledDeletionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   deletionReason?: Prisma.StringNullableFilter<"User"> | string | null
@@ -372,6 +372,7 @@ export type UserOrderByWithRelationInput = {
   auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   files?: Prisma.FileUploadOrderByRelationAggregateInput
+  _relevance?: Prisma.UserOrderByRelevanceInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -393,7 +394,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   isBlocked?: Prisma.BoolFilter<"User"> | boolean
   blockedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   blockedReason?: Prisma.StringNullableFilter<"User"> | string | null
-  blockedServices?: Prisma.StringNullableListFilter<"User">
+  blockedServices?: Prisma.JsonFilter<"User">
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   scheduledDeletionDate?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   deletionReason?: Prisma.StringNullableFilter<"User"> | string | null
@@ -453,7 +454,7 @@ export type UserScalarWhereWithAggregatesInput = {
   isBlocked?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   blockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   blockedReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
-  blockedServices?: Prisma.StringNullableListFilter<"User">
+  blockedServices?: Prisma.JsonWithAggregatesFilter<"User">
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   scheduledDeletionDate?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   deletionReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
@@ -477,7 +478,7 @@ export type UserCreateInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -505,7 +506,7 @@ export type UserUncheckedCreateInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -533,7 +534,7 @@ export type UserUpdateInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -561,7 +562,7 @@ export type UserUncheckedUpdateInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -589,7 +590,7 @@ export type UserCreateManyInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -613,7 +614,7 @@ export type UserUpdateManyMutationInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -637,7 +638,7 @@ export type UserUncheckedUpdateManyInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -645,12 +646,10 @@ export type UserUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type StringNullableListFilter<$PrismaModel = never> = {
-  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
-  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
-  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
-  isEmpty?: boolean
+export type UserOrderByRelevanceInput = {
+  fields: Prisma.UserOrderByRelevanceFieldEnum | Prisma.UserOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -741,10 +740,6 @@ export type UserNullableScalarRelationFilter = {
   isNot?: Prisma.UserWhereInput | null
 }
 
-export type UserCreateblockedServicesInput = {
-  set: string[]
-}
-
 export type StringFieldUpdateOperationsInput = {
   set?: string
 }
@@ -771,11 +766,6 @@ export type IntFieldUpdateOperationsInput = {
   decrement?: number
   multiply?: number
   divide?: number
-}
-
-export type UserUpdateblockedServicesInput = {
-  set?: string[]
-  push?: string | string[]
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -856,7 +846,7 @@ export type UserCreateWithoutTwoFactorConfirmationInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -883,7 +873,7 @@ export type UserUncheckedCreateWithoutTwoFactorConfirmationInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -926,7 +916,7 @@ export type UserUpdateWithoutTwoFactorConfirmationInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -953,7 +943,7 @@ export type UserUncheckedUpdateWithoutTwoFactorConfirmationInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -980,7 +970,7 @@ export type UserCreateWithoutAuditLogsInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -1007,7 +997,7 @@ export type UserUncheckedCreateWithoutAuditLogsInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -1050,7 +1040,7 @@ export type UserUpdateWithoutAuditLogsInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1077,7 +1067,7 @@ export type UserUncheckedUpdateWithoutAuditLogsInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1104,7 +1094,7 @@ export type UserCreateWithoutSessionsInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -1131,7 +1121,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -1174,7 +1164,7 @@ export type UserUpdateWithoutSessionsInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1201,7 +1191,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1228,7 +1218,7 @@ export type UserCreateWithoutFilesInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -1255,7 +1245,7 @@ export type UserUncheckedCreateWithoutFilesInput = {
   isBlocked?: boolean
   blockedAt?: Date | string | null
   blockedReason?: string | null
-  blockedServices?: Prisma.UserCreateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Date | string | null
   scheduledDeletionDate?: Date | string | null
   deletionReason?: string | null
@@ -1298,7 +1288,7 @@ export type UserUpdateWithoutFilesInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1325,7 +1315,7 @@ export type UserUncheckedUpdateWithoutFilesInput = {
   isBlocked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   blockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   blockedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  blockedServices?: Prisma.UserUpdateblockedServicesInput | string[]
+  blockedServices?: Prisma.JsonNullValueInput | runtime.InputJsonValue
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   scheduledDeletionDate?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   deletionReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1414,53 +1404,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
-export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userName?: boolean
-  name?: boolean
-  email?: boolean
-  emailVerified?: boolean
-  image?: boolean
-  password?: boolean
-  role?: boolean
-  isTwoFactorEnabled?: boolean
-  failedLoginAttempts?: boolean
-  lockedUntil?: boolean
-  lastFailedLogin?: boolean
-  isBlocked?: boolean
-  blockedAt?: boolean
-  blockedReason?: boolean
-  blockedServices?: boolean
-  deletedAt?: boolean
-  scheduledDeletionDate?: boolean
-  deletionReason?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-}, ExtArgs["result"]["user"]>
 
-export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userName?: boolean
-  name?: boolean
-  email?: boolean
-  emailVerified?: boolean
-  image?: boolean
-  password?: boolean
-  role?: boolean
-  isTwoFactorEnabled?: boolean
-  failedLoginAttempts?: boolean
-  lockedUntil?: boolean
-  lastFailedLogin?: boolean
-  isBlocked?: boolean
-  blockedAt?: boolean
-  blockedReason?: boolean
-  blockedServices?: boolean
-  deletedAt?: boolean
-  scheduledDeletionDate?: boolean
-  deletionReason?: boolean
-  createdAt?: boolean
-  updatedAt?: boolean
-}, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
   id?: boolean
@@ -1494,8 +1438,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   files?: boolean | Prisma.User$filesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
@@ -1521,7 +1463,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     isBlocked: boolean
     blockedAt: Date | null
     blockedReason: string | null
-    blockedServices: string[]
+    blockedServices: runtime.JsonValue
     deletedAt: Date | null
     scheduledDeletionDate: Date | null
     deletionReason: string | null
@@ -1645,30 +1587,6 @@ export interface UserDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
   createMany<T extends UserCreateManyArgs>(args?: Prisma.SelectSubset<T, UserCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many Users and returns the data saved in the database.
-   * @param {UserCreateManyAndReturnArgs} args - Arguments to create many Users.
-   * @example
-   * // Create many Users
-   * const user = await prisma.user.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many Users and only return the `id`
-   * const userWithIdOnly = await prisma.user.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends UserCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, UserCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a User.
    * @param {UserDeleteArgs} args - Arguments to delete one User.
    * @example
@@ -1731,36 +1649,6 @@ export interface UserDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * 
    */
   updateMany<T extends UserUpdateManyArgs>(args: Prisma.SelectSubset<T, UserUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more Users and returns the data updated in the database.
-   * @param {UserUpdateManyAndReturnArgs} args - Arguments to update many Users.
-   * @example
-   * // Update many Users
-   * const user = await prisma.user.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more Users and only return the `id`
-   * const userWithIdOnly = await prisma.user.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends UserUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, UserUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one User.
@@ -1969,7 +1857,7 @@ export interface UserFieldRefs {
   readonly isBlocked: Prisma.FieldRef<"User", 'Boolean'>
   readonly blockedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly blockedReason: Prisma.FieldRef<"User", 'String'>
-  readonly blockedServices: Prisma.FieldRef<"User", 'String[]'>
+  readonly blockedServices: Prisma.FieldRef<"User", 'Json'>
   readonly deletedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly scheduledDeletionDate: Prisma.FieldRef<"User", 'DateTime'>
   readonly deletionReason: Prisma.FieldRef<"User", 'String'>
@@ -2208,25 +2096,6 @@ export type UserCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
 }
 
 /**
- * User createManyAndReturn
- */
-export type UserCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
-  /**
-   * The data used to create many Users.
-   */
-  data: Prisma.UserCreateManyInput | Prisma.UserCreateManyInput[]
-  skipDuplicates?: boolean
-}
-
-/**
  * User update
  */
 export type UserUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2256,32 +2125,6 @@ export type UserUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
  * User updateMany
  */
 export type UserUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * The data used to update Users.
-   */
-  data: Prisma.XOR<Prisma.UserUpdateManyMutationInput, Prisma.UserUncheckedUpdateManyInput>
-  /**
-   * Filter which Users to update
-   */
-  where?: Prisma.UserWhereInput
-  /**
-   * Limit how many Users to update.
-   */
-  limit?: number
-}
-
-/**
- * User updateManyAndReturn
- */
-export type UserUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the User
-   */
-  select?: Prisma.UserSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the User
-   */
-  omit?: Prisma.UserOmit<ExtArgs> | null
   /**
    * The data used to update Users.
    */

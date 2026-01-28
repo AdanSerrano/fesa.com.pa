@@ -10,7 +10,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
 }
 
 enum Role {
@@ -31,12 +31,10 @@ model User {
   failedLoginAttempts   Int                    @default(0)
   lockedUntil           DateTime?
   lastFailedLogin       DateTime?
-  // Bloqueo administrativo
   isBlocked             Boolean                @default(false)
   blockedAt             DateTime?
   blockedReason         String?
-  blockedServices       String[]               @default([])
-  // Eliminación suave (soft delete)
+  blockedServices       Json                   @default("[]")
   deletedAt             DateTime?
   scheduledDeletionDate DateTime?
   deletionReason        String?
@@ -160,9 +158,9 @@ model FileUpload {
   mimeType      String
   fileExtension String
 
-  visibility    String           @default("PRIVATE")  // PUBLIC, PRIVATE
-  category      String           @default("OTHER")    // IMAGE, DOCUMENT, SPREADSHEET, OTHER
-  status        String           @default("PENDING")  // PENDING, COMPLETED, FAILED, DELETED
+  visibility    String           @default("PRIVATE")
+  category      String           @default("OTHER")
+  status        String           @default("PENDING")
 
   publicUrl     String?
 
@@ -175,5 +173,129 @@ model FileUpload {
   @@index([status])
   @@index([category])
   @@index([createdAt])
+}
+
+model ServiceCategory {
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?       @db.Text
+  image       String?
+  isActive    Boolean       @default(true)
+  isFeatured  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  items       ServiceItem[]
+
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+model ServiceItem {
+  id          String           @id @default(cuid())
+  categoryId  String?
+  category    ServiceCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name        String
+  slug        String           @unique
+  description String?          @db.Text
+  image       String?
+  isActive    Boolean          @default(true)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+model ProductCategory {
+  id           String                       @id @default(cuid())
+  image        String?
+  isActive     Boolean                      @default(true)
+  isFeatured   Boolean                      @default(false)
+  createdAt    DateTime                     @default(now())
+  updatedAt    DateTime                     @updatedAt
+  items        ProductItem[]
+
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([createdAt])
+}
+
+
+model ProductItem {
+  id           String                   @id @default(cuid())
+  categoryId   String
+  category     ProductCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  image        String?
+  isActive     Boolean                  @default(true)
+  price        Decimal?                 @db.Decimal(10, 2)
+  sku          String?
+  createdAt    DateTime                 @default(now())
+  updatedAt    DateTime                 @updatedAt
+
+  @@unique([sku])
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([createdAt])
+}
+
+model NewsCategory {
+  id          String                    @id @default(cuid())
+  image       String?
+  icon        String?
+  order       Int                       @default(0)
+  isActive    Boolean                   @default(true)
+  createdAt   DateTime                  @default(now())
+  updatedAt   DateTime                  @updatedAt
+  news        News[]
+
+  @@index([isActive])
+  @@index([order])
+}
+
+
+model NewsTag {
+  id          String              @id @default(cuid())
+  order       Int                 @default(0)
+  isActive    Boolean             @default(true)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @updatedAt
+  news        NewsToTag[]
+
+  @@index([isActive])
+  @@index([order])
+}
+
+model News {
+  id          String            @id @default(cuid())
+  categoryId  String?
+  category    NewsCategory?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  image       String?
+  publishedAt DateTime?
+  isActive    Boolean           @default(false)
+  isFeatured  Boolean           @default(false)
+  viewCount   Int               @default(0)
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+  tags        NewsToTag[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@index([isFeatured])
+  @@index([publishedAt])
+  @@index([viewCount])
+}
+
+model NewsToTag {
+  newsId String
+  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  tagId  String
+  tag    NewsTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([newsId, tagId])
+  @@index([newsId])
+  @@index([tagId])
 }
 

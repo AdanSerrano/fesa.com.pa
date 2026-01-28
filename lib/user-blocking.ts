@@ -93,8 +93,7 @@ export async function blockUserFromServices(
       return { success: false, error: "Usuario no encontrado" };
     }
 
-    // Combinar servicios existentes con los nuevos (sin duplicados)
-    const currentServices = user.blockedServices || [];
+    const currentServices = (user.blockedServices as string[] | null) || [];
     const newServices = [...new Set([...currentServices, ...services])];
 
     await db.user.update({
@@ -133,8 +132,7 @@ export async function unblockUserFromServices(
       return { success: false, error: "Usuario no encontrado" };
     }
 
-    // Remover los servicios especificados
-    const currentServices = user.blockedServices || [];
+    const currentServices = (user.blockedServices as string[] | null) || [];
     const newServices = currentServices.filter((s) => !services.includes(s));
 
     await db.user.update({
@@ -190,8 +188,8 @@ export async function isUserBlockedFromService(
     // Si está bloqueado completamente, está bloqueado de todos los servicios
     if (user.isBlocked) return true;
 
-    // Verificar si está bloqueado del servicio específico
-    return user.blockedServices?.includes(service) ?? false;
+    const blockedServices = (user.blockedServices as string[] | null) || [];
+    return blockedServices.includes(service);
   } catch (error) {
     console.error("Error checking if user is blocked from service:", error);
     return false;
@@ -221,7 +219,7 @@ export async function getUserBlockStatus(
       isBlocked: user.isBlocked,
       blockedAt: user.blockedAt,
       blockedReason: user.blockedReason,
-      blockedServices: user.blockedServices || [],
+      blockedServices: (user.blockedServices as string[] | null) || [],
     };
   } catch (error) {
     console.error("Error getting user block status:", error);

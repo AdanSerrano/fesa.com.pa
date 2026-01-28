@@ -181,6 +181,7 @@ export type VerificationTokenOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   token?: Prisma.SortOrder
   expires?: Prisma.SortOrder
+  _relevance?: Prisma.VerificationTokenOrderByRelevanceInput
 }
 
 export type VerificationTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +264,12 @@ export type VerificationTokenUncheckedUpdateManyInput = {
   expires?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type VerificationTokenOrderByRelevanceInput = {
+  fields: Prisma.VerificationTokenOrderByRelevanceFieldEnum | Prisma.VerificationTokenOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
+}
+
 export type VerificationTokenEmailTokenCompoundUniqueInput = {
   email: string
   token: string
@@ -298,19 +305,7 @@ export type VerificationTokenSelect<ExtArgs extends runtime.Types.Extensions.Int
   expires?: boolean
 }, ExtArgs["result"]["verificationToken"]>
 
-export type VerificationTokenSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  email?: boolean
-  token?: boolean
-  expires?: boolean
-}, ExtArgs["result"]["verificationToken"]>
 
-export type VerificationTokenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  email?: boolean
-  token?: boolean
-  expires?: boolean
-}, ExtArgs["result"]["verificationToken"]>
 
 export type VerificationTokenSelectScalar = {
   id?: boolean
@@ -447,30 +442,6 @@ export interface VerificationTokenDelegate<ExtArgs extends runtime.Types.Extensi
   createMany<T extends VerificationTokenCreateManyArgs>(args?: Prisma.SelectSubset<T, VerificationTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many VerificationTokens and returns the data saved in the database.
-   * @param {VerificationTokenCreateManyAndReturnArgs} args - Arguments to create many VerificationTokens.
-   * @example
-   * // Create many VerificationTokens
-   * const verificationToken = await prisma.verificationToken.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many VerificationTokens and only return the `id`
-   * const verificationTokenWithIdOnly = await prisma.verificationToken.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends VerificationTokenCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, VerificationTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a VerificationToken.
    * @param {VerificationTokenDeleteArgs} args - Arguments to delete one VerificationToken.
    * @example
@@ -533,36 +504,6 @@ export interface VerificationTokenDelegate<ExtArgs extends runtime.Types.Extensi
    * 
    */
   updateMany<T extends VerificationTokenUpdateManyArgs>(args: Prisma.SelectSubset<T, VerificationTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more VerificationTokens and returns the data updated in the database.
-   * @param {VerificationTokenUpdateManyAndReturnArgs} args - Arguments to update many VerificationTokens.
-   * @example
-   * // Update many VerificationTokens
-   * const verificationToken = await prisma.verificationToken.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more VerificationTokens and only return the `id`
-   * const verificationTokenWithIdOnly = await prisma.verificationToken.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends VerificationTokenUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, VerificationTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VerificationTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one VerificationToken.
@@ -965,25 +906,6 @@ export type VerificationTokenCreateManyArgs<ExtArgs extends runtime.Types.Extens
 }
 
 /**
- * VerificationToken createManyAndReturn
- */
-export type VerificationTokenCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the VerificationToken
-   */
-  select?: Prisma.VerificationTokenSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the VerificationToken
-   */
-  omit?: Prisma.VerificationTokenOmit<ExtArgs> | null
-  /**
-   * The data used to create many VerificationTokens.
-   */
-  data: Prisma.VerificationTokenCreateManyInput | Prisma.VerificationTokenCreateManyInput[]
-  skipDuplicates?: boolean
-}
-
-/**
  * VerificationToken update
  */
 export type VerificationTokenUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1009,32 +931,6 @@ export type VerificationTokenUpdateArgs<ExtArgs extends runtime.Types.Extensions
  * VerificationToken updateMany
  */
 export type VerificationTokenUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * The data used to update VerificationTokens.
-   */
-  data: Prisma.XOR<Prisma.VerificationTokenUpdateManyMutationInput, Prisma.VerificationTokenUncheckedUpdateManyInput>
-  /**
-   * Filter which VerificationTokens to update
-   */
-  where?: Prisma.VerificationTokenWhereInput
-  /**
-   * Limit how many VerificationTokens to update.
-   */
-  limit?: number
-}
-
-/**
- * VerificationToken updateManyAndReturn
- */
-export type VerificationTokenUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the VerificationToken
-   */
-  select?: Prisma.VerificationTokenSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the VerificationToken
-   */
-  omit?: Prisma.VerificationTokenOmit<ExtArgs> | null
   /**
    * The data used to update VerificationTokens.
    */

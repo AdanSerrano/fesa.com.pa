@@ -12,6 +12,9 @@ import {
   Table,
   Users,
   FolderOpen,
+  Package,
+  ShoppingBag,
+  Newspaper,
 } from "lucide-react";
 import {
   Sidebar,
@@ -43,7 +46,7 @@ const mainNavItemsConfig: NavItem[] = [
   },
   {
     titleKey: "dashboard",
-    url: "/dashboard/services",
+    url: "/dashboard/overview",
     icon: LayoutDashboard,
   },
 ];
@@ -58,6 +61,21 @@ const adminNavItemsConfig: NavItem[] = [
     titleKey: "files",
     url: "/dashboard/admin/files-manager",
     icon: FolderOpen,
+  },
+  {
+    titleKey: "services",
+    url: "/dashboard/admin/services",
+    icon: Package,
+  },
+  {
+    titleKey: "products",
+    url: "/dashboard/admin/products",
+    icon: ShoppingBag,
+  },
+  {
+    titleKey: "news",
+    url: "/dashboard/admin/news",
+    icon: Newspaper,
   },
 ];
 

@@ -59,7 +59,15 @@ export const ModelName = {
   twoFactorConfirmation: 'twoFactorConfirmation',
   AuditLog: 'AuditLog',
   Session: 'Session',
-  FileUpload: 'FileUpload'
+  FileUpload: 'FileUpload',
+  ServiceCategory: 'ServiceCategory',
+  ServiceItem: 'ServiceItem',
+  ProductCategory: 'ProductCategory',
+  ProductItem: 'ProductItem',
+  NewsCategory: 'NewsCategory',
+  NewsTag: 'NewsTag',
+  News: 'News',
+  NewsToTag: 'NewsToTag'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -201,6 +209,109 @@ export const FileUploadScalarFieldEnum = {
 export type FileUploadScalarFieldEnum = (typeof FileUploadScalarFieldEnum)[keyof typeof FileUploadScalarFieldEnum]
 
 
+export const ServiceCategoryScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  image: 'image',
+  isActive: 'isActive',
+  isFeatured: 'isFeatured',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceCategoryScalarFieldEnum = (typeof ServiceCategoryScalarFieldEnum)[keyof typeof ServiceCategoryScalarFieldEnum]
+
+
+export const ServiceItemScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  image: 'image',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ServiceItemScalarFieldEnum = (typeof ServiceItemScalarFieldEnum)[keyof typeof ServiceItemScalarFieldEnum]
+
+
+export const ProductCategoryScalarFieldEnum = {
+  id: 'id',
+  image: 'image',
+  isActive: 'isActive',
+  isFeatured: 'isFeatured',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldEnum)[keyof typeof ProductCategoryScalarFieldEnum]
+
+
+export const ProductItemScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  image: 'image',
+  isActive: 'isActive',
+  price: 'price',
+  sku: 'sku',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductItemScalarFieldEnum = (typeof ProductItemScalarFieldEnum)[keyof typeof ProductItemScalarFieldEnum]
+
+
+export const NewsCategoryScalarFieldEnum = {
+  id: 'id',
+  image: 'image',
+  icon: 'icon',
+  order: 'order',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NewsCategoryScalarFieldEnum = (typeof NewsCategoryScalarFieldEnum)[keyof typeof NewsCategoryScalarFieldEnum]
+
+
+export const NewsTagScalarFieldEnum = {
+  id: 'id',
+  order: 'order',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NewsTagScalarFieldEnum = (typeof NewsTagScalarFieldEnum)[keyof typeof NewsTagScalarFieldEnum]
+
+
+export const NewsScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  image: 'image',
+  publishedAt: 'publishedAt',
+  isActive: 'isActive',
+  isFeatured: 'isFeatured',
+  viewCount: 'viewCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NewsScalarFieldEnum = (typeof NewsScalarFieldEnum)[keyof typeof NewsScalarFieldEnum]
+
+
+export const NewsToTagScalarFieldEnum = {
+  newsId: 'newsId',
+  tagId: 'tagId'
+} as const
+
+export type NewsToTagScalarFieldEnum = (typeof NewsToTagScalarFieldEnum)[keyof typeof NewsToTagScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -209,12 +320,28 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 
 
 export const QueryMode = {
@@ -233,11 +360,173 @@ export const NullsOrder = {
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
+export const UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userName: 'userName',
+  name: 'name',
+  email: 'email',
+  image: 'image',
+  password: 'password',
+  blockedReason: 'blockedReason',
+  deletionReason: 'deletionReason'
 } as const
 
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+export type UserOrderByRelevanceFieldEnum = (typeof UserOrderByRelevanceFieldEnum)[keyof typeof UserOrderByRelevanceFieldEnum]
+
+
+export const VerificationTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token'
+} as const
+
+export type VerificationTokenOrderByRelevanceFieldEnum = (typeof VerificationTokenOrderByRelevanceFieldEnum)[keyof typeof VerificationTokenOrderByRelevanceFieldEnum]
+
+
+export const PasswordResetTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token'
+} as const
+
+export type PasswordResetTokenOrderByRelevanceFieldEnum = (typeof PasswordResetTokenOrderByRelevanceFieldEnum)[keyof typeof PasswordResetTokenOrderByRelevanceFieldEnum]
+
+
+export const TwoFactorTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token'
+} as const
+
+export type TwoFactorTokenOrderByRelevanceFieldEnum = (typeof TwoFactorTokenOrderByRelevanceFieldEnum)[keyof typeof TwoFactorTokenOrderByRelevanceFieldEnum]
+
+
+export const MagicLinkTokenOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  token: 'token'
+} as const
+
+export type MagicLinkTokenOrderByRelevanceFieldEnum = (typeof MagicLinkTokenOrderByRelevanceFieldEnum)[keyof typeof MagicLinkTokenOrderByRelevanceFieldEnum]
+
+
+export const twoFactorConfirmationOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId'
+} as const
+
+export type twoFactorConfirmationOrderByRelevanceFieldEnum = (typeof twoFactorConfirmationOrderByRelevanceFieldEnum)[keyof typeof twoFactorConfirmationOrderByRelevanceFieldEnum]
+
+
+export const AuditLogOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  ipAddress: 'ipAddress',
+  userAgent: 'userAgent'
+} as const
+
+export type AuditLogOrderByRelevanceFieldEnum = (typeof AuditLogOrderByRelevanceFieldEnum)[keyof typeof AuditLogOrderByRelevanceFieldEnum]
+
+
+export const SessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  deviceType: 'deviceType',
+  browser: 'browser',
+  os: 'os',
+  ipAddress: 'ipAddress'
+} as const
+
+export type SessionOrderByRelevanceFieldEnum = (typeof SessionOrderByRelevanceFieldEnum)[keyof typeof SessionOrderByRelevanceFieldEnum]
+
+
+export const FileUploadOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  fileName: 'fileName',
+  fileKey: 'fileKey',
+  mimeType: 'mimeType',
+  fileExtension: 'fileExtension',
+  visibility: 'visibility',
+  category: 'category',
+  status: 'status',
+  publicUrl: 'publicUrl'
+} as const
+
+export type FileUploadOrderByRelevanceFieldEnum = (typeof FileUploadOrderByRelevanceFieldEnum)[keyof typeof FileUploadOrderByRelevanceFieldEnum]
+
+
+export const ServiceCategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  image: 'image'
+} as const
+
+export type ServiceCategoryOrderByRelevanceFieldEnum = (typeof ServiceCategoryOrderByRelevanceFieldEnum)[keyof typeof ServiceCategoryOrderByRelevanceFieldEnum]
+
+
+export const ServiceItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
+  image: 'image'
+} as const
+
+export type ServiceItemOrderByRelevanceFieldEnum = (typeof ServiceItemOrderByRelevanceFieldEnum)[keyof typeof ServiceItemOrderByRelevanceFieldEnum]
+
+
+export const ProductCategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  image: 'image'
+} as const
+
+export type ProductCategoryOrderByRelevanceFieldEnum = (typeof ProductCategoryOrderByRelevanceFieldEnum)[keyof typeof ProductCategoryOrderByRelevanceFieldEnum]
+
+
+export const ProductItemOrderByRelevanceFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  image: 'image',
+  sku: 'sku'
+} as const
+
+export type ProductItemOrderByRelevanceFieldEnum = (typeof ProductItemOrderByRelevanceFieldEnum)[keyof typeof ProductItemOrderByRelevanceFieldEnum]
+
+
+export const NewsCategoryOrderByRelevanceFieldEnum = {
+  id: 'id',
+  image: 'image',
+  icon: 'icon'
+} as const
+
+export type NewsCategoryOrderByRelevanceFieldEnum = (typeof NewsCategoryOrderByRelevanceFieldEnum)[keyof typeof NewsCategoryOrderByRelevanceFieldEnum]
+
+
+export const NewsTagOrderByRelevanceFieldEnum = {
+  id: 'id'
+} as const
+
+export type NewsTagOrderByRelevanceFieldEnum = (typeof NewsTagOrderByRelevanceFieldEnum)[keyof typeof NewsTagOrderByRelevanceFieldEnum]
+
+
+export const NewsOrderByRelevanceFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  image: 'image'
+} as const
+
+export type NewsOrderByRelevanceFieldEnum = (typeof NewsOrderByRelevanceFieldEnum)[keyof typeof NewsOrderByRelevanceFieldEnum]
+
+
+export const NewsToTagOrderByRelevanceFieldEnum = {
+  newsId: 'newsId',
+  tagId: 'tagId'
+} as const
+
+export type NewsToTagOrderByRelevanceFieldEnum = (typeof NewsToTagOrderByRelevanceFieldEnum)[keyof typeof NewsToTagOrderByRelevanceFieldEnum]
 

@@ -130,7 +130,7 @@ function NavUserComponent({ user }: NavUserProps) {
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/services" className="cursor-pointer">
+                  <Link href="/dashboard/overview" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     {t("dashboard")}
                   </Link>

@@ -84,3 +84,43 @@ export type Session = Prisma.SessionModel
  * 
  */
 export type FileUpload = Prisma.FileUploadModel
+/**
+ * Model ServiceCategory
+ * 
+ */
+export type ServiceCategory = Prisma.ServiceCategoryModel
+/**
+ * Model ServiceItem
+ * 
+ */
+export type ServiceItem = Prisma.ServiceItemModel
+/**
+ * Model ProductCategory
+ * 
+ */
+export type ProductCategory = Prisma.ProductCategoryModel
+/**
+ * Model ProductItem
+ * 
+ */
+export type ProductItem = Prisma.ProductItemModel
+/**
+ * Model NewsCategory
+ * 
+ */
+export type NewsCategory = Prisma.NewsCategoryModel
+/**
+ * Model NewsTag
+ * 
+ */
+export type NewsTag = Prisma.NewsTagModel
+/**
+ * Model News
+ * 
+ */
+export type News = Prisma.NewsModel
+/**
+ * Model NewsToTag
+ * 
+ */
+export type NewsToTag = Prisma.NewsToTagModel

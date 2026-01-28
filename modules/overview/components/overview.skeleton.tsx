@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function ServicesSkeleton() {
+export function OverviewSkeleton() {
   return (
     <Card className="w-full border-border/40 shadow-lg">
       <CardHeader>

@@ -66,6 +66,8 @@
     "home": "Inicio",
     "dashboard": "Panel",
     "services": "Servicios",
+    "products": "Productos",
+    "news": "Noticias",
     "settings": "Configuración",
     "profile": "Perfil",
     "security": "Seguridad",
@@ -476,6 +478,155 @@
         "dataUpdated": "Datos actualizados",
         "printTitle": "Listado de Usuarios"
       }
+    },
+    "services": {
+      "title": "Gestión de Servicios",
+      "description": "Administra las categorías y servicios de la plataforma",
+      "tabs": {
+        "categories": "Categorías",
+        "items": "Servicios"
+      },
+      "stats": {
+        "totalCategories": "Total Categorías",
+        "totalCategoriesDesc": "Categorías registradas",
+        "totalItems": "Total Servicios",
+        "totalItemsDesc": "Servicios registrados",
+        "activeCategories": "Categorías Activas",
+        "activeCategoriesDesc": "Categorías visibles",
+        "activeItems": "Servicios Activos",
+        "activeItemsDesc": "Servicios visibles",
+        "featuredCategories": "Categorías Destacadas",
+        "featuredCategoriesDesc": "Categorías promocionadas",
+        "featuredItems": "Servicios Destacados",
+        "featuredItemsDesc": "Servicios promocionados"
+      },
+      "filters": {
+        "status": "Estado",
+        "allStatuses": "Todos los estados",
+        "active": "Activos",
+        "inactive": "Inactivos",
+        "featured": "Destacados",
+        "category": "Categoría",
+        "allCategories": "Todas las categorías",
+        "clearFilters": "Limpiar filtros"
+      },
+      "columns": {
+        "name": "Nombre",
+        "category": "Categoría",
+        "status": "Estado",
+        "featured": "Destacado",
+        "order": "Orden",
+        "items": "Servicios",
+        "createdAt": "Creado",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "yes": "Sí",
+        "no": "No",
+        "actions": "Acciones",
+        "viewDetails": "Ver detalles",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "noCategory": "Sin categoría"
+      },
+      "table": {
+        "noCategories": "No hay categorías registradas",
+        "noItems": "No hay servicios registrados",
+        "dataUpdated": "Datos actualizados",
+        "searchPlaceholder": "Buscar por nombre..."
+      },
+      "actions": {
+        "createCategory": "Nueva Categoría",
+        "createItem": "Nuevo Servicio"
+      },
+      "categoryForm": {
+        "createTitle": "Crear Categoría",
+        "editTitle": "Editar Categoría",
+        "name": "Nombre",
+        "namePlaceholder": "Nombre de la categoría",
+        "slug": "Slug",
+        "slugPlaceholder": "slug-de-la-categoria",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción de la categoría",
+        "metaTitle": "Meta Título",
+        "metaTitlePlaceholder": "Título SEO",
+        "metaDescription": "Meta Descripción",
+        "metaDescriptionPlaceholder": "Descripción SEO",
+        "image": "Imagen",
+        "imagePlaceholder": "URL de la imagen",
+        "icon": "Icono",
+        "iconPlaceholder": "Emoji o código de icono",
+        "order": "Orden",
+        "isActive": "Activo",
+        "isFeatured": "Destacado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "itemForm": {
+        "createTitle": "Crear Servicio",
+        "editTitle": "Editar Servicio",
+        "category": "Categoría",
+        "selectCategory": "Selecciona una categoría",
+        "noCategory": "Sin categoría",
+        "name": "Nombre",
+        "namePlaceholder": "Nombre del servicio",
+        "slug": "Slug",
+        "slugPlaceholder": "slug-del-servicio",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción del servicio",
+        "metaTitle": "Meta Título",
+        "metaTitlePlaceholder": "Título SEO",
+        "metaDescription": "Meta Descripción",
+        "metaDescriptionPlaceholder": "Descripción SEO",
+        "image": "Imagen",
+        "imagePlaceholder": "URL de la imagen",
+        "icon": "Icono",
+        "iconPlaceholder": "Emoji o código de icono",
+        "order": "Orden",
+        "isActive": "Activo",
+        "isFeatured": "Destacado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "deleteDialog": {
+        "categoryTitle": "Eliminar Categoría",
+        "categoryDescription": "¿Estás seguro de que deseas eliminar la categoría {name}?",
+        "itemTitle": "Eliminar Servicio",
+        "itemDescription": "¿Estás seguro de que deseas eliminar el servicio {name}?",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "deleting": "Eliminando...",
+        "warning": "Esta acción no se puede deshacer."
+      },
+      "categoryDetails": {
+        "title": "Detalles de Categoría",
+        "name": "Nombre",
+        "description": "Descripción",
+        "status": "Estado",
+        "featured": "Destacada",
+        "items": "Servicios",
+        "createdAt": "Creada",
+        "updatedAt": "Actualizada",
+        "active": "Activa",
+        "inactive": "Inactiva",
+        "yes": "Sí",
+        "no": "No",
+        "noDescription": "Sin descripción"
+      },
+      "itemDetails": {
+        "title": "Detalles del Servicio",
+        "name": "Nombre",
+        "category": "Categoría",
+        "description": "Descripción",
+        "status": "Estado",
+        "createdAt": "Creado",
+        "updatedAt": "Actualizado",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "noCategory": "Sin categoría",
+        "noDescription": "Sin descripción"
+      }
     }
   },
   "BlockUserDialog": {
@@ -645,7 +796,7 @@
     "passwordMismatch": "Las contraseñas no coinciden",
     "passwordWeak": "La contraseña es muy débil"
   },
-  "ServicesPage": {
+  "OverviewPage": {
     "title": "Mi cuenta",
     "description": "Panel de control de tu cuenta",
     "welcome": "Bienvenido, {name}",
@@ -931,5 +1082,25 @@
     "title": "Demo de Componentes de Formulario",
     "description": "Demostración de todos los componentes de formulario disponibles",
     "subtitle": "Explora todos los componentes de campos de formulario con ejemplos interactivos."
+  },
+  "PublicServices": {
+    "title": "Nuestros Servicios",
+    "subtitle": "Descubre todos los servicios que ofrecemos para ti",
+    "categoriesTitle": "Categorías de Servicios",
+    "featuredTitle": "Servicios Destacados",
+    "viewMore": "Ver más",
+    "viewAll": "Ver todos",
+    "noCategories": "No hay categorías disponibles",
+    "noServicesInCategory": "No hay servicios en esta categoría",
+    "backToServices": "Volver a servicios",
+    "backToCategory": "Volver a categoría",
+    "contactUs": "Contáctanos",
+    "viewAllServices": "Ver todos los servicios",
+    "homeSectionTitle": "Nuestros Servicios",
+    "homeSectionSubtitle": "Explora nuestras categorías y servicios destacados",
+    "whyChooseUs": "¿Por qué elegirnos?",
+    "feature1": "Profesionales certificados con amplia experiencia",
+    "feature2": "Atención personalizada y soporte continuo",
+    "feature3": "Garantía de satisfacción en todos nuestros servicios"
   }
 }

@@ -66,6 +66,8 @@
     "home": "Home",
     "dashboard": "Dashboard",
     "services": "Services",
+    "products": "Products",
+    "news": "News",
     "settings": "Settings",
     "profile": "Profile",
     "security": "Security",
@@ -476,6 +478,155 @@
         "dataUpdated": "Data updated",
         "printTitle": "User List"
       }
+    },
+    "services": {
+      "title": "Services Management",
+      "description": "Manage categories and services on the platform",
+      "tabs": {
+        "categories": "Categories",
+        "items": "Services"
+      },
+      "stats": {
+        "totalCategories": "Total Categories",
+        "totalCategoriesDesc": "Registered categories",
+        "totalItems": "Total Services",
+        "totalItemsDesc": "Registered services",
+        "activeCategories": "Active Categories",
+        "activeCategoriesDesc": "Visible categories",
+        "activeItems": "Active Services",
+        "activeItemsDesc": "Visible services",
+        "featuredCategories": "Featured Categories",
+        "featuredCategoriesDesc": "Promoted categories",
+        "featuredItems": "Featured Services",
+        "featuredItemsDesc": "Promoted services"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "active": "Active",
+        "inactive": "Inactive",
+        "featured": "Featured",
+        "category": "Category",
+        "allCategories": "All categories",
+        "clearFilters": "Clear filters"
+      },
+      "columns": {
+        "name": "Name",
+        "category": "Category",
+        "status": "Status",
+        "featured": "Featured",
+        "order": "Order",
+        "items": "Services",
+        "createdAt": "Created",
+        "active": "Active",
+        "inactive": "Inactive",
+        "yes": "Yes",
+        "no": "No",
+        "actions": "Actions",
+        "viewDetails": "View details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "noCategory": "No category"
+      },
+      "table": {
+        "noCategories": "No categories registered",
+        "noItems": "No services registered",
+        "dataUpdated": "Data updated",
+        "searchPlaceholder": "Search by name..."
+      },
+      "actions": {
+        "createCategory": "New Category",
+        "createItem": "New Service"
+      },
+      "categoryForm": {
+        "createTitle": "Create Category",
+        "editTitle": "Edit Category",
+        "name": "Name",
+        "namePlaceholder": "Category name",
+        "slug": "Slug",
+        "slugPlaceholder": "category-slug",
+        "description": "Description",
+        "descriptionPlaceholder": "Category description",
+        "metaTitle": "Meta Title",
+        "metaTitlePlaceholder": "SEO title",
+        "metaDescription": "Meta Description",
+        "metaDescriptionPlaceholder": "SEO description",
+        "image": "Image",
+        "imagePlaceholder": "Image URL",
+        "icon": "Icon",
+        "iconPlaceholder": "Emoji or icon code",
+        "order": "Order",
+        "isActive": "Active",
+        "isFeatured": "Featured",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "itemForm": {
+        "createTitle": "Create Service",
+        "editTitle": "Edit Service",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "noCategory": "No category",
+        "name": "Name",
+        "namePlaceholder": "Service name",
+        "slug": "Slug",
+        "slugPlaceholder": "service-slug",
+        "description": "Description",
+        "descriptionPlaceholder": "Service description",
+        "metaTitle": "Meta Title",
+        "metaTitlePlaceholder": "SEO title",
+        "metaDescription": "Meta Description",
+        "metaDescriptionPlaceholder": "SEO description",
+        "image": "Image",
+        "imagePlaceholder": "Image URL",
+        "icon": "Icon",
+        "iconPlaceholder": "Emoji or icon code",
+        "order": "Order",
+        "isActive": "Active",
+        "isFeatured": "Featured",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "deleteDialog": {
+        "categoryTitle": "Delete Category",
+        "categoryDescription": "Are you sure you want to delete the category {name}?",
+        "itemTitle": "Delete Service",
+        "itemDescription": "Are you sure you want to delete the service {name}?",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "deleting": "Deleting...",
+        "warning": "This action cannot be undone."
+      },
+      "categoryDetails": {
+        "title": "Category Details",
+        "name": "Name",
+        "description": "Description",
+        "status": "Status",
+        "featured": "Featured",
+        "items": "Services",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "active": "Active",
+        "inactive": "Inactive",
+        "yes": "Yes",
+        "no": "No",
+        "noDescription": "No description"
+      },
+      "itemDetails": {
+        "title": "Service Details",
+        "name": "Name",
+        "category": "Category",
+        "description": "Description",
+        "status": "Status",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "active": "Active",
+        "inactive": "Inactive",
+        "noCategory": "No category",
+        "noDescription": "No description"
+      }
     }
   },
   "BlockUserDialog": {
@@ -646,7 +797,7 @@
     "passwordMismatch": "Passwords do not match",
     "passwordWeak": "Password is too weak"
   },
-  "ServicesPage": {
+  "OverviewPage": {
     "title": "My Account",
     "description": "Your account dashboard",
     "welcome": "Welcome, {name}",
@@ -932,5 +1083,25 @@
     "title": "Form Components Demo",
     "description": "Demonstration of all available form components",
     "subtitle": "Explore all form field components with interactive examples."
+  },
+  "PublicServices": {
+    "title": "Our Services",
+    "subtitle": "Discover all the services we offer for you",
+    "categoriesTitle": "Service Categories",
+    "featuredTitle": "Featured Services",
+    "viewMore": "View more",
+    "viewAll": "View all",
+    "noCategories": "No categories available",
+    "noServicesInCategory": "No services in this category",
+    "backToServices": "Back to services",
+    "backToCategory": "Back to category",
+    "contactUs": "Contact us",
+    "viewAllServices": "View all services",
+    "homeSectionTitle": "Our Services",
+    "homeSectionSubtitle": "Explore our categories and featured services",
+    "whyChooseUs": "Why choose us?",
+    "feature1": "Certified professionals with extensive experience",
+    "feature2": "Personalized attention and continuous support",
+    "feature3": "Satisfaction guarantee on all our services"
   }
 }

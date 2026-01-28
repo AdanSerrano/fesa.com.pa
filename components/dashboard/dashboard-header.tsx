@@ -42,7 +42,7 @@ export async function DashboardHeader() {
             </Link>
           </Button>
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/dashboard/services">
+            <Link href="/dashboard/overview">
               <LayoutDashboard className="mr-2 h-4 w-4" />
               Panel
             </Link>
@@ -88,7 +88,7 @@ export async function DashboardHeader() {
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/dashboard/services" className="cursor-pointer">
+                  <Link href="/dashboard/overview" className="cursor-pointer">
                     <User className="mr-2 h-4 w-4" />
                     Mi cuenta
                   </Link>

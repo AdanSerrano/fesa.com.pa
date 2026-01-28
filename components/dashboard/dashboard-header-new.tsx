@@ -22,7 +22,7 @@ function DashboardHeaderComponent() {
 
   const routeLabels = useMemo(
     () => ({
-      "/dashboard/services": t("dashboard"),
+      "/dashboard/overview": t("dashboard"),
       "/dashboard/settings/profile": t("settings"),
       "/dashboard/settings/security": t("security"),
       "/dashboard/admin/users": t("usersManagement"),
@@ -44,7 +44,7 @@ function DashboardHeaderComponent() {
       <Breadcrumb className="flex-1">
         <BreadcrumbList>
           <BreadcrumbItem className="hidden md:block">
-            <BreadcrumbLink href="/dashboard/services">{t("dashboard")}</BreadcrumbLink>
+            <BreadcrumbLink href="/dashboard/overview">{t("dashboard")}</BreadcrumbLink>
           </BreadcrumbItem>
           {isSettingsPage && (
             <>

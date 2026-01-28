@@ -28,7 +28,7 @@ export default async function AdminFilesPage({ searchParams }: PageProps) {
   }
 
   if (session.user.role !== Role.ADMIN) {
-    redirect("/dashboard/services");
+    redirect("/dashboard/overview");
   }
 
   const params = await searchParams;

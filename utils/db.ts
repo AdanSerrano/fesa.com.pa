@@ -1,16 +1,25 @@
 import { PrismaClient } from "@/app/prisma/client";
-import { PrismaPg } from "@prisma/adapter-pg";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-});
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+  adapter: PrismaMariaDb | undefined;
+};
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+function createPrismaClient(): PrismaClient {
+  const adapter = globalForPrisma.adapter ?? new PrismaMariaDb(process.env.DATABASE_URL as string);
 
-export const db =
-  globalForPrisma.prisma ||
-  new PrismaClient({
+  if (!globalForPrisma.adapter) {
+    globalForPrisma.adapter = adapter;
+  }
+
+  return new PrismaClient({
     adapter,
   });
+}
 
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = db;
+export const db = globalForPrisma.prisma ?? createPrismaClient();
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = db;
+}

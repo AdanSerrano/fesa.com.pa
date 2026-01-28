@@ -1,4 +1,4 @@
-import { ServicesRepository } from "../repository/services.repository";
+import { OverviewRepository } from "../repository/overview.repository";
 
 export interface UserSession {
   id: string;
@@ -10,19 +10,19 @@ export interface UserSession {
   isTwoFactorEnabled: boolean;
 }
 
-export interface ServicesResult {
+export interface OverviewResult {
   user?: UserSession;
   error?: string;
 }
 
-export class ServicesService {
-  private repository: ServicesRepository;
+export class OverviewService {
+  private repository: OverviewRepository;
 
   constructor() {
-    this.repository = new ServicesRepository();
+    this.repository = new OverviewRepository();
   }
 
-  public async getUserSession(): Promise<ServicesResult> {
+  public async getUserSession(): Promise<OverviewResult> {
     try {
       const session = await this.repository.getCurrentSession();
 

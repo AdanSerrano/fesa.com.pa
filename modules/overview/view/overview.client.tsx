@@ -3,13 +3,13 @@
 import { memo, Children, useMemo } from "react";
 import { AnimatedSection } from "@/components/ui/animated-section";
 
-interface ServicesClientWrapperProps {
+interface OverviewClientWrapperProps {
   children: React.ReactNode;
 }
 
-export const ServicesClientWrapper = memo(function ServicesClientWrapper({
+export const OverviewClientWrapper = memo(function OverviewClientWrapper({
   children,
-}: ServicesClientWrapperProps) {
+}: OverviewClientWrapperProps) {
   const childArray = useMemo(() => Children.toArray(children), [children]);
 
   return (
@@ -28,4 +28,4 @@ export const ServicesClientWrapper = memo(function ServicesClientWrapper({
   );
 });
 
-ServicesClientWrapper.displayName = "ServicesClientWrapper";
+OverviewClientWrapper.displayName = "OverviewClientWrapper";

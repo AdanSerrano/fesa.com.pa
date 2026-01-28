@@ -165,6 +165,7 @@ export type twoFactorConfirmationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  _relevance?: Prisma.twoFactorConfirmationOrderByRelevanceInput
 }
 
 export type twoFactorConfirmationWhereUniqueInput = Prisma.AtLeast<{
@@ -229,6 +230,12 @@ export type twoFactorConfirmationUncheckedUpdateManyInput = {
 export type TwoFactorConfirmationNullableScalarRelationFilter = {
   is?: Prisma.twoFactorConfirmationWhereInput | null
   isNot?: Prisma.twoFactorConfirmationWhereInput | null
+}
+
+export type twoFactorConfirmationOrderByRelevanceInput = {
+  fields: Prisma.twoFactorConfirmationOrderByRelevanceFieldEnum | Prisma.twoFactorConfirmationOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
 }
 
 export type twoFactorConfirmationCountOrderByAggregateInput = {
@@ -318,17 +325,7 @@ export type twoFactorConfirmationSelect<ExtArgs extends runtime.Types.Extensions
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["twoFactorConfirmation"]>
 
-export type twoFactorConfirmationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["twoFactorConfirmation"]>
 
-export type twoFactorConfirmationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  userId?: boolean
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}, ExtArgs["result"]["twoFactorConfirmation"]>
 
 export type twoFactorConfirmationSelectScalar = {
   id?: boolean
@@ -337,12 +334,6 @@ export type twoFactorConfirmationSelectScalar = {
 
 export type twoFactorConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId", ExtArgs["result"]["twoFactorConfirmation"]>
 export type twoFactorConfirmationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type twoFactorConfirmationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
-}
-export type twoFactorConfirmationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
@@ -472,30 +463,6 @@ export interface twoFactorConfirmationDelegate<ExtArgs extends runtime.Types.Ext
   createMany<T extends twoFactorConfirmationCreateManyArgs>(args?: Prisma.SelectSubset<T, twoFactorConfirmationCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many TwoFactorConfirmations and returns the data saved in the database.
-   * @param {twoFactorConfirmationCreateManyAndReturnArgs} args - Arguments to create many TwoFactorConfirmations.
-   * @example
-   * // Create many TwoFactorConfirmations
-   * const twoFactorConfirmation = await prisma.twoFactorConfirmation.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many TwoFactorConfirmations and only return the `id`
-   * const twoFactorConfirmationWithIdOnly = await prisma.twoFactorConfirmation.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends twoFactorConfirmationCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, twoFactorConfirmationCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$twoFactorConfirmationPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a TwoFactorConfirmation.
    * @param {twoFactorConfirmationDeleteArgs} args - Arguments to delete one TwoFactorConfirmation.
    * @example
@@ -558,36 +525,6 @@ export interface twoFactorConfirmationDelegate<ExtArgs extends runtime.Types.Ext
    * 
    */
   updateMany<T extends twoFactorConfirmationUpdateManyArgs>(args: Prisma.SelectSubset<T, twoFactorConfirmationUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more TwoFactorConfirmations and returns the data updated in the database.
-   * @param {twoFactorConfirmationUpdateManyAndReturnArgs} args - Arguments to update many TwoFactorConfirmations.
-   * @example
-   * // Update many TwoFactorConfirmations
-   * const twoFactorConfirmation = await prisma.twoFactorConfirmation.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more TwoFactorConfirmations and only return the `id`
-   * const twoFactorConfirmationWithIdOnly = await prisma.twoFactorConfirmation.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends twoFactorConfirmationUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, twoFactorConfirmationUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$twoFactorConfirmationPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one TwoFactorConfirmation.
@@ -1013,29 +950,6 @@ export type twoFactorConfirmationCreateManyArgs<ExtArgs extends runtime.Types.Ex
 }
 
 /**
- * twoFactorConfirmation createManyAndReturn
- */
-export type twoFactorConfirmationCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the twoFactorConfirmation
-   */
-  select?: Prisma.twoFactorConfirmationSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the twoFactorConfirmation
-   */
-  omit?: Prisma.twoFactorConfirmationOmit<ExtArgs> | null
-  /**
-   * The data used to create many twoFactorConfirmations.
-   */
-  data: Prisma.twoFactorConfirmationCreateManyInput | Prisma.twoFactorConfirmationCreateManyInput[]
-  skipDuplicates?: boolean
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.twoFactorConfirmationIncludeCreateManyAndReturn<ExtArgs> | null
-}
-
-/**
  * twoFactorConfirmation update
  */
 export type twoFactorConfirmationUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1077,36 +991,6 @@ export type twoFactorConfirmationUpdateManyArgs<ExtArgs extends runtime.Types.Ex
    * Limit how many twoFactorConfirmations to update.
    */
   limit?: number
-}
-
-/**
- * twoFactorConfirmation updateManyAndReturn
- */
-export type twoFactorConfirmationUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the twoFactorConfirmation
-   */
-  select?: Prisma.twoFactorConfirmationSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the twoFactorConfirmation
-   */
-  omit?: Prisma.twoFactorConfirmationOmit<ExtArgs> | null
-  /**
-   * The data used to update twoFactorConfirmations.
-   */
-  data: Prisma.XOR<Prisma.twoFactorConfirmationUpdateManyMutationInput, Prisma.twoFactorConfirmationUncheckedUpdateManyInput>
-  /**
-   * Filter which twoFactorConfirmations to update
-   */
-  where?: Prisma.twoFactorConfirmationWhereInput
-  /**
-   * Limit how many twoFactorConfirmations to update.
-   */
-  limit?: number
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.twoFactorConfirmationIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**

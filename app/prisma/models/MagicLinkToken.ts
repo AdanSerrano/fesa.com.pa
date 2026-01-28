@@ -181,6 +181,7 @@ export type MagicLinkTokenOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   token?: Prisma.SortOrder
   expires?: Prisma.SortOrder
+  _relevance?: Prisma.MagicLinkTokenOrderByRelevanceInput
 }
 
 export type MagicLinkTokenWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +264,12 @@ export type MagicLinkTokenUncheckedUpdateManyInput = {
   expires?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+export type MagicLinkTokenOrderByRelevanceInput = {
+  fields: Prisma.MagicLinkTokenOrderByRelevanceFieldEnum | Prisma.MagicLinkTokenOrderByRelevanceFieldEnum[]
+  sort: Prisma.SortOrder
+  search: string
+}
+
 export type MagicLinkTokenEmailTokenCompoundUniqueInput = {
   email: string
   token: string
@@ -298,19 +305,7 @@ export type MagicLinkTokenSelect<ExtArgs extends runtime.Types.Extensions.Intern
   expires?: boolean
 }, ExtArgs["result"]["magicLinkToken"]>
 
-export type MagicLinkTokenSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  email?: boolean
-  token?: boolean
-  expires?: boolean
-}, ExtArgs["result"]["magicLinkToken"]>
 
-export type MagicLinkTokenSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
-  id?: boolean
-  email?: boolean
-  token?: boolean
-  expires?: boolean
-}, ExtArgs["result"]["magicLinkToken"]>
 
 export type MagicLinkTokenSelectScalar = {
   id?: boolean
@@ -447,30 +442,6 @@ export interface MagicLinkTokenDelegate<ExtArgs extends runtime.Types.Extensions
   createMany<T extends MagicLinkTokenCreateManyArgs>(args?: Prisma.SelectSubset<T, MagicLinkTokenCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
 
   /**
-   * Create many MagicLinkTokens and returns the data saved in the database.
-   * @param {MagicLinkTokenCreateManyAndReturnArgs} args - Arguments to create many MagicLinkTokens.
-   * @example
-   * // Create many MagicLinkTokens
-   * const magicLinkToken = await prisma.magicLinkToken.createManyAndReturn({
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Create many MagicLinkTokens and only return the `id`
-   * const magicLinkTokenWithIdOnly = await prisma.magicLinkToken.createManyAndReturn({
-   *   select: { id: true },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  createManyAndReturn<T extends MagicLinkTokenCreateManyAndReturnArgs>(args?: Prisma.SelectSubset<T, MagicLinkTokenCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-  /**
    * Delete a MagicLinkToken.
    * @param {MagicLinkTokenDeleteArgs} args - Arguments to delete one MagicLinkToken.
    * @example
@@ -533,36 +504,6 @@ export interface MagicLinkTokenDelegate<ExtArgs extends runtime.Types.Extensions
    * 
    */
   updateMany<T extends MagicLinkTokenUpdateManyArgs>(args: Prisma.SelectSubset<T, MagicLinkTokenUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<Prisma.BatchPayload>
-
-  /**
-   * Update zero or more MagicLinkTokens and returns the data updated in the database.
-   * @param {MagicLinkTokenUpdateManyAndReturnArgs} args - Arguments to update many MagicLinkTokens.
-   * @example
-   * // Update many MagicLinkTokens
-   * const magicLinkToken = await prisma.magicLinkToken.updateManyAndReturn({
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * 
-   * // Update zero or more MagicLinkTokens and only return the `id`
-   * const magicLinkTokenWithIdOnly = await prisma.magicLinkToken.updateManyAndReturn({
-   *   select: { id: true },
-   *   where: {
-   *     // ... provide filter here
-   *   },
-   *   data: [
-   *     // ... provide data here
-   *   ]
-   * })
-   * Note, that providing `undefined` is treated as the value not being there.
-   * Read more here: https://pris.ly/d/null-undefined
-   * 
-   */
-  updateManyAndReturn<T extends MagicLinkTokenUpdateManyAndReturnArgs>(args: Prisma.SelectSubset<T, MagicLinkTokenUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MagicLinkTokenPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
 
   /**
    * Create or update one MagicLinkToken.
@@ -965,25 +906,6 @@ export type MagicLinkTokenCreateManyArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * MagicLinkToken createManyAndReturn
- */
-export type MagicLinkTokenCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MagicLinkToken
-   */
-  select?: Prisma.MagicLinkTokenSelectCreateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the MagicLinkToken
-   */
-  omit?: Prisma.MagicLinkTokenOmit<ExtArgs> | null
-  /**
-   * The data used to create many MagicLinkTokens.
-   */
-  data: Prisma.MagicLinkTokenCreateManyInput | Prisma.MagicLinkTokenCreateManyInput[]
-  skipDuplicates?: boolean
-}
-
-/**
  * MagicLinkToken update
  */
 export type MagicLinkTokenUpdateArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1009,32 +931,6 @@ export type MagicLinkTokenUpdateArgs<ExtArgs extends runtime.Types.Extensions.In
  * MagicLinkToken updateMany
  */
 export type MagicLinkTokenUpdateManyArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * The data used to update MagicLinkTokens.
-   */
-  data: Prisma.XOR<Prisma.MagicLinkTokenUpdateManyMutationInput, Prisma.MagicLinkTokenUncheckedUpdateManyInput>
-  /**
-   * Filter which MagicLinkTokens to update
-   */
-  where?: Prisma.MagicLinkTokenWhereInput
-  /**
-   * Limit how many MagicLinkTokens to update.
-   */
-  limit?: number
-}
-
-/**
- * MagicLinkToken updateManyAndReturn
- */
-export type MagicLinkTokenUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MagicLinkToken
-   */
-  select?: Prisma.MagicLinkTokenSelectUpdateManyAndReturn<ExtArgs> | null
-  /**
-   * Omit specific fields from the MagicLinkToken
-   */
-  omit?: Prisma.MagicLinkTokenOmit<ExtArgs> | null
   /**
    * The data used to update MagicLinkTokens.
    */

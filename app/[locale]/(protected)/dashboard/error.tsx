@@ -33,7 +33,7 @@ const DashboardError = memo(function DashboardError({ reset }: ErrorProps) {
               {t("reloadSection")}
             </Button>
             <Button variant="outline" asChild className="w-full">
-              <Link href="/dashboard/services">
+              <Link href="/dashboard/overview">
                 <LayoutDashboard className="w-4 h-4 mr-2" />
                 {t("goToDashboard")}
               </Link>
