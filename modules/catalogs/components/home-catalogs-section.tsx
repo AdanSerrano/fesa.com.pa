@@ -108,7 +108,7 @@ function HomeCatalogsSectionComponent({ catalogs, labels }: HomeCatalogsSectionP
   return (
     <>
       <section className="py-16 md:py-24 border-b bg-muted/30">
-        <div className="container mx-auto px-4">
+        <div className="max-w-7xl mx-auto px-4 md:px-6">
           <div className="mx-auto max-w-4xl">
             <AnimatedSection animation="fade-up" delay={0}>
               <div className="relative overflow-hidden rounded-2xl border bg-card p-8 md:p-12">

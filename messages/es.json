@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Fesa - Sistema de Autenticación",
-    "description": "Sistema de autenticación completo y seguro con verificación de email, autenticación de dos factores (2FA), recuperación de contraseña y arquitectura modular."
+    "title": "FESA - Formas Eficientes S.A. | Soluciones Empresariales en Panamá",
+    "description": "FESA - Más de 50 años innovando en impresión comercial, soluciones RFID, medios de pago y tecnología empresarial en Panamá. Documentos de seguridad, formularios y soluciones logísticas."
   },
   "Common": {
     "loading": "Cargando...",
@@ -61,6 +61,13 @@
     "myAccount": "Mi cuenta",
     "settings": "Configuración",
     "securityAudit": "Seguridad - Auditoría"
+  },
+  "Footer": {
+    "tagline": "Más de 50 años innovando en soluciones empresariales en Panamá. Impresión, RFID, medios de pago y tecnología.",
+    "explore": "Explorar",
+    "company": "Empresa",
+    "ecosystem": "Ecosistema Digital",
+    "madeInPanama": "Hecho en Panamá"
   },
   "Navigation": {
     "home": "Inicio",
@@ -196,91 +203,237 @@
     "continueDelete": "No, continuar con la eliminación"
   },
   "HomePage": {
-    "badge": "Next.js 16 + Auth.js v5",
-    "title": "Plataforma SaaS",
-    "titleHighlight": "completa y segura",
-    "subtitle": "Template enterprise-ready con autenticación avanzada, internacionalización, almacenamiento en la nube, panel de administración y seguridad de nivel empresarial.",
-    "getStarted": "Comenzar",
-    "viewDemo": "Ver demo",
-    "learnMore": "Más información",
-    "featuresSection": {
-      "badge": "Características",
-      "title": "Todo lo que necesitas para tu SaaS",
-      "subtitle": "Funcionalidades enterprise-ready implementadas siguiendo las mejores prácticas de la industria."
+    "badge": "+50 Años de Innovación en Panamá",
+    "title": "Innovamos para",
+    "titleHighlight": "transformar tu empresa",
+    "subtitle": "Soluciones tecnológicas integrales en impresión comercial, RFID, medios de pago y logística. Más de 50 años modernizando los procesos empresariales de Panamá.",
+    "exploreServices": "Explorar Servicios",
+    "contactUs": "Contáctanos",
+    "viewCatalogs": "Ver Catálogos",
+    "clientsMarquee": "Atendemos empresas de todos los sectores",
+    "heroFeatures": {
+      "feature1": "Sin costos de implementación",
+      "feature2": "Soporte técnico 24/7",
+      "feature3": "Resultados garantizados"
     },
-    "techSection": {
-      "badge": "Stack tecnológico",
-      "title": "Construido con las mejores tecnologías",
-      "subtitle": "Stack moderno y actualizado para desarrollo rápido y mantenible."
+    "quickLinks": {
+      "services": "Servicios",
+      "products": "Productos",
+      "catalogs": "Catálogos",
+      "news": "Noticias"
     },
-    "benefitsSection": {
-      "badge": "Arquitectura",
-      "title": "Código limpio y escalable",
-      "subtitle": "Arquitectura modular con separación de responsabilidades clara. Cada módulo es independiente y fácil de mantener o extender.",
-      "button": "Ver código"
+    "pillars": {
+      "productivity": {
+        "title": "Productividad",
+        "description": "Optimizamos tus procesos para lograr mayor eficiencia operativa y mejores resultados."
+      },
+      "security": {
+        "title": "Seguridad",
+        "description": "Protección de datos y documentos con los más altos estándares de la industria."
+      },
+      "savings": {
+        "title": "Ahorro",
+        "description": "Reducción significativa de costos operativos mediante soluciones inteligentes."
+      },
+      "revenue": {
+        "title": "Ingresos",
+        "description": "Soluciones diseñadas para generar valor y maximizar tu retorno de inversión."
+      }
+    },
+    "pillarsSection": {
+      "badge": "Nuestra Propuesta de Valor",
+      "title": "Cuatro pilares que garantizan tu éxito",
+      "subtitle": "Cada solución que ofrecemos está diseñada para impactar positivamente estos cuatro aspectos fundamentales de tu negocio."
+    },
+    "mainServices": {
+      "printing": {
+        "title": "Impresión Comercial",
+        "description": "Publicidad impresa y digital, documentos de seguridad, formularios continuos y separables con la más alta calidad."
+      },
+      "rfid": {
+        "title": "Soluciones RFID",
+        "description": "Tecnología de identificación por radiofrecuencia para control de inventarios, activos y automatización de procesos."
+      },
+      "payment": {
+        "title": "Medios de Pago",
+        "description": "Soluciones integrales para procesamiento de pagos, tarjetas y sistemas de transacciones seguras."
+      },
+      "logistics": {
+        "title": "Soluciones Logísticas",
+        "description": "Optimización de cadena de suministro, tracking y gestión eficiente de operaciones logísticas."
+      },
+      "security": {
+        "title": "Documentos de Seguridad",
+        "description": "Impresión de alta seguridad con elementos anti-falsificación para certificados, títulos y documentos oficiales."
+      },
+      "consulting": {
+        "title": "Consultoría Empresarial",
+        "description": "Asesoría especializada para la implementación de soluciones tecnológicas y mejora de procesos."
+      }
+    },
+    "mainServicesSection": {
+      "badge": "Nuestros Servicios",
+      "title": "Soluciones que impulsan tu negocio",
+      "subtitle": "Un portafolio completo de servicios diseñados para optimizar y modernizar los procesos de tu empresa.",
+      "viewAll": "Ver todos los servicios"
+    },
+    "statsSection": {
+      "title": "Resultados que hablan por sí solos",
+      "subtitle": "Nuestras soluciones generan impacto real y medible en las operaciones de nuestros clientes.",
+      "stat1": "Reducción de tiempos",
+      "stat2": "Ahorro anual promedio",
+      "stat3": "Disponibilidad del sistema",
+      "stat4": "Empresas confían en nosotros"
+    },
+    "products": {
+      "advertising": {
+        "title": "Publicidad Impresa y Digital",
+        "description": "Material promocional de alto impacto para tu marca."
+      },
+      "securityDocs": {
+        "title": "Documentos de Seguridad",
+        "description": "Certificados, títulos y documentos con elementos anti-falsificación."
+      },
+      "continuousForms": {
+        "title": "Formularios Continuos",
+        "description": "Formularios para impresoras de matriz con calidad superior."
+      },
+      "digitalPrinting": {
+        "title": "Impresión Digital",
+        "description": "Impresión bajo demanda con tiempos de entrega rápidos."
+      },
+      "standardProducts": {
+        "title": "Productos Estándar",
+        "description": "Papelería comercial y productos de uso frecuente."
+      },
+      "separableForms": {
+        "title": "Formularios Separables",
+        "description": "Formularios multicopia con papel carbonless."
+      }
+    },
+    "productsSection": {
+      "badge": "Nuestros Productos",
+      "title": "Productos de calidad garantizada",
+      "subtitle": "Catálogo completo de productos diseñados para satisfacer las necesidades de tu empresa.",
+      "viewAll": "Ver todos los productos"
+    },
+    "ecosystem": {
+      "store": "Plataforma B2B para gestión de compras empresariales con catálogos personalizados.",
+      "storeBadge": "Popular",
+      "transfer": "Transferencia segura de archivos y documentos entre empresas.",
+      "tracking": "Seguimiento en tiempo real de envíos y pedidos.",
+      "storage": "Almacenamiento empresarial seguro en la nube.",
+      "id": "Tarjetas digitales empresariales y gestión de identidad."
+    },
+    "ecosystemSection": {
+      "badge": "Ecosistema Digital FESA",
+      "title": "Herramientas digitales integradas",
+      "subtitle": "Un ecosistema completo de aplicaciones diseñadas para potenciar la eficiencia y productividad de tu empresa.",
+      "visitApp": "Visitar"
+    },
+    "whyUsSection": {
+      "badge": "¿Por qué FESA?",
+      "title": "Más de 50 años de innovación constante",
+      "subtitle": "Somos líderes en soluciones empresariales en Panamá, comprometidos con la innovación y la excelencia en el servicio a nuestros clientes.",
+      "sustainability": "Producción Más Limpia",
+      "sustainabilityDesc": "Implementamos prácticas TPM para optimizar recursos y reducir el impacto ambiental.",
+      "quality": "Calidad Certificada",
+      "qualityDesc": "Procesos y productos que cumplen con los más altos estándares internacionales.",
+      "experience": "Experiencia Comprobada",
+      "experienceDesc": "Más de 50 años atendiendo a las principales empresas de Panamá.",
+      "learnMore": "Conoce más sobre nosotros",
+      "yearsLabel": "Años de experiencia",
+      "clientsLabel": "Clientes satisfechos",
+      "supportLabel": "Soporte técnico",
+      "uptimeLabel": "Disponibilidad"
     },
     "ctaSection": {
-      "title": "Comienza a construir hoy",
-      "subtitle": "Crea tu cuenta y explora todas las funcionalidades de la plataforma."
+      "badge": "Comienza hoy",
+      "title": "¿Listo para transformar tu empresa?",
+      "subtitle": "Contáctanos y descubre cómo nuestras soluciones pueden impulsar el crecimiento de tu negocio.",
+      "benefit1": "Atención personalizada",
+      "benefit2": "Soporte técnico 24/7",
+      "benefit3": "Sin costos de implementación",
+      "contactDirect": "O contáctanos directamente:"
     },
-    "features": {
-      "secureRegistration": "Registro seguro",
-      "secureRegistrationDesc": "Sistema de registro con validación de email y contraseñas seguras con indicador de fortaleza.",
-      "emailVerification": "Verificación de email",
-      "emailVerificationDesc": "Flujo completo de verificación de correo electrónico con tokens seguros y reenvío automático.",
-      "magicLink": "Magic Link",
-      "magicLinkDesc": "Inicio de sesión sin contraseña mediante enlace seguro enviado por email.",
-      "passwordRecovery": "Recuperación de contraseña",
-      "passwordRecoveryDesc": "Proceso seguro de recuperación con enlaces temporales y validación de tokens.",
-      "twoFactorAuth": "Autenticación 2FA",
-      "twoFactorAuthDesc": "Verificación en dos pasos mediante código OTP enviado por email para mayor seguridad.",
-      "sessionManagement": "Gestión de sesiones",
-      "sessionManagementDesc": "Sesiones JWT con expiración configurable y protección de rutas automática.",
-      "internationalization": "Internacionalización",
-      "internationalizationDesc": "Soporte multi-idioma con next-intl. Cambia entre español e inglés con detección automática.",
-      "cloudStorage": "Almacenamiento en la nube",
-      "cloudStorageDesc": "Gestión de archivos con Cloudflare R2. Upload drag & drop, vista previa y organización por carpetas.",
-      "adminDashboard": "Panel de administración",
-      "adminDashboardDesc": "Gestión completa de usuarios y archivos. Control de roles, bloqueo de cuentas y auditoría.",
-      "wafSecurity": "Firewall de aplicación (WAF)",
-      "wafSecurityDesc": "48 reglas de detección: SQL injection, XSS, path traversal. Bloqueo automático de IPs maliciosas.",
-      "rateLimiting": "Rate Limiting",
-      "rateLimitingDesc": "Protección contra abuso con límites configurables por endpoint. Algoritmo de ventana deslizante.",
-      "pwa": "Progressive Web App",
-      "pwaSupportDesc": "Instalable como app nativa. Soporte offline y notificaciones push."
+    "trustedBy": "Empresas que confían en nosotros",
+    "clientLogos": [
+      { "name": "Banca", "logo": "/images/clients/banca.png" },
+      { "name": "Seguros", "logo": "/images/clients/seguros.png" },
+      { "name": "Manufactura", "logo": "/images/clients/manufactura.png" },
+      { "name": "Retail", "logo": "/images/clients/retail.png" },
+      { "name": "Educación", "logo": "/images/clients/educacion.png" },
+      { "name": "Gobierno", "logo": "/images/clients/gobierno.png" },
+      { "name": "Salud", "logo": "/images/clients/salud.png" },
+      { "name": "Telecomunicaciones", "logo": "/images/clients/telecom.png" }
+    ],
+    "trustedCompanyLogos": [
+      { "name": "Banco General", "logo": "/images/companies/banco-general.png" },
+      { "name": "Banistmo", "logo": "/images/companies/banistmo.png" },
+      { "name": "Global Bank", "logo": "/images/companies/global-bank.png" },
+      { "name": "Copa Airlines", "logo": "/images/companies/copa.png" },
+      { "name": "Super 99", "logo": "/images/companies/super99.png" },
+      { "name": "Grupo Rey", "logo": "/images/companies/grupo-rey.png" },
+      { "name": "Cervecería Nacional", "logo": "/images/companies/cerveceria.png" },
+      { "name": "Melo S.A.", "logo": "/images/companies/melo.png" },
+      { "name": "Felipe Motta", "logo": "/images/companies/felipe-motta.png" },
+      { "name": "Ricardo Pérez", "logo": "/images/companies/ricardo-perez.png" }
+    ],
+    "certificationsSection": {
+      "badge": "Certificaciones y Estándares",
+      "title": "Calidad garantizada",
+      "subtitle": "Cumplimos con los más altos estándares de calidad y sostenibilidad."
     },
-    "techStack": {
-      "nextjs": "Next.js 16",
-      "nextjsDesc": "App Router + Turbopack",
-      "react": "React 19",
-      "reactDesc": "Server Components",
-      "typescript": "TypeScript",
-      "typescriptDesc": "Type-safe",
-      "prisma": "Prisma 7",
-      "prismaDesc": "ORM + PostgreSQL",
-      "authjs": "Auth.js v5",
-      "authjsDesc": "NextAuth Beta",
-      "tailwind": "Tailwind CSS 4",
-      "tailwindDesc": "shadcn/ui",
-      "nextIntl": "next-intl",
-      "nextIntlDesc": "Internacionalización",
-      "cloudflareR2": "Cloudflare R2",
-      "cloudflareR2Desc": "Object Storage",
-      "pwa": "PWA Ready",
-      "pwaDesc": "Instalable"
+    "certifications": [
+      {
+        "icon": "cog",
+        "name": "TPM",
+        "description": "Total Productive Maintenance para máxima eficiencia operativa."
+      },
+      {
+        "icon": "leaf",
+        "name": "Producción Más Limpia",
+        "description": "Procesos sostenibles que minimizan el impacto ambiental."
+      },
+      {
+        "icon": "shield",
+        "name": "Seguridad de Datos",
+        "description": "Protección de información con estándares internacionales."
+      },
+      {
+        "icon": "award",
+        "name": "Calidad Premium",
+        "description": "Productos y servicios que superan expectativas."
+      }
+    ],
+    "faqSection": {
+      "badge": "Preguntas Frecuentes",
+      "title": "¿Tienes dudas?",
+      "subtitle": "Encuentra respuestas a las preguntas más comunes sobre nuestros servicios."
     },
-    "benefits": {
-      "cleanArchitecture": "Arquitectura limpia y modular",
-      "zodValidation": "Validación con Zod en cliente y servidor",
-      "transactionalEmails": "Emails transaccionales con React Email",
-      "darkLightMode": "Soporte para dark/light mode",
-      "responsiveDesign": "Diseño responsive mobile-first",
-      "gdprCompliance": "Cumplimiento GDPR con gestión de cookies",
-      "multiLanguage": "Soporte multi-idioma (ES/EN)",
-      "fileManagement": "Gestión de archivos con R2",
-      "enterpriseSecurity": "Seguridad de nivel empresarial",
-      "productionReady": "Listo para producción"
-    }
+    "faqs": [
+      {
+        "question": "¿Cuánto tiempo toma implementar sus soluciones?",
+        "answer": "El tiempo de implementación varía según la complejidad del proyecto. Soluciones estándar pueden estar listas en 2-4 semanas, mientras que proyectos personalizados pueden tomar 1-3 meses. Nuestro equipo trabaja para minimizar el tiempo de implementación sin comprometer la calidad."
+      },
+      {
+        "question": "¿Ofrecen soporte técnico después de la implementación?",
+        "answer": "Sí, ofrecemos soporte técnico 24/7 para todos nuestros clientes. Contamos con un equipo dedicado que puede asistirte por teléfono, email o WhatsApp. Además, realizamos mantenimiento preventivo para asegurar el óptimo funcionamiento de tus soluciones."
+      },
+      {
+        "question": "¿Pueden personalizar las soluciones según mis necesidades?",
+        "answer": "Absolutamente. Cada empresa es única y entendemos eso. Nuestro equipo de consultores analiza tus procesos actuales y diseña soluciones a medida que se adaptan perfectamente a tus requerimientos específicos."
+      },
+      {
+        "question": "¿Qué sectores atienden?",
+        "answer": "Atendemos empresas de todos los sectores: banca, seguros, retail, manufactura, gobierno, salud, educación, telecomunicaciones, energía, logística, construcción y agroindustria. Nuestra experiencia de más de 50 años nos ha permitido desarrollar expertise en múltiples industrias."
+      },
+      {
+        "question": "¿Cuál es el proceso para solicitar una cotización?",
+        "answer": "Puedes contactarnos por WhatsApp, teléfono o email. Uno de nuestros asesores se comunicará contigo para entender tus necesidades, luego programaremos una visita o reunión virtual para presentarte una propuesta personalizada sin compromiso."
+      }
+    ],
+    "whatsappMessage": "Hola, me interesa conocer más sobre los servicios de FESA."
   },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",

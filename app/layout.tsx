@@ -20,47 +20,41 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const APP_NAME = "Fesa";
+const APP_NAME = "FESA";
 const APP_DESCRIPTION =
-  "Sistema de autenticación completo y seguro con verificación de email, autenticación de dos factores (2FA), recuperación de contraseña y arquitectura modular. Production-ready con Next.js 16, React 19 y TypeScript.";
+  "Formas Eficientes S.A. - Más de 50 años innovando en soluciones empresariales en Panamá. Impresión comercial, RFID, medios de pago, documentos de seguridad y soluciones tecnológicas integrales.";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {
   metadataBase: new URL(APP_URL),
   title: {
-    default: `${APP_NAME} - Sistema de Autenticación`,
+    default: `${APP_NAME} - Formas Eficientes S.A. | Soluciones Empresariales en Panamá`,
     template: `%s | ${APP_NAME}`,
   },
   description: APP_DESCRIPTION,
   applicationName: APP_NAME,
   authors: [
     {
-      name: "Adan Serrano",
-      url: "https://github.com/AdanSerrano",
+      name: "Formas Eficientes S.A.",
+      url: APP_URL,
     },
   ],
   generator: "Next.js",
   keywords: [
-    "autenticación",
-    "authentication",
-    "login",
-    "registro",
-    "2FA",
-    "two-factor",
-    "verificación email",
-    "Next.js",
-    "React",
-    "TypeScript",
-    "Prisma",
-    "PostgreSQL",
-    "Auth.js",
-    "NextAuth",
-    "boilerplate",
-    "seguridad",
-    "JWT",
-    "sesiones",
+    "FESA",
+    "Formas Eficientes",
+    "impresión comercial",
+    "RFID",
+    "medios de pago",
+    "documentos de seguridad",
+    "formularios",
+    "soluciones empresariales",
+    "Panamá",
+    "logística",
+    "tarjetas digitales",
+    "B2B",
   ],
-  creator: "Adan Serrano",
+  creator: "Formas Eficientes S.A.",
   publisher: APP_NAME,
   formatDetection: {
     email: false,
@@ -74,18 +68,18 @@ export const metadata: Metadata = {
 
   openGraph: {
     type: "website",
-    locale: "es_ES",
+    locale: "es_PA",
     alternateLocale: "en_US",
     url: APP_URL,
     siteName: APP_NAME,
-    title: `${APP_NAME} - Sistema de Autenticación Seguro`,
+    title: `${APP_NAME} - Formas Eficientes S.A. | Soluciones Empresariales`,
     description: APP_DESCRIPTION,
     images: [
       {
         url: "/icon.png",
         width: 1200,
         height: 630,
-        alt: `${APP_NAME} - Sistema de Autenticación`,
+        alt: `${APP_NAME} - Formas Eficientes S.A.`,
         type: "image/png",
       },
     ],
@@ -93,10 +87,10 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: `${APP_NAME} - Sistema de Autenticación`,
+    title: `${APP_NAME} - Soluciones Empresariales en Panamá`,
     description: APP_DESCRIPTION,
     images: ["/icon.png"],
-    creator: "@adanserrano",
+    creator: "@FesaPanama",
   },
 
   robots: {

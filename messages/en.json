@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Fesa - Authentication System",
-    "description": "Complete and secure authentication system with email verification, two-factor authentication (2FA), password recovery, and modular architecture."
+    "title": "FESA - Formas Eficientes S.A. | Business Solutions in Panama",
+    "description": "FESA - Over 50 years innovating in commercial printing, RFID solutions, payment methods and business technology in Panama. Security documents, forms and logistics solutions."
   },
   "Common": {
     "loading": "Loading...",
@@ -61,6 +61,13 @@
     "myAccount": "My Account",
     "settings": "Settings",
     "securityAudit": "Security - Audit"
+  },
+  "Footer": {
+    "tagline": "Over 50 years innovating in business solutions in Panama. Printing, RFID, payment methods and technology.",
+    "explore": "Explore",
+    "company": "Company",
+    "ecosystem": "Digital Ecosystem",
+    "madeInPanama": "Made in Panama"
   },
   "Navigation": {
     "home": "Home",
@@ -196,91 +203,237 @@
     "continueDelete": "No, continue with deletion"
   },
   "HomePage": {
-    "badge": "Next.js 16 + Auth.js v5",
-    "title": "SaaS Platform",
-    "titleHighlight": "complete and secure",
-    "subtitle": "Enterprise-ready template with advanced authentication, internationalization, cloud storage, admin dashboard, and enterprise-level security.",
-    "getStarted": "Get Started",
-    "viewDemo": "View Demo",
-    "learnMore": "Learn More",
-    "featuresSection": {
-      "badge": "Features",
-      "title": "Everything you need for your SaaS",
-      "subtitle": "Enterprise-ready features implemented following industry best practices."
+    "badge": "+50 Years of Innovation in Panama",
+    "title": "We innovate to",
+    "titleHighlight": "transform your business",
+    "subtitle": "Comprehensive technology solutions in commercial printing, RFID, payment methods and logistics. Over 50 years modernizing Panama's business processes.",
+    "exploreServices": "Explore Services",
+    "contactUs": "Contact Us",
+    "viewCatalogs": "View Catalogs",
+    "clientsMarquee": "We serve companies across all sectors",
+    "heroFeatures": {
+      "feature1": "No implementation costs",
+      "feature2": "24/7 technical support",
+      "feature3": "Guaranteed results"
     },
-    "techSection": {
-      "badge": "Tech Stack",
-      "title": "Built with the best technologies",
-      "subtitle": "Modern and up-to-date stack for fast and maintainable development."
+    "quickLinks": {
+      "services": "Services",
+      "products": "Products",
+      "catalogs": "Catalogs",
+      "news": "News"
     },
-    "benefitsSection": {
-      "badge": "Architecture",
-      "title": "Clean and scalable code",
-      "subtitle": "Modular architecture with clear separation of concerns. Each module is independent and easy to maintain or extend.",
-      "button": "View Code"
+    "pillars": {
+      "productivity": {
+        "title": "Productivity",
+        "description": "We optimize your processes to achieve greater operational efficiency and better results."
+      },
+      "security": {
+        "title": "Security",
+        "description": "Data and document protection with the highest industry standards."
+      },
+      "savings": {
+        "title": "Savings",
+        "description": "Significant reduction in operational costs through intelligent solutions."
+      },
+      "revenue": {
+        "title": "Revenue",
+        "description": "Solutions designed to generate value and maximize your return on investment."
+      }
+    },
+    "pillarsSection": {
+      "badge": "Our Value Proposition",
+      "title": "Four pillars that guarantee your success",
+      "subtitle": "Every solution we offer is designed to positively impact these four fundamental aspects of your business."
+    },
+    "mainServices": {
+      "printing": {
+        "title": "Commercial Printing",
+        "description": "Print and digital advertising, security documents, continuous and separable forms with the highest quality."
+      },
+      "rfid": {
+        "title": "RFID Solutions",
+        "description": "Radio frequency identification technology for inventory control, assets and process automation."
+      },
+      "payment": {
+        "title": "Payment Methods",
+        "description": "Comprehensive solutions for payment processing, cards and secure transaction systems."
+      },
+      "logistics": {
+        "title": "Logistics Solutions",
+        "description": "Supply chain optimization, tracking and efficient logistics operations management."
+      },
+      "security": {
+        "title": "Security Documents",
+        "description": "High security printing with anti-counterfeiting elements for certificates, titles and official documents."
+      },
+      "consulting": {
+        "title": "Business Consulting",
+        "description": "Specialized advice for the implementation of technological solutions and process improvement."
+      }
+    },
+    "mainServicesSection": {
+      "badge": "Our Services",
+      "title": "Solutions that drive your business",
+      "subtitle": "A complete portfolio of services designed to optimize and modernize your company's processes.",
+      "viewAll": "View all services"
+    },
+    "statsSection": {
+      "title": "Results that speak for themselves",
+      "subtitle": "Our solutions generate real, measurable impact on our clients' operations.",
+      "stat1": "Time reduction",
+      "stat2": "Average annual savings",
+      "stat3": "System availability",
+      "stat4": "Companies trust us"
+    },
+    "products": {
+      "advertising": {
+        "title": "Print and Digital Advertising",
+        "description": "High-impact promotional material for your brand."
+      },
+      "securityDocs": {
+        "title": "Security Documents",
+        "description": "Certificates, titles and documents with anti-counterfeiting elements."
+      },
+      "continuousForms": {
+        "title": "Continuous Forms",
+        "description": "Forms for matrix printers with superior quality."
+      },
+      "digitalPrinting": {
+        "title": "Digital Printing",
+        "description": "On-demand printing with fast delivery times."
+      },
+      "standardProducts": {
+        "title": "Standard Products",
+        "description": "Commercial stationery and frequently used products."
+      },
+      "separableForms": {
+        "title": "Separable Forms",
+        "description": "Multi-copy forms with carbonless paper."
+      }
+    },
+    "productsSection": {
+      "badge": "Our Products",
+      "title": "Guaranteed quality products",
+      "subtitle": "Complete catalog of products designed to meet your company's needs.",
+      "viewAll": "View all products"
+    },
+    "ecosystem": {
+      "store": "B2B platform for business purchasing management with personalized catalogs.",
+      "storeBadge": "Popular",
+      "transfer": "Secure file and document transfer between companies.",
+      "tracking": "Real-time shipment and order tracking.",
+      "storage": "Secure enterprise cloud storage.",
+      "id": "Digital business cards and identity management."
+    },
+    "ecosystemSection": {
+      "badge": "FESA Digital Ecosystem",
+      "title": "Integrated digital tools",
+      "subtitle": "A complete ecosystem of applications designed to boost your company's efficiency and productivity.",
+      "visitApp": "Visit"
+    },
+    "whyUsSection": {
+      "badge": "Why FESA?",
+      "title": "Over 50 years of constant innovation",
+      "subtitle": "We are leaders in business solutions in Panama, committed to innovation and excellence in customer service.",
+      "sustainability": "Cleaner Production",
+      "sustainabilityDesc": "We implement TPM practices to optimize resources and reduce environmental impact.",
+      "quality": "Certified Quality",
+      "qualityDesc": "Processes and products that meet the highest international standards.",
+      "experience": "Proven Experience",
+      "experienceDesc": "Over 50 years serving Panama's leading companies.",
+      "learnMore": "Learn more about us",
+      "yearsLabel": "Years of experience",
+      "clientsLabel": "Satisfied clients",
+      "supportLabel": "Technical support",
+      "uptimeLabel": "Availability"
     },
     "ctaSection": {
-      "title": "Start building today",
-      "subtitle": "Create your account and explore all the platform features."
+      "badge": "Start today",
+      "title": "Ready to transform your business?",
+      "subtitle": "Contact us and discover how our solutions can drive your business growth.",
+      "benefit1": "Personalized attention",
+      "benefit2": "24/7 technical support",
+      "benefit3": "No implementation costs",
+      "contactDirect": "Or contact us directly:"
     },
-    "features": {
-      "secureRegistration": "Secure Registration",
-      "secureRegistrationDesc": "Registration system with email validation and secure passwords with strength indicator.",
-      "emailVerification": "Email Verification",
-      "emailVerificationDesc": "Complete email verification flow with secure tokens and automatic resending.",
-      "magicLink": "Magic Link",
-      "magicLinkDesc": "Passwordless login through secure link sent by email.",
-      "passwordRecovery": "Password Recovery",
-      "passwordRecoveryDesc": "Secure recovery process with temporary links and token validation.",
-      "twoFactorAuth": "2FA Authentication",
-      "twoFactorAuthDesc": "Two-step verification via OTP code sent by email for enhanced security.",
-      "sessionManagement": "Session Management",
-      "sessionManagementDesc": "JWT sessions with configurable expiration and automatic route protection.",
-      "internationalization": "Internationalization",
-      "internationalizationDesc": "Multi-language support with next-intl. Switch between Spanish and English with auto-detection.",
-      "cloudStorage": "Cloud Storage",
-      "cloudStorageDesc": "File management with Cloudflare R2. Drag & drop upload, preview, and folder organization.",
-      "adminDashboard": "Admin Dashboard",
-      "adminDashboardDesc": "Complete user and file management. Role control, account blocking, and auditing.",
-      "wafSecurity": "Web Application Firewall",
-      "wafSecurityDesc": "48 detection rules: SQL injection, XSS, path traversal. Automatic blocking of malicious IPs.",
-      "rateLimiting": "Rate Limiting",
-      "rateLimitingDesc": "Abuse protection with configurable limits per endpoint. Sliding window algorithm.",
-      "pwa": "Progressive Web App",
-      "pwaSupportDesc": "Installable as native app. Offline support and push notifications."
+    "trustedBy": "Companies that trust us",
+    "clientLogos": [
+      { "name": "Banking", "logo": "/images/clients/banca.png" },
+      { "name": "Insurance", "logo": "/images/clients/seguros.png" },
+      { "name": "Manufacturing", "logo": "/images/clients/manufactura.png" },
+      { "name": "Retail", "logo": "/images/clients/retail.png" },
+      { "name": "Education", "logo": "/images/clients/educacion.png" },
+      { "name": "Government", "logo": "/images/clients/gobierno.png" },
+      { "name": "Healthcare", "logo": "/images/clients/salud.png" },
+      { "name": "Telecommunications", "logo": "/images/clients/telecom.png" }
+    ],
+    "trustedCompanyLogos": [
+      { "name": "Banco General", "logo": "/images/companies/banco-general.png" },
+      { "name": "Banistmo", "logo": "/images/companies/banistmo.png" },
+      { "name": "Global Bank", "logo": "/images/companies/global-bank.png" },
+      { "name": "Copa Airlines", "logo": "/images/companies/copa.png" },
+      { "name": "Super 99", "logo": "/images/companies/super99.png" },
+      { "name": "Grupo Rey", "logo": "/images/companies/grupo-rey.png" },
+      { "name": "Cervecería Nacional", "logo": "/images/companies/cerveceria.png" },
+      { "name": "Melo S.A.", "logo": "/images/companies/melo.png" },
+      { "name": "Felipe Motta", "logo": "/images/companies/felipe-motta.png" },
+      { "name": "Ricardo Pérez", "logo": "/images/companies/ricardo-perez.png" }
+    ],
+    "certificationsSection": {
+      "badge": "Certifications & Standards",
+      "title": "Guaranteed quality",
+      "subtitle": "We meet the highest quality and sustainability standards."
     },
-    "techStack": {
-      "nextjs": "Next.js 16",
-      "nextjsDesc": "App Router + Turbopack",
-      "react": "React 19",
-      "reactDesc": "Server Components",
-      "typescript": "TypeScript",
-      "typescriptDesc": "Type-safe",
-      "prisma": "Prisma 7",
-      "prismaDesc": "ORM + PostgreSQL",
-      "authjs": "Auth.js v5",
-      "authjsDesc": "NextAuth Beta",
-      "tailwind": "Tailwind CSS 4",
-      "tailwindDesc": "shadcn/ui",
-      "nextIntl": "next-intl",
-      "nextIntlDesc": "Internationalization",
-      "cloudflareR2": "Cloudflare R2",
-      "cloudflareR2Desc": "Object Storage",
-      "pwa": "PWA Ready",
-      "pwaDesc": "Installable"
+    "certifications": [
+      {
+        "icon": "cog",
+        "name": "TPM",
+        "description": "Total Productive Maintenance for maximum operational efficiency."
+      },
+      {
+        "icon": "leaf",
+        "name": "Cleaner Production",
+        "description": "Sustainable processes that minimize environmental impact."
+      },
+      {
+        "icon": "shield",
+        "name": "Data Security",
+        "description": "Information protection with international standards."
+      },
+      {
+        "icon": "award",
+        "name": "Premium Quality",
+        "description": "Products and services that exceed expectations."
+      }
+    ],
+    "faqSection": {
+      "badge": "FAQ",
+      "title": "Have questions?",
+      "subtitle": "Find answers to the most common questions about our services."
     },
-    "benefits": {
-      "cleanArchitecture": "Clean and modular architecture",
-      "zodValidation": "Zod validation on client and server",
-      "transactionalEmails": "Transactional emails with React Email",
-      "darkLightMode": "Dark/light mode support",
-      "responsiveDesign": "Mobile-first responsive design",
-      "gdprCompliance": "GDPR compliance with cookie management",
-      "multiLanguage": "Multi-language support (ES/EN)",
-      "fileManagement": "File management with R2",
-      "enterpriseSecurity": "Enterprise-level security",
-      "productionReady": "Production ready"
-    }
+    "faqs": [
+      {
+        "question": "How long does it take to implement your solutions?",
+        "answer": "Implementation time varies depending on project complexity. Standard solutions can be ready in 2-4 weeks, while customized projects may take 1-3 months. Our team works to minimize implementation time without compromising quality."
+      },
+      {
+        "question": "Do you offer technical support after implementation?",
+        "answer": "Yes, we offer 24/7 technical support for all our clients. We have a dedicated team that can assist you by phone, email or WhatsApp. Additionally, we perform preventive maintenance to ensure optimal operation of your solutions."
+      },
+      {
+        "question": "Can you customize solutions according to my needs?",
+        "answer": "Absolutely. Every company is unique and we understand that. Our team of consultants analyzes your current processes and designs tailor-made solutions that perfectly adapt to your specific requirements."
+      },
+      {
+        "question": "What sectors do you serve?",
+        "answer": "We serve companies across all sectors: banking, insurance, retail, manufacturing, government, healthcare, education, telecommunications, energy, logistics, construction and agribusiness. Our 50+ years of experience has allowed us to develop expertise in multiple industries."
+      },
+      {
+        "question": "What is the process to request a quote?",
+        "answer": "You can contact us via WhatsApp, phone or email. One of our advisors will contact you to understand your needs, then we'll schedule a visit or virtual meeting to present you with a personalized proposal with no obligation."
+      }
+    ],
+    "whatsappMessage": "Hello, I'm interested in learning more about FESA's services."
   },
   "Dashboard": {
     "welcome": "Welcome, {name}",

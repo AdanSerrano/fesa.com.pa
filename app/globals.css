@@ -172,6 +172,14 @@
     animation: scroll 30s linear infinite;
   }
 
+  .animate-scroll-x {
+    animation: scroll-x 25s linear infinite;
+  }
+
+  .animate-scroll-x-slow {
+    animation: scroll-x 40s linear infinite;
+  }
+
   @keyframes scroll {
     0% {
       transform: translateX(0);
@@ -181,7 +189,18 @@
     }
   }
 
-  .animate-scroll:hover {
+  @keyframes scroll-x {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .animate-scroll:hover,
+  .animate-scroll-x:hover,
+  .animate-scroll-x-slow:hover {
     animation-play-state: paused;
   }
 
@@ -238,4 +257,3 @@
     background: hsl(var(--muted-foreground) / 0.5);
   }
 }
-

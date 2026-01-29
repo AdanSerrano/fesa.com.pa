@@ -48,12 +48,12 @@ export async function getHomeNewsDataAction(): Promise<{
   featuredNews: PublicNewsArticle[];
 }> {
   try {
-    const [categories, featuredNews] = await Promise.all([
+    const [categories, recentNews] = await Promise.all([
       repository.getActiveCategories(),
-      repository.getFeaturedNews(4),
+      repository.getRecentNews(3),
     ]);
 
-    return { categories, featuredNews };
+    return { categories, featuredNews: recentNews };
   } catch (error) {
     console.error("Error fetching home news data:", error);
     return { categories: [], featuredNews: [] };

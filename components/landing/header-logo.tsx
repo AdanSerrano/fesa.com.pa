@@ -2,15 +2,13 @@
 
 import { memo } from "react";
 import { Link } from "@/i18n/navigation";
-import { KeyRound } from "lucide-react";
 
 function HeaderLogoComponent() {
   return (
-    <Link href="/" className="flex items-center gap-2">
-      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-        <KeyRound className="h-4 w-4 text-primary-foreground" />
-      </div>
-      <span className="text-xl font-bold">Fesa</span>
+    <Link href="/" className="flex items-center gap-2 group">
+      <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent group-hover:from-primary/80 group-hover:to-primary transition-all duration-300">
+        FESA
+      </span>
     </Link>
   );
 }

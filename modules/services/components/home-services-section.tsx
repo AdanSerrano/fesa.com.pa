@@ -7,12 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import {
   ArrowRight,
+  Briefcase,
   FolderOpen,
-  Layers,
-  ChevronRight,
-  Sparkles,
-  LayoutGrid,
-  Star,
 } from "lucide-react";
 import type { PublicServiceCategory, PublicServiceItem } from "../types/services.types";
 
@@ -41,8 +37,8 @@ const HomeCategoryCard = memo(function HomeCategoryCard({
 }) {
   return (
     <Link href={`/${locale}/services/${category.slug}`} className="block h-full">
-      <Card className="group h-full transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/30 overflow-hidden">
-        <div className="relative h-28 overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10">
+      <Card className="group h-full border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 overflow-hidden">
+        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
           {category.image ? (
             <Image
               src={category.image}
@@ -52,83 +48,27 @@ const HomeCategoryCard = memo(function HomeCategoryCard({
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
             />
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="h-14 w-14 rounded-full bg-background/80 backdrop-blur flex items-center justify-center ring-1 ring-primary/20 transition-transform duration-300 group-hover:scale-110">
-                <FolderOpen className="h-7 w-7 text-primary" />
+            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-blue-500/10 to-blue-600/10">
+              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
+                <FolderOpen className="h-8 w-8 text-white" />
               </div>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
         </div>
-        <CardContent className="pt-4 pb-5">
-          <h3 className="font-semibold text-base mb-2 group-hover:text-primary transition-colors line-clamp-1">
+        <CardContent className="p-6">
+          <h3 className="font-bold text-lg group-hover:text-primary transition-colors line-clamp-1 mb-2">
             {category.name}
           </h3>
           {category.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-3 min-h-[2.5rem]">
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
               {category.description}
             </p>
           )}
-          <div className="flex items-center justify-between">
-            <span className="inline-flex items-center text-sm font-medium text-primary">
-              {viewMoreLabel}
-              <ArrowRight className="ml-1 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
-            </span>
-            <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-              <ChevronRight className="h-3.5 w-3.5 text-primary" />
-            </div>
+          <div className="flex items-center text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-all">
+            <span>{viewMoreLabel}</span>
+            <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </div>
-        </CardContent>
-      </Card>
-    </Link>
-  );
-});
-
-const HomeServiceCard = memo(function HomeServiceCard({
-  service,
-  locale,
-  viewMoreLabel,
-}: {
-  service: PublicServiceItem;
-  locale: string;
-  viewMoreLabel: string;
-}) {
-  return (
-    <Link href={`/${locale}/services/${service.categorySlug}/${service.slug}`} className="block h-full">
-      <Card className="group h-full transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/30 overflow-hidden">
-        <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
-          {service.image ? (
-            <Image
-              src={service.image}
-              alt={service.name}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/5 to-primary/10">
-              <div className="h-14 w-14 rounded-full bg-background/80 backdrop-blur flex items-center justify-center ring-1 ring-primary/20 transition-transform duration-300 group-hover:scale-110">
-                <Layers className="h-7 w-7 text-primary" />
-              </div>
-            </div>
-          )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
-          <Badge
-            variant="secondary"
-            className="absolute top-3 left-3 text-xs bg-background/90 backdrop-blur-sm border-0 shadow-sm"
-          >
-            {service.categoryName}
-          </Badge>
-        </div>
-        <CardContent className="pt-4 pb-5">
-          <h3 className="font-semibold group-hover:text-primary transition-colors line-clamp-1 mb-2">
-            {service.name}
-          </h3>
-          {service.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 min-h-[2.5rem]">
-              {service.description}
-            </p>
-          )}
         </CardContent>
       </Card>
     </Link>
@@ -137,101 +77,55 @@ const HomeServiceCard = memo(function HomeServiceCard({
 
 export const HomeServicesSection = memo(function HomeServicesSection({
   categories,
-  featuredServices,
   locale,
   labels,
 }: HomeServicesSectionProps) {
   const displayCategories = categories.slice(0, 4);
-  const displayServices = featuredServices.slice(0, 3);
 
-  if (categories.length === 0 && featuredServices.length === 0) {
+  if (categories.length === 0) {
     return null;
   }
 
   return (
-    <section className="py-16 sm:py-24 relative overflow-hidden">
-      <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/2 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-
-      <div className="container px-4 md:px-6 relative">
+    <section className="py-20 sm:py-28 border-b">
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
         <AnimatedSection animation="fade-up" delay={0}>
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center justify-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-              <Sparkles className="h-4 w-4" />
+          <div className="text-center mb-16">
+            <Badge variant="outline" className="mb-4">
+              <Briefcase className="mr-2 h-3.5 w-3.5" />
               {labels.sectionTitle}
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl mb-4">
+            </Badge>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
               {labels.sectionTitle}
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg">
+            <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               {labels.sectionSubtitle}
             </p>
           </div>
         </AnimatedSection>
 
-        {displayCategories.length > 0 && (
-          <div className="mb-14">
-            <AnimatedSection animation="fade-up" delay={100}>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <LayoutGrid className="h-5 w-5 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold">{labels.categoriesTitle}</h3>
-                </div>
-                <Button variant="ghost" size="sm" className="gap-1.5 hover:bg-primary/5" asChild>
-                  <Link href={`/${locale}/services`}>
-                    {labels.viewAll}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {displayCategories.map((category, index) => (
+            <AnimatedSection key={category.id} animation="fade-up" delay={index * 100}>
+              <HomeCategoryCard
+                category={category}
+                locale={locale}
+                viewMoreLabel={labels.viewMore}
+              />
             </AnimatedSection>
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {displayCategories.map((category, index) => (
-                <AnimatedSection key={category.id} animation="fade-up" delay={150 + index * 50}>
-                  <HomeCategoryCard
-                    category={category}
-                    locale={locale}
-                    viewMoreLabel={labels.viewMore}
-                  />
-                </AnimatedSection>
-              ))}
-            </div>
-          </div>
-        )}
+          ))}
+        </div>
 
-        {displayServices.length > 0 && (
-          <div>
-            <AnimatedSection animation="fade-up" delay={300}>
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-                    <Star className="h-5 w-5 text-amber-500" />
-                  </div>
-                  <h3 className="text-xl font-semibold">{labels.featuredTitle}</h3>
-                </div>
-                <Button variant="ghost" size="sm" className="gap-1.5 hover:bg-primary/5" asChild>
-                  <Link href={`/${locale}/services`}>
-                    {labels.viewAll}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            </AnimatedSection>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {displayServices.map((service, index) => (
-                <AnimatedSection key={service.id} animation="fade-up" delay={350 + index * 50}>
-                  <HomeServiceCard
-                    service={service}
-                    locale={locale}
-                    viewMoreLabel={labels.viewMore}
-                  />
-                </AnimatedSection>
-              ))}
-            </div>
+        <AnimatedSection animation="fade-up" delay={400}>
+          <div className="text-center mt-12">
+            <Button size="lg" variant="outline" asChild>
+              <Link href={`/${locale}/services`}>
+                {labels.viewAll}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
           </div>
-        )}
+        </AnimatedSection>
       </div>
     </section>
   );
