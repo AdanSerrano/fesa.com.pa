@@ -2,6 +2,15 @@ export const publicRoutes = [
   "/",
   "/contact",
   "/api/health",
+  "/products",
+  "/products/:slug",
+  "/products/:slug/:productSlug",
+  "/services",
+  "/services/:slug",
+  "/services/:slug/:serviceSlug",
+  "/news",
+  "/news/:slug",
+  "/news/:slug/:newsSlug",
 ];
 
 export const authRoutes = [

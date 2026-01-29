@@ -627,6 +627,151 @@
         "noCategory": "Sin categoría",
         "noDescription": "Sin descripción"
       }
+    },
+    "products": {
+      "title": "Gestión de Productos",
+      "description": "Administra las categorías y productos de la plataforma",
+      "tabs": {
+        "categories": "Categorías",
+        "items": "Productos"
+      },
+      "stats": {
+        "totalCategories": "Total Categorías",
+        "totalCategoriesDesc": "Categorías registradas",
+        "totalItems": "Total Productos",
+        "totalItemsDesc": "Productos registrados",
+        "activeCategories": "Categorías Activas",
+        "activeCategoriesDesc": "Categorías visibles",
+        "activeItems": "Productos Activos",
+        "activeItemsDesc": "Productos visibles",
+        "featuredCategories": "Categorías Destacadas",
+        "featuredCategoriesDesc": "Categorías promocionadas"
+      },
+      "filters": {
+        "status": "Estado",
+        "allStatuses": "Todos los estados",
+        "active": "Activos",
+        "inactive": "Inactivos",
+        "featured": "Destacados",
+        "category": "Categoría",
+        "allCategories": "Todas las categorías",
+        "clearFilters": "Limpiar filtros",
+        "price": "Precio",
+        "allPrices": "Todos los precios",
+        "withPrice": "Con precio",
+        "withoutPrice": "Sin precio",
+        "sku": "SKU",
+        "allSkus": "Todos los SKU",
+        "withSku": "Con SKU",
+        "withoutSku": "Sin SKU"
+      },
+      "columns": {
+        "name": "Nombre",
+        "category": "Categoría",
+        "status": "Estado",
+        "featured": "Destacado",
+        "items": "Productos",
+        "createdAt": "Creado",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "yes": "Sí",
+        "no": "No",
+        "actions": "Acciones",
+        "viewDetails": "Ver detalles",
+        "edit": "Editar",
+        "delete": "Eliminar",
+        "noCategory": "Sin categoría",
+        "price": "Precio",
+        "sku": "SKU"
+      },
+      "table": {
+        "noCategories": "No hay categorías registradas",
+        "noItems": "No hay productos registrados",
+        "dataUpdated": "Datos actualizados",
+        "searchPlaceholder": "Buscar por nombre o SKU..."
+      },
+      "actions": {
+        "createCategory": "Nueva Categoría",
+        "createItem": "Nuevo Producto"
+      },
+      "categoryForm": {
+        "createTitle": "Crear Categoría",
+        "editTitle": "Editar Categoría",
+        "name": "Nombre",
+        "namePlaceholder": "Nombre de la categoría",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción de la categoría",
+        "image": "Imagen",
+        "imagePlaceholder": "URL de la imagen",
+        "isActive": "Activo",
+        "isFeatured": "Destacado",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "itemForm": {
+        "createTitle": "Crear Producto",
+        "editTitle": "Editar Producto",
+        "category": "Categoría",
+        "selectCategory": "Selecciona una categoría",
+        "noCategory": "Sin categoría",
+        "name": "Nombre",
+        "namePlaceholder": "Nombre del producto",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción del producto",
+        "image": "Imagen",
+        "imagePlaceholder": "URL de la imagen",
+        "isActive": "Activo",
+        "price": "Precio",
+        "pricePlaceholder": "0.00",
+        "sku": "SKU",
+        "skuPlaceholder": "Código único del producto",
+        "cancel": "Cancelar",
+        "save": "Guardar",
+        "saving": "Guardando..."
+      },
+      "deleteDialog": {
+        "categoryTitle": "Eliminar Categoría",
+        "categoryDescription": "¿Estás seguro de que deseas eliminar la categoría {name}?",
+        "itemTitle": "Eliminar Producto",
+        "itemDescription": "¿Estás seguro de que deseas eliminar el producto {name}?",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "deleting": "Eliminando...",
+        "warning": "Esta acción no se puede deshacer."
+      },
+      "categoryDetails": {
+        "title": "Detalles de Categoría",
+        "name": "Nombre",
+        "description": "Descripción",
+        "status": "Estado",
+        "featured": "Destacada",
+        "items": "Productos",
+        "createdAt": "Creada",
+        "updatedAt": "Actualizada",
+        "active": "Activa",
+        "inactive": "Inactiva",
+        "yes": "Sí",
+        "no": "No",
+        "noDescription": "Sin descripción"
+      },
+      "itemDetails": {
+        "title": "Detalles del Producto",
+        "name": "Nombre",
+        "category": "Categoría",
+        "description": "Descripción",
+        "status": "Estado",
+        "price": "Precio",
+        "sku": "SKU",
+        "createdAt": "Creado",
+        "updatedAt": "Actualizado",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "noCategory": "Sin categoría",
+        "noDescription": "Sin descripción",
+        "noPrice": "Sin precio",
+        "noSku": "Sin SKU"
+      }
     }
   },
   "BlockUserDialog": {
@@ -1102,5 +1247,26 @@
     "feature1": "Profesionales certificados con amplia experiencia",
     "feature2": "Atención personalizada y soporte continuo",
     "feature3": "Garantía de satisfacción en todos nuestros servicios"
+  },
+  "PublicProducts": {
+    "title": "Nuestros Productos",
+    "subtitle": "Descubre todos los productos que ofrecemos para ti",
+    "homeSectionTitle": "Nuestros Productos",
+    "homeSectionSubtitle": "Explora nuestra amplia gama de productos de alta calidad",
+    "categoriesTitle": "Categorías de Productos",
+    "featuredTitle": "Productos Destacados",
+    "viewMore": "Ver más",
+    "viewAll": "Ver todos",
+    "noCategories": "No hay categorías disponibles",
+    "noProductsInCategory": "No hay productos en esta categoría",
+    "productsInCategory": "Productos",
+    "backToProducts": "Volver a productos",
+    "backToCategory": "Volver a categoría",
+    "contactUs": "Contáctanos",
+    "viewAllProducts": "Ver todos los productos",
+    "whyChooseUs": "¿Por qué elegirnos?",
+    "feature1": "Productos de alta calidad garantizada",
+    "feature2": "Atención personalizada y asesoría",
+    "feature3": "Garantía de satisfacción en todos nuestros productos"
   }
 }

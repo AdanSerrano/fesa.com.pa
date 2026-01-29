@@ -6,6 +6,8 @@ import { setRequestLocale, getTranslations } from "next-intl/server";
 import type { Locale } from "@/i18n/routing";
 import { getServicesPageDataAction } from "@/modules/services/actions/services.actions";
 import { HomeServicesSection } from "@/modules/services/components/home-services-section";
+import { getProductsPageDataAction } from "@/modules/products/actions/products.actions";
+import { HomeProductsSection } from "@/modules/products/components/home-products-section";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -56,8 +58,15 @@ export default async function Home({ params }: HomeProps) {
   const tAuth = await getTranslations("Auth");
   const tCommon = await getTranslations("Common");
   const tServices = await getTranslations("PublicServices");
+  const tProducts = await getTranslations("PublicProducts");
 
-  const { categories, featuredServices } = await getServicesPageDataAction();
+  const [servicesData, productsData] = await Promise.all([
+    getServicesPageDataAction(),
+    getProductsPageDataAction(),
+  ]);
+
+  const { categories, featuredServices } = servicesData;
+  const { categories: productCategories, featuredProducts } = productsData;
 
   const features = [
     {
@@ -369,6 +378,21 @@ export default async function Home({ params }: HomeProps) {
             featuredTitle: tServices("featuredTitle"),
             viewAll: tServices("viewAll"),
             viewMore: tServices("viewMore"),
+          }}
+        />
+
+        {/* Products Section */}
+        <HomeProductsSection
+          categories={productCategories}
+          featuredProducts={featuredProducts}
+          locale={locale}
+          labels={{
+            sectionTitle: tProducts("homeSectionTitle"),
+            sectionSubtitle: tProducts("homeSectionSubtitle"),
+            categoriesTitle: tProducts("categoriesTitle"),
+            featuredTitle: tProducts("featuredTitle"),
+            viewAll: tProducts("viewAll"),
+            viewMore: tProducts("viewMore"),
           }}
         />
 

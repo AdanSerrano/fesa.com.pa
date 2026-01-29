@@ -229,9 +229,21 @@ function getPathnameWithoutLocale(pathname: string): string {
   return pathname;
 }
 
+function routePatternToRegex(pattern: string): RegExp {
+  const regexPattern = pattern
+    .replace(/:[^/]+/g, "[^/]+")
+    .replace(/\//g, "\\/");
+  return new RegExp(`^${regexPattern}$`);
+}
+
+const publicRouteRegexes = publicRoutes.map((route) => ({
+  pattern: route,
+  regex: routePatternToRegex(route),
+}));
+
 const isPublicRoute = (pathname: string): boolean => {
   const cleanPath = getPathnameWithoutLocale(pathname);
-  return publicRoutes.includes(cleanPath);
+  return publicRouteRegexes.some(({ regex }) => regex.test(cleanPath));
 };
 
 const isAuthRoute = (pathname: string): boolean => {
@@ -243,10 +255,6 @@ const isApiAuthRoute = (pathname: string): boolean => pathname.startsWith(apiAut
 const isApiRoute = (pathname: string): boolean => pathname.startsWith("/api/");
 const isHealthRoute = (pathname: string): boolean => pathname === "/api/health";
 
-// ============================================================================
-// MIDDLEWARE PRINCIPAL
-// ============================================================================
-
 export const proxy = NextAuth(authConfig).auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
@@ -254,9 +262,6 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
   const clientIP = getClientIP(req);
   const userAgent = req.headers.get("user-agent");
   const pathname = nextUrl.pathname;
-
-  // ========================================================================
-  // 0. PERMITIR HEALTH CHECK SIN RESTRICCIONES
   // ========================================================================
   if (isHealthRoute(pathname)) {
     return NextResponse.next();

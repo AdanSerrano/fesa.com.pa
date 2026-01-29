@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { memo, useCallback, useReducer } from "react";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,30 +17,47 @@ import { LogOut } from "lucide-react";
 import { logoutAction } from "@/modules/logout/actions/logout.actions";
 import { useTranslations } from "next-intl";
 
-export function LogoutButton() {
+interface LogoutButtonProps {
+  variant?: "dropdown" | "button";
+}
+
+function LogoutButtonComponent({ variant = "dropdown" }: LogoutButtonProps) {
   const t = useTranslations("Auth");
   const tNav = useTranslations("Navigation");
   const tCommon = useTranslations("Common");
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [showConfirmDialog, toggleDialog] = useReducer((s) => !s, false);
 
-  const handleLogout = () => {
+  const handleLogout = useCallback(() => {
     logoutAction();
-  };
+  }, []);
+
+  const handleOpenDialog = useCallback((e?: Event) => {
+    e?.preventDefault();
+    toggleDialog();
+  }, []);
 
   return (
     <>
-      <DropdownMenuItem
-        className="cursor-pointer text-destructive focus:text-destructive"
-        onSelect={(e) => {
-          e.preventDefault();
-          setShowConfirmDialog(true);
-        }}
-      >
-        <LogOut className="mr-2 h-4 w-4 text-destructive" />
-        {tNav("logout")}
-      </DropdownMenuItem>
+      {variant === "dropdown" ? (
+        <DropdownMenuItem
+          className="cursor-pointer text-destructive focus:text-destructive"
+          onSelect={handleOpenDialog}
+        >
+          <LogOut className="mr-2 h-4 w-4 text-destructive" />
+          {tNav("logout")}
+        </DropdownMenuItem>
+      ) : (
+        <Button
+          variant="destructive"
+          className="w-full justify-start"
+          onClick={() => toggleDialog()}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          {tNav("logout")}
+        </Button>
+      )}
 
-      <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+      <AlertDialog open={showConfirmDialog} onOpenChange={toggleDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>{t("logoutConfirm")}</AlertDialogTitle>
@@ -61,3 +79,6 @@ export function LogoutButton() {
     </>
   );
 }
+
+export const LogoutButton = memo(LogoutButtonComponent);
+LogoutButton.displayName = "LogoutButton";

@@ -1736,6 +1736,9 @@ export type ServiceItemScalarFieldEnum = (typeof ServiceItemScalarFieldEnum)[key
 
 export const ProductCategoryScalarFieldEnum = {
   id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
   image: 'image',
   isActive: 'isActive',
   isFeatured: 'isFeatured',
@@ -1749,6 +1752,9 @@ export type ProductCategoryScalarFieldEnum = (typeof ProductCategoryScalarFieldE
 export const ProductItemScalarFieldEnum = {
   id: 'id',
   categoryId: 'categoryId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
   image: 'image',
   isActive: 'isActive',
   price: 'price',
@@ -1977,6 +1983,9 @@ export type ServiceItemOrderByRelevanceFieldEnum = (typeof ServiceItemOrderByRel
 
 export const ProductCategoryOrderByRelevanceFieldEnum = {
   id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
   image: 'image'
 } as const
 
@@ -1986,6 +1995,9 @@ export type ProductCategoryOrderByRelevanceFieldEnum = (typeof ProductCategoryOr
 export const ProductItemOrderByRelevanceFieldEnum = {
   id: 'id',
   categoryId: 'categoryId',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
   image: 'image',
   sku: 'sku'
 } as const

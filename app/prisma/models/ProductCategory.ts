@@ -26,6 +26,9 @@ export type AggregateProductCategory = {
 
 export type ProductCategoryMinAggregateOutputType = {
   id: string | null
+  name: string | null
+  slug: string | null
+  description: string | null
   image: string | null
   isActive: boolean | null
   isFeatured: boolean | null
@@ -35,6 +38,9 @@ export type ProductCategoryMinAggregateOutputType = {
 
 export type ProductCategoryMaxAggregateOutputType = {
   id: string | null
+  name: string | null
+  slug: string | null
+  description: string | null
   image: string | null
   isActive: boolean | null
   isFeatured: boolean | null
@@ -44,6 +50,9 @@ export type ProductCategoryMaxAggregateOutputType = {
 
 export type ProductCategoryCountAggregateOutputType = {
   id: number
+  name: number
+  slug: number
+  description: number
   image: number
   isActive: number
   isFeatured: number
@@ -55,6 +64,9 @@ export type ProductCategoryCountAggregateOutputType = {
 
 export type ProductCategoryMinAggregateInputType = {
   id?: true
+  name?: true
+  slug?: true
+  description?: true
   image?: true
   isActive?: true
   isFeatured?: true
@@ -64,6 +76,9 @@ export type ProductCategoryMinAggregateInputType = {
 
 export type ProductCategoryMaxAggregateInputType = {
   id?: true
+  name?: true
+  slug?: true
+  description?: true
   image?: true
   isActive?: true
   isFeatured?: true
@@ -73,6 +88,9 @@ export type ProductCategoryMaxAggregateInputType = {
 
 export type ProductCategoryCountAggregateInputType = {
   id?: true
+  name?: true
+  slug?: true
+  description?: true
   image?: true
   isActive?: true
   isFeatured?: true
@@ -155,6 +173,9 @@ export type ProductCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.
 
 export type ProductCategoryGroupByOutputType = {
   id: string
+  name: string
+  slug: string
+  description: string | null
   image: string | null
   isActive: boolean
   isFeatured: boolean
@@ -185,6 +206,9 @@ export type ProductCategoryWhereInput = {
   OR?: Prisma.ProductCategoryWhereInput[]
   NOT?: Prisma.ProductCategoryWhereInput | Prisma.ProductCategoryWhereInput[]
   id?: Prisma.StringFilter<"ProductCategory"> | string
+  name?: Prisma.StringFilter<"ProductCategory"> | string
+  slug?: Prisma.StringFilter<"ProductCategory"> | string
+  description?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
   image?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
   isActive?: Prisma.BoolFilter<"ProductCategory"> | boolean
   isFeatured?: Prisma.BoolFilter<"ProductCategory"> | boolean
@@ -195,6 +219,9 @@ export type ProductCategoryWhereInput = {
 
 export type ProductCategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -206,19 +233,25 @@ export type ProductCategoryOrderByWithRelationInput = {
 
 export type ProductCategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  slug?: string
   AND?: Prisma.ProductCategoryWhereInput | Prisma.ProductCategoryWhereInput[]
   OR?: Prisma.ProductCategoryWhereInput[]
   NOT?: Prisma.ProductCategoryWhereInput | Prisma.ProductCategoryWhereInput[]
+  name?: Prisma.StringFilter<"ProductCategory"> | string
+  description?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
   image?: Prisma.StringNullableFilter<"ProductCategory"> | string | null
   isActive?: Prisma.BoolFilter<"ProductCategory"> | boolean
   isFeatured?: Prisma.BoolFilter<"ProductCategory"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductCategory"> | Date | string
   items?: Prisma.ProductItemListRelationFilter
-}, "id">
+}, "id" | "slug">
 
 export type ProductCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -234,6 +267,9 @@ export type ProductCategoryScalarWhereWithAggregatesInput = {
   OR?: Prisma.ProductCategoryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.ProductCategoryScalarWhereWithAggregatesInput | Prisma.ProductCategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ProductCategory"> | string
+  name?: Prisma.StringWithAggregatesFilter<"ProductCategory"> | string
+  slug?: Prisma.StringWithAggregatesFilter<"ProductCategory"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"ProductCategory"> | string | null
   image?: Prisma.StringNullableWithAggregatesFilter<"ProductCategory"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"ProductCategory"> | boolean
   isFeatured?: Prisma.BoolWithAggregatesFilter<"ProductCategory"> | boolean
@@ -243,6 +279,9 @@ export type ProductCategoryScalarWhereWithAggregatesInput = {
 
 export type ProductCategoryCreateInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   isActive?: boolean
   isFeatured?: boolean
@@ -253,6 +292,9 @@ export type ProductCategoryCreateInput = {
 
 export type ProductCategoryUncheckedCreateInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   isActive?: boolean
   isFeatured?: boolean
@@ -263,6 +305,9 @@ export type ProductCategoryUncheckedCreateInput = {
 
 export type ProductCategoryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -273,6 +318,9 @@ export type ProductCategoryUpdateInput = {
 
 export type ProductCategoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -283,6 +331,9 @@ export type ProductCategoryUncheckedUpdateInput = {
 
 export type ProductCategoryCreateManyInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   isActive?: boolean
   isFeatured?: boolean
@@ -292,6 +343,9 @@ export type ProductCategoryCreateManyInput = {
 
 export type ProductCategoryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -301,6 +355,9 @@ export type ProductCategoryUpdateManyMutationInput = {
 
 export type ProductCategoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -316,6 +373,9 @@ export type ProductCategoryOrderByRelevanceInput = {
 
 export type ProductCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   image?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -325,6 +385,9 @@ export type ProductCategoryCountOrderByAggregateInput = {
 
 export type ProductCategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   image?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -334,6 +397,9 @@ export type ProductCategoryMaxOrderByAggregateInput = {
 
 export type ProductCategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   image?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   isFeatured?: Prisma.SortOrder
@@ -341,9 +407,9 @@ export type ProductCategoryMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type ProductCategoryScalarRelationFilter = {
-  is?: Prisma.ProductCategoryWhereInput
-  isNot?: Prisma.ProductCategoryWhereInput
+export type ProductCategoryNullableScalarRelationFilter = {
+  is?: Prisma.ProductCategoryWhereInput | null
+  isNot?: Prisma.ProductCategoryWhereInput | null
 }
 
 export type ProductCategoryCreateNestedOneWithoutItemsInput = {
@@ -352,16 +418,21 @@ export type ProductCategoryCreateNestedOneWithoutItemsInput = {
   connect?: Prisma.ProductCategoryWhereUniqueInput
 }
 
-export type ProductCategoryUpdateOneRequiredWithoutItemsNestedInput = {
+export type ProductCategoryUpdateOneWithoutItemsNestedInput = {
   create?: Prisma.XOR<Prisma.ProductCategoryCreateWithoutItemsInput, Prisma.ProductCategoryUncheckedCreateWithoutItemsInput>
   connectOrCreate?: Prisma.ProductCategoryCreateOrConnectWithoutItemsInput
   upsert?: Prisma.ProductCategoryUpsertWithoutItemsInput
+  disconnect?: Prisma.ProductCategoryWhereInput | boolean
+  delete?: Prisma.ProductCategoryWhereInput | boolean
   connect?: Prisma.ProductCategoryWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductCategoryUpdateToOneWithWhereWithoutItemsInput, Prisma.ProductCategoryUpdateWithoutItemsInput>, Prisma.ProductCategoryUncheckedUpdateWithoutItemsInput>
 }
 
 export type ProductCategoryCreateWithoutItemsInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   isActive?: boolean
   isFeatured?: boolean
@@ -371,6 +442,9 @@ export type ProductCategoryCreateWithoutItemsInput = {
 
 export type ProductCategoryUncheckedCreateWithoutItemsInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   isActive?: boolean
   isFeatured?: boolean
@@ -396,6 +470,9 @@ export type ProductCategoryUpdateToOneWithWhereWithoutItemsInput = {
 
 export type ProductCategoryUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -405,6 +482,9 @@ export type ProductCategoryUpdateWithoutItemsInput = {
 
 export type ProductCategoryUncheckedUpdateWithoutItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -445,6 +525,9 @@ export type ProductCategoryCountOutputTypeCountItemsArgs<ExtArgs extends runtime
 
 export type ProductCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  name?: boolean
+  slug?: boolean
+  description?: boolean
   image?: boolean
   isActive?: boolean
   isFeatured?: boolean
@@ -458,6 +541,9 @@ export type ProductCategorySelect<ExtArgs extends runtime.Types.Extensions.Inter
 
 export type ProductCategorySelectScalar = {
   id?: boolean
+  name?: boolean
+  slug?: boolean
+  description?: boolean
   image?: boolean
   isActive?: boolean
   isFeatured?: boolean
@@ -465,7 +551,7 @@ export type ProductCategorySelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProductCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "image" | "isActive" | "isFeatured" | "createdAt" | "updatedAt", ExtArgs["result"]["productCategory"]>
+export type ProductCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "image" | "isActive" | "isFeatured" | "createdAt" | "updatedAt", ExtArgs["result"]["productCategory"]>
 export type ProductCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   items?: boolean | Prisma.ProductCategory$itemsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCategoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -478,6 +564,9 @@ export type $ProductCategoryPayload<ExtArgs extends runtime.Types.Extensions.Int
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    name: string
+    slug: string
+    description: string | null
     image: string | null
     isActive: boolean
     isFeatured: boolean
@@ -854,6 +943,9 @@ export interface Prisma__ProductCategoryClient<T, Null = never, ExtArgs extends 
  */
 export interface ProductCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"ProductCategory", 'String'>
+  readonly name: Prisma.FieldRef<"ProductCategory", 'String'>
+  readonly slug: Prisma.FieldRef<"ProductCategory", 'String'>
+  readonly description: Prisma.FieldRef<"ProductCategory", 'String'>
   readonly image: Prisma.FieldRef<"ProductCategory", 'String'>
   readonly isActive: Prisma.FieldRef<"ProductCategory", 'Boolean'>
   readonly isFeatured: Prisma.FieldRef<"ProductCategory", 'Boolean'>

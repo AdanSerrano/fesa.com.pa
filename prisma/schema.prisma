@@ -210,30 +210,35 @@ model ServiceItem {
 }
 
 model ProductCategory {
-  id           String                       @id @default(cuid())
-  image        String?
-  isActive     Boolean                      @default(true)
-  isFeatured   Boolean                      @default(false)
-  createdAt    DateTime                     @default(now())
-  updatedAt    DateTime                     @updatedAt
-  items        ProductItem[]
+  id          String        @id @default(cuid())
+  name        String
+  slug        String        @unique
+  description String?       @db.Text
+  image       String?
+  isActive    Boolean       @default(true)
+  isFeatured  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  items       ProductItem[]
 
   @@index([isActive])
   @@index([isFeatured])
   @@index([createdAt])
 }
 
-
 model ProductItem {
-  id           String                   @id @default(cuid())
-  categoryId   String
-  category     ProductCategory          @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  image        String?
-  isActive     Boolean                  @default(true)
-  price        Decimal?                 @db.Decimal(10, 2)
-  sku          String?
-  createdAt    DateTime                 @default(now())
-  updatedAt    DateTime                 @updatedAt
+  id          String           @id @default(cuid())
+  categoryId  String?
+  category    ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  name        String
+  slug        String           @unique
+  description String?          @db.Text
+  image       String?
+  isActive    Boolean          @default(true)
+  price       Decimal?         @db.Decimal(10, 2)
+  sku         String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 
   @@unique([sku])
   @@index([categoryId])

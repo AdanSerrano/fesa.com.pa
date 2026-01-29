@@ -627,6 +627,151 @@
         "noCategory": "No category",
         "noDescription": "No description"
       }
+    },
+    "products": {
+      "title": "Products Management",
+      "description": "Manage categories and products on the platform",
+      "tabs": {
+        "categories": "Categories",
+        "items": "Products"
+      },
+      "stats": {
+        "totalCategories": "Total Categories",
+        "totalCategoriesDesc": "Registered categories",
+        "totalItems": "Total Products",
+        "totalItemsDesc": "Registered products",
+        "activeCategories": "Active Categories",
+        "activeCategoriesDesc": "Visible categories",
+        "activeItems": "Active Products",
+        "activeItemsDesc": "Visible products",
+        "featuredCategories": "Featured Categories",
+        "featuredCategoriesDesc": "Promoted categories"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "active": "Active",
+        "inactive": "Inactive",
+        "featured": "Featured",
+        "category": "Category",
+        "allCategories": "All categories",
+        "clearFilters": "Clear filters",
+        "price": "Price",
+        "allPrices": "All prices",
+        "withPrice": "With price",
+        "withoutPrice": "Without price",
+        "sku": "SKU",
+        "allSkus": "All SKUs",
+        "withSku": "With SKU",
+        "withoutSku": "Without SKU"
+      },
+      "columns": {
+        "name": "Name",
+        "category": "Category",
+        "status": "Status",
+        "featured": "Featured",
+        "items": "Products",
+        "createdAt": "Created",
+        "active": "Active",
+        "inactive": "Inactive",
+        "yes": "Yes",
+        "no": "No",
+        "actions": "Actions",
+        "viewDetails": "View details",
+        "edit": "Edit",
+        "delete": "Delete",
+        "noCategory": "No category",
+        "price": "Price",
+        "sku": "SKU"
+      },
+      "table": {
+        "noCategories": "No categories registered",
+        "noItems": "No products registered",
+        "dataUpdated": "Data updated",
+        "searchPlaceholder": "Search by name or SKU..."
+      },
+      "actions": {
+        "createCategory": "New Category",
+        "createItem": "New Product"
+      },
+      "categoryForm": {
+        "createTitle": "Create Category",
+        "editTitle": "Edit Category",
+        "name": "Name",
+        "namePlaceholder": "Category name",
+        "description": "Description",
+        "descriptionPlaceholder": "Category description",
+        "image": "Image",
+        "imagePlaceholder": "Image URL",
+        "isActive": "Active",
+        "isFeatured": "Featured",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "itemForm": {
+        "createTitle": "Create Product",
+        "editTitle": "Edit Product",
+        "category": "Category",
+        "selectCategory": "Select a category",
+        "noCategory": "No category",
+        "name": "Name",
+        "namePlaceholder": "Product name",
+        "description": "Description",
+        "descriptionPlaceholder": "Product description",
+        "image": "Image",
+        "imagePlaceholder": "Image URL",
+        "isActive": "Active",
+        "price": "Price",
+        "pricePlaceholder": "0.00",
+        "sku": "SKU",
+        "skuPlaceholder": "Unique product code",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saving": "Saving..."
+      },
+      "deleteDialog": {
+        "categoryTitle": "Delete Category",
+        "categoryDescription": "Are you sure you want to delete the category {name}?",
+        "itemTitle": "Delete Product",
+        "itemDescription": "Are you sure you want to delete the product {name}?",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "deleting": "Deleting...",
+        "warning": "This action cannot be undone."
+      },
+      "categoryDetails": {
+        "title": "Category Details",
+        "name": "Name",
+        "description": "Description",
+        "status": "Status",
+        "featured": "Featured",
+        "items": "Products",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "active": "Active",
+        "inactive": "Inactive",
+        "yes": "Yes",
+        "no": "No",
+        "noDescription": "No description"
+      },
+      "itemDetails": {
+        "title": "Product Details",
+        "name": "Name",
+        "category": "Category",
+        "description": "Description",
+        "status": "Status",
+        "price": "Price",
+        "sku": "SKU",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "active": "Active",
+        "inactive": "Inactive",
+        "noCategory": "No category",
+        "noDescription": "No description",
+        "noPrice": "No price",
+        "noSku": "No SKU"
+      }
     }
   },
   "BlockUserDialog": {
@@ -1103,5 +1248,26 @@
     "feature1": "Certified professionals with extensive experience",
     "feature2": "Personalized attention and continuous support",
     "feature3": "Satisfaction guarantee on all our services"
+  },
+  "PublicProducts": {
+    "title": "Our Products",
+    "subtitle": "Discover all the products we offer for you",
+    "homeSectionTitle": "Our Products",
+    "homeSectionSubtitle": "Explore our wide range of high-quality products",
+    "categoriesTitle": "Product Categories",
+    "featuredTitle": "Featured Products",
+    "viewMore": "View more",
+    "viewAll": "View all",
+    "noCategories": "No categories available",
+    "noProductsInCategory": "No products in this category",
+    "productsInCategory": "Products",
+    "backToProducts": "Back to products",
+    "backToCategory": "Back to category",
+    "contactUs": "Contact us",
+    "viewAllProducts": "View all products",
+    "whyChooseUs": "Why choose us?",
+    "feature1": "High quality guaranteed products",
+    "feature2": "Personalized attention and advisory",
+    "feature3": "Satisfaction guarantee on all our products"
   }
 }

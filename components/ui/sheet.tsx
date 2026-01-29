@@ -6,7 +6,32 @@ import { XIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+let observerInitialized = false
+
+function initScrollbarShiftPrevention() {
+  if (observerInitialized || typeof window === "undefined") return
+  observerInitialized = true
+
+  const observer = new MutationObserver(() => {
+    if (document.body.style.paddingRight && document.body.style.paddingRight !== "0px") {
+      document.body.style.setProperty("padding-right", "0px", "important")
+    }
+    if (document.body.style.marginRight && document.body.style.marginRight !== "0px") {
+      document.body.style.setProperty("margin-right", "0px", "important")
+    }
+  })
+
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["style"],
+  })
+}
+
 function Sheet({ ...props }: React.ComponentProps<typeof SheetPrimitive.Root>) {
+  React.useEffect(() => {
+    initScrollbarShiftPrevention()
+  }, [])
+
   return <SheetPrimitive.Root data-slot="sheet" {...props} />
 }
 
