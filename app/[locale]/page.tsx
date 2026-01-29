@@ -10,6 +10,8 @@ import { getProductsPageDataAction } from "@/modules/products/actions/products.a
 import { HomeProductsSection } from "@/modules/products/components/home-products-section";
 import { getHomeNewsDataAction } from "@/modules/news/actions/news.actions";
 import { HomeNewsSection } from "@/modules/news/components/home-news-section";
+import { getFeaturedCatalogsAction } from "@/modules/catalogs/actions/catalogs.actions";
+import { HomeCatalogsSection } from "@/modules/catalogs/components/home-catalogs-section";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -62,11 +64,13 @@ export default async function Home({ params }: HomeProps) {
   const tServices = await getTranslations("PublicServices");
   const tProducts = await getTranslations("PublicProducts");
   const tNews = await getTranslations("PublicNews");
+  const tCatalogs = await getTranslations("PublicCatalogs");
 
-  const [servicesData, productsData, newsData] = await Promise.all([
+  const [servicesData, productsData, newsData, catalogsData] = await Promise.all([
     getServicesPageDataAction(),
     getProductsPageDataAction(),
     getHomeNewsDataAction(),
+    getFeaturedCatalogsAction(4),
   ]);
 
   const { categories, featuredServices } = servicesData;
@@ -413,6 +417,23 @@ export default async function Home({ params }: HomeProps) {
             featuredTitle: tNews("featuredTitle"),
             viewAll: tNews("viewAll"),
             viewMore: tNews("viewMore"),
+          }}
+        />
+
+        {/* Catalogs Section */}
+        <HomeCatalogsSection
+          catalogs={catalogsData}
+          labels={{
+            title: tCatalogs("homeSectionTitle"),
+            description: tCatalogs("homeSectionDescription"),
+            badge: tCatalogs("homeSectionBadge"),
+            viewCatalogs: tCatalogs("viewCatalogs"),
+            viewAll: tCatalogs("viewAll"),
+            modalTitle: tCatalogs("modalTitle"),
+            selectCatalog: tCatalogs("selectCatalog"),
+            view: tCatalogs("view"),
+            pages: tCatalogs("pages"),
+            year: tCatalogs("year"),
           }}
         />
 

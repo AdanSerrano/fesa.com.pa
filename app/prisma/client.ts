@@ -124,3 +124,13 @@ export type NewsImage = Prisma.NewsImageModel
  * 
  */
 export type AboutContent = Prisma.AboutContentModel
+/**
+ * Model Catalog
+ * 
+ */
+export type Catalog = Prisma.CatalogModel
+/**
+ * Model CatalogPage
+ * 
+ */
+export type CatalogPage = Prisma.CatalogPageModel

@@ -67,7 +67,9 @@ export const ModelName = {
   NewsCategory: 'NewsCategory',
   News: 'News',
   NewsImage: 'NewsImage',
-  AboutContent: 'AboutContent'
+  AboutContent: 'AboutContent',
+  Catalog: 'Catalog',
+  CatalogPage: 'CatalogPage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -334,6 +336,34 @@ export const AboutContentScalarFieldEnum = {
 export type AboutContentScalarFieldEnum = (typeof AboutContentScalarFieldEnum)[keyof typeof AboutContentScalarFieldEnum]
 
 
+export const CatalogScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  year: 'year',
+  coverImage: 'coverImage',
+  isActive: 'isActive',
+  isFeatured: 'isFeatured',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CatalogScalarFieldEnum = (typeof CatalogScalarFieldEnum)[keyof typeof CatalogScalarFieldEnum]
+
+
+export const CatalogPageScalarFieldEnum = {
+  id: 'id',
+  catalogId: 'catalogId',
+  imageUrl: 'imageUrl',
+  alt: 'alt',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type CatalogPageScalarFieldEnum = (typeof CatalogPageScalarFieldEnum)[keyof typeof CatalogPageScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -571,4 +601,25 @@ export const AboutContentOrderByRelevanceFieldEnum = {
 } as const
 
 export type AboutContentOrderByRelevanceFieldEnum = (typeof AboutContentOrderByRelevanceFieldEnum)[keyof typeof AboutContentOrderByRelevanceFieldEnum]
+
+
+export const CatalogOrderByRelevanceFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  coverImage: 'coverImage'
+} as const
+
+export type CatalogOrderByRelevanceFieldEnum = (typeof CatalogOrderByRelevanceFieldEnum)[keyof typeof CatalogOrderByRelevanceFieldEnum]
+
+
+export const CatalogPageOrderByRelevanceFieldEnum = {
+  id: 'id',
+  catalogId: 'catalogId',
+  imageUrl: 'imageUrl',
+  alt: 'alt'
+} as const
+
+export type CatalogPageOrderByRelevanceFieldEnum = (typeof CatalogPageOrderByRelevanceFieldEnum)[keyof typeof CatalogPageOrderByRelevanceFieldEnum]
 

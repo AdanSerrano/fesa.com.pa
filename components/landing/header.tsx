@@ -18,6 +18,7 @@ export async function Header() {
   const navLinks = [
     { href: "/services", label: tNav("services"), iconName: "Briefcase" as const },
     { href: "/products", label: tNav("products"), iconName: "Package" as const },
+    { href: "/catalogs", label: tNav("catalogs"), iconName: "BookOpen" as const },
     { href: "/news", label: tNav("news"), iconName: "Newspaper" as const },
     { href: "/about", label: tNav("about"), iconName: "Building2" as const },
     { href: "/contact", label: tNav("contact"), iconName: "Home" as const },

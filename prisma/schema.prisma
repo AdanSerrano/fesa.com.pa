@@ -318,3 +318,35 @@ model AboutContent {
   @@index([isActive])
   @@index([order])
 }
+
+model Catalog {
+  id          String        @id @default(cuid())
+  title       String
+  slug        String        @unique
+  description String?       @db.Text
+  year        Int
+  coverImage  String?
+  isActive    Boolean       @default(false)
+  isFeatured  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  pages       CatalogPage[]
+
+  @@index([year])
+  @@index([slug])
+  @@index([isActive])
+  @@index([isFeatured])
+}
+
+model CatalogPage {
+  id        String   @id @default(cuid())
+  catalogId String
+  catalog   Catalog  @relation(fields: [catalogId], references: [id], onDelete: Cascade)
+  imageUrl  String
+  alt       String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@index([catalogId])
+  @@index([order])
+}

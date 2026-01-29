@@ -16,6 +16,7 @@ import {
   ShoppingBag,
   Newspaper,
   Building2,
+  BookOpen,
 } from "lucide-react";
 import {
   Sidebar,
@@ -82,6 +83,11 @@ const adminNavItemsConfig: NavItem[] = [
     titleKey: "about",
     url: "/dashboard/admin/about",
     icon: Building2,
+  },
+  {
+    titleKey: "catalogs",
+    url: "/dashboard/admin/catalogs",
+    icon: BookOpen,
   },
 ];
 

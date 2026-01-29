@@ -78,7 +78,8 @@
     "contact": "Contacto",
     "logout": "Cerrar sesión",
     "account": "Cuenta",
-    "usersManagement": "Gestión de Usuarios"
+    "usersManagement": "Gestión de Usuarios",
+    "catalogs": "Catálogos"
   },
   "Auth": {
     "login": "Iniciar sesión",
@@ -962,6 +963,101 @@
         "saved": "Sección actualizada exitosamente",
         "error": "Error al guardar la sección"
       }
+    },
+    "catalogs": {
+      "title": "Gestión de Catálogos",
+      "description": "Administra los catálogos digitales de la plataforma",
+      "stats": {
+        "totalCatalogs": "Total Catálogos",
+        "totalCatalogsDesc": "Catálogos registrados",
+        "activeCatalogs": "Catálogos Activos",
+        "activeCatalogsDesc": "Catálogos visibles",
+        "featuredCatalogs": "Catálogos Destacados",
+        "featuredCatalogsDesc": "Catálogos promocionados",
+        "totalPages": "Total Páginas",
+        "totalPagesDesc": "Páginas en todos los catálogos"
+      },
+      "filters": {
+        "status": "Estado",
+        "allStatuses": "Todos los estados",
+        "active": "Activos",
+        "inactive": "Inactivos",
+        "featured": "Destacados",
+        "year": "Año",
+        "allYears": "Todos los años",
+        "clearFilters": "Limpiar filtros"
+      },
+      "columns": {
+        "title": "Título",
+        "year": "Año",
+        "pages": "Páginas",
+        "status": "Estado",
+        "featured": "Destacado",
+        "createdAt": "Creado",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "yes": "Sí",
+        "no": "No",
+        "actions": "Acciones",
+        "viewDetails": "Ver detalles",
+        "edit": "Editar",
+        "delete": "Eliminar"
+      },
+      "table": {
+        "noCatalogs": "No hay catálogos registrados",
+        "dataUpdated": "Datos actualizados",
+        "searchPlaceholder": "Buscar por título..."
+      },
+      "actions": {
+        "createCatalog": "Nuevo Catálogo"
+      },
+      "catalogForm": {
+        "createTitle": "Crear Catálogo",
+        "editTitle": "Editar Catálogo",
+        "title": "Título",
+        "titlePlaceholder": "Título del catálogo",
+        "year": "Año",
+        "yearPlaceholder": "Ej: 2024",
+        "description": "Descripción",
+        "descriptionPlaceholder": "Descripción del catálogo",
+        "coverImage": "Imagen de portada",
+        "pages": "Páginas del catálogo",
+        "addPage": "Agregar página",
+        "dragToReorder": "Arrastra para reordenar las páginas",
+        "isActive": "Activo",
+        "isFeatured": "Destacado",
+        "save": "Guardar",
+        "saving": "Guardando...",
+        "cancel": "Cancelar",
+        "uploadCover": "Subir portada",
+        "removeCover": "Eliminar",
+        "page": "Página"
+      },
+      "deleteDialog": {
+        "title": "Eliminar Catálogo",
+        "description": "¿Estás seguro de que deseas eliminar el catálogo {name}?",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "deleting": "Eliminando...",
+        "warning": "Esta acción eliminará todas las páginas del catálogo y no se puede deshacer."
+      },
+      "catalogDetails": {
+        "title": "Detalles del Catálogo",
+        "catalogTitle": "Título",
+        "year": "Año",
+        "description": "Descripción",
+        "status": "Estado",
+        "featured": "Destacado",
+        "pages": "Páginas",
+        "createdAt": "Creado",
+        "updatedAt": "Actualizado",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "yes": "Sí",
+        "no": "No",
+        "noDescription": "Sin descripción",
+        "noPages": "Sin páginas"
+      }
     }
   },
   "BlockUserDialog": {
@@ -1493,5 +1589,33 @@
     "shareError": "No se pudo compartir",
     "imageGallery": "Galería de imágenes",
     "image": "Imagen"
+  },
+  "PublicCatalogs": {
+    "title": "Catálogos",
+    "description": "Explora nuestros catálogos digitales con todos nuestros productos y servicios",
+    "noCatalogs": "No hay catálogos disponibles",
+    "view": "Ver",
+    "pages": "páginas",
+    "backToCatalogs": "Volver a catálogos",
+    "noPages": "Este catálogo no tiene páginas",
+    "homeSectionTitle": "Catálogos Digitales",
+    "homeSectionDescription": "Accede a nuestros catálogos digitales interactivos con información completa de productos y servicios",
+    "homeSectionBadge": "Catálogos",
+    "viewCatalogs": "Ver Catálogos",
+    "viewAll": "Ver todos los catálogos",
+    "modalTitle": "Nuestros Catálogos",
+    "close": "Cerrar",
+    "selectCatalog": "Selecciona un catálogo para explorar",
+    "year": "Año",
+    "viewer": {
+      "page": "Página",
+      "of": "de",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "fullscreen": "Pantalla completa",
+      "exitFullscreen": "Salir de pantalla completa",
+      "zoomIn": "Acercar",
+      "zoomOut": "Alejar"
+    }
   }
 }

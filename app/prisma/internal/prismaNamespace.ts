@@ -400,7 +400,9 @@ export const ModelName = {
   NewsCategory: 'NewsCategory',
   News: 'News',
   NewsImage: 'NewsImage',
-  AboutContent: 'AboutContent'
+  AboutContent: 'AboutContent',
+  Catalog: 'Catalog',
+  CatalogPage: 'CatalogPage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +418,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "verificationToken" | "passwordResetToken" | "twoFactorToken" | "magicLinkToken" | "twoFactorConfirmation" | "auditLog" | "session" | "fileUpload" | "serviceCategory" | "serviceItem" | "productCategory" | "productItem" | "newsCategory" | "news" | "newsImage" | "aboutContent"
+    modelProps: "user" | "verificationToken" | "passwordResetToken" | "twoFactorToken" | "magicLinkToken" | "twoFactorConfirmation" | "auditLog" | "session" | "fileUpload" | "serviceCategory" | "serviceItem" | "productCategory" | "productItem" | "newsCategory" | "news" | "newsImage" | "aboutContent" | "catalog" | "catalogPage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1542,6 +1544,138 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Catalog: {
+      payload: Prisma.$CatalogPayload<ExtArgs>
+      fields: Prisma.CatalogFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CatalogFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CatalogFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>
+        }
+        findFirst: {
+          args: Prisma.CatalogFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CatalogFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>
+        }
+        findMany: {
+          args: Prisma.CatalogFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>[]
+        }
+        create: {
+          args: Prisma.CatalogCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>
+        }
+        createMany: {
+          args: Prisma.CatalogCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.CatalogDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>
+        }
+        update: {
+          args: Prisma.CatalogUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>
+        }
+        deleteMany: {
+          args: Prisma.CatalogDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CatalogUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.CatalogUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPayload>
+        }
+        aggregate: {
+          args: Prisma.CatalogAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCatalog>
+        }
+        groupBy: {
+          args: Prisma.CatalogGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CatalogGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CatalogCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CatalogCountAggregateOutputType> | number
+        }
+      }
+    }
+    CatalogPage: {
+      payload: Prisma.$CatalogPagePayload<ExtArgs>
+      fields: Prisma.CatalogPageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CatalogPageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CatalogPageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>
+        }
+        findFirst: {
+          args: Prisma.CatalogPageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CatalogPageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>
+        }
+        findMany: {
+          args: Prisma.CatalogPageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>[]
+        }
+        create: {
+          args: Prisma.CatalogPageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>
+        }
+        createMany: {
+          args: Prisma.CatalogPageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.CatalogPageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>
+        }
+        update: {
+          args: Prisma.CatalogPageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>
+        }
+        deleteMany: {
+          args: Prisma.CatalogPageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CatalogPageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.CatalogPageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CatalogPagePayload>
+        }
+        aggregate: {
+          args: Prisma.CatalogPageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCatalogPage>
+        }
+        groupBy: {
+          args: Prisma.CatalogPageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CatalogPageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CatalogPageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CatalogPageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1829,6 +1963,34 @@ export const AboutContentScalarFieldEnum = {
 export type AboutContentScalarFieldEnum = (typeof AboutContentScalarFieldEnum)[keyof typeof AboutContentScalarFieldEnum]
 
 
+export const CatalogScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  year: 'year',
+  coverImage: 'coverImage',
+  isActive: 'isActive',
+  isFeatured: 'isFeatured',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CatalogScalarFieldEnum = (typeof CatalogScalarFieldEnum)[keyof typeof CatalogScalarFieldEnum]
+
+
+export const CatalogPageScalarFieldEnum = {
+  id: 'id',
+  catalogId: 'catalogId',
+  imageUrl: 'imageUrl',
+  alt: 'alt',
+  order: 'order',
+  createdAt: 'createdAt'
+} as const
+
+export type CatalogPageScalarFieldEnum = (typeof CatalogPageScalarFieldEnum)[keyof typeof CatalogPageScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -2068,6 +2230,27 @@ export const AboutContentOrderByRelevanceFieldEnum = {
 export type AboutContentOrderByRelevanceFieldEnum = (typeof AboutContentOrderByRelevanceFieldEnum)[keyof typeof AboutContentOrderByRelevanceFieldEnum]
 
 
+export const CatalogOrderByRelevanceFieldEnum = {
+  id: 'id',
+  title: 'title',
+  slug: 'slug',
+  description: 'description',
+  coverImage: 'coverImage'
+} as const
+
+export type CatalogOrderByRelevanceFieldEnum = (typeof CatalogOrderByRelevanceFieldEnum)[keyof typeof CatalogOrderByRelevanceFieldEnum]
+
+
+export const CatalogPageOrderByRelevanceFieldEnum = {
+  id: 'id',
+  catalogId: 'catalogId',
+  imageUrl: 'imageUrl',
+  alt: 'alt'
+} as const
+
+export type CatalogPageOrderByRelevanceFieldEnum = (typeof CatalogPageOrderByRelevanceFieldEnum)[keyof typeof CatalogPageOrderByRelevanceFieldEnum]
+
+
 
 /**
  * Field references
@@ -2255,6 +2438,8 @@ export type GlobalOmitConfig = {
   news?: Prisma.NewsOmit
   newsImage?: Prisma.NewsImageOmit
   aboutContent?: Prisma.AboutContentOmit
+  catalog?: Prisma.CatalogOmit
+  catalogPage?: Prisma.CatalogPageOmit
 }
 
 /* Types for Logging */

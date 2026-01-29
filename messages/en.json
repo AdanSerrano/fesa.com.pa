@@ -78,7 +78,8 @@
     "contact": "Contact",
     "logout": "Logout",
     "account": "Account",
-    "usersManagement": "User Management"
+    "usersManagement": "User Management",
+    "catalogs": "Catalogs"
   },
   "Auth": {
     "login": "Login",
@@ -962,6 +963,101 @@
         "saved": "Section updated successfully",
         "error": "Error saving section"
       }
+    },
+    "catalogs": {
+      "title": "Catalogs Management",
+      "description": "Manage digital catalogs on the platform",
+      "stats": {
+        "totalCatalogs": "Total Catalogs",
+        "totalCatalogsDesc": "Registered catalogs",
+        "activeCatalogs": "Active Catalogs",
+        "activeCatalogsDesc": "Visible catalogs",
+        "featuredCatalogs": "Featured Catalogs",
+        "featuredCatalogsDesc": "Promoted catalogs",
+        "totalPages": "Total Pages",
+        "totalPagesDesc": "Pages across all catalogs"
+      },
+      "filters": {
+        "status": "Status",
+        "allStatuses": "All statuses",
+        "active": "Active",
+        "inactive": "Inactive",
+        "featured": "Featured",
+        "year": "Year",
+        "allYears": "All years",
+        "clearFilters": "Clear filters"
+      },
+      "columns": {
+        "title": "Title",
+        "year": "Year",
+        "pages": "Pages",
+        "status": "Status",
+        "featured": "Featured",
+        "createdAt": "Created",
+        "active": "Active",
+        "inactive": "Inactive",
+        "yes": "Yes",
+        "no": "No",
+        "actions": "Actions",
+        "viewDetails": "View details",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "table": {
+        "noCatalogs": "No catalogs registered",
+        "dataUpdated": "Data updated",
+        "searchPlaceholder": "Search by title..."
+      },
+      "actions": {
+        "createCatalog": "New Catalog"
+      },
+      "catalogForm": {
+        "createTitle": "Create Catalog",
+        "editTitle": "Edit Catalog",
+        "title": "Title",
+        "titlePlaceholder": "Catalog title",
+        "year": "Year",
+        "yearPlaceholder": "Ex: 2024",
+        "description": "Description",
+        "descriptionPlaceholder": "Catalog description",
+        "coverImage": "Cover image",
+        "pages": "Catalog pages",
+        "addPage": "Add page",
+        "dragToReorder": "Drag to reorder pages",
+        "isActive": "Active",
+        "isFeatured": "Featured",
+        "save": "Save",
+        "saving": "Saving...",
+        "cancel": "Cancel",
+        "uploadCover": "Upload cover",
+        "removeCover": "Remove",
+        "page": "Page"
+      },
+      "deleteDialog": {
+        "title": "Delete Catalog",
+        "description": "Are you sure you want to delete the catalog {name}?",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "deleting": "Deleting...",
+        "warning": "This action will delete all catalog pages and cannot be undone."
+      },
+      "catalogDetails": {
+        "title": "Catalog Details",
+        "catalogTitle": "Title",
+        "year": "Year",
+        "description": "Description",
+        "status": "Status",
+        "featured": "Featured",
+        "pages": "Pages",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "active": "Active",
+        "inactive": "Inactive",
+        "yes": "Yes",
+        "no": "No",
+        "noDescription": "No description",
+        "noPages": "No pages"
+      }
     }
   },
   "BlockUserDialog": {
@@ -1494,5 +1590,33 @@
     "shareError": "Could not share",
     "imageGallery": "Image Gallery",
     "image": "Image"
+  },
+  "PublicCatalogs": {
+    "title": "Catalogs",
+    "description": "Explore our digital catalogs with all our products and services",
+    "noCatalogs": "No catalogs available",
+    "view": "View",
+    "pages": "pages",
+    "backToCatalogs": "Back to catalogs",
+    "noPages": "This catalog has no pages",
+    "homeSectionTitle": "Digital Catalogs",
+    "homeSectionDescription": "Access our interactive digital catalogs with complete product and service information",
+    "homeSectionBadge": "Catalogs",
+    "viewCatalogs": "View Catalogs",
+    "viewAll": "View all catalogs",
+    "modalTitle": "Our Catalogs",
+    "close": "Close",
+    "selectCatalog": "Select a catalog to explore",
+    "year": "Year",
+    "viewer": {
+      "page": "Page",
+      "of": "of",
+      "previous": "Previous",
+      "next": "Next",
+      "fullscreen": "Fullscreen",
+      "exitFullscreen": "Exit fullscreen",
+      "zoomIn": "Zoom in",
+      "zoomOut": "Zoom out"
+    }
   }
 }
