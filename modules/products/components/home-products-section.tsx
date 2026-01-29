@@ -1,7 +1,6 @@
 import { memo } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/ui/animated-section";
@@ -36,41 +35,44 @@ const HomeCategoryCard = memo(function HomeCategoryCard({
   viewMoreLabel: string;
 }) {
   return (
-    <Link href={`/${locale}/products/${category.slug}`} className="block h-full">
-      <Card className="group h-full border-2 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30 overflow-hidden">
-        <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted to-muted/50">
+    <Link href={`/${locale}/products/${category.slug}`} className="group block h-full">
+      <div className="relative h-full rounded-xl overflow-hidden bg-card border border-border transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:-translate-y-1">
+        <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           {category.image ? (
-            <Image
-              src={category.image}
-              alt={category.name}
-              fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
-              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            />
+            <>
+              <Image
+                src={category.image}
+                alt={category.name}
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+            </>
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-green-500/10 to-green-600/10">
-              <div className="h-16 w-16 rounded-2xl bg-gradient-to-br from-green-500 to-green-600 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-                <FolderOpen className="h-8 w-8 text-white" />
+            <div className="absolute inset-0 flex items-center justify-center bg-primary/5">
+              <div className="h-16 w-16 rounded-xl bg-primary/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <FolderOpen className="h-8 w-8 text-primary" />
               </div>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-80" />
         </div>
-        <CardContent className="p-6">
-          <h3 className="font-bold text-lg group-hover:text-primary transition-colors line-clamp-1 mb-2">
+
+        <div className="p-5">
+          <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
             {category.name}
           </h3>
           {category.description && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+            <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
               {category.description}
             </p>
           )}
-          <div className="flex items-center text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-all">
+          <div className="flex items-center text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
             <span>{viewMoreLabel}</span>
             <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </Link>
   );
 });
@@ -90,7 +92,7 @@ export const HomeProductsSection = memo(function HomeProductsSection({
     <section className="py-20 sm:py-28 border-b bg-muted/30">
       <div className="max-w-7xl mx-auto px-4 md:px-6">
         <AnimatedSection animation="fade-up" delay={0}>
-          <div className="text-center mb-16">
+          <div className="text-center mb-14">
             <Badge variant="outline" className="mb-4">
               <Package className="mr-2 h-3.5 w-3.5" />
               {labels.sectionTitle}
@@ -118,7 +120,7 @@ export const HomeProductsSection = memo(function HomeProductsSection({
 
         <AnimatedSection animation="fade-up" delay={400}>
           <div className="text-center mt-12">
-            <Button size="lg" variant="outline" asChild>
+            <Button size="lg" asChild>
               <Link href={`/${locale}/products`}>
                 {labels.viewAll}
                 <ArrowRight className="ml-2 h-4 w-4" />

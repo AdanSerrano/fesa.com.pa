@@ -282,8 +282,6 @@ export default async function Home({ params }: HomeProps) {
           <ClientsMarquee title={t("clientsMarquee")} />
         </section>
 
-        <TrustedBySection title={t("trustedBy")} />
-
         <section className="py-20 sm:py-28 border-b bg-gradient-to-b from-background via-muted/20 to-background">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <AnimatedSection animation="fade-up" delay={0}>

@@ -96,21 +96,12 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t">
+        <div className="mt-12 pt-8 border-t w-full flex items-center justify-end">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
               <p>© {new Date().getFullYear()} Formas Eficientes S.A.</p>
               <span className="hidden sm:inline">•</span>
               <p>{tCommon("allRightsReserved")}</p>
-            </div>
-            <div className="flex items-center gap-4 text-xs sm:text-sm text-muted-foreground">
-              <span className="flex items-center gap-1.5">
-                <span className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500"></span>
-                </span>
-                {tFooter("madeInPanama")}
-              </span>
             </div>
           </div>
         </div>
