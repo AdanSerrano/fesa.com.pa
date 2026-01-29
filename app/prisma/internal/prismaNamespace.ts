@@ -398,9 +398,8 @@ export const ModelName = {
   ProductCategory: 'ProductCategory',
   ProductItem: 'ProductItem',
   NewsCategory: 'NewsCategory',
-  NewsTag: 'NewsTag',
   News: 'News',
-  NewsToTag: 'NewsToTag'
+  NewsImage: 'NewsImage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +415,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "verificationToken" | "passwordResetToken" | "twoFactorToken" | "magicLinkToken" | "twoFactorConfirmation" | "auditLog" | "session" | "fileUpload" | "serviceCategory" | "serviceItem" | "productCategory" | "productItem" | "newsCategory" | "newsTag" | "news" | "newsToTag"
+    modelProps: "user" | "verificationToken" | "passwordResetToken" | "twoFactorToken" | "magicLinkToken" | "twoFactorConfirmation" | "auditLog" | "session" | "fileUpload" | "serviceCategory" | "serviceItem" | "productCategory" | "productItem" | "newsCategory" | "news" | "newsImage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1344,72 +1343,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    NewsTag: {
-      payload: Prisma.$NewsTagPayload<ExtArgs>
-      fields: Prisma.NewsTagFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.NewsTagFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.NewsTagFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>
-        }
-        findFirst: {
-          args: Prisma.NewsTagFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.NewsTagFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>
-        }
-        findMany: {
-          args: Prisma.NewsTagFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>[]
-        }
-        create: {
-          args: Prisma.NewsTagCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>
-        }
-        createMany: {
-          args: Prisma.NewsTagCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        delete: {
-          args: Prisma.NewsTagDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>
-        }
-        update: {
-          args: Prisma.NewsTagUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>
-        }
-        deleteMany: {
-          args: Prisma.NewsTagDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.NewsTagUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        upsert: {
-          args: Prisma.NewsTagUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsTagPayload>
-        }
-        aggregate: {
-          args: Prisma.NewsTagAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateNewsTag>
-        }
-        groupBy: {
-          args: Prisma.NewsTagGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NewsTagGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.NewsTagCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NewsTagCountAggregateOutputType> | number
-        }
-      }
-    }
     News: {
       payload: Prisma.$NewsPayload<ExtArgs>
       fields: Prisma.NewsFieldRefs
@@ -1476,69 +1409,69 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    NewsToTag: {
-      payload: Prisma.$NewsToTagPayload<ExtArgs>
-      fields: Prisma.NewsToTagFieldRefs
+    NewsImage: {
+      payload: Prisma.$NewsImagePayload<ExtArgs>
+      fields: Prisma.NewsImageFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.NewsToTagFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload> | null
+          args: Prisma.NewsImageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.NewsToTagFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>
+          args: Prisma.NewsImageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>
         }
         findFirst: {
-          args: Prisma.NewsToTagFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload> | null
+          args: Prisma.NewsImageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.NewsToTagFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>
+          args: Prisma.NewsImageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>
         }
         findMany: {
-          args: Prisma.NewsToTagFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>[]
+          args: Prisma.NewsImageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>[]
         }
         create: {
-          args: Prisma.NewsToTagCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>
+          args: Prisma.NewsImageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>
         }
         createMany: {
-          args: Prisma.NewsToTagCreateManyArgs<ExtArgs>
+          args: Prisma.NewsImageCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         delete: {
-          args: Prisma.NewsToTagDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>
+          args: Prisma.NewsImageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>
         }
         update: {
-          args: Prisma.NewsToTagUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>
+          args: Prisma.NewsImageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>
         }
         deleteMany: {
-          args: Prisma.NewsToTagDeleteManyArgs<ExtArgs>
+          args: Prisma.NewsImageDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.NewsToTagUpdateManyArgs<ExtArgs>
+          args: Prisma.NewsImageUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         upsert: {
-          args: Prisma.NewsToTagUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsToTagPayload>
+          args: Prisma.NewsImageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$NewsImagePayload>
         }
         aggregate: {
-          args: Prisma.NewsToTagAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateNewsToTag>
+          args: Prisma.NewsImageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateNewsImage>
         }
         groupBy: {
-          args: Prisma.NewsToTagGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NewsToTagGroupByOutputType>[]
+          args: Prisma.NewsImageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NewsImageGroupByOutputType>[]
         }
         count: {
-          args: Prisma.NewsToTagCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.NewsToTagCountAggregateOutputType> | number
+          args: Prisma.NewsImageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.NewsImageCountAggregateOutputType> | number
         }
       }
     }
@@ -1768,10 +1701,14 @@ export type ProductItemScalarFieldEnum = (typeof ProductItemScalarFieldEnum)[key
 
 export const NewsCategoryScalarFieldEnum = {
   id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
   image: 'image',
   icon: 'icon',
   order: 'order',
   isActive: 'isActive',
+  isFeatured: 'isFeatured',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1779,25 +1716,17 @@ export const NewsCategoryScalarFieldEnum = {
 export type NewsCategoryScalarFieldEnum = (typeof NewsCategoryScalarFieldEnum)[keyof typeof NewsCategoryScalarFieldEnum]
 
 
-export const NewsTagScalarFieldEnum = {
-  id: 'id',
-  order: 'order',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type NewsTagScalarFieldEnum = (typeof NewsTagScalarFieldEnum)[keyof typeof NewsTagScalarFieldEnum]
-
-
 export const NewsScalarFieldEnum = {
   id: 'id',
   categoryId: 'categoryId',
+  title: 'title',
+  slug: 'slug',
+  excerpt: 'excerpt',
+  content: 'content',
   image: 'image',
   publishedAt: 'publishedAt',
   isActive: 'isActive',
   isFeatured: 'isFeatured',
-  viewCount: 'viewCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1805,12 +1734,16 @@ export const NewsScalarFieldEnum = {
 export type NewsScalarFieldEnum = (typeof NewsScalarFieldEnum)[keyof typeof NewsScalarFieldEnum]
 
 
-export const NewsToTagScalarFieldEnum = {
+export const NewsImageScalarFieldEnum = {
+  id: 'id',
   newsId: 'newsId',
-  tagId: 'tagId'
+  url: 'url',
+  alt: 'alt',
+  order: 'order',
+  createdAt: 'createdAt'
 } as const
 
-export type NewsToTagScalarFieldEnum = (typeof NewsToTagScalarFieldEnum)[keyof typeof NewsToTagScalarFieldEnum]
+export type NewsImageScalarFieldEnum = (typeof NewsImageScalarFieldEnum)[keyof typeof NewsImageScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2007,6 +1940,9 @@ export type ProductItemOrderByRelevanceFieldEnum = (typeof ProductItemOrderByRel
 
 export const NewsCategoryOrderByRelevanceFieldEnum = {
   id: 'id',
+  name: 'name',
+  slug: 'slug',
+  description: 'description',
   image: 'image',
   icon: 'icon'
 } as const
@@ -2014,28 +1950,27 @@ export const NewsCategoryOrderByRelevanceFieldEnum = {
 export type NewsCategoryOrderByRelevanceFieldEnum = (typeof NewsCategoryOrderByRelevanceFieldEnum)[keyof typeof NewsCategoryOrderByRelevanceFieldEnum]
 
 
-export const NewsTagOrderByRelevanceFieldEnum = {
-  id: 'id'
-} as const
-
-export type NewsTagOrderByRelevanceFieldEnum = (typeof NewsTagOrderByRelevanceFieldEnum)[keyof typeof NewsTagOrderByRelevanceFieldEnum]
-
-
 export const NewsOrderByRelevanceFieldEnum = {
   id: 'id',
   categoryId: 'categoryId',
+  title: 'title',
+  slug: 'slug',
+  excerpt: 'excerpt',
+  content: 'content',
   image: 'image'
 } as const
 
 export type NewsOrderByRelevanceFieldEnum = (typeof NewsOrderByRelevanceFieldEnum)[keyof typeof NewsOrderByRelevanceFieldEnum]
 
 
-export const NewsToTagOrderByRelevanceFieldEnum = {
+export const NewsImageOrderByRelevanceFieldEnum = {
+  id: 'id',
   newsId: 'newsId',
-  tagId: 'tagId'
+  url: 'url',
+  alt: 'alt'
 } as const
 
-export type NewsToTagOrderByRelevanceFieldEnum = (typeof NewsToTagOrderByRelevanceFieldEnum)[keyof typeof NewsToTagOrderByRelevanceFieldEnum]
+export type NewsImageOrderByRelevanceFieldEnum = (typeof NewsImageOrderByRelevanceFieldEnum)[keyof typeof NewsImageOrderByRelevanceFieldEnum]
 
 
 
@@ -2222,9 +2157,8 @@ export type GlobalOmitConfig = {
   productCategory?: Prisma.ProductCategoryOmit
   productItem?: Prisma.ProductItemOmit
   newsCategory?: Prisma.NewsCategoryOmit
-  newsTag?: Prisma.NewsTagOmit
   news?: Prisma.NewsOmit
-  newsToTag?: Prisma.NewsToTagOmit
+  newsImage?: Prisma.NewsImageOmit
 }
 
 /* Types for Logging */

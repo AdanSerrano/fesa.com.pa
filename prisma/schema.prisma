@@ -247,60 +247,57 @@ model ProductItem {
 }
 
 model NewsCategory {
-  id          String                    @id @default(cuid())
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?   @db.Text
   image       String?
   icon        String?
-  order       Int                       @default(0)
-  isActive    Boolean                   @default(true)
-  createdAt   DateTime                  @default(now())
-  updatedAt   DateTime                  @updatedAt
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+  isFeatured  Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   news        News[]
 
   @@index([isActive])
+  @@index([isFeatured])
   @@index([order])
 }
 
-
-model NewsTag {
-  id          String              @id @default(cuid())
-  order       Int                 @default(0)
-  isActive    Boolean             @default(true)
-  createdAt   DateTime            @default(now())
-  updatedAt   DateTime            @updatedAt
-  news        NewsToTag[]
-
-  @@index([isActive])
-  @@index([order])
-}
 
 model News {
-  id          String            @id @default(cuid())
+  id          String        @id @default(cuid())
   categoryId  String?
-  category    NewsCategory?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  category    NewsCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  title       String
+  slug        String        @unique
+  excerpt     String?       @db.Text
+  content     String?       @db.LongText
   image       String?
   publishedAt DateTime?
-  isActive    Boolean           @default(false)
-  isFeatured  Boolean           @default(false)
-  viewCount   Int               @default(0)
-  createdAt   DateTime          @default(now())
-  updatedAt   DateTime          @updatedAt
-  tags        NewsToTag[]
+  isActive    Boolean       @default(false)
+  isFeatured  Boolean       @default(false)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  images      NewsImage[]
 
   @@index([categoryId])
+  @@index([slug])
   @@index([isActive])
   @@index([isFeatured])
   @@index([publishedAt])
-  @@index([viewCount])
 }
 
-model NewsToTag {
-  newsId String
-  news   News   @relation(fields: [newsId], references: [id], onDelete: Cascade)
-  tagId  String
-  tag    NewsTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+model NewsImage {
+  id        String   @id @default(cuid())
+  newsId    String
+  news      News     @relation(fields: [newsId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
 
-  @@id([newsId, tagId])
   @@index([newsId])
-  @@index([tagId])
+  @@index([order])
 }
-

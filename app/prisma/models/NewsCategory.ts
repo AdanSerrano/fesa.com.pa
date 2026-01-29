@@ -36,30 +36,42 @@ export type NewsCategorySumAggregateOutputType = {
 
 export type NewsCategoryMinAggregateOutputType = {
   id: string | null
+  name: string | null
+  slug: string | null
+  description: string | null
   image: string | null
   icon: string | null
   order: number | null
   isActive: boolean | null
+  isFeatured: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type NewsCategoryMaxAggregateOutputType = {
   id: string | null
+  name: string | null
+  slug: string | null
+  description: string | null
   image: string | null
   icon: string | null
   order: number | null
   isActive: boolean | null
+  isFeatured: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type NewsCategoryCountAggregateOutputType = {
   id: number
+  name: number
+  slug: number
+  description: number
   image: number
   icon: number
   order: number
   isActive: number
+  isFeatured: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -76,30 +88,42 @@ export type NewsCategorySumAggregateInputType = {
 
 export type NewsCategoryMinAggregateInputType = {
   id?: true
+  name?: true
+  slug?: true
+  description?: true
   image?: true
   icon?: true
   order?: true
   isActive?: true
+  isFeatured?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type NewsCategoryMaxAggregateInputType = {
   id?: true
+  name?: true
+  slug?: true
+  description?: true
   image?: true
   icon?: true
   order?: true
   isActive?: true
+  isFeatured?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type NewsCategoryCountAggregateInputType = {
   id?: true
+  name?: true
+  slug?: true
+  description?: true
   image?: true
   icon?: true
   order?: true
   isActive?: true
+  isFeatured?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -193,10 +217,14 @@ export type NewsCategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type NewsCategoryGroupByOutputType = {
   id: string
+  name: string
+  slug: string
+  description: string | null
   image: string | null
   icon: string | null
   order: number
   isActive: boolean
+  isFeatured: boolean
   createdAt: Date
   updatedAt: Date
   _count: NewsCategoryCountAggregateOutputType | null
@@ -226,10 +254,14 @@ export type NewsCategoryWhereInput = {
   OR?: Prisma.NewsCategoryWhereInput[]
   NOT?: Prisma.NewsCategoryWhereInput | Prisma.NewsCategoryWhereInput[]
   id?: Prisma.StringFilter<"NewsCategory"> | string
+  name?: Prisma.StringFilter<"NewsCategory"> | string
+  slug?: Prisma.StringFilter<"NewsCategory"> | string
+  description?: Prisma.StringNullableFilter<"NewsCategory"> | string | null
   image?: Prisma.StringNullableFilter<"NewsCategory"> | string | null
   icon?: Prisma.StringNullableFilter<"NewsCategory"> | string | null
   order?: Prisma.IntFilter<"NewsCategory"> | number
   isActive?: Prisma.BoolFilter<"NewsCategory"> | boolean
+  isFeatured?: Prisma.BoolFilter<"NewsCategory"> | boolean
   createdAt?: Prisma.DateTimeFilter<"NewsCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"NewsCategory"> | Date | string
   news?: Prisma.NewsListRelationFilter
@@ -237,10 +269,14 @@ export type NewsCategoryWhereInput = {
 
 export type NewsCategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
   order?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   news?: Prisma.NewsOrderByRelationAggregateInput
@@ -249,24 +285,32 @@ export type NewsCategoryOrderByWithRelationInput = {
 
 export type NewsCategoryWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  slug?: string
   AND?: Prisma.NewsCategoryWhereInput | Prisma.NewsCategoryWhereInput[]
   OR?: Prisma.NewsCategoryWhereInput[]
   NOT?: Prisma.NewsCategoryWhereInput | Prisma.NewsCategoryWhereInput[]
+  name?: Prisma.StringFilter<"NewsCategory"> | string
+  description?: Prisma.StringNullableFilter<"NewsCategory"> | string | null
   image?: Prisma.StringNullableFilter<"NewsCategory"> | string | null
   icon?: Prisma.StringNullableFilter<"NewsCategory"> | string | null
   order?: Prisma.IntFilter<"NewsCategory"> | number
   isActive?: Prisma.BoolFilter<"NewsCategory"> | boolean
+  isFeatured?: Prisma.BoolFilter<"NewsCategory"> | boolean
   createdAt?: Prisma.DateTimeFilter<"NewsCategory"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"NewsCategory"> | Date | string
   news?: Prisma.NewsListRelationFilter
-}, "id">
+}, "id" | "slug">
 
 export type NewsCategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   image?: Prisma.SortOrderInput | Prisma.SortOrder
   icon?: Prisma.SortOrderInput | Prisma.SortOrder
   order?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.NewsCategoryCountOrderByAggregateInput
@@ -281,20 +325,28 @@ export type NewsCategoryScalarWhereWithAggregatesInput = {
   OR?: Prisma.NewsCategoryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.NewsCategoryScalarWhereWithAggregatesInput | Prisma.NewsCategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"NewsCategory"> | string
+  name?: Prisma.StringWithAggregatesFilter<"NewsCategory"> | string
+  slug?: Prisma.StringWithAggregatesFilter<"NewsCategory"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"NewsCategory"> | string | null
   image?: Prisma.StringNullableWithAggregatesFilter<"NewsCategory"> | string | null
   icon?: Prisma.StringNullableWithAggregatesFilter<"NewsCategory"> | string | null
   order?: Prisma.IntWithAggregatesFilter<"NewsCategory"> | number
   isActive?: Prisma.BoolWithAggregatesFilter<"NewsCategory"> | boolean
+  isFeatured?: Prisma.BoolWithAggregatesFilter<"NewsCategory"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"NewsCategory"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"NewsCategory"> | Date | string
 }
 
 export type NewsCategoryCreateInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   icon?: string | null
   order?: number
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   news?: Prisma.NewsCreateNestedManyWithoutCategoryInput
@@ -302,10 +354,14 @@ export type NewsCategoryCreateInput = {
 
 export type NewsCategoryUncheckedCreateInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   icon?: string | null
   order?: number
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   news?: Prisma.NewsUncheckedCreateNestedManyWithoutCategoryInput
@@ -313,10 +369,14 @@ export type NewsCategoryUncheckedCreateInput = {
 
 export type NewsCategoryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   news?: Prisma.NewsUpdateManyWithoutCategoryNestedInput
@@ -324,10 +384,14 @@ export type NewsCategoryUpdateInput = {
 
 export type NewsCategoryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   news?: Prisma.NewsUncheckedUpdateManyWithoutCategoryNestedInput
@@ -335,30 +399,42 @@ export type NewsCategoryUncheckedUpdateInput = {
 
 export type NewsCategoryCreateManyInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   icon?: string | null
   order?: number
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type NewsCategoryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NewsCategoryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -371,10 +447,14 @@ export type NewsCategoryOrderByRelevanceInput = {
 
 export type NewsCategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   image?: Prisma.SortOrder
   icon?: Prisma.SortOrder
   order?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -385,20 +465,28 @@ export type NewsCategoryAvgOrderByAggregateInput = {
 
 export type NewsCategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   image?: Prisma.SortOrder
   icon?: Prisma.SortOrder
   order?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type NewsCategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  name?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   image?: Prisma.SortOrder
   icon?: Prisma.SortOrder
   order?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  isFeatured?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -430,20 +518,28 @@ export type NewsCategoryUpdateOneWithoutNewsNestedInput = {
 
 export type NewsCategoryCreateWithoutNewsInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   icon?: string | null
   order?: number
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type NewsCategoryUncheckedCreateWithoutNewsInput = {
   id?: string
+  name: string
+  slug: string
+  description?: string | null
   image?: string | null
   icon?: string | null
   order?: number
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -466,20 +562,28 @@ export type NewsCategoryUpdateToOneWithWhereWithoutNewsInput = {
 
 export type NewsCategoryUpdateWithoutNewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type NewsCategoryUncheckedUpdateWithoutNewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   icon?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   order?: Prisma.IntFieldUpdateOperationsInput | number
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  isFeatured?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -517,10 +621,14 @@ export type NewsCategoryCountOutputTypeCountNewsArgs<ExtArgs extends runtime.Typ
 
 export type NewsCategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  name?: boolean
+  slug?: boolean
+  description?: boolean
   image?: boolean
   icon?: boolean
   order?: boolean
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   news?: boolean | Prisma.NewsCategory$newsArgs<ExtArgs>
@@ -531,15 +639,19 @@ export type NewsCategorySelect<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type NewsCategorySelectScalar = {
   id?: boolean
+  name?: boolean
+  slug?: boolean
+  description?: boolean
   image?: boolean
   icon?: boolean
   order?: boolean
   isActive?: boolean
+  isFeatured?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type NewsCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "image" | "icon" | "order" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["newsCategory"]>
+export type NewsCategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "slug" | "description" | "image" | "icon" | "order" | "isActive" | "isFeatured" | "createdAt" | "updatedAt", ExtArgs["result"]["newsCategory"]>
 export type NewsCategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   news?: boolean | Prisma.NewsCategory$newsArgs<ExtArgs>
   _count?: boolean | Prisma.NewsCategoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -552,10 +664,14 @@ export type $NewsCategoryPayload<ExtArgs extends runtime.Types.Extensions.Intern
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    name: string
+    slug: string
+    description: string | null
     image: string | null
     icon: string | null
     order: number
     isActive: boolean
+    isFeatured: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["newsCategory"]>
@@ -929,10 +1045,14 @@ export interface Prisma__NewsCategoryClient<T, Null = never, ExtArgs extends run
  */
 export interface NewsCategoryFieldRefs {
   readonly id: Prisma.FieldRef<"NewsCategory", 'String'>
+  readonly name: Prisma.FieldRef<"NewsCategory", 'String'>
+  readonly slug: Prisma.FieldRef<"NewsCategory", 'String'>
+  readonly description: Prisma.FieldRef<"NewsCategory", 'String'>
   readonly image: Prisma.FieldRef<"NewsCategory", 'String'>
   readonly icon: Prisma.FieldRef<"NewsCategory", 'String'>
   readonly order: Prisma.FieldRef<"NewsCategory", 'Int'>
   readonly isActive: Prisma.FieldRef<"NewsCategory", 'Boolean'>
+  readonly isFeatured: Prisma.FieldRef<"NewsCategory", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"NewsCategory", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"NewsCategory", 'DateTime'>
 }

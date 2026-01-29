@@ -14,23 +14,8 @@ export default function ContactPage() {
   const t = useTranslations("Contact");
 
   return (
-    <div className="min-h-screen bg-linear-to-b from-background to-muted/20">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary">
-              <MessageSquare className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary-foreground" />
-            </div>
-            <span className="text-base sm:text-lg font-semibold">Nexus</span>
-          </Link>
-          <Button asChild variant="outline" size="sm">
-            <Link href="/login">{t("login")}</Link>
-          </Button>
-        </div>
-      </header>
-
-      <main className="container px-4 py-8 sm:py-12 md:py-16 sm:px-6">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-b from-background to-muted/20">
+      <main className="container px-4 py-8 sm:py-12 md:py-16 sm:px-6 w-full">
         <div className="mx-auto max-w-5xl">
           {/* Hero */}
           <AnimatedSection animation="fade-up" delay={0}>
@@ -160,15 +145,6 @@ export default function ContactPage() {
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="border-t py-6 sm:py-8 mt-8 sm:mt-12">
-        <div className="container px-4 sm:px-6 text-center">
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            {t("footer", { year: new Date().getFullYear() })}
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

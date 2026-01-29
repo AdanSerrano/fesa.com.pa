@@ -8,6 +8,8 @@ import { getServicesPageDataAction } from "@/modules/services/actions/services.a
 import { HomeServicesSection } from "@/modules/services/components/home-services-section";
 import { getProductsPageDataAction } from "@/modules/products/actions/products.actions";
 import { HomeProductsSection } from "@/modules/products/components/home-products-section";
+import { getHomeNewsDataAction } from "@/modules/news/actions/news.actions";
+import { HomeNewsSection } from "@/modules/news/components/home-news-section";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
@@ -59,14 +61,17 @@ export default async function Home({ params }: HomeProps) {
   const tCommon = await getTranslations("Common");
   const tServices = await getTranslations("PublicServices");
   const tProducts = await getTranslations("PublicProducts");
+  const tNews = await getTranslations("PublicNews");
 
-  const [servicesData, productsData] = await Promise.all([
+  const [servicesData, productsData, newsData] = await Promise.all([
     getServicesPageDataAction(),
     getProductsPageDataAction(),
+    getHomeNewsDataAction(),
   ]);
 
   const { categories, featuredServices } = servicesData;
   const { categories: productCategories, featuredProducts } = productsData;
+  const { categories: newsCategories, featuredNews } = newsData;
 
   const features = [
     {
@@ -393,6 +398,21 @@ export default async function Home({ params }: HomeProps) {
             featuredTitle: tProducts("featuredTitle"),
             viewAll: tProducts("viewAll"),
             viewMore: tProducts("viewMore"),
+          }}
+        />
+
+        {/* News Section */}
+        <HomeNewsSection
+          categories={newsCategories}
+          featuredNews={featuredNews}
+          locale={locale}
+          labels={{
+            sectionTitle: tNews("homeSectionTitle"),
+            sectionSubtitle: tNews("homeSectionSubtitle"),
+            categoriesTitle: tNews("categoriesTitle"),
+            featuredTitle: tNews("featuredTitle"),
+            viewAll: tNews("viewAll"),
+            viewMore: tNews("viewMore"),
           }}
         />
 

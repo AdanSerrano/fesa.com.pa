@@ -9,8 +9,8 @@ export const publicRoutes = [
   "/services/:slug",
   "/services/:slug/:serviceSlug",
   "/news",
-  "/news/:slug",
-  "/news/:slug/:newsSlug",
+  "/news/:category",
+  "/news/:category/:article",
 ];
 
 export const authRoutes = [

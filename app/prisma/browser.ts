@@ -88,17 +88,12 @@ export type ProductItem = Prisma.ProductItemModel
  */
 export type NewsCategory = Prisma.NewsCategoryModel
 /**
- * Model NewsTag
- * 
- */
-export type NewsTag = Prisma.NewsTagModel
-/**
  * Model News
  * 
  */
 export type News = Prisma.NewsModel
 /**
- * Model NewsToTag
+ * Model NewsImage
  * 
  */
-export type NewsToTag = Prisma.NewsToTagModel
+export type NewsImage = Prisma.NewsImageModel
