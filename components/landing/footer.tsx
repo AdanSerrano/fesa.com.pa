@@ -15,7 +15,7 @@ export async function Footer() {
             <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary">
               <KeyRound className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary-foreground" />
             </div>
-            <span className="text-base sm:text-lg font-semibold">Nexus</span>
+            <span className="text-base sm:text-lg font-semibold">Fesa</span>
           </div>
 
           <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
@@ -34,7 +34,7 @@ export async function Footer() {
           </nav>
 
           <p className="text-xs sm:text-sm text-muted-foreground">
-            {new Date().getFullYear()} Nexus. {tCommon("allRightsReserved")}.
+            {new Date().getFullYear()} Fesa. {tCommon("allRightsReserved")}.
           </p>
         </div>
       </div>

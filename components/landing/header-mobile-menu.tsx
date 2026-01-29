@@ -23,6 +23,7 @@ import {
   Package,
   Newspaper,
   Home,
+  Building2,
 } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 
@@ -31,6 +32,7 @@ const iconMap = {
   Package,
   Newspaper,
   Home,
+  Building2,
 } as const;
 
 type IconName = keyof typeof iconMap;
@@ -73,7 +75,7 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
               <KeyRound className="h-4 w-4 text-primary-foreground" />
             </div>
-            Nexus
+            Fesa
           </SheetTitle>
         </SheetHeader>
         <nav className="mt-6 flex flex-col gap-2 flex-1 overflow-y-auto">

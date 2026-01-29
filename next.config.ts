@@ -113,10 +113,12 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Imágenes: mismo origen + data URIs + blobs
       "img-src 'self' data: blob: https:",
+      // Videos/Audio: mismo origen + Cloudflare R2
+      `media-src 'self' blob: https://*.r2.cloudflarestorage.com https://*.r2.dev ${process.env.R2_PUBLIC_URL || ""} https://file.fesa.com.pa`.trim(),
       // Fuentes: Google Fonts
       "font-src 'self' https://fonts.gstatic.com",
       // Conexiones: mismo origen + APIs necesarias + Cloudflare R2
-      `connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://*.r2.cloudflarestorage.com ${process.env.R2_PUBLIC_URL || ""}`.trim(),
+      `connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com https://*.r2.cloudflarestorage.com https://*.r2.dev ${process.env.R2_PUBLIC_URL || ""} https://file.fesa.com.pa`.trim(),
       // Frames: ninguno permitido
       "frame-src 'none'",
       // Frame ancestors: ninguno (prevenir embedding)
@@ -139,20 +141,20 @@ const securityHeaders = [
       .filter(Boolean)
       .join("; "),
   },
-  // Cross-Origin Embedder Policy
+  // Cross-Origin Embedder Policy - Permitir recursos externos
   {
     key: "Cross-Origin-Embedder-Policy",
-    value: "credentialless",
+    value: "unsafe-none",
   },
   // Cross-Origin Opener Policy
   {
     key: "Cross-Origin-Opener-Policy",
     value: "same-origin",
   },
-  // Cross-Origin Resource Policy
+  // Cross-Origin Resource Policy - Permitir recursos de R2
   {
     key: "Cross-Origin-Resource-Policy",
-    value: "same-origin",
+    value: "cross-origin",
   },
   // No almacenar en cache datos sensibles
   {
@@ -456,7 +458,7 @@ const nextConfig: NextConfig = {
   env: {
     // Solo exponer variables necesarias al cliente
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
-    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || "Nexus",
+    NEXT_PUBLIC_APP_NAME: process.env.NEXT_PUBLIC_APP_NAME || "Fesa",
   },
 };
 

@@ -119,3 +119,8 @@ export type News = Prisma.NewsModel
  * 
  */
 export type NewsImage = Prisma.NewsImageModel
+/**
+ * Model AboutContent
+ * 
+ */
+export type AboutContent = Prisma.AboutContentModel

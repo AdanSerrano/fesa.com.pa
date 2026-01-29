@@ -66,7 +66,8 @@ export const ModelName = {
   ProductItem: 'ProductItem',
   NewsCategory: 'NewsCategory',
   News: 'News',
-  NewsImage: 'NewsImage'
+  NewsImage: 'NewsImage',
+  AboutContent: 'AboutContent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -317,6 +318,22 @@ export const NewsImageScalarFieldEnum = {
 export type NewsImageScalarFieldEnum = (typeof NewsImageScalarFieldEnum)[keyof typeof NewsImageScalarFieldEnum]
 
 
+export const AboutContentScalarFieldEnum = {
+  id: 'id',
+  section: 'section',
+  title: 'title',
+  content: 'content',
+  mediaType: 'mediaType',
+  mediaUrl: 'mediaUrl',
+  isActive: 'isActive',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AboutContentScalarFieldEnum = (typeof AboutContentScalarFieldEnum)[keyof typeof AboutContentScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -542,4 +559,16 @@ export const NewsImageOrderByRelevanceFieldEnum = {
 } as const
 
 export type NewsImageOrderByRelevanceFieldEnum = (typeof NewsImageOrderByRelevanceFieldEnum)[keyof typeof NewsImageOrderByRelevanceFieldEnum]
+
+
+export const AboutContentOrderByRelevanceFieldEnum = {
+  id: 'id',
+  section: 'section',
+  title: 'title',
+  content: 'content',
+  mediaType: 'mediaType',
+  mediaUrl: 'mediaUrl'
+} as const
+
+export type AboutContentOrderByRelevanceFieldEnum = (typeof AboutContentOrderByRelevanceFieldEnum)[keyof typeof AboutContentOrderByRelevanceFieldEnum]
 

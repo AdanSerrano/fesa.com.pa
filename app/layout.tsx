@@ -20,7 +20,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const APP_NAME = "Nexus";
+const APP_NAME = "Fesa";
 const APP_DESCRIPTION =
   "Sistema de autenticación completo y seguro con verificación de email, autenticación de dos factores (2FA), recuperación de contraseña y arquitectura modular. Production-ready con Next.js 16, React 19 y TypeScript.";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -168,7 +168,7 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/icon.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="Nexus" />
+        <meta name="apple-mobile-web-app-title" content="Fesa" />
         <meta name="mobile-web-app-capable" content="yes" />
         {/* Structured Data */}
         <RootJsonLd />

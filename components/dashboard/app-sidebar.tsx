@@ -15,6 +15,7 @@ import {
   Package,
   ShoppingBag,
   Newspaper,
+  Building2,
 } from "lucide-react";
 import {
   Sidebar,
@@ -76,6 +77,11 @@ const adminNavItemsConfig: NavItem[] = [
     titleKey: "news",
     url: "/dashboard/admin/news",
     icon: Newspaper,
+  },
+  {
+    titleKey: "about",
+    url: "/dashboard/admin/about",
+    icon: Building2,
   },
 ];
 
@@ -145,7 +151,7 @@ function AppSidebarComponent({ user }: AppSidebarProps) {
                   <KeyRound className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Nexus</span>
+                  <span className="truncate font-semibold">Fesa</span>
                   <span className="truncate text-xs text-muted-foreground">
                     {t("dashboard")}
                   </span>

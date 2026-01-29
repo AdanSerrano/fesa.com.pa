@@ -11,6 +11,7 @@ export const publicRoutes = [
   "/news",
   "/news/:category",
   "/news/:category/:article",
+  "/about",
 ];
 
 export const authRoutes = [

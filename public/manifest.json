@@ -1,7 +1,7 @@
 {
   "id": "/",
-  "name": "Nexus - Sistema de Autenticación",
-  "short_name": "Nexus",
+  "name": "Fesa - Sistema de Autenticación",
+  "short_name": "Fesa",
   "description": "Sistema de autenticación completo y seguro con verificación de email, 2FA y recuperación de contraseña.",
   "start_url": "/",
   "display": "standalone",

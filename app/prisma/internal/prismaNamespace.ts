@@ -399,7 +399,8 @@ export const ModelName = {
   ProductItem: 'ProductItem',
   NewsCategory: 'NewsCategory',
   News: 'News',
-  NewsImage: 'NewsImage'
+  NewsImage: 'NewsImage',
+  AboutContent: 'AboutContent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -415,7 +416,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "verificationToken" | "passwordResetToken" | "twoFactorToken" | "magicLinkToken" | "twoFactorConfirmation" | "auditLog" | "session" | "fileUpload" | "serviceCategory" | "serviceItem" | "productCategory" | "productItem" | "newsCategory" | "news" | "newsImage"
+    modelProps: "user" | "verificationToken" | "passwordResetToken" | "twoFactorToken" | "magicLinkToken" | "twoFactorConfirmation" | "auditLog" | "session" | "fileUpload" | "serviceCategory" | "serviceItem" | "productCategory" | "productItem" | "newsCategory" | "news" | "newsImage" | "aboutContent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1475,6 +1476,72 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    AboutContent: {
+      payload: Prisma.$AboutContentPayload<ExtArgs>
+      fields: Prisma.AboutContentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.AboutContentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.AboutContentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>
+        }
+        findFirst: {
+          args: Prisma.AboutContentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.AboutContentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>
+        }
+        findMany: {
+          args: Prisma.AboutContentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>[]
+        }
+        create: {
+          args: Prisma.AboutContentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>
+        }
+        createMany: {
+          args: Prisma.AboutContentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        delete: {
+          args: Prisma.AboutContentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>
+        }
+        update: {
+          args: Prisma.AboutContentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>
+        }
+        deleteMany: {
+          args: Prisma.AboutContentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.AboutContentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        upsert: {
+          args: Prisma.AboutContentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$AboutContentPayload>
+        }
+        aggregate: {
+          args: Prisma.AboutContentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateAboutContent>
+        }
+        groupBy: {
+          args: Prisma.AboutContentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AboutContentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.AboutContentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AboutContentCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1746,6 +1813,22 @@ export const NewsImageScalarFieldEnum = {
 export type NewsImageScalarFieldEnum = (typeof NewsImageScalarFieldEnum)[keyof typeof NewsImageScalarFieldEnum]
 
 
+export const AboutContentScalarFieldEnum = {
+  id: 'id',
+  section: 'section',
+  title: 'title',
+  content: 'content',
+  mediaType: 'mediaType',
+  mediaUrl: 'mediaUrl',
+  isActive: 'isActive',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AboutContentScalarFieldEnum = (typeof AboutContentScalarFieldEnum)[keyof typeof AboutContentScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -1973,6 +2056,18 @@ export const NewsImageOrderByRelevanceFieldEnum = {
 export type NewsImageOrderByRelevanceFieldEnum = (typeof NewsImageOrderByRelevanceFieldEnum)[keyof typeof NewsImageOrderByRelevanceFieldEnum]
 
 
+export const AboutContentOrderByRelevanceFieldEnum = {
+  id: 'id',
+  section: 'section',
+  title: 'title',
+  content: 'content',
+  mediaType: 'mediaType',
+  mediaUrl: 'mediaUrl'
+} as const
+
+export type AboutContentOrderByRelevanceFieldEnum = (typeof AboutContentOrderByRelevanceFieldEnum)[keyof typeof AboutContentOrderByRelevanceFieldEnum]
+
+
 
 /**
  * Field references
@@ -2159,6 +2254,7 @@ export type GlobalOmitConfig = {
   newsCategory?: Prisma.NewsCategoryOmit
   news?: Prisma.NewsOmit
   newsImage?: Prisma.NewsImageOmit
+  aboutContent?: Prisma.AboutContentOmit
 }
 
 /* Types for Logging */

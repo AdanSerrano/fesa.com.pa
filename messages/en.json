@@ -1,6 +1,6 @@
 {
   "Metadata": {
-    "title": "Nexus - Authentication System",
+    "title": "Fesa - Authentication System",
     "description": "Complete and secure authentication system with email verification, two-factor authentication (2FA), password recovery, and modular architecture."
   },
   "Common": {
@@ -68,6 +68,7 @@
     "services": "Services",
     "products": "Products",
     "news": "News",
+    "about": "About",
     "settings": "Settings",
     "profile": "Profile",
     "security": "Security",
@@ -930,6 +931,37 @@
       "inactive": "Inactive",
       "noCategories": "No categories registered",
       "noArticles": "No articles registered"
+    },
+    "about": {
+      "title": "About Management",
+      "description": "Manage company information: history, mission and vision",
+      "tabs": {
+        "history": "History",
+        "mission": "Mission",
+        "vision": "Vision"
+      },
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "Section title",
+        "content": "Content",
+        "contentPlaceholder": "Describe the content of this section...",
+        "mediaType": "Media type",
+        "selectMediaType": "Select a type",
+        "image": "Image",
+        "video": "Video",
+        "noMedia": "No media",
+        "mediaUrl": "Media URL",
+        "mediaUrlPlaceholder": "https://...",
+        "isActive": "Active",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "uploadMedia": "Upload file",
+        "removeMedia": "Remove"
+      },
+      "messages": {
+        "saved": "Section updated successfully",
+        "error": "Error saving section"
+      }
     }
   },
   "BlockUserDialog": {
@@ -1165,7 +1197,7 @@
     "message": "Message",
     "messagePlaceholder": "Write your message here...",
     "send": "Send message",
-    "footer": "{year} Nexus. All rights reserved."
+    "footer": "{year} Fesa. All rights reserved."
   },
   "DemoTable": {
     "title": "Demo DataTable",
@@ -1427,6 +1459,14 @@
     "feature1": "High quality guaranteed products",
     "feature2": "Personalized attention and advisory",
     "feature3": "Satisfaction guarantee on all our products"
+  },
+  "PublicAbout": {
+    "badge": "Our Company",
+    "title": "About Us",
+    "subtitle": "Discover our history, mission and vision that guide us every day",
+    "noContent": "No content available",
+    "noContentTitle": "Content under construction",
+    "noContentSubtitle": "We will soon share more information about our company"
   },
   "PublicNews": {
     "title": "News",

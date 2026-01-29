@@ -1,6 +1,6 @@
 {
   "Metadata": {
-    "title": "Nexus - Sistema de Autenticación",
+    "title": "Fesa - Sistema de Autenticación",
     "description": "Sistema de autenticación completo y seguro con verificación de email, autenticación de dos factores (2FA), recuperación de contraseña y arquitectura modular."
   },
   "Common": {
@@ -68,6 +68,7 @@
     "services": "Servicios",
     "products": "Productos",
     "news": "Noticias",
+    "about": "Nosotros",
     "settings": "Configuración",
     "profile": "Perfil",
     "security": "Seguridad",
@@ -930,6 +931,37 @@
       "inactive": "Inactivo",
       "noCategories": "No hay categorías registradas",
       "noArticles": "No hay artículos registrados"
+    },
+    "about": {
+      "title": "Gestión de Nosotros",
+      "description": "Administra la información de la empresa: historia, misión y visión",
+      "tabs": {
+        "history": "Historia",
+        "mission": "Misión",
+        "vision": "Visión"
+      },
+      "form": {
+        "title": "Título",
+        "titlePlaceholder": "Título de la sección",
+        "content": "Contenido",
+        "contentPlaceholder": "Describe el contenido de esta sección...",
+        "mediaType": "Tipo de medio",
+        "selectMediaType": "Selecciona un tipo",
+        "image": "Imagen",
+        "video": "Video",
+        "noMedia": "Sin medio",
+        "mediaUrl": "URL del medio",
+        "mediaUrlPlaceholder": "https://...",
+        "isActive": "Activo",
+        "save": "Guardar cambios",
+        "saving": "Guardando...",
+        "uploadMedia": "Subir archivo",
+        "removeMedia": "Eliminar"
+      },
+      "messages": {
+        "saved": "Sección actualizada exitosamente",
+        "error": "Error al guardar la sección"
+      }
     }
   },
   "BlockUserDialog": {
@@ -1164,7 +1196,7 @@
     "message": "Mensaje",
     "messagePlaceholder": "Escribe tu mensaje aquí...",
     "send": "Enviar mensaje",
-    "footer": "{year} Nexus. Todos los derechos reservados."
+    "footer": "{year} Fesa. Todos los derechos reservados."
   },
   "DemoTable": {
     "title": "Demo DataTable",
@@ -1426,6 +1458,14 @@
     "feature1": "Productos de alta calidad garantizada",
     "feature2": "Atención personalizada y asesoría",
     "feature3": "Garantía de satisfacción en todos nuestros productos"
+  },
+  "PublicAbout": {
+    "badge": "Nuestra Empresa",
+    "title": "Conócenos",
+    "subtitle": "Descubre nuestra historia, misión y visión que nos guían cada día",
+    "noContent": "Sin contenido disponible",
+    "noContentTitle": "Contenido en construcción",
+    "noContentSubtitle": "Pronto compartiremos más información sobre nuestra empresa"
   },
   "PublicNews": {
     "title": "Noticias",

@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-const APP_NAME = "Nexus";
+const APP_NAME = "Fesa";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 const APP_DESCRIPTION =
   "Sistema de autenticación completo y seguro con verificación de email, autenticación de dos factores (2FA), recuperación de contraseña y arquitectura modular.";
