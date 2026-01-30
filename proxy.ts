@@ -446,6 +446,6 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
 export const config = {
   matcher: [
     // Excluir archivos estáticos, assets y SEO files
-    "/((?!_next/static|_next/image|favicon.ico|robots\\.txt$|sitemap\\.xml$|browserconfig\\.xml$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$|.*\\.ico$|.*\\.webp$|sw\\.js$|workbox-.*\\.js$|swe-worker-.*\\.js$|fallback-.*\\.js$|manifest\\.json$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|browserconfig\\.xml$|.*\\.png$|.*\\.jpg$|.*\\.jpeg$|.*\\.gif$|.*\\.svg$|.*\\.ico$|.*\\.webp$|sw\\.js$|workbox-.*\\.js$|swe-worker-.*\\.js$|fallback-.*\\.js$|manifest\\.json$).*)",
   ],
 };
