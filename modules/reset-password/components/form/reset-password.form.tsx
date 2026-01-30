@@ -15,7 +15,7 @@ import {
   FormSubmitButton,
 } from "@/components/ui/form-fields";
 import { PasswordStrengthIndicator } from "@/components/ui/password-strength-indicator";
-import { KeyRound, CheckCircle } from "lucide-react";
+import {  CheckCircle, KeyRound } from "lucide-react";
 import { ResetPasswordViewModel } from "../../view-model/reset-password.view-model";
 import { memo, useDeferredValue } from "react";
 import { Link } from "@/i18n/navigation";
@@ -42,9 +42,6 @@ export const ResetPasswordForm = memo(function ResetPasswordForm({
   return (
     <Card className="w-full border-border/40 shadow-lg">
       <CardHeader className="space-y-1 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-2">
-          <KeyRound className="h-6 w-6 text-primary" aria-hidden="true" />
-        </div>
         <CardTitle className="text-xl font-bold sm:text-2xl">
           {t("title")}
         </CardTitle>

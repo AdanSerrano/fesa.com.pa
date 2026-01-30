@@ -15,10 +15,10 @@ export async function Footer() {
   ];
 
   const ecosystemLinks = [
-    { name: "FESA Store", href: "https://app.fesastore.com.pa" },
-    { name: "FESA ID", href: "https://id.fesa.com.pa" },
-    { name: "FESA Transfer", href: "#" },
-    { name: "FESA Tracking", href: "#" },
+    { name: "Fesa Store", href: "https://app.fesastore.com.pa" },
+    { name: "Fesa ID", href: "https://id.fesa.com.pa" },
+    { name: "Fesa Transfer", href: "#" },
+    { name: "Fesa Tracking", href: "#" },
   ];
 
   return (
@@ -27,7 +27,7 @@ export async function Footer() {
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4 sm:col-span-2 lg:col-span-1">
             <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              FESA
+              Fesa
             </span>
             <p className="text-sm text-muted-foreground max-w-xs">
               {tFooter("tagline")}

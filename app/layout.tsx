@@ -24,7 +24,7 @@ const geistMono = Geist_Mono({
   preload: false,
 });
 
-const APP_NAME = "FESA";
+const APP_NAME = "Fesa";
 const APP_DESCRIPTION =
   "Formas Eficientes S.A. - Más de 50 años innovando en soluciones empresariales en Panamá. Impresión comercial, RFID, medios de pago, documentos de seguridad y soluciones tecnológicas integrales.";
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   ],
   generator: "Next.js",
   keywords: [
-    "FESA",
+    "Fesa",
     "Formas Eficientes",
     "impresión comercial",
     "RFID",

@@ -322,7 +322,7 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
-      // FESA file storage
+      // Fesa file storage
       {
         protocol: "https",
         hostname: "file.fesa.com.pa",

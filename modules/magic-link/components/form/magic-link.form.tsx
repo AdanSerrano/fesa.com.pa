@@ -8,7 +8,7 @@ import {
   FormSubmitButton,
 } from "@/components/ui/form-fields";
 import { MagicLinkViewModel } from "@/modules/magic-link/view-model/magic-link.view-model";
-import { Wand2, CheckCircle, KeyRound } from "lucide-react";
+import { Wand2, CheckCircle } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
@@ -73,7 +73,6 @@ export const MagicLinkForm = memo(function MagicLinkForm() {
           href="/login"
           className="w-full flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
         >
-          <KeyRound className="h-4 w-4" />
           {tAuth("loginWithPassword")}
         </Link>
 

@@ -19,7 +19,6 @@ import { LoginViewModel } from "@/modules/login/view-model/login.view-model";
 import {
   LogIn,
   ShieldCheck,
-  KeyRound,
   Wand2,
   AlertTriangle,
 } from "lucide-react";
@@ -120,12 +119,6 @@ export const LoginForm = memo(function LoginForm() {
 
           {isTwoFactorPending && !twoFactor.dialogOpen && (
             <div className="flex items-center gap-3 rounded-xl bg-primary/10 px-4 py-3 border border-primary/20">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/20">
-                <KeyRound
-                  className="h-5 w-5 text-primary"
-                  aria-hidden="true"
-                />
-              </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground">
                   {t("verificationPending")}

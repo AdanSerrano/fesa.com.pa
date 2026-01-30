@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "FESA - Formas Eficientes S.A. | Soluciones Empresariales en Panamá",
-    "description": "FESA - Más de 50 años innovando en impresión comercial, soluciones RFID, medios de pago y tecnología empresarial en Panamá. Documentos de seguridad, formularios y soluciones logísticas."
+    "title": "Fesa - Formas Eficientes S.A. | Soluciones Empresariales en Panamá",
+    "description": "Fesa - Más de 50 años innovando en impresión comercial, soluciones RFID, medios de pago y tecnología empresarial en Panamá. Documentos de seguridad, formularios y soluciones logísticas."
   },
   "Common": {
     "loading": "Cargando...",
@@ -326,13 +326,13 @@
       "id": "Tarjetas digitales empresariales y gestión de identidad."
     },
     "ecosystemSection": {
-      "badge": "Ecosistema Digital FESA",
+      "badge": "Ecosistema Digital Fesa",
       "title": "Herramientas digitales integradas",
       "subtitle": "Un ecosistema completo de aplicaciones diseñadas para potenciar la eficiencia y productividad de tu empresa.",
       "visitApp": "Visitar"
     },
     "whyUsSection": {
-      "badge": "¿Por qué FESA?",
+      "badge": "¿Por qué Fesa?",
       "title": "Más de 50 años de innovación constante",
       "subtitle": "Somos líderes en soluciones empresariales en Panamá, comprometidos con la innovación y la excelencia en el servicio a nuestros clientes.",
       "sustainability": "Producción Más Limpia",
@@ -433,7 +433,7 @@
         "answer": "Puedes contactarnos por WhatsApp, teléfono o email. Uno de nuestros asesores se comunicará contigo para entender tus necesidades, luego programaremos una visita o reunión virtual para presentarte una propuesta personalizada sin compromiso."
       }
     ],
-    "whatsappMessage": "Hola, me interesa conocer más sobre los servicios de FESA."
+    "whatsappMessage": "Hola, me interesa conocer más sobre los servicios de Fesa."
   },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",

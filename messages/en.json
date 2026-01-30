@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "FESA - Formas Eficientes S.A. | Business Solutions in Panama",
-    "description": "FESA - Over 50 years innovating in commercial printing, RFID solutions, payment methods and business technology in Panama. Security documents, forms and logistics solutions."
+    "title": "Fesa - Formas Eficientes S.A. | Business Solutions in Panama",
+    "description": "Fesa - Over 50 years innovating in commercial printing, RFID solutions, payment methods and business technology in Panama. Security documents, forms and logistics solutions."
   },
   "Common": {
     "loading": "Loading...",
@@ -326,13 +326,13 @@
       "id": "Digital business cards and identity management."
     },
     "ecosystemSection": {
-      "badge": "FESA Digital Ecosystem",
+      "badge": "Fesa Digital Ecosystem",
       "title": "Integrated digital tools",
       "subtitle": "A complete ecosystem of applications designed to boost your company's efficiency and productivity.",
       "visitApp": "Visit"
     },
     "whyUsSection": {
-      "badge": "Why FESA?",
+      "badge": "Why Fesa?",
       "title": "Over 50 years of constant innovation",
       "subtitle": "We are leaders in business solutions in Panama, committed to innovation and excellence in customer service.",
       "sustainability": "Cleaner Production",
@@ -433,7 +433,7 @@
         "answer": "You can contact us via WhatsApp, phone or email. One of our advisors will contact you to understand your needs, then we'll schedule a visit or virtual meeting to present you with a personalized proposal with no obligation."
       }
     ],
-    "whatsappMessage": "Hello, I'm interested in learning more about FESA's services."
+    "whatsappMessage": "Hello, I'm interested in learning more about Fesa's services."
   },
   "Dashboard": {
     "welcome": "Welcome, {name}",

@@ -112,7 +112,7 @@ export default async function Home({ params }: HomeProps) {
   const ecosystem = [
     {
       icon: Store,
-      name: "FESA Store",
+      name: "Fesa Store",
       description: t("ecosystem.store"),
       href: "https://app.fesastore.com.pa",
       color: "from-blue-500 to-blue-600",
@@ -120,7 +120,7 @@ export default async function Home({ params }: HomeProps) {
     },
     {
       icon: Send,
-      name: "FESA Transfer",
+      name: "Fesa Transfer",
       description: t("ecosystem.transfer"),
       href: "#",
       color: "from-green-500 to-green-600",
@@ -128,7 +128,7 @@ export default async function Home({ params }: HomeProps) {
     },
     {
       icon: MapPin,
-      name: "FESA Tracking",
+      name: "Fesa Tracking",
       description: t("ecosystem.tracking"),
       href: "#",
       color: "from-orange-500 to-orange-600",
@@ -136,7 +136,7 @@ export default async function Home({ params }: HomeProps) {
     },
     {
       icon: Database,
-      name: "FESA Storage",
+      name: "Fesa Storage",
       description: t("ecosystem.storage"),
       href: "#",
       color: "from-purple-500 to-purple-600",
@@ -144,7 +144,7 @@ export default async function Home({ params }: HomeProps) {
     },
     {
       icon: IdCard,
-      name: "FESA ID",
+      name: "Fesa ID",
       description: t("ecosystem.id"),
       href: "https://id.fesa.com.pa",
       color: "from-red-500 to-red-600",

@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/sheet";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
-  KeyRound,
   User,
   Settings,
   Shield,
@@ -81,9 +80,6 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
       <SheetContent side="right" className="w-[280px] sm:w-[320px] flex flex-col">
         <SheetHeader>
           <SheetTitle className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-              <KeyRound className="h-4 w-4 text-primary-foreground" />
-            </div>
             Fesa
           </SheetTitle>
         </SheetHeader>

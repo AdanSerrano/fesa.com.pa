@@ -14,7 +14,7 @@ import {
   FormSubmitButton,
 } from "@/components/ui/form-fields";
 import { ForgotPasswordViewModel } from "../../view-model/forgot-password.view-model";
-import { CheckCircle, KeyRound, Mail } from "lucide-react";
+import { CheckCircle, Mail } from "lucide-react";
 import { Link } from "@/i18n/navigation";
 import { memo } from "react";
 import { useTranslations } from "next-intl";
@@ -32,9 +32,6 @@ export const ForgotPasswordForm = memo(function ForgotPasswordForm() {
   return (
     <Card className="w-full max-w-md border-border/40 shadow-lg">
       <CardHeader className="space-y-1 text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 mb-2">
-          <KeyRound className="h-6 w-6 text-primary" aria-hidden="true" />
-        </div>
         <CardTitle className="text-xl font-bold sm:text-2xl">
           {t("title")}
         </CardTitle>
