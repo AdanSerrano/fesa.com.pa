@@ -190,7 +190,7 @@ export default async function Home({ params }: HomeProps) {
 
           <div className="max-w-7xl mx-auto px-4 py-20 md:px-6 w-full">
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-              <div>
+              <div className="text-center lg:text-left">
                 <AnimatedSection animation="fade-down" delay={0}>
                   <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
                     <Sparkles className="mr-2 h-4 w-4" />
@@ -201,7 +201,7 @@ export default async function Home({ params }: HomeProps) {
                 <AnimatedSection animation="fade-up" delay={100}>
                   <h1 className="mb-6 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[1.1]">
                     {t("title")}{" "}
-                    <span className="relative">
+                    <span className="relative inline-block">
                       <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
                         {t("titleHighlight")}
                       </span>
@@ -222,7 +222,7 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={200}>
-                  <p className="mb-8 text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl">
+                  <p className="mb-8 text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
                     {t("subtitle")}
                   </p>
                 </AnimatedSection>
@@ -232,17 +232,17 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade" delay={400}>
-                  <div className="mt-10 flex flex-wrap items-center gap-6 text-sm text-muted-foreground">
+                  <div className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature1")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature2")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
+                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature3")}</span>
                     </div>
                   </div>
