@@ -1,150 +1,114 @@
-"use client";
+import { Suspense } from "react";
+import { ContactView } from "@/modules/contact/view/contact.view";
+import { Skeleton } from "@/components/ui/skeleton";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { AnimatedSection } from "@/components/ui/animated-section";
-import { Mail, MessageSquare, Send, MapPin, Phone } from "lucide-react";
-import Link from "next/link";
-import { useTranslations } from "next-intl";
+export const metadata = {
+  title: "Contacto",
+  description: "Contáctanos para cualquier pregunta o comentario",
+};
 
-export default function ContactPage() {
-  const t = useTranslations("Contact");
-
+function ContactSkeleton() {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-linear-to-b from-background to-muted/20">
-      <main className="container px-4 py-8 sm:py-12 md:py-16 sm:px-6 w-full">
-        <div className="mx-auto max-w-5xl">
-          {/* Hero */}
-          <AnimatedSection animation="fade-up" delay={0}>
-            <div className="text-center mb-8 sm:mb-12">
-              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-3 sm:mb-4">
-                {t("title")}
-              </h1>
-              <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mx-auto">
-                {t("subtitle")}
-              </p>
-            </div>
-          </AnimatedSection>
+    <div className="min-h-screen relative">
+      <div className="absolute inset-0 h-[50vh] bg-gradient-to-br from-primary/5 via-primary/10 to-background" />
+      <div className="absolute top-0 right-0 h-96 w-96 rounded-full bg-primary/10 blur-3xl opacity-50" />
 
-          <div className="grid gap-6 sm:gap-8 lg:grid-cols-3">
-            {/* Contact Info Cards */}
-            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
-              <AnimatedSection animation="fade-right" delay={100}>
-                <Card className="border-border/50">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                        <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-sm sm:text-base">{t("email")}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground mt-1 truncate">
-                          soporte@nexus.com
-                        </p>
+      <div className="container mx-auto px-4 py-6 sm:py-10 relative">
+        <Skeleton className="h-5 w-32 mb-8" />
+
+        <div className="text-center mb-12 sm:mb-16 max-w-3xl mx-auto space-y-4">
+          <Skeleton className="h-8 w-28 rounded-full mx-auto" />
+          <Skeleton className="h-12 w-64 mx-auto" />
+          <Skeleton className="h-6 w-96 mx-auto" />
+        </div>
+
+        <div className="max-w-6xl mx-auto">
+          <div className="grid gap-6 sm:gap-8 lg:grid-cols-5">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="rounded-xl border p-5">
+                    <div className="flex items-start gap-4">
+                      <Skeleton className="h-12 w-12 rounded-xl" />
+                      <div className="space-y-2 flex-1">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-5 w-32" />
                       </div>
                     </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
+                  </div>
+                ))}
+              </div>
 
-              <AnimatedSection animation="fade-right" delay={200}>
-                <Card className="border-border/50">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                        <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-sm sm:text-base">{t("phone")}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                          +1 (555) 123-4567
-                        </p>
-                      </div>
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                {[1, 2].map((i) => (
+                  <div key={i} className="flex items-center gap-3 p-4 rounded-xl bg-muted/50">
+                    <Skeleton className="h-10 w-10 rounded-lg" />
+                    <div className="space-y-1">
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-4 w-32" />
                     </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
+                  </div>
+                ))}
+              </div>
 
-              <AnimatedSection animation="fade-right" delay={300}>
-                <Card className="border-border/50">
-                  <CardContent className="p-4 sm:p-6">
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="flex h-9 w-9 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                        <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <h3 className="font-medium text-sm sm:text-base">{t("location")}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                          {t("locationValue")}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </AnimatedSection>
+              <div className="rounded-xl border p-5 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-4 w-4" />
+                  <Skeleton className="h-5 w-40" />
+                </div>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="border-b pb-3">
+                    <Skeleton className="h-5 w-full" />
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Contact Form */}
-            <AnimatedSection animation="fade-up" delay={200} className="lg:col-span-2">
-              <Card className="border-border/50 shadow-lg">
-                <CardHeader className="px-4 sm:px-6">
-                  <CardTitle className="text-lg sm:text-xl">{t("sendMessage")}</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    {t("formDescription")}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="px-4 sm:px-6">
-                  <form className="space-y-4 sm:space-y-6">
-                    <div className="grid gap-4 sm:gap-6 sm:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="name" className="text-sm">{t("name")}</Label>
-                        <Input
-                          id="name"
-                          placeholder={t("namePlaceholder")}
-                          className="h-10 sm:h-11"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="text-sm">{t("email")}</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder={t("emailPlaceholder")}
-                          className="h-10 sm:h-11"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="subject" className="text-sm">{t("subject")}</Label>
-                      <Input
-                        id="subject"
-                        placeholder={t("subjectPlaceholder")}
-                        className="h-10 sm:h-11"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="message" className="text-sm">{t("message")}</Label>
-                      <Textarea
-                        id="message"
-                        placeholder={t("messagePlaceholder")}
-                        rows={5}
-                        className="resize-none"
-                      />
-                    </div>
-                    <Button type="submit" className="w-full sm:w-auto">
-                      <Send className="mr-2 h-4 w-4" />
-                      {t("send")}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            </AnimatedSection>
+            <div className="lg:col-span-3">
+              <div className="rounded-xl border shadow-xl p-6 space-y-6">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-5 w-5" />
+                    <Skeleton className="h-6 w-48" />
+                  </div>
+                  <Skeleton className="h-4 w-64" />
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-11 w-full" />
+                  </div>
+                  <div className="space-y-2">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-11 w-full" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-11 w-full" />
+                </div>
+
+                <div className="space-y-2">
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-32 w-full" />
+                </div>
+
+                <Skeleton className="h-11 w-40" />
+              </div>
+            </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
+  );
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<ContactSkeleton />}>
+      <ContactView />
+    </Suspense>
   );
 }
