@@ -40,10 +40,10 @@ const CertificationCard = memo(function CertificationCard({
 }) {
   const Icon = iconMap[certification.icon] || Award;
   const colors = [
-    { bg: "bg-blue-500/10", text: "text-blue-500", border: "border-blue-500/20" },
-    { bg: "bg-green-500/10", text: "text-green-500", border: "border-green-500/20" },
-    { bg: "bg-purple-500/10", text: "text-purple-500", border: "border-purple-500/20" },
-    { bg: "bg-orange-500/10", text: "text-orange-500", border: "border-orange-500/20" },
+    { bg: "bg-blue-500/10 dark:bg-blue-400/10", text: "text-blue-600 dark:text-blue-400", border: "border-blue-500/20 dark:border-blue-400/20" },
+    { bg: "bg-green-500/10 dark:bg-green-400/10", text: "text-green-600 dark:text-green-400", border: "border-green-500/20 dark:border-green-400/20" },
+    { bg: "bg-purple-500/10 dark:bg-purple-400/10", text: "text-purple-600 dark:text-purple-400", border: "border-purple-500/20 dark:border-purple-400/20" },
+    { bg: "bg-orange-500/10 dark:bg-orange-400/10", text: "text-orange-600 dark:text-orange-400", border: "border-orange-500/20 dark:border-orange-400/20" },
   ];
   const color = colors[index % colors.length];
 

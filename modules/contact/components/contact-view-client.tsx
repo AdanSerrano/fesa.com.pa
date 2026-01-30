@@ -289,8 +289,8 @@ function ContactViewClientComponent({ locale, labels }: ContactViewClientProps) 
                 <CardContent className="px-6 pb-6">
                   {state.success ? (
                     <div className="text-center py-12">
-                      <div className="h-16 w-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4">
-                        <CheckCircle2 className="h-8 w-8 text-green-500" />
+                      <div className="h-16 w-16 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 flex items-center justify-center mx-auto mb-4">
+                        <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" />
                       </div>
                       <h3 className="text-xl font-semibold mb-2">{labels.successTitle}</h3>
                       <p className="text-muted-foreground">{labels.successMessage}</p>

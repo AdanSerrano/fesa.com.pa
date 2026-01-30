@@ -104,19 +104,19 @@ const HistorySection = memo(function HistorySection({
   return (
     <AnimatedSection animation="fade-up" delay={100}>
       <div className="relative overflow-hidden rounded-2xl border bg-card/95 backdrop-blur-sm shadow-lg p-6 sm:p-8">
-        <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-blue-500 via-blue-400 to-blue-300" />
-        <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-blue-500/5 blur-2xl" />
+        <div className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-sky-500 via-sky-400 to-sky-300 dark:from-sky-400 dark:via-sky-500 dark:to-sky-600" />
+        <div className="absolute top-0 right-0 h-32 w-32 rounded-full bg-sky-500/10 dark:bg-sky-400/10 blur-2xl" />
 
         <div className="flex flex-col md:flex-row gap-6 items-start relative">
           <div className="flex-shrink-0">
-            <div className="h-14 w-14 rounded-xl bg-blue-500 shadow-lg shadow-blue-500/25 flex items-center justify-center">
+            <div className="h-14 w-14 rounded-xl bg-sky-500 dark:bg-sky-600 shadow-lg shadow-sky-500/25 dark:shadow-sky-600/25 flex items-center justify-center">
               <History className="h-7 w-7 text-white" />
             </div>
           </div>
 
           <div className="flex-1 space-y-5">
             <div>
-              <Badge className="mb-3 bg-blue-500 text-white hover:bg-blue-600">
+              <Badge className="mb-3 bg-sky-500 dark:bg-sky-600 text-white hover:bg-sky-600 dark:hover:bg-sky-500">
                 {title}
               </Badge>
               {section.title && (
@@ -305,8 +305,8 @@ function AboutViewClientComponent({ data, locale, labels }: AboutViewClientProps
                         section={data.mission}
                         title={labels.missionTitle}
                         icon={Target}
-                        iconColor="bg-green-500/10 text-green-500"
-                        borderColor="border-green-500/20"
+                        iconColor="bg-emerald-500/10 dark:bg-emerald-400/10 text-emerald-600 dark:text-emerald-400"
+                        borderColor="border-emerald-500/20 dark:border-emerald-400/20"
                         noContent={labels.noContent}
                         delay={200}
                       />
@@ -316,8 +316,8 @@ function AboutViewClientComponent({ data, locale, labels }: AboutViewClientProps
                         section={data.vision}
                         title={labels.visionTitle}
                         icon={Eye}
-                        iconColor="bg-purple-500/10 text-purple-500"
-                        borderColor="border-purple-500/20"
+                        iconColor="bg-violet-500/10 dark:bg-violet-400/10 text-violet-600 dark:text-violet-400"
+                        borderColor="border-violet-500/20 dark:border-violet-400/20"
                         noContent={labels.noContent}
                         delay={250}
                       />

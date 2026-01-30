@@ -27,14 +27,14 @@ export const FeaturedServicesSection = memo(function FeaturedServicesSection({
       <AnimatedSection animation="fade-up" delay={200}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
-              <Star className="h-5 w-5 text-amber-500" />
+            <div className="h-10 w-10 rounded-lg bg-amber-500/10 dark:bg-amber-400/10 flex items-center justify-center">
+              <Star className="h-5 w-5 text-amber-500 dark:text-amber-400" />
             </div>
             <div>
               <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
             </div>
           </div>
-          <Badge variant="secondary" className="hidden sm:flex gap-1.5 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20">
+          <Badge variant="secondary" className="hidden sm:flex gap-1.5 bg-amber-500/10 dark:bg-amber-400/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 dark:hover:bg-amber-400/20">
             <Sparkles className="h-3 w-3" />
             {services.length}
           </Badge>
