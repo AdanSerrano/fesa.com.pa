@@ -261,13 +261,13 @@ export default async function Home({ params }: HomeProps) {
                       <Link
                         key={link.href}
                         href={link.href}
-                        className="group flex flex-col items-center gap-4 p-6 sm:p-8 rounded-2xl border bg-card/80 backdrop-blur-sm transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
+                        className="group flex h-full min-h-[180px] flex-col items-center justify-center gap-4 p-6 rounded-2xl border bg-card/80 backdrop-blur-sm transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
                         style={{ animationDelay: `${index * 100}ms` }}
                       >
                         <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-3">
                           <link.icon className="h-8 w-8" />
                         </div>
-                        <span className="text-base font-semibold">{link.label}</span>
+                        <span className="text-base font-semibold text-center">{link.label}</span>
                         <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                       </Link>
                     ))}
