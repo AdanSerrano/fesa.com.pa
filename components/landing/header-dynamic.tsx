@@ -32,8 +32,6 @@ interface MobileMenuProps {
     myAccount: string;
     settings: string;
     securityAudit: string;
-    login: string;
-    getStarted: string;
   };
 }
 

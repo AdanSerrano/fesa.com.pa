@@ -6,7 +6,6 @@ import {
   HeaderUserMenuDynamic,
   HeaderNavDynamic,
   HeaderLogoDynamic,
-  HeaderAuthButtonsDynamic,
 } from "./header-dynamic";
 import { getTranslations } from "next-intl/server";
 
@@ -29,8 +28,6 @@ export async function Header() {
     myAccount: t("myAccount"),
     settings: t("settings"),
     securityAudit: t("securityAudit"),
-    login: t("login"),
-    getStarted: t("getStarted"),
   };
 
   const userMenuLabels = {
@@ -44,11 +41,6 @@ export async function Header() {
     email: user.email,
     image: user.image,
   } : null;
-
-  const authLabels = {
-    login: t("login"),
-    getStarted: t("getStarted"),
-  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 [-webkit-transform:translateZ(0)]">
@@ -71,13 +63,11 @@ export async function Header() {
             labels={mobileMenuLabels}
           />
 
-          {userData ? (
+          {userData && (
             <HeaderUserMenuDynamic
               user={userData}
               labels={userMenuLabels}
             />
-          ) : (
-            <HeaderAuthButtonsDynamic labels={authLabels} />
           )}
         </div>
       </div>

@@ -76,7 +76,7 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
     images: [
       {
-        url: "/icon.png",
+        url: "/banner.png",
         width: 1200,
         height: 630,
         alt: `${APP_NAME} - Formas Eficientes S.A.`,
@@ -89,8 +89,8 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${APP_NAME} - Soluciones Empresariales en Panamá`,
     description: APP_DESCRIPTION,
-    images: ["/icon.png"],
-    creator: "@FesaPanama",
+    images: ["/banner.png"],
+    creator: "@adanulissess",
   },
 
   robots: {
@@ -159,7 +159,7 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
         {/* PWA & Mobile */}
-        <link rel="apple-touch-icon" href="/icon.png" />
+        <link rel="apple-touch-icon" href="/banner.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="Fesa" />

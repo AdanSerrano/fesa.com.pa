@@ -14,7 +14,6 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   KeyRound,
-  ArrowRight,
   User,
   Settings,
   Shield,
@@ -58,8 +57,6 @@ interface HeaderMobileMenuProps {
     myAccount: string;
     settings: string;
     securityAudit: string;
-    login: string;
-    getStarted: string;
   };
 }
 
@@ -125,7 +122,7 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
             </Link>
           )}
           <div className="my-2 border-t" />
-          {user ? (
+          {user && (
             <>
               <div className="flex items-center gap-3 px-3 py-2">
                 <Avatar className="h-8 w-8">
@@ -165,18 +162,6 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
                 {labels.securityAudit}
               </Link>
             </>
-          ) : (
-            <div className="flex flex-col gap-2 px-3">
-              <Button variant="outline" asChild>
-                <Link href="/login">{labels.login}</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/register">
-                  {labels.getStarted}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
           )}
         </nav>
         {user && (

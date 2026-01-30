@@ -44,7 +44,7 @@ interface BreadcrumbProps {
 const OrganizationJsonLdComponent = ({
   name = APP_NAME,
   url = APP_URL,
-  logo = `${APP_URL}/icon.png`,
+  logo = `${APP_URL}/banner.png`,
   description = APP_DESCRIPTION,
 }: OrganizationProps) => {
   const schema = {
@@ -109,7 +109,7 @@ const WebApplicationJsonLdComponent = ({
       "Session management",
       "Role-based access control",
     ],
-    screenshot: `${APP_URL}/icon.png`,
+    screenshot: `${APP_URL}/banner.png`,
     softwareVersion: "1.0.0",
     author: {
       "@type": "Person",
@@ -173,7 +173,7 @@ const WebSiteJsonLdComponent = () => {
       name: APP_NAME,
       logo: {
         "@type": "ImageObject",
-        url: `${APP_URL}/icon.png`,
+        url: `${APP_URL}/banner.png`,
       },
     },
   };
