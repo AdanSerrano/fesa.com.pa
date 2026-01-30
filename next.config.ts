@@ -312,6 +312,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "picsum.photos",
       },
+      // FESA file storage
+      {
+        protocol: "https",
+        hostname: "file.fesa.com.pa",
+      },
     ],
     // Tamaños de dispositivo
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
