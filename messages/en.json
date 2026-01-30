@@ -1668,6 +1668,9 @@
     "description": "Demonstration of all available form components",
     "subtitle": "Explore all form field components with interactive examples."
   },
+  "Breadcrumb": {
+    "home": "Home"
+  },
   "PublicServices": {
     "title": "Our Services",
     "subtitle": "Discover all the services we offer for you",
@@ -1677,6 +1680,7 @@
     "viewAll": "View all",
     "noCategories": "No categories available",
     "noServicesInCategory": "No services in this category",
+    "servicesInCategory": "Services",
     "backToServices": "Back to services",
     "backToCategory": "Back to category",
     "contactUs": "Contact us",
@@ -1686,7 +1690,11 @@
     "whyChooseUs": "Why choose us?",
     "feature1": "Certified professionals with extensive experience",
     "feature2": "Personalized attention and continuous support",
-    "feature3": "Satisfaction guarantee on all our services"
+    "feature3": "Satisfaction guarantee on all our services",
+    "itemsCount": "{count, plural, =0 {No services} =1 {1 service} other {# services}}",
+    "available": "available",
+    "featured": "Featured",
+    "exploreCategories": "Explore our categories"
   },
   "PublicProducts": {
     "title": "Our Products",
@@ -1707,7 +1715,11 @@
     "whyChooseUs": "Why choose us?",
     "feature1": "High quality guaranteed products",
     "feature2": "Personalized attention and advisory",
-    "feature3": "Satisfaction guarantee on all our products"
+    "feature3": "Satisfaction guarantee on all our products",
+    "itemsCount": "{count, plural, =0 {No products} =1 {1 product} other {# products}}",
+    "available": "available",
+    "featured": "Featured",
+    "exploreCategories": "Explore our categories"
   },
   "PublicAbout": {
     "badge": "Our Company",
@@ -1715,7 +1727,23 @@
     "subtitle": "Discover our history, mission and vision that guide us every day",
     "noContent": "No content available",
     "noContentTitle": "Content under construction",
-    "noContentSubtitle": "We will soon share more information about our company"
+    "noContentSubtitle": "We will soon share more information about our company",
+    "historyTitle": "Our History",
+    "missionTitle": "Our Mission",
+    "visionTitle": "Our Vision",
+    "valuesTitle": "Our Values",
+    "valuesSubtitle": "The principles that guide every action we take",
+    "value1Title": "Excellence",
+    "value1Description": "We seek perfection in every detail of our work",
+    "value2Title": "Innovation",
+    "value2Description": "Constantly exploring new ways to improve",
+    "value3Title": "Commitment",
+    "value3Description": "Dedicated to the success of our clients and partners",
+    "value4Title": "Integrity",
+    "value4Description": "We act with honesty and transparency at all times",
+    "ctaTitle": "Ready to work together?",
+    "ctaSubtitle": "Contact us and discover how we can help you achieve your goals",
+    "ctaButton": "Contact Us"
   },
   "PublicNews": {
     "title": "News",
@@ -1742,7 +1770,11 @@
     "linkCopied": "Link copied to clipboard",
     "shareError": "Could not share",
     "imageGallery": "Image Gallery",
-    "image": "Image"
+    "image": "Image",
+    "itemsCount": "{count, plural, =0 {No articles} =1 {1 article} other {# articles}}",
+    "available": "available",
+    "featured": "Featured",
+    "exploreCategories": "Explore our categories"
   },
   "PublicCatalogs": {
     "title": "Catalogs",

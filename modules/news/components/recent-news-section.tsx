@@ -41,7 +41,7 @@ export const RecentNewsSection = memo(function RecentNewsSection({
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {articles.map((article, index) => (
-          <AnimatedSection key={article.id} animation="fade-up" delay={350 + index * 50}>
+          <AnimatedSection key={article.id} animation="fade-up" delay={200 + index * 30}>
             <NewsCard
               article={article}
               locale={locale}
@@ -53,3 +53,4 @@ export const RecentNewsSection = memo(function RecentNewsSection({
     </section>
   );
 });
+RecentNewsSection.displayName = "RecentNewsSection";

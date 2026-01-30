@@ -1,7 +1,8 @@
 "use client";
 
-import { memo } from "react";
-import { Link } from "@/i18n/navigation";
+import { memo, useMemo } from "react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 
 interface NavLink {
   href: string;
@@ -15,21 +16,43 @@ interface HeaderNavProps {
 }
 
 function HeaderNavComponent({ navLinks, showDashboard, dashboardLabel }: HeaderNavProps) {
+  const pathname = usePathname();
+
+  const isActive = useMemo(() => {
+    return (href: string) => {
+      if (href === "/") return pathname === "/";
+      return pathname === href || pathname.startsWith(`${href}/`);
+    };
+  }, [pathname]);
+
   return (
     <nav className="hidden items-center gap-6 lg:flex">
-      {navLinks.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-        >
-          {link.label}
-        </Link>
-      ))}
+      {navLinks.map((link) => {
+        const active = isActive(link.href);
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn(
+              "text-sm transition-colors hover:text-foreground",
+              active
+                ? "font-semibold text-foreground"
+                : "text-muted-foreground"
+            )}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
       {showDashboard && (
         <Link
           href="/dashboard/overview"
-          className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          className={cn(
+            "text-sm transition-colors hover:text-foreground",
+            isActive("/dashboard")
+              ? "font-semibold text-foreground"
+              : "text-muted-foreground"
+          )}
         >
           {dashboardLabel}
         </Link>

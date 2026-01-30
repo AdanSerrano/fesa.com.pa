@@ -13,6 +13,7 @@ interface CategoriesSectionProps {
   locale: string;
   viewMoreLabel: string;
   emptyMessage: string;
+  itemsLabel?: string;
 }
 
 export const CategoriesSection = memo(function CategoriesSection({
@@ -21,6 +22,7 @@ export const CategoriesSection = memo(function CategoriesSection({
   locale,
   viewMoreLabel,
   emptyMessage,
+  itemsLabel,
 }: CategoriesSectionProps) {
   return (
     <section className="space-y-6">
@@ -46,11 +48,12 @@ export const CategoriesSection = memo(function CategoriesSection({
       {categories.length > 0 ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {categories.map((category, index) => (
-            <AnimatedSection key={category.id} animation="fade-up" delay={150 + index * 50}>
+            <AnimatedSection key={category.id} animation="fade-up" delay={100 + index * 30}>
               <CategoryCard
                 category={category}
                 locale={locale}
                 viewMoreLabel={viewMoreLabel}
+                itemsLabel={itemsLabel}
               />
             </AnimatedSection>
           ))}
@@ -68,3 +71,4 @@ export const CategoriesSection = memo(function CategoriesSection({
     </section>
   );
 });
+CategoriesSection.displayName = "CategoriesSection";

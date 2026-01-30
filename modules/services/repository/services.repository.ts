@@ -11,11 +11,25 @@ export class PublicServicesRepository {
         slug: true,
         description: true,
         image: true,
+        _count: {
+          select: {
+            items: {
+              where: { isActive: true },
+            },
+          },
+        },
       },
       orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
     });
 
-    return categories;
+    return categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug,
+      description: cat.description,
+      image: cat.image,
+      itemCount: cat._count.items,
+    }));
   }
 
   public async getFeaturedServices(limit: number = 6): Promise<PublicServiceItem[]> {
@@ -94,6 +108,7 @@ export class PublicServicesRepository {
       name: category.name,
       slug: category.slug,
       description: category.description,
+      itemCount: category.items.length,
       items: category.items.map((item) => ({
         id: item.id,
         categoryId: item.categoryId,

@@ -43,7 +43,7 @@ export const FeaturedServicesSection = memo(function FeaturedServicesSection({
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {services.map((service, index) => (
-          <AnimatedSection key={service.id} animation="fade-up" delay={250 + index * 50}>
+          <AnimatedSection key={service.id} animation="fade-up" delay={150 + index * 30}>
             <ServiceCard
               service={service}
               locale={locale}
@@ -55,3 +55,4 @@ export const FeaturedServicesSection = memo(function FeaturedServicesSection({
     </section>
   );
 });
+FeaturedServicesSection.displayName = "FeaturedServicesSection";

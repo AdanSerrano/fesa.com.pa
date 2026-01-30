@@ -12,11 +12,29 @@ export class PublicNewsRepository {
         description: true,
         image: true,
         icon: true,
+        _count: {
+          select: {
+            news: {
+              where: {
+                isActive: true,
+                publishedAt: { not: null, lte: new Date() },
+              },
+            },
+          },
+        },
       },
       orderBy: [{ isFeatured: "desc" }, { order: "asc" }, { createdAt: "desc" }],
     });
 
-    return categories;
+    return categories.map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      slug: cat.slug,
+      description: cat.description,
+      image: cat.image,
+      icon: cat.icon,
+      articleCount: cat._count.news,
+    }));
   }
 
   public async getFeaturedNews(limit: number = 6): Promise<PublicNewsArticle[]> {
@@ -146,6 +164,7 @@ export class PublicNewsRepository {
       description: category.description,
       image: category.image,
       icon: category.icon,
+      articleCount: category.news.length,
       articles: category.news.map((article) => ({
         id: article.id,
         categoryId: article.categoryId,

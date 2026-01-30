@@ -4,12 +4,20 @@ import { headers } from "next/headers";
 import { getArticleDetailAction } from "../actions/news.actions";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { ShareButton } from "../components/share-buttons";
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
-  ArrowLeft,
+  Home,
   Newspaper,
   MessageSquare,
   ChevronRight,
@@ -29,6 +37,7 @@ export async function ArticleDetailView({
 }: ArticleDetailViewProps) {
   const locale = await getLocale();
   const t = await getTranslations("PublicNews");
+  const tBreadcrumb = await getTranslations("Breadcrumb");
 
   const article = await getArticleDetailAction(categorySlug, articleSlug);
 
@@ -68,16 +77,34 @@ export async function ArticleDetailView({
 
         <div className="container mx-auto px-4 py-6 sm:py-8 relative">
           <AnimatedSection animation="fade-down" delay={0}>
-            <Link href={`/${locale}/news/${categorySlug}`}>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="mb-6 hover:bg-background/80 backdrop-blur-sm"
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                {t("backToCategory")}
-              </Button>
-            </Link>
+            <Breadcrumb className="mb-6">
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href={`/${locale}`} className="flex items-center gap-1.5">
+                      <Home className="h-3.5 w-3.5" />
+                      {tBreadcrumb("home")}
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href={`/${locale}/news`}>{t("title")}</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link href={`/${locale}/news/${categorySlug}`}>{article.categoryName}</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                  <BreadcrumbPage className="max-w-[200px] truncate">{article.title}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </AnimatedSection>
 
           <div className="grid gap-8 lg:grid-cols-3 lg:gap-12 items-start">

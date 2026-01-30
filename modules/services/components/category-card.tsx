@@ -4,30 +4,33 @@ import { memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { FolderOpen, ArrowRight, ChevronRight } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { FolderOpen, ArrowRight, Layers } from "lucide-react";
 import type { PublicServiceCategory } from "../types/services.types";
 
 interface CategoryCardProps {
   category: PublicServiceCategory;
   locale: string;
   viewMoreLabel: string;
+  itemsLabel?: string;
 }
 
 export const CategoryCard = memo(function CategoryCard({
   category,
   locale,
   viewMoreLabel,
+  itemsLabel,
 }: CategoryCardProps) {
   return (
     <Link href={`/${locale}/services/${category.slug}`} className="block h-full">
       <Card className="h-full transition-all duration-300 hover:shadow-xl hover:shadow-primary/5 hover:-translate-y-1 hover:border-primary/30 group overflow-hidden">
-        <div className="relative h-32 sm:h-36 overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10">
+        <div className="relative h-36 sm:h-40 overflow-hidden bg-gradient-to-br from-primary/5 to-primary/10">
           {category.image ? (
             <Image
               src={category.image}
               alt={category.name}
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-110"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />
           ) : (
@@ -37,7 +40,13 @@ export const CategoryCard = memo(function CategoryCard({
               </div>
             </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
+          <div className="absolute bottom-3 left-3">
+            <Badge variant="secondary" className="gap-1 bg-background/90 backdrop-blur-sm text-xs">
+              <Layers className="h-3 w-3" />
+              {category.itemCount} {itemsLabel || "servicios"}
+            </Badge>
+          </div>
         </div>
 
         <CardContent className="pt-4 pb-5">
@@ -49,17 +58,15 @@ export const CategoryCard = memo(function CategoryCard({
               {category.description}
             </p>
           )}
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between pt-2 border-t border-border/50">
             <span className="inline-flex items-center text-sm font-medium text-primary">
               {viewMoreLabel}
               <ArrowRight className="ml-1.5 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </span>
-            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-2 group-hover:translate-x-0">
-              <ChevronRight className="h-4 w-4 text-primary" />
-            </div>
           </div>
         </CardContent>
       </Card>
     </Link>
   );
 });
+CategoryCard.displayName = "CategoryCard";

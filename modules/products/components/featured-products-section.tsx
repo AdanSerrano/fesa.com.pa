@@ -41,7 +41,7 @@ export const FeaturedProductsSection = memo(function FeaturedProductsSection({
 
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {products.map((product, index) => (
-          <AnimatedSection key={product.id} animation="fade-up" delay={250 + index * 50}>
+          <AnimatedSection key={product.id} animation="fade-up" delay={150 + index * 30}>
             <ProductCard
               product={product}
               locale={locale}
@@ -53,3 +53,4 @@ export const FeaturedProductsSection = memo(function FeaturedProductsSection({
     </section>
   );
 });
+FeaturedProductsSection.displayName = "FeaturedProductsSection";

@@ -5,6 +5,7 @@ export interface PublicNewsCategory {
   description: string | null;
   image: string | null;
   icon: string | null;
+  articleCount: number;
 }
 
 export interface NewsImageData {

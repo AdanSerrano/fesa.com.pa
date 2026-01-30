@@ -1,7 +1,8 @@
 "use client";
 
-import { memo } from "react";
-import { Link } from "@/i18n/navigation";
+import { memo, useMemo } from "react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -63,6 +64,15 @@ interface HeaderMobileMenuProps {
 }
 
 function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuProps) {
+  const pathname = usePathname();
+
+  const isActive = useMemo(() => {
+    return (href: string) => {
+      if (href === "/") return pathname === "/";
+      return pathname === href || pathname.startsWith(`${href}/`);
+    };
+  }, [pathname]);
+
   return (
     <Sheet>
       <SheetTrigger asChild>
@@ -83,11 +93,17 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
         <nav className="mt-6 flex flex-col gap-2 flex-1 overflow-y-auto">
           {navLinks.map((link) => {
             const Icon = iconMap[link.iconName];
+            const active = isActive(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className={cn(
+                  "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-accent hover:text-foreground",
+                  active
+                    ? "bg-accent font-medium text-foreground"
+                    : "text-muted-foreground"
+                )}
               >
                 <Icon className="h-4 w-4" />
                 {link.label}
@@ -97,7 +113,12 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
           {user && (
             <Link
               href="/dashboard/overview"
-              className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+              className={cn(
+                "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-accent hover:text-foreground",
+                isActive("/dashboard")
+                  ? "bg-accent font-medium text-foreground"
+                  : "text-muted-foreground"
+              )}
             >
               <LayoutDashboard className="h-4 w-4" />
               {labels.dashboard}

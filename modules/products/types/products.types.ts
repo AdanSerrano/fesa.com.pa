@@ -4,6 +4,7 @@ export interface PublicProductCategory {
   name: string;
   slug: string;
   description: string | null;
+  itemCount: number;
 }
 
 export interface PublicProductItem {
