@@ -7,45 +7,66 @@ import createNextIntlPlugin from "next-intl/plugin";
 // ============================================================================
 const withPWA = withPWAInit({
   dest: "public",
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
+  cacheOnFrontEndNav: false,
+  aggressiveFrontEndNavCaching: false,
   reloadOnOnline: true,
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
-    // Excluir rutas sensibles del cache
-    navigateFallbackDenylist: [/^\/api\//, /^\/dashboard\/admin\//],
-    // Limitar tamaño de cache
-    maximumFileSizeToCacheInBytes: 3 * 1024 * 1024, // 3MB
+    navigateFallbackDenylist: [/^\/api\//, /^\/dashboard\//],
+    maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
+    skipWaiting: true,
+    clientsClaim: true,
+    cleanupOutdatedCaches: true,
     runtimeCaching: [
       {
-        // Cache de assets estáticos
         urlPattern: /^https:\/\/fonts\.(?:gstatic|googleapis)\.com\/.*/i,
         handler: "CacheFirst",
         options: {
           cacheName: "google-fonts",
           expiration: {
             maxEntries: 10,
-            maxAgeSeconds: 60 * 60 * 24 * 365, // 1 año
+            maxAgeSeconds: 60 * 60 * 24 * 365,
           },
         },
       },
       {
-        // Cache de imágenes
         urlPattern: /\.(?:jpg|jpeg|gif|png|svg|ico|webp)$/i,
         handler: "StaleWhileRevalidate",
         options: {
           cacheName: "static-images",
           expiration: {
             maxEntries: 64,
-            maxAgeSeconds: 60 * 60 * 24 * 30, // 30 días
+            maxAgeSeconds: 60 * 60 * 24 * 30,
           },
         },
       },
       {
-        // NO cachear API calls - seguridad bancaria
         urlPattern: /^https?:\/\/.*\/api\/.*/i,
         handler: "NetworkOnly",
+      },
+      {
+        urlPattern: /\/_next\/static\/.*/i,
+        handler: "CacheFirst",
+        options: {
+          cacheName: "next-static",
+          expiration: {
+            maxEntries: 200,
+            maxAgeSeconds: 60 * 60 * 24 * 30,
+          },
+        },
+      },
+      {
+        urlPattern: ({ request }) => request.mode === "navigate",
+        handler: "NetworkFirst",
+        options: {
+          cacheName: "pages",
+          networkTimeoutSeconds: 10,
+          expiration: {
+            maxEntries: 50,
+            maxAgeSeconds: 60 * 60 * 24,
+          },
+        },
       },
     ],
   },
