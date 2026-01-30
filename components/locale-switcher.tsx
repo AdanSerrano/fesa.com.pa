@@ -12,9 +12,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-const localeConfig: Record<Locale, { name: string; flag: string }> = {
-  es: { name: "Español", flag: "🇪🇸" },
-  en: { name: "English", flag: "🇺🇸" },
+const localeConfig: Record<Locale, { name: string; code: string }> = {
+  es: { name: "Español", code: "ES" },
+  en: { name: "English", code: "EN" },
 };
 
 interface LocaleSwitcherProps {
@@ -42,17 +42,15 @@ function LocaleSwitcherComponent({ compact = false }: LocaleSwitcherProps) {
     <Select value={locale} onValueChange={handleChange} disabled={isPending}>
       <SelectTrigger
         className={`${
-          compact ? "w-[65px]" : "w-[140px]"
-        } h-9 gap-1.5 `}
+          compact ? "w-[70px]" : "w-[130px]"
+        } h-9`}
         aria-label="Seleccionar idioma"
       >
         <SelectValue>
-          <span className="flex items-center gap-2">
-            <span className="text-lg leading-none">{currentConfig.flag}</span>
-            {!compact && (
-              <span className="text-sm">{currentConfig.name}</span>
-            )}
-          </span>
+          <span className="text-sm font-semibold">{currentConfig.code}</span>
+          {!compact && (
+            <span className="text-sm ml-1.5">{currentConfig.name}</span>
+          )}
         </SelectValue>
       </SelectTrigger>
       <SelectContent position="popper" align="end" side="bottom" sideOffset={4}>
@@ -60,10 +58,7 @@ function LocaleSwitcherComponent({ compact = false }: LocaleSwitcherProps) {
           const config = localeConfig[loc];
           return (
             <SelectItem key={loc} value={loc}>
-              <span className="flex items-center gap-2">
-                <span className="text-lg leading-none">{config.flag}</span>
-                <span>{config.name}</span>
-              </span>
+              {config.name}
             </SelectItem>
           );
         })}

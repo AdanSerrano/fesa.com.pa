@@ -9,7 +9,7 @@ interface LocaleSwitcherProps {
 
 function LocaleSwitcherSkeleton({ compact = false }: LocaleSwitcherProps) {
   return (
-    <Skeleton className={`${compact ? "w-[65px]" : "w-[140px]"} h-9 rounded-md`} />
+    <Skeleton className={`${compact ? "w-[70px]" : "w-[160px]"} h-9 rounded-md`} />
   );
 }
 

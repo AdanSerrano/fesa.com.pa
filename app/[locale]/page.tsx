@@ -510,7 +510,7 @@ export default async function Home({ params }: HomeProps) {
                       className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
                       <Phone className="h-4 w-4" />
-                      +507 6876-1381
+                      +507 220-0011
                     </a>
                     <a
                       href="mailto:ventas@fesa.com.pa"
