@@ -429,16 +429,8 @@ export function AdminProductsClient({
         priceFilter: "all" as AdminProductPriceFilter,
         skuFilter: "all" as AdminProductSkuFilter,
       });
-      if (tab === "items") {
-        loadItems(
-          1,
-          urlState.pageSize,
-          { search: "", status: "all", categoryId: "all", priceFilter: "all", skuFilter: "all" },
-          []
-        );
-      }
     },
-    [navigate, loadItems, urlState.pageSize]
+    [navigate]
   );
 
   const handlePaginationChange = useCallback(

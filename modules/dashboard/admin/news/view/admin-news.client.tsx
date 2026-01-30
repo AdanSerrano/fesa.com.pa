@@ -417,16 +417,8 @@ export function AdminNewsClient({
         status: "all" as AdminNewsStatus,
         categoryId: "all",
       });
-      if (tab === "articles") {
-        loadArticles(
-          1,
-          urlState.pageSize,
-          { search: "", status: "all", categoryId: "all" },
-          []
-        );
-      }
     },
-    [navigate, loadArticles, urlState.pageSize]
+    [navigate]
   );
 
   const handlePaginationChange = useCallback(

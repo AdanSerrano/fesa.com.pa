@@ -1,16 +1,14 @@
 "use client";
 
+import { memo, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
-import { useEffect, useRef } from "react";
-import { usePathname } from "next/navigation";
 
 interface ExtendedSession {
   sessionRevoked?: boolean;
 }
 
-export function SessionGuard({ children }: { children: React.ReactNode }) {
+function SessionGuardComponent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
-  const pathname = usePathname();
   const isLoggingOut = useRef(false);
 
   useEffect(() => {
@@ -28,7 +26,10 @@ export function SessionGuard({ children }: { children: React.ReactNode }) {
         redirect: true,
       });
     }
-  }, [session, status, pathname]);
+  }, [session, status]);
 
   return <>{children}</>;
 }
+
+export const SessionGuard = memo(SessionGuardComponent);
+SessionGuard.displayName = "SessionGuard";

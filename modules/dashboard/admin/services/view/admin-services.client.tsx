@@ -397,16 +397,8 @@ export function AdminServicesClient({
         status: "all" as AdminServiceStatus,
         categoryId: "all",
       });
-      if (tab === "items") {
-        loadItems(
-          1,
-          urlState.pageSize,
-          { search: "", status: "all", categoryId: "all" },
-          []
-        );
-      }
     },
-    [navigate, loadItems, urlState.pageSize]
+    [navigate]
   );
 
   const handlePaginationChange = useCallback(

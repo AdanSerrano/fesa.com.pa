@@ -13,7 +13,12 @@ const withPWA = withPWAInit({
   disable: process.env.NODE_ENV === "development",
   workboxOptions: {
     disableDevLogs: true,
-    navigateFallbackDenylist: [/^\/api\//, /^\/dashboard\//],
+    navigateFallbackDenylist: [
+      /^\/api\//,
+      /\/api\//,
+      /dashboard/,
+      /\?/,
+    ],
     maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
     skipWaiting: true,
     clientsClaim: true,
@@ -57,13 +62,18 @@ const withPWA = withPWAInit({
         },
       },
       {
-        urlPattern: ({ request }) => request.mode === "navigate",
+        urlPattern: ({ request, url }) => {
+          if (request.mode !== "navigate") return false;
+          if (url.pathname.includes("dashboard")) return false;
+          if (url.search) return false;
+          return true;
+        },
         handler: "NetworkFirst",
         options: {
           cacheName: "pages",
-          networkTimeoutSeconds: 10,
+          networkTimeoutSeconds: 15,
           expiration: {
-            maxEntries: 50,
+            maxEntries: 30,
             maxAgeSeconds: 60 * 60 * 24,
           },
         },
