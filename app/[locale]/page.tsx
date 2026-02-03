@@ -513,11 +513,11 @@ export default async function Home({ params }: HomeProps) {
                       +507 220-0011
                     </a>
                     <a
-                      href="mailto:ventas@fesa.com.pa"
+                      href="mailto:info@fesa.com.pa"
                       className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
                     >
                       <Mail className="h-4 w-4" />
-                      ventas@fesa.com.pa
+                      info@fesa.com.pa
                     </a>
                   </div>
                 </div>
