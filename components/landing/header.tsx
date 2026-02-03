@@ -21,6 +21,7 @@ export async function Header() {
     { href: "/news", label: tNav("news"), iconName: "Newspaper" as const },
     { href: "/about", label: tNav("about"), iconName: "Building2" as const },
     { href: "/contact", label: tNav("contact"), iconName: "Home" as const },
+    { href: "/privacy", label: tNav("privacy"), iconName: "ShieldCheck" as const },
   ];
 
   const mobileMenuLabels = {

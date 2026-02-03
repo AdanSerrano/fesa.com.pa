@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type IconName = "Briefcase" | "Package" | "Newspaper" | "Home" | "Building2" | "BookOpen";
+type IconName = "Briefcase" | "Package" | "Newspaper" | "Home" | "Building2" | "BookOpen" | "ShieldCheck";
 
 interface NavLinkSimple {
   href: string;

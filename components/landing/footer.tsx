@@ -75,6 +75,9 @@ export async function Footer() {
               <Link href="/contact" className="transition-colors hover:text-foreground w-fit">
                 {tNav("contact")}
               </Link>
+              <Link href="/privacy" className="transition-colors hover:text-foreground w-fit">
+                {tNav("privacy")}
+              </Link>
             </nav>
           </div>
 
@@ -96,14 +99,15 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t w-full flex items-center justify-end">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
-              <p>© {new Date().getFullYear()} Formas Eficientes S.A.</p>
-              <span className="hidden sm:inline">•</span>
-              <p>{tCommon("allRightsReserved")}</p>
-            </div>
+        <div className="mt-12 pt-8 border-t w-full flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
+            <p>© {new Date().getFullYear()} Formas Eficientes S.A.</p>
+            <span className="hidden sm:inline">•</span>
+            <p>{tCommon("allRightsReserved")}</p>
           </div>
+          <Link href="/privacy" className="text-xs sm:text-sm text-muted-foreground transition-colors hover:text-foreground">
+            {tNav("privacy")}
+          </Link>
         </div>
       </div>
     </footer>

@@ -24,6 +24,7 @@ import {
   Home,
   Building2,
   BookOpen,
+  ShieldCheck,
 } from "lucide-react";
 import { LogoutButton } from "./logout-button";
 
@@ -34,6 +35,7 @@ const iconMap = {
   Home,
   Building2,
   BookOpen,
+  ShieldCheck,
 } as const;
 
 type IconName = keyof typeof iconMap;
