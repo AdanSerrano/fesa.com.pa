@@ -3,14 +3,8 @@
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 
-interface LocaleSwitcherProps {
-  compact?: boolean;
-}
-
-function LocaleSwitcherSkeleton({ compact = false }: LocaleSwitcherProps) {
-  return (
-    <Skeleton className={`${compact ? "w-[70px]" : "w-[160px]"} h-9 rounded-md`} />
-  );
+function LocaleSwitcherSkeleton() {
+  return <Skeleton className="h-9 w-9 rounded-md" />;
 }
 
 export const LocaleSwitcherDynamic = dynamic(
@@ -18,7 +12,7 @@ export const LocaleSwitcherDynamic = dynamic(
   {
     ssr: false,
     loading: ({ isLoading }) => {
-      if (isLoading) return <LocaleSwitcherSkeleton compact />;
+      if (isLoading) return <LocaleSwitcherSkeleton />;
       return null;
     },
   }

@@ -71,7 +71,7 @@ function DashboardHeaderComponent() {
             <BreadcrumbPage>{currentLabel}</BreadcrumbPage>
           </BreadcrumbItem>
           <BreadcrumbItem className="ml-auto flex items-center gap-2">
-            <LocaleSwitcherDynamic compact />
+            <LocaleSwitcherDynamic />
             <ModeToggleWrapper />
           </BreadcrumbItem>
         </BreadcrumbList>
