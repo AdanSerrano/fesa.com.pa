@@ -25,8 +25,8 @@ function ClientsMarqueeComponent({ title }: ClientsMarqueeProps) {
   return (
     <div className="relative overflow-hidden py-6">
       <p className="text-center text-sm text-muted-foreground mb-6">{title}</p>
-      <div className="flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
-        <div className="flex animate-scroll-x gap-8 pr-8">
+      <div className="group flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
+        <div className="flex animate-scroll-x group-hover:paused gap-8 pr-8">
           {industries.map((industry) => (
             <div
               key={industry}
@@ -36,7 +36,7 @@ function ClientsMarqueeComponent({ title }: ClientsMarqueeProps) {
             </div>
           ))}
         </div>
-        <div className="flex animate-scroll-x gap-8 pr-8" aria-hidden="true">
+        <div className="flex animate-scroll-x group-hover:paused gap-8 pr-8" aria-hidden="true">
           {industries.map((industry) => (
             <div
               key={`${industry}-duplicate`}

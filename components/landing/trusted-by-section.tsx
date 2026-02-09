@@ -29,8 +29,8 @@ function TrustedBySectionComponent({ title }: TrustedBySectionProps) {
           {title}
         </p>
       </div>
-      <div className="flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
-        <div className="flex animate-scroll-x-slow gap-12 pr-12">
+      <div className="group flex overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_5%,black_95%,transparent)]">
+        <div className="flex animate-scroll-x-slow group-hover:paused gap-12 pr-12">
           {companies.map((company) => (
             <div
               key={company}
@@ -40,7 +40,7 @@ function TrustedBySectionComponent({ title }: TrustedBySectionProps) {
             </div>
           ))}
         </div>
-        <div className="flex animate-scroll-x-slow gap-12 pr-12" aria-hidden="true">
+        <div className="flex animate-scroll-x-slow group-hover:paused gap-12 pr-12" aria-hidden="true">
           {companies.map((company) => (
             <div
               key={`${company}-duplicate`}

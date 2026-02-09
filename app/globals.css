@@ -198,9 +198,7 @@
     }
   }
 
-  .animate-scroll:hover,
-  .animate-scroll-x:hover,
-  .animate-scroll-x-slow:hover {
+  .paused {
     animation-play-state: paused;
   }
 
