@@ -1910,5 +1910,392 @@
     "securityTitle": "Security",
     "dataUsageTitle": "Data Usage",
     "generalInfoTitle": "General Information"
+  },
+  "Glossary": {
+    "pageTitle": "Glossary",
+    "labels": {
+      "examples": "Examples",
+      "advantages": "Commercial advantages",
+      "before": "Before",
+      "after": "Now"
+    },
+    "tech": {
+      "title": "Basic Glossary of Technology Solutions",
+      "subtitle": "Commercial focus for the sales force",
+      "sections": [
+        {
+          "title": "General Solution Concepts",
+          "terms": [
+            {
+              "term": "Comprehensive solution",
+              "definition": "A set of hardware + software + consumables + services that addresses a client's complete need, not just part of the process."
+            },
+            {
+              "term": "Digital transformation",
+              "definition": "The process by which a company digitizes, automates, and optimizes its processes to become more efficient, secure, and profitable."
+            },
+            {
+              "term": "Process automation",
+              "definition": "Use of technology to reduce manual tasks, human errors, and operational times."
+            },
+            {
+              "term": "Scalability",
+              "definition": "The ability of a solution to grow with the client without needing to replace the entire system."
+            }
+          ]
+        },
+        {
+          "title": "Technology Hardware",
+          "terms": [
+            {
+              "term": "Hardware",
+              "definition": "Physical equipment needed to operate a technology solution (readers, specialized printers, servers, tablets, etc.)."
+            },
+            {
+              "term": "RFID Readers",
+              "definition": "Devices that read RFID tags without physical contact, enabling fast and massive object identification."
+            },
+            {
+              "term": "RFID Printers",
+              "definition": "Specialized printers that print and program RFID tags simultaneously."
+            },
+            {
+              "term": "Mobile devices (handhelds)",
+              "definition": "Portable equipment used for field data capture, inventories, dispatches, and asset control."
+            }
+          ]
+        },
+        {
+          "title": "RFID (Radio Frequency Identification)",
+          "terms": [
+            {
+              "term": "RFID",
+              "definition": "Technology that identifies and tracks objects using radio waves. No direct visual contact required."
+            },
+            {
+              "term": "RFID Tag",
+              "definition": "A tag with a chip that stores information and can be read automatically."
+            },
+            {
+              "term": "Fixed asset",
+              "definition": "A company asset that is not consumed (equipment, furniture, machinery, tools)."
+            },
+            {
+              "term": "Fixed asset control",
+              "definition": "A system that allows locating, auditing, and managing assets in real time, reducing losses and errors."
+            },
+            {
+              "term": "Automated inventory",
+              "definition": "Fast and accurate inventory counting using RFID technology or codes, without extensive manual processes."
+            }
+          ]
+        },
+        {
+          "title": "Enterprise Software",
+          "terms": [
+            {
+              "term": "Software",
+              "definition": "An application or system that manages information, processes, and client operations."
+            },
+            {
+              "term": "ERP (Enterprise Resource Planning)",
+              "definition": "A system that integrates key business areas: finance, inventory, purchasing, sales, assets.",
+              "message": "It is the operational brain of the company."
+            },
+            {
+              "term": "WMS (Warehouse Management System)",
+              "definition": "A system for warehouse management: inbound, outbound, locations, and dispatches."
+            },
+            {
+              "term": "Web applications",
+              "definition": "Systems that run from a browser (Chrome, Edge, etc.), accessible from anywhere."
+            },
+            {
+              "term": "Mobile applications",
+              "definition": "Apps designed for phones or tablets, ideal for field work or warehouse operations."
+            }
+          ]
+        },
+        {
+          "title": "Document and Content Management",
+          "terms": [
+            {
+              "term": "ECM (Enterprise Content Management)",
+              "definition": "A system for managing digital documents: contracts, records, books, legal and administrative files."
+            },
+            {
+              "term": "Digital record",
+              "definition": "A set of electronically organized documents, accessible quickly and securely."
+            },
+            {
+              "term": "Document digitization",
+              "definition": "The process of converting physical documents into organized digital files."
+            },
+            {
+              "term": "Book and archive control",
+              "definition": "Solutions for locating, tracking, and managing physical or digital books, especially in institutions."
+            }
+          ]
+        },
+        {
+          "title": "Digital Commercial Solutions",
+          "terms": [
+            {
+              "term": "Digital card",
+              "definition": "An electronic business card that replaces the physical card and makes sharing information easier."
+            },
+            {
+              "term": "Online store (e-commerce)",
+              "definition": "A platform for selling products or services online, with payments, inventory, and billing."
+            },
+            {
+              "term": "System integration",
+              "definition": "The ability of a solution to connect with other client systems (ERP, billing, inventory)."
+            }
+          ]
+        },
+        {
+          "title": "Custom Development",
+          "terms": [
+            {
+              "term": "Custom development",
+              "definition": "Software created specifically according to the client's needs, not a standard product."
+            },
+            {
+              "term": "Customization",
+              "definition": "Adaptation of an existing system to fit the client's specific processes."
+            }
+          ]
+        },
+        {
+          "title": "Services and Support",
+          "terms": [
+            {
+              "term": "Implementation",
+              "definition": "The process of installing, configuring, and putting the solution into operation at the client's site."
+            },
+            {
+              "term": "Ongoing support",
+              "definition": "Close support to the client during and after implementation to ensure project success."
+            },
+            {
+              "term": "Training",
+              "definition": "Training the client's staff on the correct use of the solution."
+            },
+            {
+              "term": "Technical support",
+              "definition": "Post-deployment assistance to resolve incidents, adjustments, or system improvements."
+            }
+          ]
+        },
+        {
+          "title": "Technology Consumables",
+          "terms": [
+            {
+              "term": "Consumables",
+              "definition": "Items that are used and periodically replaced: RFID tags, ribbons, cards, specialized paper."
+            },
+            {
+              "term": "RFID Ribbons",
+              "definition": "Ribbons used in RFID printers to print information on tags."
+            }
+          ]
+        }
+      ],
+      "closing": {
+        "title": "How the salesperson should think (key message)",
+        "before": "I sell printers and checks",
+        "after": "I solve operational, control, traceability, and efficiency problems using technology"
+      }
+    },
+    "prog": {
+      "title": "Basic Glossary – Programming and Technology Concepts",
+      "subtitle": "Commercial focus for software solution sales",
+      "sections": [
+        {
+          "title": "Databases",
+          "terms": [
+            {
+              "term": "Database",
+              "definition": "A digital place where client information is stored, organized, and protected (customers, inventories, assets, documents, transactions).",
+              "message": "It is where the system's information lives."
+            },
+            {
+              "term": "Relational database",
+              "definition": "Organizes information in interrelated tables. It is the most commonly used in enterprise systems.",
+              "examples": ["MySQL", "PostgreSQL", "SQL Server", "Oracle"],
+              "note": "We use robust and enterprise-proven databases."
+            },
+            {
+              "term": "Non-relational database (NoSQL)",
+              "definition": "Handles large volumes of information more flexibly (apps, mobile systems, web).",
+              "examples": ["MongoDB", "Firebase"],
+              "note": "Ideal for modern and mobile applications."
+            },
+            {
+              "term": "Backups",
+              "definition": "Database security copies to prevent information loss.",
+              "message": "Client information is protected against failures or errors."
+            }
+          ]
+        },
+        {
+          "title": "Programming Languages",
+          "sectionNote": "Don't sell the language, sell stability, scalability, and support.",
+          "terms": [
+            {
+              "term": "Programming language",
+              "definition": "The language programmers use to create systems, applications, and platforms.",
+              "message": "It is how software is built."
+            },
+            {
+              "term": "Java",
+              "definition": "Widely used in large and stable enterprise systems."
+            },
+            {
+              "term": ".NET / C#",
+              "definition": "Common in corporate companies and administrative systems."
+            },
+            {
+              "term": "PHP",
+              "definition": "Common in web applications and custom systems."
+            },
+            {
+              "term": "JavaScript",
+              "definition": "Key for modern web applications and mobile apps."
+            },
+            {
+              "term": "Python",
+              "definition": "Used in automation, data analysis, and integrations."
+            }
+          ]
+        },
+        {
+          "title": "Servers",
+          "terms": [
+            {
+              "term": "Server",
+              "definition": "A specialized computer where the system, database, and applications reside.",
+              "message": "It is where the system runs."
+            },
+            {
+              "term": "Cloud Server",
+              "definition": "The system is hosted on the internet and accessible from anywhere.",
+              "examples": ["AWS (Amazon Web Services)", "Microsoft Azure", "Google Cloud"],
+              "advantages": ["No own infrastructure required", "Scalable", "Remote access", "Lower initial investment"],
+              "note": "Ideal for companies seeking flexibility and rapid growth."
+            },
+            {
+              "term": "On-Premise Server",
+              "definition": "The server is physically located at the client's facilities.",
+              "advantages": ["Full control of information", "Preferred by regulated entities", "Works even without internet (in some cases)"],
+              "note": "Ideal for government, banking, healthcare, companies with strict security policies."
+            },
+            {
+              "term": "Hybrid server",
+              "definition": "Combines cloud + local server.",
+              "message": "The best of both worlds."
+            }
+          ]
+        },
+        {
+          "title": "System Environments",
+          "sectionNote": "Nothing goes to production without prior testing.",
+          "terms": [
+            {
+              "term": "Development environment",
+              "definition": "Where the system is built and tested."
+            },
+            {
+              "term": "Testing environment (QA / Testing)",
+              "definition": "Where the client validates that everything works before going live."
+            },
+            {
+              "term": "Production environment",
+              "definition": "The system in real use by the client."
+            }
+          ]
+        },
+        {
+          "title": "Integrations and Connectivity",
+          "terms": [
+            {
+              "term": "System integration",
+              "definition": "Connection between different systems to share information automatically.",
+              "examples": ["ERP with inventories", "System with billing", "RFID with database"],
+              "note": "Less manual work, fewer errors."
+            },
+            {
+              "term": "API",
+              "definition": "A bridge that allows two systems to \"talk\" to each other.",
+              "message": "It is a connector between systems."
+            }
+          ]
+        },
+        {
+          "title": "Security and Access",
+          "sectionNote": "Client information is protected.",
+          "terms": [
+            {
+              "term": "Users and roles",
+              "definition": "Define what each person can see or do within the system."
+            },
+            {
+              "term": "Authentication",
+              "definition": "The process of verifying the user's identity (username/password, two-factor)."
+            },
+            {
+              "term": "Encryption",
+              "definition": "Information protection so it cannot be read by third parties."
+            }
+          ]
+        },
+        {
+          "title": "Common Terms in Software Project Sales",
+          "terms": [
+            {
+              "term": "Requirements gathering",
+              "definition": "The process of understanding what the client needs, not just what they ask for."
+            },
+            {
+              "term": "Project scope",
+              "definition": "What the solution includes and what it does not include."
+            },
+            {
+              "term": "Timeline",
+              "definition": "Dates and stages of the project."
+            },
+            {
+              "term": "Go-live",
+              "definition": "The moment the system enters real operation."
+            },
+            {
+              "term": "Post-implementation support",
+              "definition": "Ongoing support after deployment."
+            },
+            {
+              "term": "Licensing",
+              "definition": "Right to use the software (monthly, annual, or perpetual)."
+            },
+            {
+              "term": "Scalability",
+              "definition": "The system's ability to grow with the client."
+            },
+            {
+              "term": "Customization",
+              "definition": "Specific adaptations for the client."
+            }
+          ]
+        }
+      ],
+      "closing": {
+        "title": "Final message for the salesperson",
+        "lines": [
+          "You don't need to be a programmer.",
+          "You need to understand the concept and the benefit.",
+          "The client buys security, control, and efficiency, not technology."
+        ]
+      }
+    }
   }
 }

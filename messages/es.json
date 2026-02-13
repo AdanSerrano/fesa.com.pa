@@ -1909,5 +1909,392 @@
     "securityTitle": "Seguridad",
     "dataUsageTitle": "Uso de Datos",
     "generalInfoTitle": "Información General"
+  },
+  "Glossary": {
+    "pageTitle": "Glosario",
+    "labels": {
+      "examples": "Ejemplos",
+      "advantages": "Ventajas comerciales",
+      "before": "Antes",
+      "after": "Ahora"
+    },
+    "tech": {
+      "title": "Glosario Básico de Soluciones Tecnológicas",
+      "subtitle": "Enfoque comercial para fuerza de ventas",
+      "sections": [
+        {
+          "title": "Conceptos Generales de Soluciones",
+          "terms": [
+            {
+              "term": "Solución integral",
+              "definition": "Conjunto de hardware + software + consumibles + servicios que resuelve una necesidad completa del cliente, no solo una parte del proceso."
+            },
+            {
+              "term": "Transformación digital",
+              "definition": "Proceso mediante el cual una empresa digitaliza, automatiza y optimiza sus procesos para ser más eficiente, segura y rentable."
+            },
+            {
+              "term": "Automatización de procesos",
+              "definition": "Uso de tecnología para reducir tareas manuales, errores humanos y tiempos operativos."
+            },
+            {
+              "term": "Escalabilidad",
+              "definition": "Capacidad de una solución para crecer junto con el cliente sin necesidad de cambiar todo el sistema."
+            }
+          ]
+        },
+        {
+          "title": "Hardware Tecnológico",
+          "terms": [
+            {
+              "term": "Hardware",
+              "definition": "Equipos físicos necesarios para operar una solución tecnológica (lectores, impresoras especiales, servidores, tablets, etc.)."
+            },
+            {
+              "term": "Lectores RFID",
+              "definition": "Dispositivos que leen etiquetas RFID sin contacto físico, permitiendo identificación rápida y masiva de objetos."
+            },
+            {
+              "term": "Impresoras RFID",
+              "definition": "Impresoras especializadas que imprimen y programan etiquetas RFID al mismo tiempo."
+            },
+            {
+              "term": "Dispositivos móviles (handhelds)",
+              "definition": "Equipos portátiles utilizados para captura de datos en campo, inventarios, despachos y control de activos."
+            }
+          ]
+        },
+        {
+          "title": "RFID (Radio Frequency Identification)",
+          "terms": [
+            {
+              "term": "RFID",
+              "definition": "Tecnología que permite identificar y rastrear objetos mediante ondas de radio. No requiere contacto visual directo."
+            },
+            {
+              "term": "Etiqueta RFID",
+              "definition": "Etiqueta con un chip que almacena información y puede ser leída automáticamente."
+            },
+            {
+              "term": "Activo fijo",
+              "definition": "Bien de la empresa que no se consume (equipos, mobiliario, maquinaria, herramientas)."
+            },
+            {
+              "term": "Control de activos fijos",
+              "definition": "Sistema que permite localizar, auditar y administrar activos en tiempo real, reduciendo pérdidas y errores."
+            },
+            {
+              "term": "Inventario automatizado",
+              "definition": "Conteo de inventarios rápido y preciso usando tecnología RFID o códigos, sin procesos manuales extensos."
+            }
+          ]
+        },
+        {
+          "title": "Software Empresarial",
+          "terms": [
+            {
+              "term": "Software",
+              "definition": "Aplicación o sistema que permite gestionar información, procesos y operaciones del cliente."
+            },
+            {
+              "term": "ERP (Enterprise Resource Planning)",
+              "definition": "Sistema que integra las áreas clave del negocio: finanzas, inventario, compras, ventas, activos.",
+              "message": "Es el cerebro operativo de la empresa."
+            },
+            {
+              "term": "WMS (Warehouse Management System)",
+              "definition": "Sistema para la gestión de bodegas y almacenes: entradas, salidas, ubicaciones y despachos."
+            },
+            {
+              "term": "Aplicaciones web",
+              "definition": "Sistemas que funcionan desde un navegador (Chrome, Edge, etc.), accesibles desde cualquier lugar."
+            },
+            {
+              "term": "Aplicaciones móviles",
+              "definition": "Apps diseñadas para celulares o tablets, ideales para trabajo en campo o en bodega."
+            }
+          ]
+        },
+        {
+          "title": "Gestión Documental y Contenido",
+          "terms": [
+            {
+              "term": "ECM (Enterprise Content Management)",
+              "definition": "Sistema para gestionar documentos digitales: contratos, expedientes, libros, archivos legales y administrativos."
+            },
+            {
+              "term": "Expediente digital",
+              "definition": "Conjunto de documentos organizados electrónicamente, accesibles de forma rápida y segura."
+            },
+            {
+              "term": "Digitalización documental",
+              "definition": "Proceso de convertir documentos físicos en archivos digitales organizados."
+            },
+            {
+              "term": "Control de libros y archivos",
+              "definition": "Soluciones para localizar, rastrear y administrar libros físicos o digitales, especialmente en instituciones."
+            }
+          ]
+        },
+        {
+          "title": "Soluciones Comerciales Digitales",
+          "terms": [
+            {
+              "term": "Tarjeta digital",
+              "definition": "Tarjeta de presentación electrónica que reemplaza la tarjeta física y facilita compartir información."
+            },
+            {
+              "term": "Tienda virtual (e-commerce)",
+              "definition": "Plataforma para vender productos o servicios en línea, con pagos, inventario y facturación."
+            },
+            {
+              "term": "Integración de sistemas",
+              "definition": "Capacidad de una solución para conectarse con otros sistemas del cliente (ERP, facturación, inventario)."
+            }
+          ]
+        },
+        {
+          "title": "Desarrollo a la Medida",
+          "terms": [
+            {
+              "term": "Desarrollo a la medida",
+              "definition": "Software creado específicamente según las necesidades del cliente, no un producto estándar."
+            },
+            {
+              "term": "Personalización",
+              "definition": "Adaptación de un sistema existente para ajustarse a procesos específicos del cliente."
+            }
+          ]
+        },
+        {
+          "title": "Servicios y Acompañamiento",
+          "terms": [
+            {
+              "term": "Implementación",
+              "definition": "Proceso de instalar, configurar y poner en funcionamiento la solución en el cliente."
+            },
+            {
+              "term": "Acompañamiento",
+              "definition": "Soporte cercano al cliente durante y después de la implementación para asegurar el éxito del proyecto."
+            },
+            {
+              "term": "Capacitación",
+              "definition": "Entrenamiento al personal del cliente para el uso correcto de la solución."
+            },
+            {
+              "term": "Soporte técnico",
+              "definition": "Atención posterior para resolver incidencias, ajustes o mejoras del sistema."
+            }
+          ]
+        },
+        {
+          "title": "Consumibles Tecnológicos",
+          "terms": [
+            {
+              "term": "Consumibles",
+              "definition": "Elementos que se usan y reemplazan periódicamente: etiquetas RFID, ribbons, tarjetas, papel especializado."
+            },
+            {
+              "term": "Ribbons RFID",
+              "definition": "Cintas utilizadas en impresoras RFID para imprimir información en las etiquetas."
+            }
+          ]
+        }
+      ],
+      "closing": {
+        "title": "Cómo debe pensar el vendedor (mensaje clave)",
+        "before": "Vendo impresoras y cheques",
+        "after": "Resuelvo problemas operativos, de control, trazabilidad y eficiencia usando tecnología"
+      }
+    },
+    "prog": {
+      "title": "Glosario Básico – Conceptos de Programación y Tecnología",
+      "subtitle": "Enfoque comercial para ventas de soluciones de software",
+      "sections": [
+        {
+          "title": "Bases de Datos",
+          "terms": [
+            {
+              "term": "Base de datos",
+              "definition": "Lugar digital donde se almacena, organiza y protege la información del cliente (clientes, inventarios, activos, documentos, transacciones).",
+              "message": "Es donde vive la información del sistema."
+            },
+            {
+              "term": "Base de datos relacional",
+              "definition": "Organiza la información en tablas relacionadas entre sí. Es la más usada en sistemas empresariales.",
+              "examples": ["MySQL", "PostgreSQL", "SQL Server", "Oracle"],
+              "note": "Usamos bases de datos robustas y probadas a nivel empresarial."
+            },
+            {
+              "term": "Base de datos no relacional (NoSQL)",
+              "definition": "Maneja grandes volúmenes de información de forma más flexible (apps, sistemas móviles, web).",
+              "examples": ["MongoDB", "Firebase"],
+              "note": "Ideal para aplicaciones modernas y móviles."
+            },
+            {
+              "term": "Respaldos (Backups)",
+              "definition": "Copias de seguridad de la base de datos para evitar pérdida de información.",
+              "message": "La información del cliente está protegida ante fallas o errores."
+            }
+          ]
+        },
+        {
+          "title": "Lenguajes de Programación",
+          "sectionNote": "No vender el lenguaje, sino la estabilidad, escalabilidad y soporte.",
+          "terms": [
+            {
+              "term": "Lenguaje de programación",
+              "definition": "Idioma que usan los programadores para crear sistemas, aplicaciones y plataformas.",
+              "message": "Es cómo se construye el software."
+            },
+            {
+              "term": "Java",
+              "definition": "Muy usado en sistemas empresariales grandes y estables."
+            },
+            {
+              "term": ".NET / C#",
+              "definition": "Frecuente en empresas corporativas y sistemas administrativos."
+            },
+            {
+              "term": "PHP",
+              "definition": "Común en aplicaciones web y sistemas personalizados."
+            },
+            {
+              "term": "JavaScript",
+              "definition": "Clave para aplicaciones web modernas y aplicaciones móviles."
+            },
+            {
+              "term": "Python",
+              "definition": "Usado en automatización, análisis de datos e integraciones."
+            }
+          ]
+        },
+        {
+          "title": "Servidores",
+          "terms": [
+            {
+              "term": "Servidor",
+              "definition": "Computadora especializada donde vive el sistema, la base de datos y las aplicaciones.",
+              "message": "Es el lugar donde corre el sistema."
+            },
+            {
+              "term": "Servidor en la Nube (Cloud)",
+              "definition": "El sistema está alojado en internet y se accede desde cualquier lugar.",
+              "examples": ["AWS (Amazon Web Services)", "Microsoft Azure", "Google Cloud"],
+              "advantages": ["No requiere infraestructura propia", "Escalable", "Acceso remoto", "Menor inversión inicial"],
+              "note": "Ideal para empresas que quieren flexibilidad y crecimiento rápido."
+            },
+            {
+              "term": "Servidor On-Premise (En sitio)",
+              "definition": "El servidor está físicamente en las instalaciones del cliente.",
+              "advantages": ["Control total de la información", "Preferido por entidades reguladas", "Funciona incluso sin internet (en algunos casos)"],
+              "note": "Ideal para gobierno, banca, salud, empresas con políticas estrictas de seguridad."
+            },
+            {
+              "term": "Servidor híbrido",
+              "definition": "Combina nube + servidor local.",
+              "message": "Lo mejor de ambos mundos."
+            }
+          ]
+        },
+        {
+          "title": "Ambientes de un Sistema",
+          "sectionNote": "Nada pasa a producción sin pruebas previas.",
+          "terms": [
+            {
+              "term": "Ambiente de desarrollo",
+              "definition": "Donde se construye y prueba el sistema."
+            },
+            {
+              "term": "Ambiente de pruebas (QA / Testing)",
+              "definition": "Donde el cliente valida que todo funcione antes de salir en vivo."
+            },
+            {
+              "term": "Ambiente de producción",
+              "definition": "El sistema en uso real por el cliente."
+            }
+          ]
+        },
+        {
+          "title": "Integraciones y Conectividad",
+          "terms": [
+            {
+              "term": "Integración de sistemas",
+              "definition": "Conexión entre distintos sistemas para compartir información automáticamente.",
+              "examples": ["ERP con inventarios", "Sistema con facturación", "RFID con base de datos"],
+              "note": "Menos trabajo manual, menos errores."
+            },
+            {
+              "term": "API",
+              "definition": "Puente que permite que dos sistemas \"hablen\" entre sí.",
+              "message": "Es un conector entre sistemas."
+            }
+          ]
+        },
+        {
+          "title": "Seguridad y Accesos",
+          "sectionNote": "La información del cliente está protegida.",
+          "terms": [
+            {
+              "term": "Usuarios y roles",
+              "definition": "Definen qué puede ver o hacer cada persona dentro del sistema."
+            },
+            {
+              "term": "Autenticación",
+              "definition": "Proceso para verificar la identidad del usuario (usuario/contraseña, doble factor)."
+            },
+            {
+              "term": "Encriptación",
+              "definition": "Protección de la información para que no pueda ser leída por terceros."
+            }
+          ]
+        },
+        {
+          "title": "Términos Comunes en Ventas de Proyectos de Software",
+          "terms": [
+            {
+              "term": "Levantamiento de requerimientos",
+              "definition": "Proceso de entender qué necesita el cliente, no solo qué pide."
+            },
+            {
+              "term": "Alcance del proyecto",
+              "definition": "Qué incluye y qué no incluye la solución."
+            },
+            {
+              "term": "Cronograma",
+              "definition": "Fechas y etapas del proyecto."
+            },
+            {
+              "term": "Go-live",
+              "definition": "Momento en que el sistema entra en operación real."
+            },
+            {
+              "term": "Soporte post implementación",
+              "definition": "Acompañamiento luego de la puesta en marcha."
+            },
+            {
+              "term": "Licenciamiento",
+              "definition": "Derecho de uso del software (mensual, anual o perpetuo)."
+            },
+            {
+              "term": "Escalabilidad",
+              "definition": "Capacidad del sistema para crecer con el cliente."
+            },
+            {
+              "term": "Personalización",
+              "definition": "Adaptaciones específicas para el cliente."
+            }
+          ]
+        }
+      ],
+      "closing": {
+        "title": "Mensaje final para el vendedor",
+        "lines": [
+          "No necesitas ser programador.",
+          "Necesitas entender el concepto y el beneficio.",
+          "El cliente compra seguridad, control y eficiencia, no tecnología."
+        ]
+      }
+    }
   }
 }

@@ -26,7 +26,7 @@ export async function Footer() {
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 sm:py-16">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-            <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+            <span className="text-2xl font-black tracking-tight text-foreground">
               Fesa
             </span>
             <p className="text-sm text-muted-foreground max-w-xs">

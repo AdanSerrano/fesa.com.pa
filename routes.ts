@@ -14,7 +14,8 @@ export const publicRoutes = [
   "/about",
   "/catalogs",
   "/catalogs/:slug",
-  "/privacy"
+  "/privacy",
+  "/glossary"
 ];
 
 export const authRoutes = [
