@@ -17,51 +17,95 @@ import {
   Settings,
   Shield,
   Menu,
-  LayoutDashboard,
   Briefcase,
   Package,
   Newspaper,
-  Home,
   Building2,
   BookOpen,
   ShieldCheck,
+  Mail,
 } from "lucide-react";
 import { LogoutButton } from "./logout-button";
+import type { MobileMenuProps, NavGroupLink } from "./header-dynamic";
 
 const iconMap = {
   Briefcase,
   Package,
   Newspaper,
-  Home,
   Building2,
   BookOpen,
   ShieldCheck,
+  Mail,
 } as const;
 
 type IconName = keyof typeof iconMap;
 
-interface NavLink {
+const MobileNavLink = memo(function MobileNavLink({
+  href,
+  label,
+  iconName,
+  isActive,
+}: {
   href: string;
   label: string;
-  iconName: IconName;
-}
+  iconName: string;
+  isActive: boolean;
+}) {
+  const Icon = iconMap[iconName as IconName] || Briefcase;
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors hover:bg-accent hover:text-foreground",
+        isActive
+          ? "bg-accent font-medium text-foreground"
+          : "text-muted-foreground"
+      )}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
+    </Link>
+  );
+});
+MobileNavLink.displayName = "MobileNavLink";
 
-interface HeaderMobileMenuProps {
-  user: {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null;
-  } | null;
-  navLinks: NavLink[];
-  labels: {
-    dashboard: string;
-    myAccount: string;
-    settings: string;
-    securityAudit: string;
-  };
-}
+const MobileNavSection = memo(function MobileNavSection({
+  title,
+  links,
+  isActive,
+}: {
+  title: string;
+  links: NavGroupLink[];
+  isActive: (href: string) => boolean;
+}) {
+  return (
+    <div className="space-y-1">
+      <div className="mx-3 mb-1 border-b pb-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {title}
+        </p>
+      </div>
+      {links.map((link) => (
+        <MobileNavLink
+          key={link.href}
+          href={link.href}
+          label={link.label}
+          iconName={link.iconName}
+          isActive={isActive(link.href)}
+        />
+      ))}
+    </div>
+  );
+});
+MobileNavSection.displayName = "MobileNavSection";
 
-function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuProps) {
+function HeaderMobileMenuComponent({
+  user,
+  solutionsGroup,
+  companyGroup,
+  directLinks,
+  labels,
+}: MobileMenuProps) {
   const pathname = usePathname();
 
   const isActive = useMemo(() => {
@@ -81,50 +125,57 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
       </SheetTrigger>
       <SheetContent side="right" className="w-[280px] sm:w-[320px] flex flex-col">
         <SheetHeader>
-          <SheetTitle className="flex items-center gap-2">
+          <SheetTitle className="flex items-center gap-2 text-foreground font-black tracking-tight">
             Fesa
           </SheetTitle>
         </SheetHeader>
-        <nav className="mt-6 flex flex-col gap-2 flex-1 overflow-y-auto">
-          {navLinks.map((link) => {
-            const Icon = iconMap[link.iconName];
-            const active = isActive(link.href);
-            return (
-              <Link
+        <nav className="mt-6 flex flex-col gap-4 flex-1 overflow-y-auto">
+          <MobileNavSection
+            title={solutionsGroup.trigger}
+            links={solutionsGroup.links}
+            isActive={isActive}
+          />
+
+          <div className="mx-3 my-1 border-t" />
+
+          <div className="space-y-1">
+            {directLinks.map((link) => (
+              <MobileNavLink
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-accent hover:text-foreground",
-                  active
-                    ? "bg-accent font-medium text-foreground"
-                    : "text-muted-foreground"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {link.label}
-              </Link>
-            );
-          })}
-          {user && (
-            <Link
-              href="/dashboard/overview"
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-accent hover:text-foreground",
-                isActive("/dashboard")
-                  ? "bg-accent font-medium text-foreground"
-                  : "text-muted-foreground"
-              )}
-            >
-              <LayoutDashboard className="h-4 w-4" />
-              {labels.dashboard}
-            </Link>
-          )}
-          <div className="my-2 border-t" />
+                label={link.label}
+                iconName={link.iconName}
+                isActive={isActive(link.href)}
+              />
+            ))}
+          </div>
+
+          <div className="mx-3 my-1 border-t" />
+
+          <MobileNavSection
+            title={companyGroup.trigger}
+            links={companyGroup.links}
+            isActive={isActive}
+          />
+
           {user && (
             <>
-              <div className="flex items-center gap-3 px-3 py-2">
+              <div className="mx-3 my-1 border-t" />
+              <MobileNavLink
+                href="/dashboard/overview"
+                label={labels.dashboard}
+                iconName="Briefcase"
+                isActive={isActive("/dashboard")}
+              />
+            </>
+          )}
+
+          {user && (
+            <>
+              <div className="mx-3 my-1 border-t" />
+              <div className="flex items-center gap-3 px-3 py-2.5">
                 <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.image || undefined} alt={user.name || "Usuario"} />
+                  <AvatarImage src={user.image || undefined} alt={user.name || "User"} />
                   <AvatarFallback className="text-xs">
                     {user.name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase() || "U"}
                   </AvatarFallback>
@@ -140,21 +191,21 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
               </div>
               <Link
                 href="/dashboard/overview"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 <User className="h-4 w-4" />
                 {labels.myAccount}
               </Link>
               <Link
                 href="/dashboard/settings/profile"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 <Settings className="h-4 w-4" />
                 {labels.settings}
               </Link>
               <Link
                 href="/dashboard/settings/security"
-                className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
               >
                 <Shield className="h-4 w-4" />
                 {labels.securityAudit}
@@ -162,6 +213,7 @@ function HeaderMobileMenuComponent({ user, navLinks, labels }: HeaderMobileMenuP
             </>
           )}
         </nav>
+
         {user && (
           <div className="border-t pt-4 px-3 mt-auto">
             <LogoutButton variant="button" />

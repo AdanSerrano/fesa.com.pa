@@ -14,14 +14,63 @@ export async function Header() {
   const t = await getTranslations("Header");
   const tNav = await getTranslations("Navigation");
 
-  const navLinks = [
-    { href: "/services", label: tNav("services"), iconName: "Briefcase" as const },
-    { href: "/products", label: tNav("products"), iconName: "Package" as const },
-    { href: "/catalogs", label: tNav("catalogs"), iconName: "BookOpen" as const },
-    { href: "/news", label: tNav("news"), iconName: "Newspaper" as const },
-    { href: "/about", label: tNav("about"), iconName: "Building2" as const },
-    { href: "/contact", label: tNav("contact"), iconName: "Home" as const },
-    { href: "/privacy", label: tNav("privacy"), iconName: "ShieldCheck" as const },
+  const solutionsGroup = {
+    trigger: tNav("solutions"),
+    description: tNav("solutionsDescription"),
+    links: [
+      {
+        href: "/services",
+        label: tNav("services"),
+        description: tNav("servicesDescription"),
+        iconName: "Briefcase" as const,
+      },
+      {
+        href: "/products",
+        label: tNav("products"),
+        description: tNav("productsDescription"),
+        iconName: "Package" as const,
+      },
+      {
+        href: "/catalogs",
+        label: tNav("catalogs"),
+        description: tNav("catalogsDescription"),
+        iconName: "BookOpen" as const,
+      },
+    ],
+  };
+
+  const companyGroup = {
+    trigger: tNav("companyLabel"),
+    description: tNav("companyDescription"),
+    links: [
+      {
+        href: "/about",
+        label: tNav("about"),
+        description: tNav("aboutDescription"),
+        iconName: "Building2" as const,
+      },
+      {
+        href: "/privacy",
+        label: tNav("privacy"),
+        description: tNav("privacyDescription"),
+        iconName: "ShieldCheck" as const,
+      },
+    ],
+  };
+
+  const directLinks = [
+    {
+      href: "/news",
+      label: tNav("news"),
+      description: tNav("newsDescription"),
+      iconName: "Newspaper" as const,
+    },
+    {
+      href: "/contact",
+      label: tNav("contact"),
+      description: tNav("contactDescription"),
+      iconName: "Mail" as const,
+    },
   ];
 
   const mobileMenuLabels = {
@@ -37,11 +86,13 @@ export async function Header() {
     securityAudit: t("securityAudit"),
   };
 
-  const userData = user ? {
-    name: user.name,
-    email: user.email,
-    image: user.image,
-  } : null;
+  const userData = user
+    ? {
+        name: user.name,
+        email: user.email,
+        image: user.image,
+      }
+    : null;
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 [-webkit-transform:translateZ(0)]">
@@ -49,7 +100,9 @@ export async function Header() {
         <HeaderLogoDynamic />
 
         <HeaderNavDynamic
-          navLinks={navLinks.map(({ href, label }) => ({ href, label }))}
+          solutionsGroup={solutionsGroup}
+          companyGroup={companyGroup}
+          directLinks={directLinks}
           showDashboard={!!user}
           dashboardLabel={tNav("dashboard")}
         />
@@ -60,15 +113,14 @@ export async function Header() {
 
           <HeaderMobileMenuDynamic
             user={userData}
-            navLinks={navLinks}
+            solutionsGroup={solutionsGroup}
+            companyGroup={companyGroup}
+            directLinks={directLinks}
             labels={mobileMenuLabels}
           />
 
           {userData && (
-            <HeaderUserMenuDynamic
-              user={userData}
-              labels={userMenuLabels}
-            />
+            <HeaderUserMenuDynamic user={userData} labels={userMenuLabels} />
           )}
         </div>
       </div>

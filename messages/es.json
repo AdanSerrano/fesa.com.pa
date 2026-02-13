@@ -71,7 +71,7 @@
   },
   "Navigation": {
     "home": "Inicio",
-    "dashboard": "Panel",
+    "dashboard": "Dashboard",
     "services": "Servicios",
     "products": "Productos",
     "news": "Noticias",
@@ -87,7 +87,18 @@
     "account": "Cuenta",
     "usersManagement": "Gestión de Usuarios",
     "catalogs": "Catálogos",
-    "privacy": "Política de Privacidad"
+    "privacy": "Política de Privacidad",
+    "solutions": "Soluciones",
+    "solutionsDescription": "Explora nuestros servicios, productos y catálogos digitales",
+    "servicesDescription": "Soluciones integrales de tecnología y negocios",
+    "productsDescription": "Productos de alta calidad para tu empresa",
+    "catalogsDescription": "Explora nuestros catálogos digitales de productos",
+    "companyLabel": "Empresa",
+    "companyDescription": "Conoce nuestra historia, equipo y valores",
+    "aboutDescription": "Más de 50 años innovando en Panamá",
+    "contactDescription": "Ponte en contacto con nuestro equipo",
+    "privacyDescription": "Cómo protegemos tus datos personales",
+    "newsDescription": "Últimas noticias y novedades de Fesa"
   },
   "Auth": {
     "login": "Iniciar sesión",

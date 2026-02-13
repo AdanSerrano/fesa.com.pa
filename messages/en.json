@@ -87,7 +87,18 @@
     "account": "Account",
     "usersManagement": "User Management",
     "catalogs": "Catalogs",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "solutions": "Solutions",
+    "solutionsDescription": "Explore our services, products, and digital catalogs",
+    "servicesDescription": "Comprehensive technology and business solutions",
+    "productsDescription": "High-quality products for your company",
+    "catalogsDescription": "Browse our digital product catalogs",
+    "companyLabel": "Company",
+    "companyDescription": "Learn about our history, team, and values",
+    "aboutDescription": "Over 50 years innovating in Panama",
+    "contactDescription": "Get in touch with our team",
+    "privacyDescription": "How we protect your personal data",
+    "newsDescription": "Latest news and updates from Fesa"
   },
   "Auth": {
     "login": "Login",

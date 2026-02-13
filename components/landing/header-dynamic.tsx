@@ -3,30 +3,45 @@
 import dynamic from "next/dynamic";
 import { Skeleton } from "@/components/ui/skeleton";
 
-type IconName = "Briefcase" | "Package" | "Newspaper" | "Home" | "Building2" | "BookOpen" | "ShieldCheck";
+type IconName = "Briefcase" | "Package" | "Newspaper" | "Home" | "Building2" | "BookOpen" | "ShieldCheck" | "Mail";
 
-interface NavLinkSimple {
+export interface NavGroupLink {
   href: string;
   label: string;
-}
-
-interface NavLink extends NavLinkSimple {
+  description: string;
   iconName: IconName;
 }
 
-interface HeaderNavProps {
-  navLinks: NavLinkSimple[];
+export interface NavGroup {
+  trigger: string;
+  description: string;
+  links: NavGroupLink[];
+}
+
+export interface DirectLink {
+  href: string;
+  label: string;
+  description: string;
+  iconName: IconName;
+}
+
+export interface HeaderNavProps {
+  solutionsGroup: NavGroup;
+  companyGroup: NavGroup;
+  directLinks: DirectLink[];
   showDashboard: boolean;
   dashboardLabel: string;
 }
 
-interface MobileMenuProps {
+export interface MobileMenuProps {
   user: {
     name?: string | null;
     email?: string | null;
     image?: string | null;
   } | null;
-  navLinks: NavLink[];
+  solutionsGroup: NavGroup;
+  companyGroup: NavGroup;
+  directLinks: DirectLink[];
   labels: {
     dashboard: string;
     myAccount: string;
@@ -74,9 +89,9 @@ export const HeaderUserMenuDynamic = dynamic<UserMenuProps>(
 
 function NavSkeleton() {
   return (
-    <nav className="hidden items-center gap-6 lg:flex">
-      {[1, 2, 3, 4].map((i) => (
-        <Skeleton key={i} className="h-4 w-16" />
+    <nav className="hidden items-center gap-1 lg:flex">
+      {[1, 2, 3].map((i) => (
+        <Skeleton key={i} className="h-9 w-24 rounded-md" />
       ))}
     </nav>
   );
@@ -107,26 +122,3 @@ export const HeaderLogoDynamic = dynamic(
   }
 );
 
-interface AuthButtonsProps {
-  labels: {
-    login: string;
-    getStarted: string;
-  };
-}
-
-function AuthButtonsSkeleton() {
-  return (
-    <div className="hidden lg:flex items-center gap-2">
-      <Skeleton className="h-8 w-16" />
-      <Skeleton className="h-8 w-24" />
-    </div>
-  );
-}
-
-export const HeaderAuthButtonsDynamic = dynamic<AuthButtonsProps>(
-  () => import("./header-auth-buttons").then((mod) => mod.HeaderAuthButtons),
-  {
-    ssr: false,
-    loading: () => <AuthButtonsSkeleton />,
-  }
-);
