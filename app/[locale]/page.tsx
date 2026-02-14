@@ -177,11 +177,11 @@ export default async function Home({ params }: HomeProps) {
   const faqs = t.raw("faqs") as { question: string; answer: string }[];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Header />
 
       <main>
-        <section className="relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 hero-mesh-bg">
+        <section className="relative min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 hero-mesh-bg">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
           <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20 animate-glow">
             <div className="aspect-square w-[32rem] rounded-full bg-gradient-to-br from-primary to-brand-600" />
@@ -193,11 +193,11 @@ export default async function Home({ params }: HomeProps) {
             <div className="aspect-square w-[24rem] rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
           </div>
 
-          <div className="relative max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center">
+          <div className="relative max-w-7xl mx-auto min-h-[calc(100dvh-4rem)] lg:min-h-0 lg:h-full px-4 md:px-6 flex items-center py-8 sm:py-12 lg:py-0">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
               <div className="text-center lg:text-left">
                 <AnimatedSection animation="fade-up" delay={0}>
-                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-6 badge-glow">
+                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-4 sm:mb-6 badge-glow">
                     <Sparkles className="h-4 w-4" />
                     {t("badge")}
                   </div>
@@ -213,30 +213,30 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={200}>
-                  <p className="mt-6 text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     {t("subtitle")}
                   </p>
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={300}>
-                  <div className="mt-8">
+                  <div className="mt-6 sm:mt-8">
                     <HeroButtons />
                   </div>
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={400}>
-                  <div className="mt-8 flex items-center justify-center lg:justify-start gap-x-2 sm:gap-x-5 text-xs sm:text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                  <div className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-2 gap-y-1 sm:gap-x-5 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5">
                       <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature1")}</span>
                     </div>
-                    <span className="text-border">·</span>
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="text-border hidden sm:inline">·</span>
+                    <div className="flex items-center gap-1.5">
                       <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature2")}</span>
                     </div>
-                    <span className="text-border">·</span>
-                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <span className="text-border hidden sm:inline">·</span>
+                    <div className="flex items-center gap-1.5">
                       <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature3")}</span>
                     </div>

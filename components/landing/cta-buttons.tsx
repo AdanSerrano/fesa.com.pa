@@ -37,7 +37,7 @@ export async function CtaButtons() {
           {t("contactUs")}
         </Link>
       </Button>
-      <Button variant="outline" size="lg" className="w-full min-w-[200px] sm:w-auto border-brand-400/40 text-brand-200 hover:bg-brand-800/50 hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98]" asChild>
+      <Button variant="outline" size="lg" className="w-full min-w-[200px] sm:w-auto border-brand-400/40 text-brand-600 hover:bg-brand-800/50 hover:text-white transition-all hover:scale-[1.02] active:scale-[0.98]" asChild>
         <Link href="/catalogs">
           {t("viewCatalogs")}
           <ArrowRight className="ml-2 h-4 w-4" />

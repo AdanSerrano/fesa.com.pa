@@ -22,7 +22,7 @@ const iconMap: Record<string, LucideIcon> = {
 
 function MobileQuickLinksComponent({ links }: MobileQuickLinksProps) {
   return (
-    <div className="lg:hidden mt-8 w-full">
+    <div className="lg:hidden mt-5 sm:mt-8 w-full">
       <div className="grid grid-cols-2 gap-3 max-w-md mx-auto">
         {links.map((link) => {
           const Icon = iconMap[link.icon] || Briefcase;
