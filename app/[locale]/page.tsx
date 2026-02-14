@@ -183,13 +183,13 @@ export default async function Home({ params }: HomeProps) {
       <main>
         <section className="relative min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 hero-mesh-bg">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20 animate-glow">
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-10 lg:opacity-20 animate-glow">
             <div className="aspect-square w-[32rem] rounded-full bg-gradient-to-br from-primary to-brand-600" />
           </div>
-          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-20 animate-float-delayed">
+          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-10 lg:opacity-20 animate-float-delayed">
             <div className="aspect-square w-[28rem] rounded-full bg-gradient-to-tr from-primary to-brand-800" />
           </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl opacity-10 animate-glow">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl opacity-5 lg:opacity-10 animate-glow">
             <div className="aspect-square w-[24rem] rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
           </div>
 
@@ -213,7 +213,7 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={200}>
-                  <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                  <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-foreground/70 lg:text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     {t("subtitle")}
                   </p>
                 </AnimatedSection>
@@ -225,7 +225,7 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={400}>
-                  <div className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-2 gap-y-1 sm:gap-x-5 text-xs sm:text-sm text-muted-foreground">
+                  <div className="mt-5 sm:mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-x-2 gap-y-1 sm:gap-x-5 text-xs sm:text-sm text-foreground/60 lg:text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature1")}</span>
