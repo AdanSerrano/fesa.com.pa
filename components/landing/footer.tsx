@@ -17,8 +17,8 @@ export async function Footer() {
   const ecosystemLinks = [
     { name: "Fesa Store", href: "https://app.fesastore.com.pa" },
     { name: "Fesa ID", href: "https://id.fesa.com.pa" },
-    { name: "Fesa Transfer", href: "#" },
-    { name: "Fesa Tracking", href: "#" },
+    { name: "Fesa Transfer", href: "https://transfer.fesa.com.pa" },
+    { name: "Fesa Tracking", href: "https://tracking.fesa.com.pa" },
   ];
 
   return (
