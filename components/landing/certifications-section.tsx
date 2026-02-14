@@ -82,9 +82,9 @@ function CertificationsSectionComponent({ labels, certifications }: Certificatio
               {labels.subtitle}
             </p>
             <div className="mt-6 flex items-center justify-center gap-2">
-              <div className="h-1 w-8 rounded-full bg-brand-400" />
-              <div className="h-1 w-16 rounded-full bg-brand-500" />
-              <div className="h-1 w-8 rounded-full bg-brand-400" />
+              <div className="h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent to-brand-400" />
+              <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-brand-400 to-brand-500 animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, #60a5fa, #93c5fd, #60a5fa)", backgroundSize: "200% auto" }} />
+              <div className="h-0.5 w-12 rounded-full bg-gradient-to-l from-transparent to-brand-400" />
             </div>
           </div>
         </AnimatedSection>

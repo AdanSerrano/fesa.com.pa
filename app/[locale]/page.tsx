@@ -181,20 +181,23 @@ export default async function Home({ params }: HomeProps) {
       <Header />
 
       <main>
-        <section className="relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+        <section className="relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 hero-mesh-bg">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20">
-            <div className="aspect-square w-96 rounded-full bg-gradient-to-br from-primary to-brand-600" />
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20 animate-glow">
+            <div className="aspect-square w-[32rem] rounded-full bg-gradient-to-br from-primary to-brand-600" />
           </div>
-          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-20">
-            <div className="aspect-square w-96 rounded-full bg-gradient-to-tr from-primary to-brand-800" />
+          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-20 animate-float-delayed">
+            <div className="aspect-square w-[28rem] rounded-full bg-gradient-to-tr from-primary to-brand-800" />
+          </div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl opacity-10 animate-glow">
+            <div className="aspect-square w-[24rem] rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
           </div>
 
           <div className="relative max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center">
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
               <div className="text-center lg:text-left">
                 <AnimatedSection animation="fade-up" delay={0}>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-6 badge-glow">
                     <Sparkles className="h-4 w-4" />
                     {t("badge")}
                   </div>
@@ -203,7 +206,7 @@ export default async function Home({ params }: HomeProps) {
                 <AnimatedSection animation="fade-up" delay={100}>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
                     {t("title")}{" "}
-                    <span className="text-primary dark:text-brand-400">
+                    <span className="text-gradient-animate">
                       {t("titleHighlight")}
                     </span>
                   </h1>
@@ -222,17 +225,19 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={400}>
-                  <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                  <div className="mt-8 flex items-center justify-center lg:justify-start gap-x-2 sm:gap-x-5 text-xs sm:text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature1")}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <span className="text-border">·</span>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature2")}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                    <span className="text-border">·</span>
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-green-500 shrink-0" />
                       <span>{t("heroFeatures.feature3")}</span>
                     </div>
                   </div>
@@ -246,22 +251,29 @@ export default async function Home({ params }: HomeProps) {
               <AnimatedSection animation="fade-left" delay={200}>
                 <div className="hidden lg:block">
                   <div className="relative">
-                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-brand-600/20 rounded-3xl blur-2xl" />
+                    <div className="absolute -inset-8 bg-gradient-to-r from-primary/20 to-brand-600/20 rounded-3xl blur-3xl animate-glow" />
                     <div className="relative grid grid-cols-2 gap-4">
-                      {quickLinks.map((link, index) => (
-                        <Link
-                          key={link.href}
-                          href={link.href}
-                          className="group flex h-full min-h-[180px] flex-col items-center justify-center gap-3 p-6 rounded-2xl border bg-card/90 backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
-                          style={{ animationDelay: `${index * 100}ms` }}
-                        >
-                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110">
-                            <link.icon className="h-7 w-7" />
-                          </div>
-                          <span className="text-base font-semibold text-center">{link.label}</span>
-                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                        </Link>
-                      ))}
+                      {quickLinks.map((link, index) => {
+                        const floatClass = [
+                          "animate-float-hero-1",
+                          "animate-float-hero-2",
+                          "animate-float-hero-3",
+                          "animate-float-hero-4",
+                        ][index];
+                        return (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            className={`group flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-8 rounded-3xl border border-white/60 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-3 hero-card-glow gradient-border-animated ${floatClass}`}
+                          >
+                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 ring-1 ring-primary/20 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110 group-hover:ring-primary/40">
+                              <link.icon className="h-7 w-7" />
+                            </div>
+                            <span className="text-base font-semibold text-center">{link.label}</span>
+                            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </div>
@@ -270,7 +282,7 @@ export default async function Home({ params }: HomeProps) {
           </div>
         </section>
 
-        <section className="bg-muted/40 py-6">
+        <section className="bg-muted/40 py-6 border-y border-border/50">
           <ClientsMarquee title={t("clientsMarquee")} />
         </section>
 
@@ -289,9 +301,9 @@ export default async function Home({ params }: HomeProps) {
                   {t("pillarsSection.subtitle")}
                 </p>
                 <div className="mt-6 flex items-center justify-center gap-2">
-                  <div className="h-1 w-8 rounded-full bg-brand-500" />
-                  <div className="h-1 w-16 rounded-full bg-brand-600" />
-                  <div className="h-1 w-8 rounded-full bg-brand-500" />
+                  <div className="h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent to-brand-500" />
+                  <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6)", backgroundSize: "200% auto" }} />
+                  <div className="h-0.5 w-12 rounded-full bg-gradient-to-l from-transparent to-brand-500" />
                 </div>
               </div>
             </AnimatedSection>
@@ -301,7 +313,7 @@ export default async function Home({ params }: HomeProps) {
                 <AnimatedSection key={pillar.title} animation="fade-up" delay={index * 100}>
                   <div className="group relative h-full">
                     <div className="absolute inset-0 bg-gradient-to-br from-brand-600/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Card className="relative h-full border-2 transition-all duration-300 hover:border-brand-600/30 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+                    <Card className="relative h-full border-2 transition-all duration-300 hover:border-brand-600/30 hover:shadow-xl hover:-translate-y-1 overflow-hidden card-glow-hover">
                       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${pillar.color}`} />
                       <CardContent className="p-6 sm:p-8 text-center">
                         <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${pillar.color} text-white mb-5 transition-transform group-hover:scale-110 shadow-lg`}>
@@ -367,9 +379,9 @@ export default async function Home({ params }: HomeProps) {
                   {t("ecosystemSection.subtitle")}
                 </p>
                 <div className="mt-6 flex items-center justify-center gap-2">
-                  <div className="h-1 w-8 rounded-full bg-brand-500" />
-                  <div className="h-1 w-16 rounded-full bg-brand-600" />
-                  <div className="h-1 w-8 rounded-full bg-brand-500" />
+                  <div className="h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent to-brand-500" />
+                  <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6)", backgroundSize: "200% auto" }} />
+                  <div className="h-0.5 w-12 rounded-full bg-gradient-to-l from-transparent to-brand-500" />
                 </div>
               </div>
             </AnimatedSection>
@@ -385,7 +397,7 @@ export default async function Home({ params }: HomeProps) {
                       rel={app.href.startsWith("http") ? "noopener noreferrer" : undefined}
                       className={`group block h-full ${isComingSoon ? "opacity-60 grayscale pointer-events-none" : ""}`}
                     >
-                      <Card className={`h-full transition-all duration-300 overflow-hidden ${isComingSoon ? "" : "hover:shadow-xl hover:-translate-y-2 hover:border-brand-600/30 card-glow-hover"}`}>
+                      <Card className={`h-full transition-all duration-300 overflow-hidden ${isComingSoon ? "" : "hover:shadow-xl hover:-translate-y-2 hover:border-brand-600/30 card-glow-hover ecosystem-card-shine"}`}>
                         <CardContent className="p-6 text-center relative">
                           {app.badge && (
                             <Badge
@@ -477,10 +489,11 @@ export default async function Home({ params }: HomeProps) {
         />
 
         <section className="py-24 sm:py-32 relative overflow-hidden bg-brand-950">
-          <div className="absolute inset-0 bg-gradient-to-br from-brand-900/80 via-brand-950 to-brand-900/60" />
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-900/80 via-brand-950 to-brand-900/60 animate-gradient" />
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:3rem_3rem]" />
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-brand-600/15 blur-[120px]" />
-          <div className="absolute right-0 bottom-0 h-64 w-64 rounded-full bg-brand-400/10 blur-[100px]" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-brand-600/15 blur-[120px] animate-glow" />
+          <div className="absolute right-0 bottom-0 h-64 w-64 rounded-full bg-brand-400/10 blur-[100px] animate-float-delayed" />
+          <div className="absolute left-1/2 -translate-x-1/2 top-0 h-48 w-48 rounded-full bg-brand-500/8 blur-[80px] animate-float" />
 
           <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
             <AnimatedSection animation="slide-up" delay={0}>

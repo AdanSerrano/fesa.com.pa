@@ -19,6 +19,7 @@ export async function Footer() {
     { name: "Fesa ID", href: "https://id.fesa.com.pa" },
     { name: "Fesa Transfer", href: "https://transfer.fesa.com.pa" },
     { name: "Fesa Tracking", href: "https://tracking.fesa.com.pa" },
+    { name: "Fesa Storage", href: "https://storage.fesa.com.pa" },
   ];
 
   return (

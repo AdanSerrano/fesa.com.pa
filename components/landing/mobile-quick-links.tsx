@@ -30,7 +30,7 @@ function MobileQuickLinksComponent({ links }: MobileQuickLinksProps) {
             <Link
               key={link.href}
               href={link.href}
-              className="group flex items-center justify-center gap-2 px-3 py-3 rounded-xl border bg-card/80 backdrop-blur-sm text-sm font-medium transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 active:scale-95"
+              className="group flex items-center justify-center gap-2 px-4 py-3.5 rounded-2xl border border-white/60 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md text-sm font-semibold transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 active:scale-95"
             >
               <Icon className="h-4 w-4 text-primary shrink-0" />
               <span className="truncate">{link.label}</span>

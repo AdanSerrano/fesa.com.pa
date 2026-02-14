@@ -64,7 +64,7 @@ function StatsSectionComponent({ labels }: StatsSectionProps) {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="group relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 sm:p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-400/30 card-glow-hover"
+              className="group relative bg-white/5 backdrop-blur-md rounded-2xl border border-white/10 p-6 sm:p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-400/30 card-glow-hover stat-card-shine"
             >
               <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-brand-300 mb-4 transition-transform group-hover:scale-110">
                 <stat.icon className="h-7 w-7" />

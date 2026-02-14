@@ -13,7 +13,7 @@ export async function CtaButtons() {
   if (isLoggedIn) {
     return (
       <div className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
-        <Button size="lg" className="w-full min-w-[200px] sm:w-auto bg-white text-brand-950 hover:bg-brand-100 shadow-lg shadow-brand-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]" asChild>
+        <Button size="lg" className="w-full min-w-[200px] sm:w-auto bg-white text-brand-950 hover:bg-brand-100 shadow-lg shadow-brand-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] hover:shadow-xl hover:shadow-brand-500/40" asChild>
           <Link href="/dashboard/overview">
             <LayoutDashboard className="mr-2 h-4 w-4" />
             {tNav("dashboard")}
@@ -31,7 +31,7 @@ export async function CtaButtons() {
 
   return (
     <div className="flex w-full flex-col items-center justify-center gap-4 sm:w-auto sm:flex-row">
-      <Button size="lg" className="w-full min-w-[200px] sm:w-auto bg-white text-brand-950 hover:bg-brand-100 shadow-lg shadow-brand-500/20 transition-all hover:scale-[1.02] active:scale-[0.98]" asChild>
+      <Button size="lg" className="w-full min-w-[200px] sm:w-auto bg-white text-brand-950 hover:bg-brand-100 shadow-lg shadow-brand-500/30 transition-all hover:scale-[1.02] active:scale-[0.98] hover:shadow-xl hover:shadow-brand-500/40" asChild>
         <Link href="/contact">
           <Phone className="mr-2 h-4 w-4" />
           {t("contactUs")}
