@@ -36,7 +36,7 @@ const HomeNewsCategoryCard = memo(function HomeNewsCategoryCard({
 }) {
   return (
     <Link href={`/${locale}/news/${category.slug}`} className="group block h-full">
-      <div className="relative h-full rounded-xl overflow-hidden bg-card border border-border transition-all duration-300 hover:border-primary/40 hover:shadow-lg hover:-translate-y-1">
+      <div className="relative h-full rounded-xl overflow-hidden bg-card border border-border transition-all duration-300 hover:border-brand-400/40 hover:shadow-lg hover:-translate-y-1">
         <div className="relative aspect-[4/3] overflow-hidden bg-muted">
           {category.image ? (
             <>
@@ -50,16 +50,16 @@ const HomeNewsCategoryCard = memo(function HomeNewsCategoryCard({
               <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
             </>
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-primary/5">
-              <div className="h-16 w-16 rounded-xl bg-primary/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                <FolderOpen className="h-8 w-8 text-primary" />
+            <div className="absolute inset-0 flex items-center justify-center bg-brand-500/5">
+              <div className="h-16 w-16 rounded-xl bg-brand-500/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <FolderOpen className="h-8 w-8 text-brand-600" />
               </div>
             </div>
           )}
         </div>
 
         <div className="p-5">
-          <h3 className="font-semibold text-lg mb-2 group-hover:text-primary transition-colors">
+          <h3 className="font-semibold text-lg mb-2 group-hover:text-brand-600 transition-colors">
             {category.name}
           </h3>
           {category.description && (
@@ -67,7 +67,7 @@ const HomeNewsCategoryCard = memo(function HomeNewsCategoryCard({
               {category.description}
             </p>
           )}
-          <div className="flex items-center text-sm font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center text-sm font-medium text-brand-600 opacity-0 group-hover:opacity-100 transition-opacity">
             <span>{viewMoreLabel}</span>
             <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
           </div>

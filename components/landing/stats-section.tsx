@@ -22,24 +22,18 @@ function StatsSectionComponent({ labels }: StatsSectionProps) {
       value: 70,
       suffix: "%",
       label: labels.stat1Label,
-      color: "text-blue-600 dark:text-blue-400",
-      bgColor: "bg-blue-500/10 dark:bg-blue-400/10",
     },
     {
       icon: TrendingUp,
       value: 25,
       suffix: "%",
       label: labels.stat2Label,
-      color: "text-green-600 dark:text-green-400",
-      bgColor: "bg-green-500/10 dark:bg-green-400/10",
     },
     {
       icon: Shield,
       value: 99.9,
       suffix: "%",
       label: labels.stat3Label,
-      color: "text-purple-600 dark:text-purple-400",
-      bgColor: "bg-purple-500/10 dark:bg-purple-400/10",
       decimals: 1,
     },
     {
@@ -47,23 +41,21 @@ function StatsSectionComponent({ labels }: StatsSectionProps) {
       value: 1000,
       suffix: "+",
       label: labels.stat4Label,
-      color: "text-orange-600 dark:text-orange-400",
-      bgColor: "bg-orange-500/10 dark:bg-orange-400/10",
     },
   ];
 
   return (
-    <section className="py-20 sm:py-28 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-primary/5" />
-      <div className="absolute left-1/4 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-primary/10 blur-[100px]" />
-      <div className="absolute right-1/4 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-primary/5 blur-[100px]" />
+    <section className="py-20 sm:py-28 relative overflow-hidden bg-gradient-to-br from-brand-900 via-brand-950 to-brand-900 text-white section-divider-wave-top section-divider-wave">
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+      <div className="absolute left-1/4 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-brand-600/15 blur-[100px] animate-glow" />
+      <div className="absolute right-1/4 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-brand-400/10 blur-[100px] animate-float-delayed" />
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white">
             {labels.title}
           </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+          <p className="text-brand-200/70 max-w-2xl mx-auto text-lg">
             {labels.subtitle}
           </p>
         </div>
@@ -72,19 +64,19 @@ function StatsSectionComponent({ labels }: StatsSectionProps) {
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="group relative bg-card rounded-2xl border p-6 sm:p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-primary/30"
+              className="group relative bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-6 sm:p-8 text-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-brand-400/30 card-glow-hover"
             >
-              <div className={`inline-flex h-14 w-14 items-center justify-center rounded-xl ${stat.bgColor} ${stat.color} mb-4 transition-transform group-hover:scale-110`}>
+              <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-white/10 text-brand-300 mb-4 transition-transform group-hover:scale-110">
                 <stat.icon className="h-7 w-7" />
               </div>
-              <div className={`text-4xl sm:text-5xl font-black ${stat.color} mb-2`}>
+              <div className="text-4xl sm:text-5xl font-black text-white mb-2">
                 <AnimatedCounter
                   end={stat.value}
                   suffix={stat.suffix}
                   decimals={stat.decimals}
                 />
               </div>
-              <p className="text-sm sm:text-base text-muted-foreground font-medium">
+              <p className="text-sm sm:text-base text-brand-200/80 font-medium">
                 {stat.label}
               </p>
             </div>

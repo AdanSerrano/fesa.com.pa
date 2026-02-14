@@ -49,7 +49,7 @@ const FAQItem = memo(function FAQItem({
       <div
         className={cn(
           "border-2 rounded-xl overflow-hidden transition-all duration-300",
-          isOpen ? "border-primary/30 shadow-lg" : "border-muted-foreground/10 hover:border-primary/20"
+          isOpen ? "border-brand-500/30 shadow-lg border-l-4 border-l-brand-500 shadow-brand-500/5" : "border-muted-foreground/10 hover:border-brand-300/30"
         )}
       >
         <button
@@ -60,7 +60,7 @@ const FAQItem = memo(function FAQItem({
           <span className="font-semibold pr-4">{faq.question}</span>
           <ChevronDown
             className={cn(
-              "h-5 w-5 text-primary shrink-0 transition-transform duration-300",
+              "h-5 w-5 text-brand-600 shrink-0 transition-transform duration-300",
               isOpen && "rotate-180"
             )}
           />
@@ -106,6 +106,11 @@ function FAQSectionComponent({ labels, faqs }: FAQSectionProps) {
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               {labels.subtitle}
             </p>
+            <div className="mt-6 flex items-center justify-center gap-2">
+              <div className="h-1 w-8 rounded-full bg-brand-400" />
+              <div className="h-1 w-16 rounded-full bg-brand-500" />
+              <div className="h-1 w-8 rounded-full bg-brand-400" />
+            </div>
           </div>
         </AnimatedSection>
 

@@ -112,16 +112,16 @@ function HomeCatalogsSectionComponent({ catalogs, labels }: HomeCatalogsSectionP
           <div className="mx-auto max-w-4xl">
             <AnimatedSection animation="fade-up" delay={0}>
               <div className="relative overflow-hidden rounded-2xl border bg-card p-8 md:p-12">
-                <div className="absolute inset-0 -z-10 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
-                <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-                <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+                <div className="absolute inset-0 -z-10 bg-gradient-to-br from-brand-500/5 via-transparent to-brand-500/10" />
+                <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-brand-600/10 blur-3xl" />
+                <div className="absolute -left-20 -bottom-20 h-64 w-64 rounded-full bg-brand-400/5 blur-3xl" />
 
                 <div className="relative flex flex-col md:flex-row items-center gap-8">
                   <div className="flex-shrink-0">
                     <div className="relative">
-                      <div className="absolute inset-0 animate-pulse rounded-full bg-primary/20 blur-xl" />
-                      <div className="relative flex h-24 w-24 md:h-32 md:w-32 items-center justify-center rounded-full bg-primary/10 ring-4 ring-primary/20">
-                        <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-primary" />
+                      <div className="absolute inset-0 animate-pulse rounded-full bg-brand-500/20 blur-xl" />
+                      <div className="relative flex h-24 w-24 md:h-32 md:w-32 items-center justify-center rounded-full bg-brand-500/10 ring-4 ring-brand-500/20">
+                        <BookOpen className="h-12 w-12 md:h-16 md:w-16 text-brand-600" />
                       </div>
                     </div>
                   </div>
@@ -157,7 +157,7 @@ function HomeCatalogsSectionComponent({ catalogs, labels }: HomeCatalogsSectionP
                   </div>
 
                   <div className="hidden lg:flex flex-col gap-2 items-end text-right">
-                    <div className="text-4xl font-bold text-primary">{catalogs.length}</div>
+                    <div className="text-4xl font-bold text-brand-600">{catalogs.length}</div>
                     <div className="text-sm text-muted-foreground">{labels.badge}</div>
                   </div>
                 </div>

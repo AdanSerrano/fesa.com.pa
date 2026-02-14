@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useRef, useState, useCallback } from "react";
+import { memo, useReducer, useLayoutEffect, useRef, useCallback } from "react";
 
 interface AnimatedCounterProps {
   end: number;
@@ -10,6 +10,13 @@ interface AnimatedCounterProps {
   decimals?: number;
 }
 
+type CounterState = { value: number };
+type CounterAction = { type: "SET"; value: number };
+
+function counterReducer(_state: CounterState, action: CounterAction): CounterState {
+  return { value: action.value };
+}
+
 function AnimatedCounterComponent({
   end,
   duration = 2000,
@@ -17,37 +24,39 @@ function AnimatedCounterComponent({
   prefix = "",
   decimals = 0,
 }: AnimatedCounterProps) {
-  const [count, setCount] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const [state, dispatch] = useReducer(counterReducer, { value: 0 });
   const ref = useRef<HTMLSpanElement>(null);
+  const hasAnimatedRef = useRef(false);
+  const animationFrameRef = useRef<number>(0);
 
   const animate = useCallback(() => {
     const startTime = performance.now();
-    const startValue = 0;
 
     const step = (currentTime: number) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-      const currentCount = startValue + (end - startValue) * easeOutQuart;
+      const currentCount = end * easeOutQuart;
 
-      setCount(currentCount);
+      dispatch({ type: "SET", value: currentCount });
 
       if (progress < 1) {
-        requestAnimationFrame(step);
+        animationFrameRef.current = requestAnimationFrame(step);
       }
     };
 
-    requestAnimationFrame(step);
+    animationFrameRef.current = requestAnimationFrame(step);
   }, [end, duration]);
 
-  useEffect(() => {
-    if (hasAnimated) return;
+  useLayoutEffect(() => {
+    if (hasAnimatedRef.current) return;
+    const element = ref.current;
+    if (!element) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting) {
-          setHasAnimated(true);
+          hasAnimatedRef.current = true;
           animate();
           observer.disconnect();
         }
@@ -55,14 +64,17 @@ function AnimatedCounterComponent({
       { threshold: 0.3 }
     );
 
-    if (ref.current) {
-      observer.observe(ref.current);
-    }
+    observer.observe(element);
 
-    return () => observer.disconnect();
-  }, [animate, hasAnimated]);
+    return () => {
+      observer.disconnect();
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [animate]);
 
-  const displayValue = decimals > 0 ? count.toFixed(decimals) : Math.floor(count);
+  const displayValue = decimals > 0 ? state.value.toFixed(decimals) : Math.floor(state.value);
 
   return (
     <span ref={ref} className="tabular-nums">

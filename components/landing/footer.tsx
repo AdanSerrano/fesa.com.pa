@@ -22,11 +22,11 @@ export async function Footer() {
   ];
 
   return (
-    <footer className="border-t bg-muted/30">
+    <footer className="border-t bg-gradient-to-b from-muted/30 via-muted/40 to-muted/60 dark:from-muted/20 dark:via-muted/30 dark:to-muted/40">
       <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 sm:py-16">
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div className="space-y-4 sm:col-span-2 lg:col-span-1">
-            <span className="text-2xl font-black tracking-tight text-foreground">
+            <span className="text-2xl font-black tracking-tight bg-gradient-to-r from-brand-600 to-brand-500 bg-clip-text text-transparent">
               Fesa
             </span>
             <p className="text-sm text-muted-foreground max-w-xs">
@@ -39,7 +39,7 @@ export async function Footer() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                  className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted text-muted-foreground transition-all hover:bg-brand-600 hover:text-white hover:shadow-md hover:shadow-brand-500/20 hover:scale-110"
                   aria-label={social.label}
                 >
                   <social.icon className="h-4 w-4" />
@@ -99,7 +99,7 @@ export async function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t w-full flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mt-12 pt-8 border-t border-brand-200/20 dark:border-brand-800/20 w-full flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-xs sm:text-sm text-muted-foreground">
             <p>© {new Date().getFullYear()} Formas Eficientes S.A.</p>
             <span className="hidden sm:inline">•</span>

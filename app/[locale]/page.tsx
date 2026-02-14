@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 import { ClientsMarquee } from "@/components/landing/clients-marquee";
 import { StatsSection } from "@/components/landing/stats-section";
-import { TrustedBySection } from "@/components/landing/trusted-by-section";
 import { CertificationsSection } from "@/components/landing/certifications-section";
 import { FAQSection } from "@/components/landing/faq-section";
 import { MobileQuickLinks } from "@/components/landing/mobile-quick-links";
@@ -87,25 +85,25 @@ export default async function Home({ params }: HomeProps) {
       icon: Zap,
       title: t("pillars.productivity.title"),
       description: t("pillars.productivity.description"),
-      color: "from-blue-500 to-blue-600",
+      color: "from-brand-500 to-brand-600",
     },
     {
       icon: ShieldCheck,
       title: t("pillars.security.title"),
       description: t("pillars.security.description"),
-      color: "from-green-500 to-green-600",
+      color: "from-brand-600 to-brand-700",
     },
     {
       icon: TrendingUp,
       title: t("pillars.savings.title"),
       description: t("pillars.savings.description"),
-      color: "from-purple-500 to-purple-600",
+      color: "from-brand-700 to-brand-800",
     },
     {
       icon: Target,
       title: t("pillars.revenue.title"),
       description: t("pillars.revenue.description"),
-      color: "from-orange-500 to-orange-600",
+      color: "from-brand-800 to-brand-900",
     },
   ];
 
@@ -115,31 +113,31 @@ export default async function Home({ params }: HomeProps) {
       name: "Fesa Store",
       description: t("ecosystem.store"),
       href: "https://app.fesastore.com.pa",
-      color: "from-blue-500 to-blue-600",
+      color: "from-brand-500 to-brand-600",
       badge: t("ecosystem.storeBadge"),
     },
     {
       icon: Send,
       name: "Fesa Transfer",
       description: t("ecosystem.transfer"),
-      href: "#",
-      color: "from-green-500 to-green-600",
+      href: "https://transfer.fesa.com.pa",
+      color: "from-brand-600 to-brand-700",
       badge: null,
     },
     {
       icon: MapPin,
       name: "Fesa Tracking",
       description: t("ecosystem.tracking"),
-      href: "#",
-      color: "from-orange-500 to-orange-600",
+      href: "https://tracking.fesa.com.pa",
+      color: "from-brand-700 to-brand-800",
       badge: null,
     },
     {
       icon: Database,
       name: "Fesa Storage",
       description: t("ecosystem.storage"),
-      href: "#",
-      color: "from-purple-500 to-purple-600",
+      href: "https://storage.fesa.com.pa",
+      color: "from-brand-800 to-brand-900",
       badge: null,
     },
     {
@@ -147,7 +145,7 @@ export default async function Home({ params }: HomeProps) {
       name: "Fesa ID",
       description: t("ecosystem.id"),
       href: "https://id.fesa.com.pa",
-      color: "from-red-500 to-red-600",
+      color: "from-brand-400 to-brand-500",
       badge: null,
     },
   ];
@@ -183,66 +181,58 @@ export default async function Home({ params }: HomeProps) {
       <Header />
 
       <main>
-        <section className="relative overflow-hidden min-h-[90vh] flex items-center">
-          <div className="absolute inset-0 -z-10 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem]" />
-          <div className="absolute left-1/2 top-1/3 -z-10 -translate-x-1/2 -translate-y-1/2 h-[700px] w-[1000px] rounded-full bg-gradient-to-br from-primary/20 via-primary/10 to-transparent opacity-60 blur-[100px]" />
-          <div className="absolute right-0 bottom-0 -z-10 h-[400px] w-[400px] rounded-full bg-primary/10 blur-[100px]" />
+        <section className="relative h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-20">
+            <div className="aspect-square w-96 rounded-full bg-gradient-to-br from-primary to-brand-600" />
+          </div>
+          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-20">
+            <div className="aspect-square w-96 rounded-full bg-gradient-to-tr from-primary to-brand-800" />
+          </div>
 
-          <div className="max-w-7xl mx-auto px-4 py-20 md:px-6 w-full">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <div className="relative max-w-7xl mx-auto h-full px-4 md:px-6 flex items-center">
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
               <div className="text-center lg:text-left">
-                <AnimatedSection animation="fade-down" delay={0}>
-                  <Badge variant="secondary" className="mb-6 px-4 py-2 text-sm font-medium">
-                    <Sparkles className="mr-2 h-4 w-4" />
+                <AnimatedSection animation="fade-up" delay={0}>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
+                    <Sparkles className="h-4 w-4" />
                     {t("badge")}
-                  </Badge>
+                  </div>
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={100}>
-                  <h1 className="mb-6 text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[1.1]">
+                  <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
                     {t("title")}{" "}
-                    <span className="relative inline-block">
-                      <span className="bg-gradient-to-r from-primary via-primary to-primary/70 bg-clip-text text-transparent">
-                        {t("titleHighlight")}
-                      </span>
-                      <svg
-                        className="absolute -bottom-2 left-0 w-full h-3 text-primary/30"
-                        viewBox="0 0 200 12"
-                        preserveAspectRatio="none"
-                      >
-                        <path
-                          d="M0 10 Q 50 0, 100 10 T 200 10"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                      </svg>
+                    <span className="text-primary dark:text-brand-400">
+                      {t("titleHighlight")}
                     </span>
                   </h1>
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={200}>
-                  <p className="mb-8 text-lg sm:text-xl text-muted-foreground leading-relaxed max-w-xl mx-auto lg:mx-0">
+                  <p className="mt-6 text-lg lg:text-xl text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
                     {t("subtitle")}
                   </p>
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={300}>
-                  <HeroButtons />
+                  <div className="mt-8">
+                    <HeroButtons />
+                  </div>
                 </AnimatedSection>
 
-                <AnimatedSection animation="fade" delay={400}>
-                  <div className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-sm text-muted-foreground">
+                <AnimatedSection animation="fade-up" delay={400}>
+                  <div className="mt-8 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
                       <span>{t("heroFeatures.feature1")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
                       <span>{t("heroFeatures.feature2")}</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-green-500 shrink-0" />
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
                       <span>{t("heroFeatures.feature3")}</span>
                     </div>
                   </div>
@@ -253,24 +243,26 @@ export default async function Home({ params }: HomeProps) {
                 </AnimatedSection>
               </div>
 
-              <AnimatedSection animation="fade-left" delay={300}>
-                <div className="relative hidden lg:block">
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 rounded-3xl blur-2xl" />
-                  <div className="relative grid grid-cols-2 gap-4">
-                    {quickLinks.map((link, index) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        className="group flex h-full min-h-[180px] flex-col items-center justify-center gap-4 p-6 rounded-2xl border bg-card/80 backdrop-blur-sm transition-all hover:border-primary/50 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
-                        style={{ animationDelay: `${index * 100}ms` }}
-                      >
-                        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:scale-110 group-hover:rotate-3">
-                          <link.icon className="h-8 w-8" />
-                        </div>
-                        <span className="text-base font-semibold text-center">{link.label}</span>
-                        <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                      </Link>
-                    ))}
+              <AnimatedSection animation="fade-left" delay={200}>
+                <div className="hidden lg:block">
+                  <div className="relative">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-primary/20 to-brand-600/20 rounded-3xl blur-2xl" />
+                    <div className="relative grid grid-cols-2 gap-4">
+                      {quickLinks.map((link, index) => (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          className="group flex h-full min-h-[180px] flex-col items-center justify-center gap-3 p-6 rounded-2xl border bg-card/90 backdrop-blur-sm transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
+                          style={{ animationDelay: `${index * 100}ms` }}
+                        >
+                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110">
+                            <link.icon className="h-7 w-7" />
+                          </div>
+                          <span className="text-base font-semibold text-center">{link.label}</span>
+                          <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                        </Link>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </AnimatedSection>
@@ -278,11 +270,11 @@ export default async function Home({ params }: HomeProps) {
           </div>
         </section>
 
-        <section className="border-y bg-muted/30 py-4">
+        <section className="bg-muted/40 py-6">
           <ClientsMarquee title={t("clientsMarquee")} />
         </section>
 
-        <section className="py-20 sm:py-28 border-b bg-gradient-to-b from-background via-muted/20 to-background">
+        <section className="py-20 sm:py-28 bg-gradient-to-b from-muted/10 via-brand-100/25 to-background dark:from-muted/10 dark:via-brand-950/20 dark:to-background section-divider-wave">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <AnimatedSection animation="fade-up" delay={0}>
               <div className="text-center mb-16">
@@ -296,6 +288,11 @@ export default async function Home({ params }: HomeProps) {
                 <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                   {t("pillarsSection.subtitle")}
                 </p>
+                <div className="mt-6 flex items-center justify-center gap-2">
+                  <div className="h-1 w-8 rounded-full bg-brand-500" />
+                  <div className="h-1 w-16 rounded-full bg-brand-600" />
+                  <div className="h-1 w-8 rounded-full bg-brand-500" />
+                </div>
               </div>
             </AnimatedSection>
 
@@ -303,14 +300,14 @@ export default async function Home({ params }: HomeProps) {
               {valuePillars.map((pillar, index) => (
                 <AnimatedSection key={pillar.title} animation="fade-up" delay={index * 100}>
                   <div className="group relative h-full">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Card className="relative h-full border-2 transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand-600/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Card className="relative h-full border-2 transition-all duration-300 hover:border-brand-600/30 hover:shadow-xl hover:-translate-y-1 overflow-hidden">
                       <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${pillar.color}`} />
                       <CardContent className="p-6 sm:p-8 text-center">
                         <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${pillar.color} text-white mb-5 transition-transform group-hover:scale-110 shadow-lg`}>
                           <pillar.icon className="h-8 w-8" />
                         </div>
-                        <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                        <h3 className="text-xl font-bold mb-3 group-hover:text-brand-600 transition-colors">
                           {pillar.title}
                         </h3>
                         <p className="text-muted-foreground leading-relaxed">
@@ -355,7 +352,7 @@ export default async function Home({ params }: HomeProps) {
 
         <StatsSection labels={statsLabels} />
 
-        <section className="py-20 sm:py-28 border-b bg-gradient-to-b from-muted/30 via-background to-muted/20">
+        <section className="py-20 sm:py-28 bg-gradient-to-b from-brand-100/30 via-background to-brand-100/15 dark:from-brand-950/30 dark:via-background dark:to-brand-950/10">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <AnimatedSection animation="fade-up" delay={0}>
               <div className="text-center mb-16">
@@ -369,48 +366,64 @@ export default async function Home({ params }: HomeProps) {
                 <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                   {t("ecosystemSection.subtitle")}
                 </p>
+                <div className="mt-6 flex items-center justify-center gap-2">
+                  <div className="h-1 w-8 rounded-full bg-brand-500" />
+                  <div className="h-1 w-16 rounded-full bg-brand-600" />
+                  <div className="h-1 w-8 rounded-full bg-brand-500" />
+                </div>
               </div>
             </AnimatedSection>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              {ecosystem.map((app, index) => (
-                <AnimatedSection key={app.name} animation="fade-up" delay={index * 100}>
-                  <a
-                    href={app.href}
-                    target={app.href.startsWith("http") ? "_blank" : undefined}
-                    rel={app.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                    className="group block h-full"
-                  >
-                    <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-2 hover:border-primary/30 overflow-hidden">
-                      <CardContent className="p-6 text-center relative">
-                        {app.badge && (
-                          <Badge
-                            variant={app.badge === "Próximamente" ? "outline" : "secondary"}
-                            className="absolute top-3 right-3 text-xs"
-                          >
-                            {app.badge}
-                          </Badge>
-                        )}
-                        <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${app.color} text-white mb-4 transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
-                          <app.icon className="h-8 w-8" />
-                        </div>
-                        <h3 className="font-bold text-lg mb-2 group-hover:text-primary transition-colors">
-                          {app.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {app.description}
-                        </p>
-                        {app.href.startsWith("http") && (
-                          <div className="mt-4 flex items-center justify-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                            <ExternalLink className="h-3 w-3 mr-1" />
-                            {t("ecosystemSection.visitApp")}
+              {ecosystem.map((app, index) => {
+                const isComingSoon = app.href === "#";
+                return (
+                  <AnimatedSection key={app.name} animation="fade-up" delay={index * 100}>
+                    <a
+                      href={isComingSoon ? undefined : app.href}
+                      target={app.href.startsWith("http") ? "_blank" : undefined}
+                      rel={app.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                      className={`group block h-full ${isComingSoon ? "opacity-60 grayscale pointer-events-none" : ""}`}
+                    >
+                      <Card className={`h-full transition-all duration-300 overflow-hidden ${isComingSoon ? "" : "hover:shadow-xl hover:-translate-y-2 hover:border-brand-600/30 card-glow-hover"}`}>
+                        <CardContent className="p-6 text-center relative">
+                          {app.badge && (
+                            <Badge
+                              variant="secondary"
+                              className="absolute top-3 right-3 text-xs"
+                            >
+                              {app.badge}
+                            </Badge>
+                          )}
+                          {isComingSoon && !app.badge && (
+                            <Badge
+                              variant="outline"
+                              className="absolute top-3 right-3 text-xs"
+                            >
+                              {t("ecosystemSection.comingSoon")}
+                            </Badge>
+                          )}
+                          <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${app.color} text-white mb-4 transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
+                            <app.icon className="h-8 w-8" />
                           </div>
-                        )}
-                      </CardContent>
-                    </Card>
-                  </a>
-                </AnimatedSection>
-              ))}
+                          <h3 className="font-bold text-lg mb-2 group-hover:text-brand-600 transition-colors">
+                            {app.name}
+                          </h3>
+                          <p className="text-sm text-muted-foreground line-clamp-2">
+                            {app.description}
+                          </p>
+                          {app.href.startsWith("http") && (
+                            <div className="mt-4 flex items-center justify-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+                              <ExternalLink className="h-3 w-3 mr-1" />
+                              {t("ecosystemSection.visitApp")}
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </a>
+                  </AnimatedSection>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -463,58 +476,58 @@ export default async function Home({ params }: HomeProps) {
           faqs={faqs}
         />
 
-        <section className="py-24 sm:py-32 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-background to-primary/5" />
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:3rem_3rem]" />
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-primary/20 blur-[100px]" />
-          <div className="absolute right-0 bottom-0 h-64 w-64 rounded-full bg-primary/10 blur-[100px]" />
+        <section className="py-24 sm:py-32 relative overflow-hidden bg-brand-950">
+          <div className="absolute inset-0 bg-gradient-to-br from-brand-900/80 via-brand-950 to-brand-900/60" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff06_1px,transparent_1px),linear-gradient(to_bottom,#ffffff06_1px,transparent_1px)] bg-[size:3rem_3rem]" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-brand-600/15 blur-[120px]" />
+          <div className="absolute right-0 bottom-0 h-64 w-64 rounded-full bg-brand-400/10 blur-[100px]" />
 
           <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
             <AnimatedSection animation="slide-up" delay={0}>
               <div className="text-center max-w-3xl mx-auto">
-                <Badge variant="secondary" className="mb-6 px-4 py-2">
+                <Badge className="mb-6 px-4 py-2 bg-brand-500/15 text-brand-300 border-brand-400/20 hover:bg-brand-500/20">
                   <Phone className="mr-2 h-4 w-4" />
                   {t("ctaSection.badge")}
                 </Badge>
-                <h2 className="mb-6 text-3xl sm:text-4xl md:text-5xl font-bold">
+                <h2 className="mb-6 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
                   {t("ctaSection.title")}
                 </h2>
-                <p className="mb-10 text-muted-foreground text-lg max-w-xl mx-auto">
+                <p className="mb-10 text-brand-200/70 text-lg max-w-xl mx-auto">
                   {t("ctaSection.subtitle")}
                 </p>
 
                 <CtaButtons />
 
-                <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm text-muted-foreground">
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm text-brand-200/70">
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <CheckCircle2 className="h-5 w-5 text-brand-400" />
                     <span>{t("ctaSection.benefit1")}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <CheckCircle2 className="h-5 w-5 text-brand-400" />
                     <span>{t("ctaSection.benefit2")}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-green-500" />
+                    <CheckCircle2 className="h-5 w-5 text-brand-400" />
                     <span>{t("ctaSection.benefit3")}</span>
                   </div>
                 </div>
 
-                <div className="mt-12 pt-8 border-t border-muted-foreground/10">
-                  <p className="text-sm text-muted-foreground mb-4">{t("ctaSection.contactDirect")}</p>
+                <div className="mt-12 pt-8 border-t border-brand-700/30">
+                  <p className="text-sm text-brand-300/60 mb-4">{t("ctaSection.contactDirect")}</p>
                   <div className="flex flex-wrap items-center justify-center gap-6">
                     <a
                       href="https://wa.me/50768761381"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-brand-400 hover:text-brand-300 hover:underline transition-colors"
                     >
                       <Phone className="h-4 w-4" />
                       +507 220-0011
                     </a>
                     <a
                       href="mailto:fesa.tecnologia@fesa.com.pa"
-                      className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-brand-400 hover:text-brand-300 hover:underline transition-colors"
                     >
                       <Mail className="h-4 w-4" />
                       fesa.tecnologia@fesa.com.pa
