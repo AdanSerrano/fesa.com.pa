@@ -103,4 +103,5 @@ export default {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
   },
+  trustHost: true,
 } satisfies NextAuthConfig;

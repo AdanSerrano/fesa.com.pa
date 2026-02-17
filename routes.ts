@@ -1,7 +1,6 @@
 export const publicRoutes = [
   "/",
   "/contact",
-  "/api/health",
   "/products",
   "/products/:slug",
   "/products/:slug/:productSlug",
