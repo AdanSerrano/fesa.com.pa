@@ -177,7 +177,7 @@ export default async function Home({ params }: HomeProps) {
   const faqs = t.raw("faqs") as { question: string; answer: string }[];
 
   return (
-    <div className="min-h-screen bg-background overflow-x-hidden">
+    <div className="min-h-screen bg-background">
       <Header />
 
       <main>
