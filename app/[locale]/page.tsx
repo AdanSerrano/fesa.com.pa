@@ -181,15 +181,15 @@ export default async function Home({ params }: HomeProps) {
       <Header />
 
       <main>
-        <section className="relative min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 hero-mesh-bg">
+        <section className="relative min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
-          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-10 lg:opacity-20 animate-glow">
+          <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-10 lg:opacity-20">
             <div className="aspect-square w-[32rem] rounded-full bg-gradient-to-br from-primary to-brand-600" />
           </div>
-          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-10 lg:opacity-20 animate-float-delayed">
+          <div className="absolute bottom-0 left-0 translate-y-12 -translate-x-12 blur-3xl opacity-10 lg:opacity-20">
             <div className="aspect-square w-[28rem] rounded-full bg-gradient-to-tr from-primary to-brand-800" />
           </div>
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl opacity-5 lg:opacity-10 animate-glow">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 blur-3xl opacity-5 lg:opacity-10">
             <div className="aspect-square w-[24rem] rounded-full bg-gradient-to-br from-brand-400 to-brand-700" />
           </div>
 
@@ -197,7 +197,7 @@ export default async function Home({ params }: HomeProps) {
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
               <div className="text-center lg:text-left">
                 <AnimatedSection animation="fade-up" delay={0}>
-                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-4 sm:mb-6 badge-glow">
+                  <div className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 border border-primary/20 text-primary text-sm font-semibold mb-4 sm:mb-6">
                     <Sparkles className="h-4 w-4" />
                     {t("badge")}
                   </div>
@@ -206,7 +206,7 @@ export default async function Home({ params }: HomeProps) {
                 <AnimatedSection animation="fade-up" delay={100}>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
                     {t("title")}{" "}
-                    <span className="text-gradient-animate">
+                    <span className="text-primary">
                       {t("titleHighlight")}
                     </span>
                   </h1>
@@ -251,20 +251,13 @@ export default async function Home({ params }: HomeProps) {
               <AnimatedSection animation="fade-left" delay={200}>
                 <div className="hidden lg:block">
                   <div className="relative">
-                    <div className="absolute -inset-8 bg-gradient-to-r from-primary/20 to-brand-600/20 rounded-3xl blur-3xl animate-glow" />
+                    <div className="absolute -inset-8 bg-gradient-to-r from-primary/20 to-brand-600/20 rounded-3xl blur-3xl" />
                     <div className="relative grid grid-cols-2 gap-4">
-                      {quickLinks.map((link, index) => {
-                        const floatClass = [
-                          "animate-float-hero-1",
-                          "animate-float-hero-2",
-                          "animate-float-hero-3",
-                          "animate-float-hero-4",
-                        ][index];
-                        return (
+                      {quickLinks.map((link) => (
                           <Link
                             key={link.href}
                             href={link.href}
-                            className={`group flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-8 rounded-3xl border border-white/60 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md transition-all duration-500 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-3 hero-card-glow gradient-border-animated ${floatClass}`}
+                            className="group flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-8 rounded-3xl border border-white/60 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
                           >
                             <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 ring-1 ring-primary/20 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110 group-hover:ring-primary/40">
                               <link.icon className="h-7 w-7" />
@@ -272,8 +265,7 @@ export default async function Home({ params }: HomeProps) {
                             <span className="text-base font-semibold text-center">{link.label}</span>
                             <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                           </Link>
-                        );
-                      })}
+                      ))}
                     </div>
                   </div>
                 </div>

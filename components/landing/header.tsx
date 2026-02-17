@@ -1,12 +1,10 @@
 import { currentUser } from "@/lib/user";
-import { ModeToggleWrapper } from "@/components/mode-toggle-wrapper";
-import { LocaleSwitcherDynamic } from "@/components/locale-switcher-dynamic";
-import {
-  HeaderMobileMenuDynamic,
-  HeaderUserMenuDynamic,
-  HeaderNavDynamic,
-  HeaderLogoDynamic,
-} from "./header-dynamic";
+import { ModeToggle } from "@/components/mode-toggle";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { HeaderMobileMenu } from "./header-mobile-menu";
+import { HeaderUserMenu } from "./header-user-menu";
+import { HeaderNav } from "./header-nav";
+import { HeaderLogo } from "./header-logo";
 import { getTranslations } from "next-intl/server";
 
 export async function Header() {
@@ -97,9 +95,9 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 [-webkit-transform:translateZ(0)]">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 md:px-6">
-        <HeaderLogoDynamic />
+        <HeaderLogo />
 
-        <HeaderNavDynamic
+        <HeaderNav
           solutionsGroup={solutionsGroup}
           companyGroup={companyGroup}
           directLinks={directLinks}
@@ -108,10 +106,10 @@ export async function Header() {
         />
 
         <div className="flex items-center gap-2">
-          <LocaleSwitcherDynamic />
-          <ModeToggleWrapper />
+          <LocaleSwitcher />
+          <ModeToggle />
 
-          <HeaderMobileMenuDynamic
+          <HeaderMobileMenu
             user={userData}
             solutionsGroup={solutionsGroup}
             companyGroup={companyGroup}
@@ -120,7 +118,7 @@ export async function Header() {
           />
 
           {userData && (
-            <HeaderUserMenuDynamic user={userData} labels={userMenuLabels} />
+            <HeaderUserMenu user={userData} labels={userMenuLabels} />
           )}
         </div>
       </div>

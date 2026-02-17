@@ -7,7 +7,7 @@ const CookieConsentBanner = dynamic(
     import("@/components/cookie-consent/cookie-consent").then(
       (mod) => mod.CookieConsentBanner
     ),
-  { ssr: false }
+  { ssr: false, loading: () => null }
 );
 
 export function CookieConsentWrapper() {

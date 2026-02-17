@@ -13,8 +13,8 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { ModeToggleWrapper } from "../mode-toggle-wrapper";
-import { LocaleSwitcherDynamic } from "@/components/locale-switcher-dynamic";
+import { ModeToggle } from "../mode-toggle";
+import { LocaleSwitcher } from "@/components/locale-switcher";
 
 function DashboardHeaderComponent() {
   const pathname = usePathname();
@@ -71,8 +71,8 @@ function DashboardHeaderComponent() {
             <BreadcrumbPage>{currentLabel}</BreadcrumbPage>
           </BreadcrumbItem>
           <BreadcrumbItem className="ml-auto flex items-center gap-2">
-            <LocaleSwitcherDynamic />
-            <ModeToggleWrapper />
+            <LocaleSwitcher />
+            <ModeToggle />
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
