@@ -160,7 +160,7 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg lg:max-w-2xl max-h-[90vh] flex flex-col overflow-hidden">
+      <DialogContent className="sm:max-w-4xl lg:max-w-5xl max-h-[90vh] flex flex-col overflow-hidden">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>
             {isEditing ? labels.editTitle : labels.createTitle}

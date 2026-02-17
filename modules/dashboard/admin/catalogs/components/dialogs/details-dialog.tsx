@@ -111,7 +111,7 @@ function CatalogDetailsDialogComponent({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-2xl lg:max-w-4xl max-h-[90vh]">
+      <DialogContent className="sm:max-w-4xl lg:max-w-5xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>{labels.title}</DialogTitle>
         </DialogHeader>
