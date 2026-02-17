@@ -414,7 +414,7 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
   }
   // Rutas protegidas - requieren autenticación
   else if (!isLoggedIn) {
-    const loginUrl = new URL("/", nextUrl.origin);
+    const loginUrl = new URL("/login", nextUrl.origin);
     if (!isAuthRoute(pathname) && !isPublicRoute(pathname)) {
       loginUrl.searchParams.set("callbackUrl", pathname);
     }
