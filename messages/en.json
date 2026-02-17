@@ -60,7 +60,15 @@
     "getStarted": "Get Started",
     "myAccount": "My Account",
     "settings": "Settings",
-    "securityAudit": "Security - Audit"
+    "securityAudit": "Security - Audit",
+    "appLauncher": {
+      "title": "Fesa Apps",
+      "store": "B2B enterprise purchasing",
+      "transfer": "Secure file transfer",
+      "tracking": "Shipment tracking",
+      "storage": "Cloud storage",
+      "id": "Digital identity"
+    }
   },
   "Footer": {
     "tagline": "Over 50 years innovating in business solutions in Panama. Printing, RFID, payment methods and technology.",

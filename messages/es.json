@@ -60,7 +60,15 @@
     "getStarted": "Comenzar",
     "myAccount": "Mi cuenta",
     "settings": "Configuración",
-    "securityAudit": "Seguridad - Auditoría"
+    "securityAudit": "Seguridad - Auditoría",
+    "appLauncher": {
+      "title": "Apps Fesa",
+      "store": "Compras empresariales B2B",
+      "transfer": "Transferencia de archivos",
+      "tracking": "Seguimiento de envíos",
+      "storage": "Almacenamiento en la nube",
+      "id": "Identidad digital"
+    }
   },
   "Footer": {
     "tagline": "Más de 50 años innovando en soluciones empresariales en Panamá. Impresión, RFID, medios de pago y tecnología.",
