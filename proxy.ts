@@ -9,6 +9,11 @@
  * - Detección de ataques
  * - Bloqueo automático de IPs maliciosas
  * - Internacionalización con next-intl
+ *
+ * FIXES APLICADOS:
+ * - ✅ Excepción para endpoints de NextAuth (/api/auth/*)
+ * - ✅ Removido patrón agresivo de inyección que bloqueaba solicitudes legítimas
+ * - ✅ Compatible con servidor contabo y Vercel
  */
 
 import NextAuth from "next-auth";
@@ -75,11 +80,12 @@ const MALICIOUS_USER_AGENTS = [
 ];
 
 // Patrones de inyección básicos
+// ⚠️ IMPORTANTE: Se removió el patrón agresivo /(\bor\b|\band\b)\s*['"]?\s*\d+\s*=\s*\d+/i
+// que bloqueaba solicitudes legítimas a NextAuth
 const INJECTION_PATTERNS = [
   /<script[^>]*>/i,
   /javascript:/i,
   /(\bunion\b[\s\S]*\bselect\b)/i,
-  /(\bor\b|\band\b)\s*['"]?\s*\d+\s*=\s*\d+/i,
 ];
 
 // ============================================================================
@@ -271,42 +277,49 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
   // 1. WAF - VERIFICACIONES DE SEGURIDAD BÁSICAS
   // ========================================================================
 
-  // Verificar paths sospechosos
-  if (isSuspiciousPath(pathname)) {
-    logSecurity("warn", "Suspicious path blocked", {
-      requestId,
-      ip: clientIP,
-      path: pathname,
-      userAgent,
-    });
+  // 🔴 FIX #1: EXCEPCIÓN PARA ENDPOINTS DE NEXTAUTH
+  // Los endpoints de NextAuth (/api/auth/*) ya tienen su propia protección
+  // No aplicarles WAF evita falsos positivos que causan HTTP 400
+  const isAuthEndpoint = pathname.startsWith("/api/auth/");
 
-    return new NextResponse("Not Found", { status: 404 });
-  }
+  if (!isAuthEndpoint) {
+    // Verificar paths sospechosos
+    if (isSuspiciousPath(pathname)) {
+      logSecurity("warn", "Suspicious path blocked", {
+        requestId,
+        ip: clientIP,
+        path: pathname,
+        userAgent,
+      });
 
-  // Verificar User-Agent malicioso (solo en producción)
-  if (IS_PRODUCTION && isMaliciousUserAgent(userAgent)) {
-    logSecurity("warn", "Malicious user-agent blocked", {
-      requestId,
-      ip: clientIP,
-      path: pathname,
-      userAgent,
-    });
+      return new NextResponse("Not Found", { status: 404 });
+    }
 
-    return new NextResponse("Forbidden", { status: 403 });
-  }
+    // Verificar User-Agent malicioso (solo en producción)
+    if (IS_PRODUCTION && isMaliciousUserAgent(userAgent)) {
+      logSecurity("warn", "Malicious user-agent blocked", {
+        requestId,
+        ip: clientIP,
+        path: pathname,
+        userAgent,
+      });
 
-  // Verificar inyecciones básicas en el path y query
-  const fullUrl = pathname + nextUrl.search;
-  if (checkBasicInjection(decodeURIComponent(fullUrl))) {
-    logSecurity("error", "Injection attempt blocked", {
-      requestId,
-      ip: clientIP,
-      path: pathname,
-      query: nextUrl.search,
-      userAgent,
-    });
+      return new NextResponse("Forbidden", { status: 403 });
+    }
 
-    return new NextResponse("Bad Request", { status: 400 });
+    // Verificar inyecciones básicas en el path y query
+    const fullUrl = pathname + nextUrl.search;
+    if (checkBasicInjection(decodeURIComponent(fullUrl))) {
+      logSecurity("error", "Injection attempt blocked", {
+        requestId,
+        ip: clientIP,
+        path: pathname,
+        query: nextUrl.search,
+        userAgent,
+      });
+
+      return new NextResponse("Bad Request", { status: 400 });
+    }
   }
 
   // ========================================================================
