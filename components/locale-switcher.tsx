@@ -1,18 +1,16 @@
 "use client";
 
-import { memo, useCallback, useTransition } from "react";
+import { memo, useCallback, useMemo, useTransition } from "react";
 import { useLocale } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing, type Locale } from "@/i18n/routing";
-import { Globe } from "lucide-react";
+import { Check, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const localeNames: Record<Locale, string> = {
   es: "Español",
@@ -26,17 +24,36 @@ function LocaleSwitcherComponent() {
   const [isPending, startTransition] = useTransition();
 
   const handleChange = useCallback(
-    (newLocale: string) => {
+    (newLocale: Locale) => {
       startTransition(() => {
-        router.replace(pathname, { locale: newLocale as Locale });
+        router.replace(pathname, { locale: newLocale });
       });
     },
     [pathname, router]
   );
 
+  const renderedOptions = useMemo(
+    () =>
+      routing.locales.map((loc) => (
+        <button
+          key={loc}
+          type="button"
+          disabled={isPending}
+          onClick={() => handleChange(loc)}
+          className="flex w-full cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none transition-colors hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-50"
+        >
+          <Check
+            className={`h-3.5 w-3.5 ${loc === locale ? "opacity-100" : "opacity-0"}`}
+          />
+          {localeNames[loc]}
+        </button>
+      )),
+    [locale, isPending, handleChange]
+  );
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
           variant="outline"
           size="icon"
@@ -45,17 +62,11 @@ function LocaleSwitcherComponent() {
         >
           <Globe className="h-5 w-5" />
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuRadioGroup value={locale} onValueChange={handleChange}>
-          {routing.locales.map((loc) => (
-            <DropdownMenuRadioItem key={loc} value={loc}>
-              {localeNames[loc]}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverTrigger>
+      <PopoverContent align="end" className="w-36 p-1" sideOffset={8}>
+        <div className="flex flex-col">{renderedOptions}</div>
+      </PopoverContent>
+    </Popover>
   );
 }
 
