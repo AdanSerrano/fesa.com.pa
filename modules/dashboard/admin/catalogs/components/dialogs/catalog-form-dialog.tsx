@@ -57,6 +57,7 @@ interface PageItemData {
   alt: string | null;
   order: number;
   isNew?: boolean;
+  fileName?: string;
 }
 
 interface Labels {
@@ -105,6 +106,7 @@ interface FormValues {
     alt?: string | null;
     order: number;
     isNew?: boolean;
+    fileName?: string;
   }[];
 }
 
@@ -164,6 +166,9 @@ function SortablePageItem({ page, index, onRemove, disabled, labels }: SortableP
       </div>
       <div className="flex-1 min-w-0">
         <p className="text-sm font-medium">{labels.page} {index + 1}</p>
+        {page.fileName && (
+          <p className="text-xs text-muted-foreground truncate">{page.fileName}</p>
+        )}
         {page.isNew && (
           <span className="text-xs text-primary">Pendiente</span>
         )}
@@ -298,6 +303,7 @@ function CatalogFormDialogComponent({
         alt: null,
         order: currentPages.length + idx,
         isNew: true,
+        fileName: file.name,
       };
     });
 
