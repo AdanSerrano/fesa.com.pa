@@ -1,7 +1,6 @@
 "use client";
 
 import { memo, useCallback, useReducer } from "react";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
@@ -18,10 +17,10 @@ import { logoutAction } from "@/modules/logout/actions/logout.actions";
 import { useTranslations } from "next-intl";
 
 interface LogoutButtonProps {
-  variant?: "dropdown" | "button";
+  variant?: "dropdown" | "popover" | "button";
 }
 
-function LogoutButtonComponent({ variant = "dropdown" }: LogoutButtonProps) {
+function LogoutButtonComponent({ variant = "popover" }: LogoutButtonProps) {
   const t = useTranslations("Auth");
   const tNav = useTranslations("Navigation");
   const tCommon = useTranslations("Common");
@@ -38,14 +37,15 @@ function LogoutButtonComponent({ variant = "dropdown" }: LogoutButtonProps) {
 
   return (
     <>
-      {variant === "dropdown" ? (
-        <DropdownMenuItem
-          className="cursor-pointer text-destructive focus:text-destructive"
-          onSelect={handleOpenDialog}
+      {variant === "popover" ? (
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-sm text-destructive outline-hidden select-none transition-colors hover:bg-accent"
+          onClick={() => toggleDialog()}
         >
-          <LogOut className="mr-2 h-4 w-4 text-destructive" />
+          <LogOut className="h-4 w-4 text-destructive" />
           {tNav("logout")}
-        </DropdownMenuItem>
+        </button>
       ) : (
         <Button
           variant="destructive"
