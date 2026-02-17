@@ -44,26 +44,28 @@ const isAuthRoute = (pathname: string): boolean => {
   return authRoutes.includes(cleanPath);
 };
 
-const isApiAuthRoute = (pathname: string): boolean => pathname.startsWith(apiAuthPrefix);
+const isApiAuthRoute = (pathname: string): boolean =>
+  pathname.startsWith(apiAuthPrefix);
 const isApiRoute = (pathname: string): boolean => pathname.startsWith("/api/");
 
-export const proxy = NextAuth(authConfig).auth(async (req) => {
+export const proxy = NextAuth(authConfig).auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const pathname = nextUrl.pathname;
 
-  if (isApiAuthRoute(pathname)) {
+  // 1. Para rutas API, pasar directamente
+  if (isApiAuthRoute(pathname) || isApiRoute(pathname)) {
     return NextResponse.next();
   }
 
+  // 2. Para rutas públicas, aplicar intl
   if (isPublicRoute(pathname)) {
-    const response = isApiRoute(pathname)
-      ? NextResponse.next()
-      : intlMiddleware(req);
-    return response;
+    return intlMiddleware(req);
   }
 
+  // 3. Para rutas de auth
   if (isAuthRoute(pathname)) {
+    // Si está logueado, redirigir al dashboard
     if (isLoggedIn) {
       const callbackUrl = nextUrl.searchParams.get("callbackUrl");
       const redirectUrl =
@@ -72,21 +74,19 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
           : DEFAULT_LOGIN_REDIRECT;
       return Response.redirect(new URL(redirectUrl, nextUrl.origin));
     }
-    const response = intlMiddleware(req);
-    return response;
+    // Si NO está logueado, aplicar intl y dejar que cargue /login
+    return intlMiddleware(req);
   }
 
+  // 4. Para rutas protegidas (NO logueado)
   if (!isLoggedIn) {
     const loginUrl = new URL("/login", nextUrl.origin);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return Response.redirect(loginUrl);
   }
 
-  const response = isApiRoute(pathname)
-    ? NextResponse.next()
-    : intlMiddleware(req);
-
-  return response;
+  // 5. Para rutas protegidas (logueado)
+  return intlMiddleware(req);
 });
 
 export const config = {
