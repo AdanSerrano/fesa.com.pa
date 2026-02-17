@@ -48,8 +48,8 @@ const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const memoryRateLimit = new Map<string, { count: number; resetTime: number }>();
 
 const RATE_LIMIT_CONFIG = {
-  general: { maxRequests: 100, windowMs: 60 * 1000 },
-  api: { maxRequests: 60, windowMs: 60 * 1000 },
+  general: { maxRequests: 1000, windowMs: 60 * 1000 },  // ⬆️ Aumentado: 1000 por minuto
+  api: { maxRequests: 500, windowMs: 60 * 1000 },      // ⬆️ Aumentado: 500 por minuto
 };
 
 
@@ -261,6 +261,17 @@ const isApiAuthRoute = (pathname: string): boolean => pathname.startsWith(apiAut
 const isApiRoute = (pathname: string): boolean => pathname.startsWith("/api/");
 const isHealthRoute = (pathname: string): boolean => pathname === "/api/health";
 
+const isStaticRoute = (pathname: string): boolean => {
+  const staticPatterns = [
+    /\.well-known\//,
+    /^\/robots\.txt$/i,
+    /^\/sitemap\.xml$/i,
+    /^\/favicon\.ico$/i,
+    /^\/ads\.txt$/i,
+  ];
+  return staticPatterns.some((pattern) => pattern.test(pathname));
+};
+
 export const proxy = NextAuth(authConfig).auth(async (req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
@@ -326,61 +337,76 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
   // 2. RATE LIMITING
   // ========================================================================
 
-  // Determinar tipo de rate limit
-  // IMPORTANTE: /api/auth/session y /api/auth/providers son llamados automáticamente
-  // por NextAuth en cada navegación, no son intentos de login reales.
-  // Usamos "general" para estos endpoints para evitar falsos positivos.
-  const isSessionOrProvidersCheck =
-    pathname === "/api/auth/session" ||
-    pathname === "/api/auth/providers" ||
-    pathname === "/api/auth/csrf";
+  // 🔴 NUEVO: Excluir rutas estáticas del rate limiting
+  const shouldSkipRateLimit = isStaticRoute(pathname);
+  let rateLimit: RateLimitResult = {
+    allowed: true,
+    remaining: 0,
+    resetTime: Date.now(),
+    limit: 0,
+  };
 
-  let rateLimitType: RateLimitType = "general";
-  if (isSessionOrProvidersCheck) {
-    rateLimitType = "general";
-  } else if (pathname === "/login" || pathname === "/api/auth/signin" || pathname === "/api/auth/callback/credentials") {
-    rateLimitType = "general";
-  } else if (isAuthRoute(pathname) || isApiAuthRoute(pathname)) {
-    rateLimitType = "general";
-  } else if (isApiRoute(pathname)) {
-    rateLimitType = "api";
-  }
+  if (!shouldSkipRateLimit) {
+    // Determinar tipo de rate limit
+    // IMPORTANTE: /api/auth/session y /api/auth/providers son llamados automáticamente
+    // por NextAuth en cada navegación, no son intentos de login reales.
+    const isSessionOrProvidersCheck =
+      pathname === "/api/auth/session" ||
+      pathname === "/api/auth/providers" ||
+      pathname === "/api/auth/csrf";
 
-  const rateLimitKey = `${rateLimitType}:${clientIP}`;
-  const rateLimitConfig = RATE_LIMIT_CONFIG[rateLimitType] || RATE_LIMIT_CONFIG.general;
-  const rateLimit = checkMemoryRateLimit(rateLimitKey, rateLimitConfig);
+    let rateLimitType: RateLimitType = "general";
+    if (isSessionOrProvidersCheck) {
+      rateLimitType = "general";
+    } else if (pathname === "/login" || pathname === "/api/auth/signin" || pathname === "/api/auth/callback/credentials") {
+      rateLimitType = "general";
+    } else if (isAuthRoute(pathname) || isApiAuthRoute(pathname)) {
+      rateLimitType = "general";
+    } else if (isApiRoute(pathname)) {
+      rateLimitType = "api";
+    }
 
-  if (!rateLimit.allowed) {
-    logSecurity("warn", "Rate limit exceeded", {
-      requestId,
-      ip: clientIP,
-      path: pathname,
-      rateLimitType,
-    });
+    const rateLimitKey = `${rateLimitType}:${clientIP}`;
+    const rateLimitConfig = RATE_LIMIT_CONFIG[rateLimitType] || RATE_LIMIT_CONFIG.general;
+    rateLimit = checkMemoryRateLimit(rateLimitKey, rateLimitConfig);
 
-    const retryAfter = rateLimit.retryAfter || 60;
-    return new NextResponse(
-      JSON.stringify({
-        error: "RATE_LIMIT_EXCEEDED",
-        message: "Demasiados intentos. Por favor, espera un momento.",
-        retryAfter,
-      }),
-      {
-        status: 429,
-        headers: {
-          "Content-Type": "application/json",
-          "Retry-After": String(retryAfter),
-          "X-RateLimit-Limit": String(rateLimit.limit),
-          "X-RateLimit-Remaining": "0",
-          "X-RateLimit-Reset": String(Math.ceil(rateLimit.resetTime / 1000)),
-        },
-      }
-    );
+    if (!rateLimit.allowed) {
+      logSecurity("warn", "Rate limit exceeded", {
+        requestId,
+        ip: clientIP,
+        path: pathname,
+        rateLimitType,
+      });
+
+      const retryAfter = rateLimit.retryAfter || 60;
+      return new NextResponse(
+        JSON.stringify({
+          error: "RATE_LIMIT_EXCEEDED",
+          message: "Demasiados intentos. Por favor, espera un momento.",
+          retryAfter,
+        }),
+        {
+          status: 429,
+          headers: {
+            "Content-Type": "application/json",
+            "Retry-After": String(retryAfter),
+            "X-RateLimit-Limit": String(rateLimit.limit),
+            "X-RateLimit-Remaining": "0",
+            "X-RateLimit-Reset": String(Math.ceil(rateLimit.resetTime / 1000)),
+          },
+        }
+      );
+    }
   }
 
   // ========================================================================
   // 3. ROUTING DE AUTENTICACIÓN
   // ========================================================================
+
+  // 🔴 NUEVO: Permitir acceso a rutas estáticas sin autenticación
+  if (isStaticRoute(pathname)) {
+    return NextResponse.next();
+  }
 
   // Rutas de API de autenticación - permitir siempre (sin i18n)
   if (isApiAuthRoute(pathname)) {
