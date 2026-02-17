@@ -290,25 +290,26 @@ export class AdminProductsRepository {
 
   private async generateUniqueCategorySlug(name: string, excludeId?: string): Promise<string> {
     const baseSlug = generateSlug(name);
-    let slug = baseSlug;
+
+    const existing = await db.productCategory.findMany({
+      where: {
+        slug: { startsWith: baseSlug },
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+      },
+      select: { slug: true },
+    });
+
+    if (existing.length === 0) return baseSlug;
+
+    const slugSet = new Set(existing.map((e) => e.slug));
+    if (!slugSet.has(baseSlug)) return baseSlug;
+
     let counter = 1;
-
-    while (true) {
-      const existing = await db.productCategory.findFirst({
-        where: {
-          slug,
-          ...(excludeId ? { id: { not: excludeId } } : {}),
-        },
-        select: { id: true },
-      });
-
-      if (!existing) break;
-
-      slug = `${baseSlug}-${counter}`;
+    while (slugSet.has(`${baseSlug}-${counter}`)) {
       counter++;
     }
 
-    return slug;
+    return `${baseSlug}-${counter}`;
   }
 
   public async createCategory(data: CreateCategoryParams): Promise<ProductCategory> {
@@ -358,25 +359,26 @@ export class AdminProductsRepository {
 
   private async generateUniqueItemSlug(name: string, excludeId?: string): Promise<string> {
     const baseSlug = generateSlug(name);
-    let slug = baseSlug;
+
+    const existing = await db.productItem.findMany({
+      where: {
+        slug: { startsWith: baseSlug },
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+      },
+      select: { slug: true },
+    });
+
+    if (existing.length === 0) return baseSlug;
+
+    const slugSet = new Set(existing.map((e) => e.slug));
+    if (!slugSet.has(baseSlug)) return baseSlug;
+
     let counter = 1;
-
-    while (true) {
-      const existing = await db.productItem.findFirst({
-        where: {
-          slug,
-          ...(excludeId ? { id: { not: excludeId } } : {}),
-        },
-        select: { id: true },
-      });
-
-      if (!existing) break;
-
-      slug = `${baseSlug}-${counter}`;
+    while (slugSet.has(`${baseSlug}-${counter}`)) {
       counter++;
     }
 
-    return slug;
+    return `${baseSlug}-${counter}`;
   }
 
   public async createItem(data: CreateItemParams): Promise<ProductItem> {

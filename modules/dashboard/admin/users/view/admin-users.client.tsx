@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useReducer, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, Ban, RefreshCw, Trash2 } from "lucide-react";
 import { toast } from "sonner";
@@ -186,23 +186,68 @@ const BulkActions = memo(function BulkActions({
   );
 });
 
-export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
+interface UsersDialogState {
+  activeDialog: AdminUsersDialogType;
+  selectedUser: AdminUser | null;
+}
+
+type UsersDialogAction =
+  | { type: "OPEN"; dialog: AdminUsersDialogType; user?: AdminUser | null }
+  | { type: "CLOSE" };
+
+function usersDialogReducer(state: UsersDialogState, action: UsersDialogAction): UsersDialogState {
+  switch (action.type) {
+    case "OPEN":
+      return { activeDialog: action.dialog, selectedUser: action.user ?? null };
+    case "CLOSE":
+      return { activeDialog: null, selectedUser: null };
+  }
+}
+
+interface UsersTableUIState {
+  rowSelection: Record<string, boolean>;
+  expandedRows: Record<string, boolean>;
+  columnVisibility: Record<string, boolean>;
+}
+
+type UsersTableUIAction =
+  | { type: "SET_ROW_SELECTION"; selection: Record<string, boolean> }
+  | { type: "SET_EXPANDED_ROWS"; rows: Record<string, boolean> }
+  | { type: "SET_COLUMN_VISIBILITY"; visibility: Record<string, boolean> }
+  | { type: "CLEAR_SELECTION" };
+
+function usersTableUIReducer(state: UsersTableUIState, action: UsersTableUIAction): UsersTableUIState {
+  switch (action.type) {
+    case "SET_ROW_SELECTION":
+      return { ...state, rowSelection: action.selection };
+    case "SET_EXPANDED_ROWS":
+      return { ...state, expandedRows: action.rows };
+    case "SET_COLUMN_VISIBILITY":
+      return { ...state, columnVisibility: action.visibility };
+    case "CLEAR_SELECTION":
+      return { ...state, rowSelection: {} };
+  }
+}
+
+export const AdminUsersClient = memo(function AdminUsersClient({ initialData }: AdminUsersClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const t = useTranslations("Admin.users");
   const tCommon = useTranslations("Common");
 
-  // Estado de UI local (no datos del servidor)
-  const [rowSelection, setRowSelection] = useState<Record<string, boolean>>({});
-  const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
-  const [activeDialog, setActiveDialog] = useState<AdminUsersDialogType>(null);
-  const [selectedUser, setSelectedUser] = useState<AdminUser | null>(null);
+  const [tableUI, dispatchTableUI] = useReducer(usersTableUIReducer, {
+    rowSelection: {},
+    expandedRows: {},
+    columnVisibility: {},
+  });
+  const [dialogState, dispatchDialog] = useReducer(usersDialogReducer, {
+    activeDialog: null,
+    selectedUser: null,
+  });
   const [isPending, startActionTransition] = useTransition();
   const [isNavigating, startNavigationTransition] = useTransition();
 
-  // Datos del servidor (readonly, vienen del Server Component)
   const { users, stats, pagination, error } = initialData;
 
   // Leer estado de URL para sincronizar UI
@@ -261,7 +306,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
   // Handlers de navegación (disparan Server Component re-fetch)
   const handlePaginationChange = useCallback(
     (paginationUpdate: { pageIndex: number; pageSize: number }) => {
-      setRowSelection({});
+      dispatchTableUI({ type: "CLEAR_SELECTION" });
       navigate({
         page: paginationUpdate.pageIndex + 1,
         pageSize: paginationUpdate.pageSize,
@@ -316,15 +361,12 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     toast.success(t("table.dataUpdated"));
   }, [router, t]);
 
-  // Dialog handlers
   const openDialog = useCallback((type: AdminUsersDialogType, user: AdminUser | null = null) => {
-    setActiveDialog(type);
-    setSelectedUser(user);
+    dispatchDialog({ type: "OPEN", dialog: type, user });
   }, []);
 
   const closeDialog = useCallback(() => {
-    setActiveDialog(null);
-    setSelectedUser(null);
+    dispatchDialog({ type: "CLOSE" });
   }, []);
 
   // Actions que modifican datos (usan Server Actions y luego router.refresh)
@@ -430,7 +472,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
 
   const bulkBlockUsers = useCallback(
     (reason?: string) => {
-      const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
+      const selectedIds = Object.keys(tableUI.rowSelection).filter((id) => tableUI.rowSelection[id]);
       if (selectedIds.length === 0) {
         toast.error(t("bulk.noUsersSelected"));
         return;
@@ -443,7 +485,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
             toast.error(result.error);
           } else if (result.success) {
             toast.success(result.success);
-            setRowSelection({});
+            dispatchTableUI({ type: "CLEAR_SELECTION" });
             router.refresh();
           }
         } catch (err) {
@@ -451,11 +493,11 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
         }
       });
     },
-    [rowSelection, router, t, tCommon]
+    [tableUI.rowSelection, router, t, tCommon]
   );
 
   const bulkDeleteUsers = useCallback(() => {
-    const selectedIds = Object.keys(rowSelection).filter((id) => rowSelection[id]);
+    const selectedIds = Object.keys(tableUI.rowSelection).filter((id) => tableUI.rowSelection[id]);
     if (selectedIds.length === 0) {
       toast.error(t("bulk.noUsersSelected"));
       return;
@@ -468,14 +510,14 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
           toast.error(result.error);
         } else if (result.success) {
           toast.success(result.success);
-          setRowSelection({});
+          dispatchTableUI({ type: "CLEAR_SELECTION" });
           router.refresh();
         }
       } catch (err) {
         toast.error(err instanceof Error ? err.message : tCommon("error"));
       }
     });
-  }, [rowSelection, router, t, tCommon]);
+  }, [tableUI.rowSelection, router, t, tCommon]);
 
   // Traducciones de columnas memoizadas
   const columnTranslations = useMemo(
@@ -506,15 +548,20 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
   );
 
   // Configs memoizadas
+  const handleRowSelectionChange = useCallback(
+    (selection: Record<string, boolean>) => dispatchTableUI({ type: "SET_ROW_SELECTION", selection }),
+    []
+  );
+
   const selectionConfig: SelectionConfig<AdminUser> = useMemo(
     () => ({
       enabled: true,
       mode: "multiple",
       showCheckbox: true,
-      selectedRows: rowSelection,
-      onSelectionChange: setRowSelection,
+      selectedRows: tableUI.rowSelection,
+      onSelectionChange: handleRowSelectionChange,
     }),
-    [rowSelection]
+    [tableUI.rowSelection, handleRowSelectionChange]
   );
 
   const paginationConfig: PaginationConfig = useMemo(
@@ -556,14 +603,19 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     [urlState.search, handleSearchChange, t]
   );
 
+  const handleColumnVisibilityChange = useCallback(
+    (visibility: Record<string, boolean>) => dispatchTableUI({ type: "SET_COLUMN_VISIBILITY", visibility }),
+    []
+  );
+
   const columnVisibilityConfig: ColumnVisibilityConfig = useMemo(
     () => ({
       enabled: true,
-      columnVisibility: columnVisibility,
-      onColumnVisibilityChange: setColumnVisibility,
+      columnVisibility: tableUI.columnVisibility,
+      onColumnVisibilityChange: handleColumnVisibilityChange,
       alwaysVisibleColumns: ["user", "actions"],
     }),
-    [columnVisibility]
+    [tableUI.columnVisibility, handleColumnVisibilityChange]
   );
 
   const toolbarConfig: ToolbarConfig = useMemo(
@@ -607,20 +659,25 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
     []
   );
 
+  const handleExpansionChange = useCallback(
+    (rows: Record<string, boolean>) => dispatchTableUI({ type: "SET_EXPANDED_ROWS", rows }),
+    []
+  );
+
   const expansionConfig: ExpansionConfig<AdminUser> = useMemo(
     () => ({
       enabled: true,
-      expandedRows: expandedRows,
-      onExpansionChange: setExpandedRows,
+      expandedRows: tableUI.expandedRows,
+      onExpansionChange: handleExpansionChange,
       renderContent: renderExpandedContent,
       expandOnClick: false,
     }),
-    [expandedRows, renderExpandedContent]
+    [tableUI.expandedRows, handleExpansionChange, renderExpandedContent]
   );
 
   const selectedCount = useMemo(
-    () => Object.values(rowSelection).filter(Boolean).length,
-    [rowSelection]
+    () => Object.values(tableUI.rowSelection).filter(Boolean).length,
+    [tableUI.rowSelection]
   );
 
   const filters: AdminUsersFilters = useMemo(
@@ -634,7 +691,7 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
 
   const getRowId = useCallback((row: AdminUser) => row.id, []);
 
-  const clearSelection = useCallback(() => setRowSelection({}), []);
+  const clearSelection = useCallback(() => dispatchTableUI({ type: "CLEAR_SELECTION" }), []);
 
   return (
     <div className="space-y-6">
@@ -695,44 +752,44 @@ export function AdminUsersClient({ initialData }: AdminUsersClientProps) {
       </AnimatedSection>
 
       <UserDetailsDialog
-        user={selectedUser}
-        open={activeDialog === "details"}
+        user={dialogState.selectedUser}
+        open={dialogState.activeDialog === "details"}
         onClose={closeDialog}
       />
 
       <BlockUserDialog
-        user={selectedUser}
-        open={activeDialog === "block" || activeDialog === "unblock"}
+        user={dialogState.selectedUser}
+        open={dialogState.activeDialog === "block" || dialogState.activeDialog === "unblock"}
         isPending={isPending}
-        mode={activeDialog === "block" ? "block" : "unblock"}
+        mode={dialogState.activeDialog === "block" ? "block" : "unblock"}
         onClose={closeDialog}
         onBlock={blockUser}
         onUnblock={unblockUser}
       />
 
       <ChangeRoleDialog
-        user={selectedUser}
-        open={activeDialog === "change-role"}
+        user={dialogState.selectedUser}
+        open={dialogState.activeDialog === "change-role"}
         isPending={isPending}
         onClose={closeDialog}
         onChangeRole={changeRole}
       />
 
       <DeleteUserDialog
-        user={selectedUser}
-        open={activeDialog === "delete"}
+        user={dialogState.selectedUser}
+        open={dialogState.activeDialog === "delete"}
         isPending={isPending}
         onClose={closeDialog}
         onDelete={deleteUser}
       />
 
       <RestoreUserDialog
-        user={selectedUser}
-        open={activeDialog === "restore"}
+        user={dialogState.selectedUser}
+        open={dialogState.activeDialog === "restore"}
         isPending={isPending}
         onClose={closeDialog}
         onRestore={restoreUser}
       />
     </div>
   );
-}
+});

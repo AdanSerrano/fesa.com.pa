@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { CatalogsView } from "@/modules/catalogs/view/catalogs.view";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Catálogos",
   description: "Explora nuestros catálogos digitales",

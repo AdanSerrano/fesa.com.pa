@@ -15,7 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Loader2 } from "lucide-react";
-import { ImageUpload } from "../image-upload";
+import { ImageUpload } from "../../../_shared/components/image-upload";
+import { uploadImage } from "../../../_shared/utils/upload-image";
 import {
   getNewsImageUploadUrlAction,
   createCategoryAction,
@@ -56,23 +57,6 @@ interface CategoryFormDialogProps {
   };
 }
 
-async function uploadImage(
-  type: "category" | "article",
-  id: string,
-  file: File
-): Promise<string | null> {
-  const result = await getNewsImageUploadUrlAction(type, id, file.name, file.type);
-  if ("error" in result) return null;
-
-  const response = await fetch(result.url, {
-    method: "PUT",
-    headers: { "Content-Type": file.type },
-    body: file,
-  });
-
-  return response.ok ? result.publicUrl : null;
-}
-
 export const CategoryFormDialog = memo(function CategoryFormDialog({
   open,
   category,
@@ -103,7 +87,7 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
             let imageUrl = data.image;
 
             if (pendingFile) {
-              const uploadedUrl = await uploadImage("category", category.id, pendingFile);
+              const uploadedUrl = await uploadImage(getNewsImageUploadUrlAction, "category", category.id, pendingFile);
               if (uploadedUrl) imageUrl = uploadedUrl;
             }
 
@@ -137,7 +121,7 @@ export const CategoryFormDialog = memo(function CategoryFormDialog({
             const createdId = (createResult.data as { id: string } | undefined)?.id;
 
             if (createdId && pendingFile) {
-              const uploadedUrl = await uploadImage("category", createdId, pendingFile);
+              const uploadedUrl = await uploadImage(getNewsImageUploadUrlAction, "category", createdId, pendingFile);
 
               if (uploadedUrl) {
                 await updateCategoryAction({

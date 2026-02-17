@@ -10,15 +10,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { X } from "lucide-react";
-import type {
-  AdminProductsFilters,
-  AdminProductStatus,
-  AdminProductPriceFilter,
-  AdminProductSkuFilter,
-  CategoryForSelect,
-} from "../../types/admin-products.types";
+import type { CategoryForSelect } from "../../types/admin-shared.types";
 
-interface FiltersLabels {
+interface BaseFiltersLabels {
   status: string;
   allStatuses: string;
   active: string;
@@ -27,6 +21,9 @@ interface FiltersLabels {
   category: string;
   allCategories: string;
   clearFilters: string;
+}
+
+interface ProductFiltersLabels extends BaseFiltersLabels {
   price: string;
   allPrices: string;
   withPrice: string;
@@ -37,28 +34,40 @@ interface FiltersLabels {
   withoutSku: string;
 }
 
-interface AdminProductsFiltersSectionProps {
-  filters: AdminProductsFilters;
+interface BaseFiltersState {
+  search: string;
+  status: string;
+  categoryId: string;
+  priceFilter?: string;
+  skuFilter?: string;
+}
+
+interface AdminFiltersSectionProps<T extends BaseFiltersState = BaseFiltersState> {
+  filters: T;
   categories: CategoryForSelect[];
-  onFiltersChange: (filters: AdminProductsFilters) => void;
+  onFiltersChange: (filters: T) => void;
   onReset: () => void;
-  labels: FiltersLabels;
+  labels: BaseFiltersLabels | ProductFiltersLabels;
   showProductFilters?: boolean;
 }
 
-export const AdminProductsFiltersSection = memo(function AdminProductsFiltersSection({
+function isProductLabels(labels: BaseFiltersLabels | ProductFiltersLabels): labels is ProductFiltersLabels {
+  return "price" in labels;
+}
+
+function AdminFiltersSectionInner<T extends BaseFiltersState>({
   filters,
   categories,
   onFiltersChange,
   onReset,
   labels,
   showProductFilters = false,
-}: AdminProductsFiltersSectionProps) {
+}: AdminFiltersSectionProps<T>) {
   const handleStatusChange = useCallback(
     (value: string) => {
       onFiltersChange({
         ...filters,
-        status: value as AdminProductStatus,
+        status: value,
       });
     },
     [filters, onFiltersChange]
@@ -78,7 +87,7 @@ export const AdminProductsFiltersSection = memo(function AdminProductsFiltersSec
     (value: string) => {
       onFiltersChange({
         ...filters,
-        priceFilter: value as AdminProductPriceFilter,
+        priceFilter: value,
       });
     },
     [filters, onFiltersChange]
@@ -88,7 +97,7 @@ export const AdminProductsFiltersSection = memo(function AdminProductsFiltersSec
     (value: string) => {
       onFiltersChange({
         ...filters,
-        skuFilter: value as AdminProductSkuFilter,
+        skuFilter: value,
       });
     },
     [filters, onFiltersChange]
@@ -99,6 +108,8 @@ export const AdminProductsFiltersSection = memo(function AdminProductsFiltersSec
     filters.categoryId !== "all" ||
     (showProductFilters && filters.priceFilter !== "all") ||
     (showProductFilters && filters.skuFilter !== "all");
+
+  const productLabels = showProductFilters && isProductLabels(labels) ? labels : null;
 
   return (
     <div className="flex flex-wrap items-center gap-3">
@@ -130,27 +141,27 @@ export const AdminProductsFiltersSection = memo(function AdminProductsFiltersSec
         </Select>
       )}
 
-      {showProductFilters && (
+      {showProductFilters && productLabels && (
         <>
           <Select value={filters.priceFilter} onValueChange={handlePriceFilterChange}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder={labels.price} />
+              <SelectValue placeholder={productLabels.price} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{labels.allPrices}</SelectItem>
-              <SelectItem value="with-price">{labels.withPrice}</SelectItem>
-              <SelectItem value="without-price">{labels.withoutPrice}</SelectItem>
+              <SelectItem value="all">{productLabels.allPrices}</SelectItem>
+              <SelectItem value="with-price">{productLabels.withPrice}</SelectItem>
+              <SelectItem value="without-price">{productLabels.withoutPrice}</SelectItem>
             </SelectContent>
           </Select>
 
           <Select value={filters.skuFilter} onValueChange={handleSkuFilterChange}>
             <SelectTrigger className="w-[160px]">
-              <SelectValue placeholder={labels.sku} />
+              <SelectValue placeholder={productLabels.sku} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">{labels.allSkus}</SelectItem>
-              <SelectItem value="with-sku">{labels.withSku}</SelectItem>
-              <SelectItem value="without-sku">{labels.withoutSku}</SelectItem>
+              <SelectItem value="all">{productLabels.allSkus}</SelectItem>
+              <SelectItem value="with-sku">{productLabels.withSku}</SelectItem>
+              <SelectItem value="without-sku">{productLabels.withoutSku}</SelectItem>
             </SelectContent>
           </Select>
         </>
@@ -164,4 +175,6 @@ export const AdminProductsFiltersSection = memo(function AdminProductsFiltersSec
       )}
     </div>
   );
-});
+}
+
+export const AdminFiltersSection = memo(AdminFiltersSectionInner) as typeof AdminFiltersSectionInner;

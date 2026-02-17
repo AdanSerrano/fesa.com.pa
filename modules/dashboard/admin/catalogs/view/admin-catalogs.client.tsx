@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useReducer, useRef, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, Plus, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -245,7 +245,35 @@ const ErrorAlert = memo(function ErrorAlert({
   );
 });
 
-export function AdminCatalogsClient({
+interface CatalogsDialogState {
+  activeDialog: AdminCatalogsDialogType;
+  selectedCatalog: AdminCatalog | null;
+  columnVisibility: Record<string, boolean>;
+}
+
+type CatalogsDialogAction =
+  | { type: "OPEN"; dialog: AdminCatalogsDialogType; catalog?: AdminCatalog | null }
+  | { type: "CLOSE" }
+  | { type: "SET_COLUMN_VISIBILITY"; visibility: Record<string, boolean> };
+
+const initialDialogState: CatalogsDialogState = {
+  activeDialog: null,
+  selectedCatalog: null,
+  columnVisibility: {},
+};
+
+function catalogsDialogReducer(state: CatalogsDialogState, action: CatalogsDialogAction): CatalogsDialogState {
+  switch (action.type) {
+    case "OPEN":
+      return { ...state, activeDialog: action.dialog, selectedCatalog: action.catalog ?? null };
+    case "CLOSE":
+      return { ...state, activeDialog: null, selectedCatalog: null };
+    case "SET_COLUMN_VISIBILITY":
+      return { ...state, columnVisibility: action.visibility };
+  }
+}
+
+export const AdminCatalogsClient = memo(function AdminCatalogsClient({
   initialData,
   labels,
   locale,
@@ -254,9 +282,7 @@ export function AdminCatalogsClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
-  const [activeDialog, setActiveDialog] = useState<AdminCatalogsDialogType>(null);
-  const [selectedCatalog, setSelectedCatalog] = useState<AdminCatalog | null>(null);
+  const [dialogState, dispatchDialog] = useReducer(catalogsDialogReducer, initialDialogState);
   const [isPending, startActionTransition] = useTransition();
   const [isNavigating, startNavigationTransition] = useTransition();
 
@@ -385,20 +411,17 @@ export function AdminCatalogsClient({
             toast.error(result.error);
             return;
           }
-          setSelectedCatalog(result);
-          setActiveDialog(type);
+          dispatchDialog({ type: "OPEN", dialog: type, catalog: result });
         });
       } else {
-        setSelectedCatalog(catalog);
-        setActiveDialog(type);
+        dispatchDialog({ type: "OPEN", dialog: type, catalog });
       }
     },
     []
   );
 
   const closeDialog = useCallback(() => {
-    setActiveDialog(null);
-    setSelectedCatalog(null);
+    dispatchDialog({ type: "CLOSE" });
   }, []);
 
   const handleSuccess = useCallback(() => {
@@ -407,10 +430,10 @@ export function AdminCatalogsClient({
   }, [closeDialog, router]);
 
   const handleDelete = useCallback(() => {
-    if (!selectedCatalog) return;
+    if (!dialogState.selectedCatalog) return;
 
     startActionTransition(async () => {
-      const result = await deleteCatalogAction(selectedCatalog.id);
+      const result = await deleteCatalogAction(dialogState.selectedCatalog!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -419,7 +442,7 @@ export function AdminCatalogsClient({
         router.refresh();
       }
     });
-  }, [selectedCatalog, closeDialog, router]);
+  }, [dialogState.selectedCatalog, closeDialog, router]);
 
   const handleToggleStatus = useCallback(
     (id: string, isActive: boolean) => {
@@ -508,14 +531,21 @@ export function AdminCatalogsClient({
     [urlState.search, handleSearchChange, labels.table.searchPlaceholder]
   );
 
+  const handleColumnVisibilityChange = useCallback(
+    (visibility: Record<string, boolean>) => {
+      dispatchDialog({ type: "SET_COLUMN_VISIBILITY", visibility });
+    },
+    []
+  );
+
   const columnVisibilityConfig: ColumnVisibilityConfig = useMemo(
     () => ({
       enabled: true,
-      columnVisibility,
-      onColumnVisibilityChange: setColumnVisibility,
+      columnVisibility: dialogState.columnVisibility,
+      onColumnVisibilityChange: handleColumnVisibilityChange,
       alwaysVisibleColumns: ["title", "actions"],
     }),
-    [columnVisibility]
+    [dialogState.columnVisibility, handleColumnVisibilityChange]
   );
 
   const toolbarConfig: ToolbarConfig = useMemo(
@@ -545,8 +575,8 @@ export function AdminCatalogsClient({
   const getRowId = useCallback((row: AdminCatalog) => row.id, []);
 
   const getSelectedCatalogName = useCallback(() => {
-    return selectedCatalog?.title || "";
-  }, [selectedCatalog]);
+    return dialogState.selectedCatalog?.title || "";
+  }, [dialogState.selectedCatalog]);
 
   return (
     <div className="space-y-6">
@@ -604,29 +634,29 @@ export function AdminCatalogsClient({
       </AnimatedSection>
 
       <CatalogFormDialog
-        key={`catalog-form-${activeDialog === "catalog-edit" ? selectedCatalog?.id : "create"}`}
-        open={activeDialog === "catalog-create" || activeDialog === "catalog-edit"}
+        key={`catalog-form-${dialogState.activeDialog === "catalog-edit" ? dialogState.selectedCatalog?.id : "create"}`}
+        open={dialogState.activeDialog === "catalog-create" || dialogState.activeDialog === "catalog-edit"}
         onOpenChange={(open) => !open && closeDialog()}
-        catalog={activeDialog === "catalog-edit" ? selectedCatalog : null}
+        catalog={dialogState.activeDialog === "catalog-edit" ? dialogState.selectedCatalog : null}
         labels={labels.catalogForm}
         onSuccess={handleSuccess}
       />
 
       <DeleteDialog
-        open={activeDialog === "catalog-delete"}
+        open={dialogState.activeDialog === "catalog-delete"}
         onOpenChange={(open) => !open && closeDialog()}
-        catalog={selectedCatalog}
+        catalog={dialogState.selectedCatalog}
         labels={labels.deleteDialog}
         onSuccess={handleDelete}
       />
 
       <CatalogDetailsDialog
-        open={activeDialog === "catalog-details"}
-        catalog={selectedCatalog}
+        open={dialogState.activeDialog === "catalog-details"}
+        catalog={dialogState.selectedCatalog}
         onClose={closeDialog}
         labels={labels.catalogDetails}
         locale={locale}
       />
     </div>
   );
-}
+});

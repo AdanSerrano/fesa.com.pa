@@ -1,72 +1,33 @@
-export interface ServiceCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  image: string | null;
-  isActive: boolean;
-  isFeatured: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  _count?: {
-    items: number;
-  };
-}
+import type {
+  BaseCategory,
+  BaseItem,
+  BaseFilters,
+  BaseStats,
+  BaseDialogType,
+  BasePagination,
+  BaseSorting,
+  CategoryForSelect,
+  CreateResult,
+  BaseActionResult,
+} from "../../_shared/types/admin-shared.types";
 
-export interface ServiceItem {
-  id: string;
-  categoryId: string | null;
-  name: string;
-  slug: string;
-  description: string | null;
-  image: string | null;
-  isActive: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  category?: {
-    id: string;
-    name: string;
-  } | null;
-}
+export type { CategoryForSelect, CreateResult };
+
+export type ServiceCategory = BaseCategory;
+
+export type ServiceItem = BaseItem;
 
 export type AdminServiceStatus = "active" | "inactive" | "featured" | "all";
 
-export interface AdminServicesFilters {
-  search: string;
-  status: AdminServiceStatus;
-  categoryId: string | "all";
-}
+export type AdminServicesFilters = BaseFilters;
 
-export interface AdminServicesStats {
-  totalCategories: number;
-  totalItems: number;
-  activeCategories: number;
-  activeItems: number;
-  featuredCategories: number;
-}
+export type AdminServicesStats = BaseStats;
 
-export type AdminServicesDialogType =
-  | "category-details"
-  | "category-create"
-  | "category-edit"
-  | "category-delete"
-  | "item-details"
-  | "item-create"
-  | "item-edit"
-  | "item-delete"
-  | null;
+export type AdminServicesDialogType = BaseDialogType;
 
-export interface AdminServicesPagination {
-  pageIndex: number;
-  pageSize: number;
-  totalRows: number;
-  totalPages: number;
-}
+export type AdminServicesPagination = BasePagination;
 
-export interface AdminServicesSorting {
-  id: string;
-  desc: boolean;
-}
+export type AdminServicesSorting = BaseSorting;
 
 export interface GetCategoriesParams {
   page: number;
@@ -142,17 +103,6 @@ export interface UpdateItemParams {
   isActive?: boolean;
 }
 
-export interface CreateResult {
-  id: string;
-}
-
-export interface AdminServicesActionResult {
-  success?: string;
-  error?: string;
+export interface AdminServicesActionResult extends BaseActionResult {
   data?: GetCategoriesResult | GetItemsResult | CreateResult;
-}
-
-export interface CategoryForSelect {
-  id: string;
-  name: string;
 }

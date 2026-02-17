@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
 import { currentUser } from "@/lib/user";
 import { Role } from "@/app/prisma/client";
 import { AdminServicesController } from "../controllers/admin-services.controllers";
@@ -94,7 +95,9 @@ export async function createCategoryAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.createCategory(inputValidation.data);
+  const result = await controller.createCategory(inputValidation.data);
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function updateCategoryAction(
@@ -110,7 +113,9 @@ export async function updateCategoryAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.updateCategory(inputValidation.data);
+  const result = await controller.updateCategory(inputValidation.data);
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function deleteCategoryAction(
@@ -126,7 +131,9 @@ export async function deleteCategoryAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.deleteCategory(inputValidation.data.id);
+  const result = await controller.deleteCategory(inputValidation.data.id);
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function createItemAction(
@@ -142,7 +149,9 @@ export async function createItemAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.createItem(inputValidation.data);
+  const result = await controller.createItem(inputValidation.data);
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function updateItemAction(
@@ -158,7 +167,9 @@ export async function updateItemAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.updateItem(inputValidation.data);
+  const result = await controller.updateItem(inputValidation.data);
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function deleteItemAction(
@@ -174,7 +185,9 @@ export async function deleteItemAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.deleteItem(inputValidation.data.id);
+  const result = await controller.deleteItem(inputValidation.data.id);
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function toggleCategoryStatusAction(
@@ -191,10 +204,12 @@ export async function toggleCategoryStatusAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.toggleCategoryStatus(
+  const result = await controller.toggleCategoryStatus(
     inputValidation.data.id,
     inputValidation.data.isActive
   );
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function toggleItemStatusAction(
@@ -211,10 +226,12 @@ export async function toggleItemStatusAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.toggleItemStatus(
+  const result = await controller.toggleItemStatus(
     inputValidation.data.id,
     inputValidation.data.isActive
   );
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function toggleCategoryFeaturedAction(
@@ -231,10 +248,12 @@ export async function toggleCategoryFeaturedAction(
     return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
   }
 
-  return await controller.toggleCategoryFeatured(
+  const result = await controller.toggleCategoryFeatured(
     inputValidation.data.id,
     inputValidation.data.isFeatured
   );
+  if (!result.error) revalidateTag("services", "max");
+  return result;
 }
 
 export async function getCategoriesForSelectAction(): Promise<CategoryForSelect[]> {

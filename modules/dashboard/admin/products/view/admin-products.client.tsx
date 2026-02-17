@@ -1,8 +1,8 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useReducer, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { AlertCircle, FolderPlus, Plus, RefreshCw } from "lucide-react";
+import { AlertCircle, CheckCircle, FolderOpen, FolderPlus, Package, Plus, RefreshCw, ShoppingCart, Star } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,9 @@ import {
   toggleCategoryFeaturedAction,
 } from "../actions/admin-products.actions";
 import { createCategoryColumns, createItemColumns } from "../components/columns/admin-products.columns";
-import { AdminProductsStatsSection } from "../components/stats/admin-products-stats";
-import { AdminProductsFiltersSection } from "../components/filters/admin-products-filters";
+import { AdminStatsSection } from "../../_shared/components/stats/admin-stats-section";
+import type { StatConfig } from "../../_shared/components/stats/admin-stats-section";
+import { AdminFiltersSection } from "../../_shared/components/filters/admin-filters-section";
 import { CategoryFormDialog, ItemFormDialog, DeleteDialog, CategoryDetailsDialog, ItemDetailsDialog } from "../components/dialogs";
 
 import type {
@@ -289,7 +290,45 @@ const ErrorAlert = memo(function ErrorAlert({
   );
 });
 
-export function AdminProductsClient({
+interface ProductsDialogState {
+  activeDialog: AdminProductsDialogType;
+  selectedCategory: ProductCategory | null;
+  selectedItem: ProductItem | null;
+}
+
+type ProductsDialogAction =
+  | { type: "OPEN"; dialog: AdminProductsDialogType; category?: ProductCategory | null; item?: ProductItem | null }
+  | { type: "CLOSE" };
+
+function productsDialogReducer(state: ProductsDialogState, action: ProductsDialogAction): ProductsDialogState {
+  switch (action.type) {
+    case "OPEN":
+      return {
+        activeDialog: action.dialog,
+        selectedCategory: action.category ?? null,
+        selectedItem: action.item ?? null,
+      };
+    case "CLOSE":
+      return { activeDialog: null, selectedCategory: null, selectedItem: null };
+  }
+}
+
+interface ProductsItemsState {
+  items: ProductItem[];
+  pagination: AdminProductsPagination;
+}
+
+type ProductsItemsAction =
+  | { type: "SET"; items: ProductItem[]; pagination: AdminProductsPagination };
+
+function productsItemsReducer(state: ProductsItemsState, action: ProductsItemsAction): ProductsItemsState {
+  switch (action.type) {
+    case "SET":
+      return { items: action.items, pagination: action.pagination };
+  }
+}
+
+export const AdminProductsClient = memo(function AdminProductsClient({
   initialData,
   categoriesForSelect,
   labels,
@@ -300,16 +339,18 @@ export function AdminProductsClient({
   const searchParams = useSearchParams();
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
-  const [activeDialog, setActiveDialog] = useState<AdminProductsDialogType>(null);
-  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | null>(null);
-  const [selectedItem, setSelectedItem] = useState<ProductItem | null>(null);
+  const [dialogState, dispatchDialog] = useReducer(productsDialogReducer, {
+    activeDialog: null,
+    selectedCategory: null,
+    selectedItem: null,
+  });
   const [isPending, startActionTransition] = useTransition();
   const [isNavigating, startNavigationTransition] = useTransition();
   const [isLoadingItems, startItemsTransition] = useTransition();
 
   const { categories, stats, pagination, error, items: initialItems, itemsPagination: initialItemsPagination } = initialData;
 
-  const itemsStateRef = useRef({
+  const [itemsState, dispatchItems] = useReducer(productsItemsReducer, {
     items: initialItems,
     pagination: initialItemsPagination || {
       pageIndex: 0,
@@ -318,10 +359,9 @@ export function AdminProductsClient({
       totalPages: 0,
     },
   });
-  const [itemsVersion, setItemsVersion] = useState(0);
 
-  const items = itemsStateRef.current.items;
-  const itemsPagination = itemsStateRef.current.pagination;
+  const items = itemsState.items;
+  const itemsPagination = itemsState.pagination;
 
   const urlState = useMemo(() => {
     const getParam = (key: string) => searchParams.get(`${PREFIX}_${key}`);
@@ -402,7 +442,8 @@ export function AdminProductsClient({
         });
         if (result.data && "items" in result.data) {
           const data = result.data as GetItemsResult;
-          itemsStateRef.current = {
+          dispatchItems({
+            type: "SET",
             items: data.items,
             pagination: {
               pageIndex: page - 1,
@@ -410,8 +451,7 @@ export function AdminProductsClient({
               totalRows: data.pagination.total,
               totalPages: data.pagination.totalPages,
             },
-          };
-          setItemsVersion((v) => v + 1);
+          });
         }
       });
     },
@@ -550,25 +590,19 @@ export function AdminProductsClient({
 
   const openDialog = useCallback(
     (type: AdminProductsDialogType, entity: ProductCategory | ProductItem | null = null) => {
-      setActiveDialog(type);
       if (type?.startsWith("category") && entity) {
-        setSelectedCategory(entity as ProductCategory);
-        setSelectedItem(null);
+        dispatchDialog({ type: "OPEN", dialog: type, category: entity as ProductCategory });
       } else if (type?.startsWith("item") && entity) {
-        setSelectedItem(entity as ProductItem);
-        setSelectedCategory(null);
+        dispatchDialog({ type: "OPEN", dialog: type, item: entity as ProductItem });
       } else {
-        setSelectedCategory(null);
-        setSelectedItem(null);
+        dispatchDialog({ type: "OPEN", dialog: type });
       }
     },
     []
   );
 
   const closeDialog = useCallback(() => {
-    setActiveDialog(null);
-    setSelectedCategory(null);
-    setSelectedItem(null);
+    dispatchDialog({ type: "CLOSE" });
   }, []);
 
   const handleCategorySuccess = useCallback(() => {
@@ -577,9 +611,9 @@ export function AdminProductsClient({
   }, [closeDialog, router]);
 
   const handleDeleteCategory = useCallback(() => {
-    if (!selectedCategory) return;
+    if (!dialogState.selectedCategory) return;
     startActionTransition(async () => {
-      const result = await deleteCategoryAction(selectedCategory.id);
+      const result = await deleteCategoryAction(dialogState.selectedCategory!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -588,7 +622,7 @@ export function AdminProductsClient({
         router.refresh();
       }
     });
-  }, [selectedCategory, closeDialog, router]);
+  }, [dialogState.selectedCategory, closeDialog, router]);
 
   const handleItemSuccess = useCallback(() => {
     closeDialog();
@@ -602,9 +636,9 @@ export function AdminProductsClient({
   }, [closeDialog, router, loadItems, urlState]);
 
   const handleDeleteItem = useCallback(() => {
-    if (!selectedItem) return;
+    if (!dialogState.selectedItem) return;
     startActionTransition(async () => {
-      const result = await deleteItemAction(selectedItem.id);
+      const result = await deleteItemAction(dialogState.selectedItem!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -614,7 +648,7 @@ export function AdminProductsClient({
         loadItems();
       }
     });
-  }, [selectedItem, closeDialog, router, loadItems]);
+  }, [dialogState.selectedItem, closeDialog, router, loadItems]);
 
   const handleToggleCategoryStatus = useCallback(
     (id: string, isActive: boolean) => {
@@ -771,16 +805,27 @@ export function AdminProductsClient({
     [urlState.search, urlState.status, urlState.categoryId, urlState.priceFilter, urlState.skuFilter]
   );
 
+  const statConfigs: StatConfig[] = useMemo(() => {
+    if (!stats) return [];
+    return [
+      { title: labels.stats.totalCategories, value: stats.totalCategories, description: labels.stats.totalCategoriesDesc, icon: <FolderOpen className="h-4 w-4" /> },
+      { title: labels.stats.totalItems, value: stats.totalItems, description: labels.stats.totalItemsDesc, icon: <Package className="h-4 w-4" /> },
+      { title: labels.stats.activeCategories, value: stats.activeCategories, description: labels.stats.activeCategoriesDesc, icon: <CheckCircle className="h-4 w-4" />, variant: "success" },
+      { title: labels.stats.activeItems, value: stats.activeItems, description: labels.stats.activeItemsDesc, icon: <ShoppingCart className="h-4 w-4" />, variant: "success" },
+      { title: labels.stats.featuredCategories, value: stats.featuredCategories, description: labels.stats.featuredCategoriesDesc, icon: <Star className="h-4 w-4" />, variant: "warning" },
+    ];
+  }, [stats, labels.stats]);
+
   const getCategoryRowId = useCallback((row: ProductCategory) => row.id, []);
   const getItemRowId = useCallback((row: ProductItem) => row.id, []);
 
   const getSelectedCategoryName = useCallback(() => {
-    return selectedCategory?.name || "";
-  }, [selectedCategory]);
+    return dialogState.selectedCategory?.name || "";
+  }, [dialogState.selectedCategory]);
 
   const getSelectedItemName = useCallback(() => {
-    return selectedItem?.name || "";
-  }, [selectedItem]);
+    return dialogState.selectedItem?.name || "";
+  }, [dialogState.selectedItem]);
 
   return (
     <div className="space-y-6">
@@ -798,7 +843,7 @@ export function AdminProductsClient({
       )}
 
       <AnimatedSection animation="fade-up" delay={100}>
-        <AdminProductsStatsSection stats={stats} labels={labels.stats} />
+        <AdminStatsSection stats={stats} statConfigs={statConfigs} />
       </AnimatedSection>
 
       <AnimatedSection animation="fade-up" delay={200}>
@@ -825,7 +870,7 @@ export function AdminProductsClient({
           </div>
 
           <TabsContent value="categories" className="space-y-4">
-            <AdminProductsFiltersSection
+            <AdminFiltersSection
               filters={filters}
               categories={[]}
               onFiltersChange={handleFiltersChange}
@@ -852,7 +897,7 @@ export function AdminProductsClient({
           </TabsContent>
 
           <TabsContent value="items" className="space-y-4">
-            <AdminProductsFiltersSection
+            <AdminFiltersSection
               filters={filters}
               categories={categoriesForSelect}
               onFiltersChange={handleFiltersChange}
@@ -887,18 +932,18 @@ export function AdminProductsClient({
       </AnimatedSection>
 
       <CategoryFormDialog
-        key={`category-form-${activeDialog === "category-edit" ? selectedCategory?.id : "create"}`}
-        open={activeDialog === "category-create" || activeDialog === "category-edit"}
-        category={activeDialog === "category-edit" ? selectedCategory : null}
+        key={`category-form-${dialogState.activeDialog === "category-edit" ? dialogState.selectedCategory?.id : "create"}`}
+        open={dialogState.activeDialog === "category-create" || dialogState.activeDialog === "category-edit"}
+        category={dialogState.activeDialog === "category-edit" ? dialogState.selectedCategory : null}
         onClose={closeDialog}
         onSuccess={handleCategorySuccess}
         labels={labels.categoryForm}
       />
 
       <ItemFormDialog
-        key={`item-form-${activeDialog === "item-edit" ? selectedItem?.id : "create"}`}
-        open={activeDialog === "item-create" || activeDialog === "item-edit"}
-        item={activeDialog === "item-edit" ? selectedItem : null}
+        key={`item-form-${dialogState.activeDialog === "item-edit" ? dialogState.selectedItem?.id : "create"}`}
+        open={dialogState.activeDialog === "item-create" || dialogState.activeDialog === "item-edit"}
+        item={dialogState.activeDialog === "item-edit" ? dialogState.selectedItem : null}
         categories={categoriesForSelect}
         onClose={closeDialog}
         onSuccess={handleItemSuccess}
@@ -906,7 +951,7 @@ export function AdminProductsClient({
       />
 
       <DeleteDialog
-        open={activeDialog === "category-delete"}
+        open={dialogState.activeDialog === "category-delete"}
         title={labels.deleteDialog.categoryTitle}
         description={labels.deleteDialog.categoryDescription}
         itemName={getSelectedCategoryName()}
@@ -917,7 +962,7 @@ export function AdminProductsClient({
       />
 
       <DeleteDialog
-        open={activeDialog === "item-delete"}
+        open={dialogState.activeDialog === "item-delete"}
         title={labels.deleteDialog.itemTitle}
         description={labels.deleteDialog.itemDescription}
         itemName={getSelectedItemName()}
@@ -928,20 +973,20 @@ export function AdminProductsClient({
       />
 
       <CategoryDetailsDialog
-        open={activeDialog === "category-details"}
-        category={selectedCategory}
+        open={dialogState.activeDialog === "category-details"}
+        category={dialogState.selectedCategory}
         onClose={closeDialog}
         labels={labels.categoryDetails}
         locale={locale}
       />
 
       <ItemDetailsDialog
-        open={activeDialog === "item-details"}
-        item={selectedItem}
+        open={dialogState.activeDialog === "item-details"}
+        item={dialogState.selectedItem}
         onClose={closeDialog}
         labels={labels.itemDetails}
         locale={locale}
       />
     </div>
   );
-}
+});

@@ -4,7 +4,7 @@ import { loginAction } from "@/modules/login/actions/login.actions";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useTransition, useCallback } from "react";
+import { useReducer, useTransition, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import {
@@ -27,24 +27,81 @@ interface PendingDeletionState {
   dialogOpen: boolean;
 }
 
+interface LoginState {
+  error: string | null;
+  twoFactor: TwoFactorState;
+  pendingDeletion: PendingDeletionState;
+  credentials: LoginActionInput | null;
+}
+
+type LoginAction =
+  | { type: "CLEAR_ERROR" }
+  | { type: "SET_ERROR"; error: string }
+  | { type: "REQUIRE_TWO_FACTOR"; email: string; credentials: LoginActionInput }
+  | { type: "CANCEL_TWO_FACTOR" }
+  | { type: "CLOSE_TWO_FACTOR_DIALOG" }
+  | { type: "OPEN_TWO_FACTOR_DIALOG" }
+  | { type: "REQUIRE_PENDING_DELETION"; email: string; scheduledDeletionDate: Date | null; daysRemaining: number | null; credentials: LoginActionInput }
+  | { type: "CLOSE_PENDING_DELETION_DIALOG" }
+  | { type: "ACCOUNT_REACTIVATED" };
+
+const initialLoginState: LoginState = {
+  error: null,
+  twoFactor: { required: false, email: null, dialogOpen: false },
+  pendingDeletion: { isPending: false, email: null, scheduledDeletionDate: null, daysRemaining: null, dialogOpen: false },
+  credentials: null,
+};
+
+function loginReducer(state: LoginState, action: LoginAction): LoginState {
+  switch (action.type) {
+    case "CLEAR_ERROR":
+      return { ...state, error: null };
+    case "SET_ERROR":
+      return { ...state, error: action.error };
+    case "REQUIRE_TWO_FACTOR":
+      return {
+        ...state,
+        credentials: action.credentials,
+        twoFactor: { required: true, email: action.email, dialogOpen: true },
+      };
+    case "CANCEL_TWO_FACTOR":
+      return {
+        ...state,
+        twoFactor: { required: false, email: null, dialogOpen: false },
+        credentials: null,
+        error: null,
+      };
+    case "CLOSE_TWO_FACTOR_DIALOG":
+      return { ...state, twoFactor: { ...state.twoFactor, dialogOpen: false } };
+    case "OPEN_TWO_FACTOR_DIALOG":
+      return { ...state, twoFactor: { ...state.twoFactor, dialogOpen: true } };
+    case "REQUIRE_PENDING_DELETION":
+      return {
+        ...state,
+        credentials: action.credentials,
+        pendingDeletion: {
+          isPending: true,
+          email: action.email,
+          scheduledDeletionDate: action.scheduledDeletionDate,
+          daysRemaining: action.daysRemaining,
+          dialogOpen: true,
+        },
+      };
+    case "CLOSE_PENDING_DELETION_DIALOG":
+      return { ...state, pendingDeletion: { ...state.pendingDeletion, dialogOpen: false } };
+    case "ACCOUNT_REACTIVATED":
+      return {
+        ...state,
+        pendingDeletion: { isPending: false, email: null, scheduledDeletionDate: null, daysRemaining: null, dialogOpen: false },
+      };
+  }
+}
+
 export const useLogin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const [twoFactor, setTwoFactor] = useState<TwoFactorState>({
-    required: false,
-    email: null,
-    dialogOpen: false,
-  });
-  const [pendingDeletion, setPendingDeletion] = useState<PendingDeletionState>({
-    isPending: false,
-    email: null,
-    scheduledDeletionDate: null,
-    daysRemaining: null,
-    dialogOpen: false,
-  });
-  const [credentials, setCredentials] = useState<LoginActionInput | null>(null);
+  const [state, dispatch] = useReducer(loginReducer, initialLoginState);
 
   const sessionExpired = searchParams.get("sessionExpired") === "true";
 
@@ -58,7 +115,7 @@ export const useLogin = () => {
 
   const login = useCallback(
     async (values: LoginUser) => {
-      setError(null);
+      dispatch({ type: "CLEAR_ERROR" });
       startTransition(async () => {
         try {
           const actionInput: LoginActionInput = {
@@ -68,29 +125,27 @@ export const useLogin = () => {
           const result = await loginAction(actionInput);
 
           if (result?.error) {
-            setError(result.error);
+            dispatch({ type: "SET_ERROR", error: result.error });
             toast.error(result.error);
             return;
           }
 
           if (result?.pendingDeletion && result?.email) {
-            setCredentials(actionInput);
-            setPendingDeletion({
-              isPending: true,
+            dispatch({
+              type: "REQUIRE_PENDING_DELETION",
               email: result.email,
               scheduledDeletionDate: result.scheduledDeletionDate || null,
               daysRemaining: result.daysRemaining ?? null,
-              dialogOpen: true,
+              credentials: actionInput,
             });
             return;
           }
 
           if (result?.requiresTwoFactor && result?.email) {
-            setCredentials(actionInput);
-            setTwoFactor({
-              required: true,
+            dispatch({
+              type: "REQUIRE_TWO_FACTOR",
               email: result.email,
-              dialogOpen: true,
+              credentials: actionInput,
             });
             toast.success("Código de verificación enviado a tu correo");
             return;
@@ -106,7 +161,7 @@ export const useLogin = () => {
         } catch (err) {
           const errorMessage =
             err instanceof Error ? err.message : "Error al iniciar sesión";
-          setError(errorMessage);
+          dispatch({ type: "SET_ERROR", error: errorMessage });
           toast.error(errorMessage);
         }
       });
@@ -115,14 +170,14 @@ export const useLogin = () => {
   );
 
   const completeTwoFactorLogin = useCallback(async () => {
-    if (!credentials) return;
+    if (!state.credentials) return;
 
     startTransition(async () => {
       try {
-        const result = await loginAction(credentials);
+        const result = await loginAction(state.credentials!);
 
         if (result?.error) {
-          setError(result.error);
+          dispatch({ type: "SET_ERROR", error: result.error });
           toast.error(result.error);
           return;
         }
@@ -137,53 +192,45 @@ export const useLogin = () => {
       } catch (err) {
         const errorMessage =
           err instanceof Error ? err.message : "Error al iniciar sesión";
-        setError(errorMessage);
+        dispatch({ type: "SET_ERROR", error: errorMessage });
         toast.error(errorMessage);
       }
     });
-  }, [credentials, router, searchParams]);
+  }, [state.credentials, router, searchParams]);
 
   const cancelTwoFactor = useCallback(() => {
-    setTwoFactor({ required: false, email: null, dialogOpen: false });
-    setCredentials(null);
-    setError(null);
+    dispatch({ type: "CANCEL_TWO_FACTOR" });
   }, []);
 
   const closeTwoFactorDialog = useCallback(() => {
-    setTwoFactor((prev) => ({ ...prev, dialogOpen: false }));
+    dispatch({ type: "CLOSE_TWO_FACTOR_DIALOG" });
   }, []);
 
   const openTwoFactorDialog = useCallback(() => {
-    setTwoFactor((prev) => ({ ...prev, dialogOpen: true }));
+    dispatch({ type: "OPEN_TWO_FACTOR_DIALOG" });
   }, []);
 
   const closePendingDeletionDialog = useCallback(() => {
-    setPendingDeletion((prev) => ({ ...prev, dialogOpen: false }));
+    dispatch({ type: "CLOSE_PENDING_DELETION_DIALOG" });
   }, []);
 
   const onAccountReactivated = useCallback(() => {
-    setPendingDeletion({
-      isPending: false,
-      email: null,
-      scheduledDeletionDate: null,
-      daysRemaining: null,
-      dialogOpen: false,
-    });
-    if (credentials) {
+    dispatch({ type: "ACCOUNT_REACTIVATED" });
+    if (state.credentials) {
       login({
-        identifier: credentials.identifier,
-        password: credentials.password,
+        identifier: state.credentials.identifier,
+        password: state.credentials.password,
       });
     }
-  }, [credentials, login]);
+  }, [state.credentials, login]);
 
   return {
     login,
     isPending,
-    error,
+    error: state.error,
     form,
-    twoFactor,
-    pendingDeletion,
+    twoFactor: state.twoFactor,
+    pendingDeletion: state.pendingDeletion,
     sessionExpired,
     completeTwoFactorLogin,
     cancelTwoFactor,

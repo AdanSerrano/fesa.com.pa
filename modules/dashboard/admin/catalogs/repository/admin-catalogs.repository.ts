@@ -126,18 +126,18 @@ export class AdminCatalogsRepository {
     if (params.isFeatured !== undefined) updateData.isFeatured = params.isFeatured;
 
     if (params.pages !== undefined) {
-      await db.catalogPage.deleteMany({ where: { catalogId: params.id } });
-
-      if (params.pages.length > 0) {
-        await db.catalogPage.createMany({
-          data: params.pages.map((p) => ({
-            catalogId: params.id,
-            imageUrl: p.imageUrl,
-            alt: p.alt ?? null,
-            order: p.order,
-          })),
-        });
-      }
+      updateData.pages = {
+        deleteMany: {},
+        ...(params.pages.length > 0
+          ? {
+              create: params.pages.map((p) => ({
+                imageUrl: p.imageUrl,
+                alt: p.alt ?? null,
+                order: p.order,
+              })),
+            }
+          : {}),
+      };
     }
 
     const catalog = await db.catalog.update({
@@ -183,6 +183,7 @@ export class AdminCatalogsRepository {
         slug,
         ...(excludeId ? { id: { not: excludeId } } : {}),
       },
+      select: { id: true },
     });
 
     return !!catalog;

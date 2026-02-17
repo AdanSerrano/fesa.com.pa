@@ -1,8 +1,18 @@
+import { unstable_cache } from "next/cache";
 import { db } from "@/utils/db";
 import type { PublicNewsCategory, PublicNewsArticle } from "../types/news.types";
 
-export class PublicNewsRepository {
-  public async getActiveCategories(): Promise<PublicNewsCategory[]> {
+type SerializedArticle = Omit<PublicNewsArticle, "publishedAt"> & {
+  publishedAt: string | null;
+};
+
+const deserializeArticle = (article: SerializedArticle): PublicNewsArticle => ({
+  ...article,
+  publishedAt: article.publishedAt ? new Date(article.publishedAt) : null,
+});
+
+const _getActiveCategories = unstable_cache(
+  async (): Promise<PublicNewsCategory[]> => {
     const categories = await db.newsCategory.findMany({
       where: { isActive: true },
       select: {
@@ -35,9 +45,13 @@ export class PublicNewsRepository {
       icon: cat.icon,
       articleCount: cat._count.news,
     }));
-  }
+  },
+  ["news-active-categories"],
+  { tags: ["news"], revalidate: 1800 }
+);
 
-  public async getFeaturedNews(limit: number = 6): Promise<PublicNewsArticle[]> {
+const _getFeaturedNews = unstable_cache(
+  async (limit: number): Promise<SerializedArticle[]> => {
     const articles = await db.news.findMany({
       where: {
         isActive: true,
@@ -50,7 +64,6 @@ export class PublicNewsRepository {
         title: true,
         slug: true,
         excerpt: true,
-        content: true,
         image: true,
         publishedAt: true,
         category: {
@@ -70,16 +83,20 @@ export class PublicNewsRepository {
       title: article.title,
       slug: article.slug,
       excerpt: article.excerpt,
-      content: article.content,
+      content: null,
       image: article.image,
       images: [],
-      publishedAt: article.publishedAt,
+      publishedAt: article.publishedAt?.toISOString() ?? null,
       categoryName: article.category?.name || "",
       categorySlug: article.category?.slug || "",
     }));
-  }
+  },
+  ["news-featured"],
+  { tags: ["news"], revalidate: 1800 }
+);
 
-  public async getRecentNews(limit: number = 10): Promise<PublicNewsArticle[]> {
+const _getRecentNews = unstable_cache(
+  async (limit: number): Promise<SerializedArticle[]> => {
     const articles = await db.news.findMany({
       where: {
         isActive: true,
@@ -91,7 +108,6 @@ export class PublicNewsRepository {
         title: true,
         slug: true,
         excerpt: true,
-        content: true,
         image: true,
         publishedAt: true,
         category: {
@@ -111,18 +127,24 @@ export class PublicNewsRepository {
       title: article.title,
       slug: article.slug,
       excerpt: article.excerpt,
-      content: article.content,
+      content: null,
       image: article.image,
       images: [],
-      publishedAt: article.publishedAt,
+      publishedAt: article.publishedAt?.toISOString() ?? null,
       categoryName: article.category?.name || "",
       categorySlug: article.category?.slug || "",
     }));
-  }
+  },
+  ["news-recent"],
+  { tags: ["news"], revalidate: 1800 }
+);
 
-  public async getCategoryBySlug(
-    slug: string
-  ): Promise<(PublicNewsCategory & { articles: PublicNewsArticle[] }) | null> {
+type SerializedCategoryWithArticles = PublicNewsCategory & {
+  articles: SerializedArticle[];
+};
+
+const _getCategoryBySlug = unstable_cache(
+  async (slug: string): Promise<SerializedCategoryWithArticles | null> => {
     const category = await db.newsCategory.findFirst({
       where: {
         isActive: true,
@@ -146,7 +168,6 @@ export class PublicNewsRepository {
             title: true,
             slug: true,
             excerpt: true,
-            content: true,
             image: true,
             publishedAt: true,
           },
@@ -171,20 +192,28 @@ export class PublicNewsRepository {
         title: article.title,
         slug: article.slug,
         excerpt: article.excerpt,
-        content: article.content,
+        content: null,
         image: article.image,
         images: [],
-        publishedAt: article.publishedAt,
+        publishedAt: article.publishedAt?.toISOString() ?? null,
         categoryName: category.name,
         categorySlug: category.slug,
       })),
     };
-  }
+  },
+  ["news-category-by-slug"],
+  { tags: ["news"], revalidate: 1800 }
+);
 
-  public async getArticleBySlug(
+type SerializedArticleDetail = Omit<PublicNewsArticle, "publishedAt"> & {
+  publishedAt: string | null;
+};
+
+const _getArticleBySlug = unstable_cache(
+  async (
     categorySlug: string,
     articleSlug: string
-  ): Promise<PublicNewsArticle | null> {
+  ): Promise<SerializedArticleDetail | null> => {
     const article = await db.news.findFirst({
       where: {
         isActive: true,
@@ -238,9 +267,49 @@ export class PublicNewsRepository {
         alt: img.alt,
         order: img.order,
       })),
-      publishedAt: article.publishedAt,
+      publishedAt: article.publishedAt?.toISOString() ?? null,
       categoryName: article.category?.name || "",
       categorySlug: article.category?.slug || "",
     };
+  },
+  ["news-article-by-slug"],
+  { tags: ["news"], revalidate: 1800 }
+);
+
+export class PublicNewsRepository {
+  public async getActiveCategories(): Promise<PublicNewsCategory[]> {
+    return _getActiveCategories();
+  }
+
+  public async getFeaturedNews(limit: number = 6): Promise<PublicNewsArticle[]> {
+    const cached = await _getFeaturedNews(limit);
+    return cached.map(deserializeArticle);
+  }
+
+  public async getRecentNews(limit: number = 10): Promise<PublicNewsArticle[]> {
+    const cached = await _getRecentNews(limit);
+    return cached.map(deserializeArticle);
+  }
+
+  public async getCategoryBySlug(
+    slug: string
+  ): Promise<(PublicNewsCategory & { articles: PublicNewsArticle[] }) | null> {
+    const cached = await _getCategoryBySlug(slug);
+    if (!cached) return null;
+
+    return {
+      ...cached,
+      articles: cached.articles.map(deserializeArticle),
+    };
+  }
+
+  public async getArticleBySlug(
+    categorySlug: string,
+    articleSlug: string
+  ): Promise<PublicNewsArticle | null> {
+    const cached = await _getArticleBySlug(categorySlug, articleSlug);
+    if (!cached) return null;
+
+    return deserializeArticle(cached);
   }
 }

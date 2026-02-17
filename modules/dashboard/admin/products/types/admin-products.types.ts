@@ -1,34 +1,23 @@
-export interface ProductCategory {
-  id: string;
-  name: string;
-  slug: string;
-  description: string | null;
-  image: string | null;
-  isActive: boolean;
-  isFeatured: boolean;
-  createdAt: Date;
-  updatedAt: Date;
-  _count?: {
-    items: number;
-  };
-}
+import type {
+  BaseCategory,
+  BaseItem,
+  BaseFilters,
+  BaseStats,
+  BaseDialogType,
+  BasePagination,
+  BaseSorting,
+  CategoryForSelect,
+  CreateResult,
+  BaseActionResult,
+} from "../../_shared/types/admin-shared.types";
 
-export interface ProductItem {
-  id: string;
-  categoryId: string | null;
-  name: string;
-  slug: string;
-  description: string | null;
-  image: string | null;
-  isActive: boolean;
+export type { CategoryForSelect, CreateResult };
+
+export type ProductCategory = BaseCategory;
+
+export interface ProductItem extends BaseItem {
   price: number | null;
   sku: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-  category?: {
-    id: string;
-    name: string;
-  } | null;
 }
 
 export type AdminProductStatus = "active" | "inactive" | "featured" | "all";
@@ -37,44 +26,18 @@ export type AdminProductPriceFilter = "all" | "with-price" | "without-price";
 
 export type AdminProductSkuFilter = "all" | "with-sku" | "without-sku";
 
-export interface AdminProductsFilters {
-  search: string;
-  status: AdminProductStatus;
-  categoryId: string | "all";
+export interface AdminProductsFilters extends BaseFilters {
   priceFilter?: AdminProductPriceFilter;
   skuFilter?: AdminProductSkuFilter;
 }
 
-export interface AdminProductsStats {
-  totalCategories: number;
-  totalItems: number;
-  activeCategories: number;
-  activeItems: number;
-  featuredCategories: number;
-}
+export type AdminProductsStats = BaseStats;
 
-export type AdminProductsDialogType =
-  | "category-details"
-  | "category-create"
-  | "category-edit"
-  | "category-delete"
-  | "item-details"
-  | "item-create"
-  | "item-edit"
-  | "item-delete"
-  | null;
+export type AdminProductsDialogType = BaseDialogType;
 
-export interface AdminProductsPagination {
-  pageIndex: number;
-  pageSize: number;
-  totalRows: number;
-  totalPages: number;
-}
+export type AdminProductsPagination = BasePagination;
 
-export interface AdminProductsSorting {
-  id: string;
-  desc: boolean;
-}
+export type AdminProductsSorting = BaseSorting;
 
 export interface GetCategoriesParams {
   page: number;
@@ -154,17 +117,6 @@ export interface UpdateItemParams {
   sku?: string | null;
 }
 
-export interface CreateResult {
-  id: string;
-}
-
-export interface AdminProductsActionResult {
-  success?: string;
-  error?: string;
+export interface AdminProductsActionResult extends BaseActionResult {
   data?: GetCategoriesResult | GetItemsResult | CreateResult;
-}
-
-export interface CategoryForSelect {
-  id: string;
-  name: string;
 }

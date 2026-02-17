@@ -14,39 +14,41 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { ImageUpload } from "../../../_shared/components/image-upload";
-import { uploadImage } from "../../../_shared/utils/upload-image";
-import { getServiceImageUploadUrlAction, createItemAction, updateItemAction } from "../../actions/admin-services.actions";
-import type { ServiceItem, CategoryForSelect } from "../../types/admin-services.types";
+import { ImageUpload } from "../image-upload";
+import { uploadImage } from "../../utils/upload-image";
+import type {
+  BaseCategory,
+  CreateCategoryAction,
+  UpdateCategoryAction,
+} from "../../types/admin-shared.types";
 
 interface FormData {
-  categoryId: string;
   name: string;
   description: string;
   image: string;
   isActive: boolean;
+  isFeatured: boolean;
 }
 
-interface ItemFormDialogProps {
+type CategoryUploadUrlAction = (
+  type: "category",
+  id: string,
+  fileName: string,
+  fileType: string,
+) => Promise<{ url: string; publicUrl: string } | { error: string }>;
+
+interface CategoryFormDialogProps {
   open: boolean;
-  item: ServiceItem | null;
-  categories: CategoryForSelect[];
+  category: BaseCategory | null;
   onClose: () => void;
   onSuccess: () => void;
+  getUploadUrlAction: CategoryUploadUrlAction;
+  createCategoryAction: CreateCategoryAction;
+  updateCategoryAction: UpdateCategoryAction;
   labels: {
     createTitle: string;
     editTitle: string;
-    category: string;
-    selectCategory: string;
-    noCategory: string;
     name: string;
     namePlaceholder: string;
     description: string;
@@ -54,31 +56,34 @@ interface ItemFormDialogProps {
     image: string;
     imagePlaceholder: string;
     isActive: string;
+    isFeatured: string;
     cancel: string;
     save: string;
     saving: string;
   };
 }
 
-export const ItemFormDialog = memo(function ItemFormDialog({
+export const CategoryFormDialog = memo(function CategoryFormDialog({
   open,
-  item,
-  categories,
+  category,
   onClose,
   onSuccess,
+  getUploadUrlAction,
+  createCategoryAction: createAction,
+  updateCategoryAction: updateAction,
   labels,
-}: ItemFormDialogProps) {
-  const isEditing = !!item;
+}: CategoryFormDialogProps) {
+  const isEditing = !!category;
   const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<FormData>({
     defaultValues: {
-      categoryId: item?.categoryId || "",
-      name: item?.name || "",
-      description: item?.description || "",
-      image: item?.image || "",
-      isActive: item?.isActive ?? true,
+      name: category?.name || "",
+      description: category?.description || "",
+      image: category?.image || "",
+      isActive: category?.isActive ?? true,
+      isFeatured: category?.isFeatured ?? false,
     },
   });
 
@@ -86,33 +91,33 @@ export const ItemFormDialog = memo(function ItemFormDialog({
     (data: FormData) => {
       startTransition(async () => {
         try {
-          if (isEditing && item) {
+          if (isEditing && category) {
             let imageUrl = data.image;
 
             if (pendingFile) {
-              const uploadedUrl = await uploadImage(getServiceImageUploadUrlAction, "item", item.id, pendingFile);
+              const uploadedUrl = await uploadImage(getUploadUrlAction, "category", category.id, pendingFile);
               if (uploadedUrl) imageUrl = uploadedUrl;
             }
 
-            const result = await updateItemAction({
-              id: item.id,
-              categoryId: data.categoryId || null,
+            const result = await updateAction({
+              id: category.id,
               name: data.name,
               description: data.description || null,
               image: imageUrl || null,
               isActive: data.isActive,
+              isFeatured: data.isFeatured,
             });
 
             if (result.error) {
               return;
             }
           } else {
-            const createResult = await createItemAction({
-              categoryId: data.categoryId || null,
+            const createResult = await createAction({
               name: data.name,
               description: data.description || null,
               image: null,
               isActive: data.isActive,
+              isFeatured: data.isFeatured,
             });
 
             if (createResult.error) {
@@ -122,10 +127,10 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             const createdId = (createResult.data as { id: string } | undefined)?.id;
 
             if (createdId && pendingFile) {
-              const uploadedUrl = await uploadImage(getServiceImageUploadUrlAction, "item", createdId, pendingFile);
+              const uploadedUrl = await uploadImage(getUploadUrlAction, "category", createdId, pendingFile);
 
               if (uploadedUrl) {
-                await updateItemAction({
+                await updateAction({
                   id: createdId,
                   image: uploadedUrl,
                 });
@@ -139,7 +144,7 @@ export const ItemFormDialog = memo(function ItemFormDialog({
         }
       });
     },
-    [isEditing, item, pendingFile, onSuccess]
+    [isEditing, category, pendingFile, onSuccess, getUploadUrlAction, createAction, updateAction]
   );
 
   const handleClose = useCallback(() => {
@@ -159,27 +164,6 @@ export const ItemFormDialog = memo(function ItemFormDialog({
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6 overflow-y-auto flex-1 pr-2">
-          <div className="space-y-2">
-            <Label>{labels.category}</Label>
-            <Select
-              value={form.watch("categoryId")}
-              onValueChange={(value) => form.setValue("categoryId", value === "none" ? "" : value)}
-              disabled={isPending}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder={labels.selectCategory} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">{labels.noCategory}</SelectItem>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="space-y-2">
             <Label htmlFor="name">{labels.name} *</Label>
             <Input
@@ -215,14 +199,25 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             disabled={isPending}
           />
 
-          <div className="flex items-center gap-2">
-            <Switch
-              id="isActive"
-              checked={form.watch("isActive")}
-              onCheckedChange={(checked) => form.setValue("isActive", checked)}
-              disabled={isPending}
-            />
-            <Label htmlFor="isActive">{labels.isActive}</Label>
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <Switch
+                id="isActive"
+                checked={form.watch("isActive")}
+                onCheckedChange={(checked) => form.setValue("isActive", checked)}
+                disabled={isPending}
+              />
+              <Label htmlFor="isActive">{labels.isActive}</Label>
+            </div>
+            <div className="flex items-center gap-2">
+              <Switch
+                id="isFeatured"
+                checked={form.watch("isFeatured")}
+                onCheckedChange={(checked) => form.setValue("isFeatured", checked)}
+                disabled={isPending}
+              />
+              <Label htmlFor="isFeatured">{labels.isFeatured}</Label>
+            </div>
           </div>
 
           <DialogFooter>

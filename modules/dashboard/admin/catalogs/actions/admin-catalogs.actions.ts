@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidateTag } from "next/cache";
 import { currentUser } from "@/lib/user";
 import { Role } from "@/app/prisma/client";
 import { AdminCatalogsRepository } from "../repository/admin-catalogs.repository";
@@ -93,6 +94,7 @@ export async function createCatalogAction(
 
   try {
     const catalog = await repository.createCatalog(inputValidation.data);
+    revalidateTag("catalogs", "max");
     return { success: "Catálogo creado exitosamente", data: catalog };
   } catch (error) {
     console.error("Error creating catalog:", error);
@@ -115,6 +117,7 @@ export async function updateCatalogAction(
 
   try {
     const catalog = await repository.updateCatalog(inputValidation.data);
+    revalidateTag("catalogs", "max");
     return { success: "Catálogo actualizado exitosamente", data: catalog };
   } catch (error) {
     console.error("Error updating catalog:", error);
@@ -130,6 +133,7 @@ export async function deleteCatalogAction(id: string): Promise<AdminCatalogsActi
 
   try {
     await repository.deleteCatalog(id);
+    revalidateTag("catalogs", "max");
     return { success: "Catálogo eliminado exitosamente" };
   } catch (error) {
     console.error("Error deleting catalog:", error);
@@ -148,6 +152,7 @@ export async function toggleCatalogStatusAction(
 
   try {
     const catalog = await repository.updateCatalog({ id, isActive });
+    revalidateTag("catalogs", "max");
     return {
       success: isActive ? "Catálogo activado" : "Catálogo desactivado",
       data: catalog,
@@ -169,6 +174,7 @@ export async function toggleCatalogFeaturedAction(
 
   try {
     const catalog = await repository.updateCatalog({ id, isFeatured });
+    revalidateTag("catalogs", "max");
     return {
       success: isFeatured ? "Catálogo destacado" : "Catálogo no destacado",
       data: catalog,

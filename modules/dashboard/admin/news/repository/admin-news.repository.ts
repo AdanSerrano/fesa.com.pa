@@ -299,25 +299,26 @@ export class AdminNewsRepository {
 
   private async generateUniqueCategorySlug(name: string, excludeId?: string): Promise<string> {
     const baseSlug = generateSlug(name);
-    let slug = baseSlug;
+
+    const existing = await db.newsCategory.findMany({
+      where: {
+        slug: { startsWith: baseSlug },
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+      },
+      select: { slug: true },
+    });
+
+    if (existing.length === 0) return baseSlug;
+
+    const slugSet = new Set(existing.map((e) => e.slug));
+    if (!slugSet.has(baseSlug)) return baseSlug;
+
     let counter = 1;
-
-    while (true) {
-      const existing = await db.newsCategory.findFirst({
-        where: {
-          slug,
-          ...(excludeId ? { id: { not: excludeId } } : {}),
-        },
-        select: { id: true },
-      });
-
-      if (!existing) break;
-
-      slug = `${baseSlug}-${counter}`;
+    while (slugSet.has(`${baseSlug}-${counter}`)) {
       counter++;
     }
 
-    return slug;
+    return `${baseSlug}-${counter}`;
   }
 
   public async createCategory(data: CreateCategoryParams): Promise<NewsCategory> {
@@ -371,25 +372,26 @@ export class AdminNewsRepository {
 
   private async generateUniqueArticleSlug(title: string, excludeId?: string): Promise<string> {
     const baseSlug = generateSlug(title);
-    let slug = baseSlug;
+
+    const existing = await db.news.findMany({
+      where: {
+        slug: { startsWith: baseSlug },
+        ...(excludeId ? { id: { not: excludeId } } : {}),
+      },
+      select: { slug: true },
+    });
+
+    if (existing.length === 0) return baseSlug;
+
+    const slugSet = new Set(existing.map((e) => e.slug));
+    if (!slugSet.has(baseSlug)) return baseSlug;
+
     let counter = 1;
-
-    while (true) {
-      const existing = await db.news.findFirst({
-        where: {
-          slug,
-          ...(excludeId ? { id: { not: excludeId } } : {}),
-        },
-        select: { id: true },
-      });
-
-      if (!existing) break;
-
-      slug = `${baseSlug}-${counter}`;
+    while (slugSet.has(`${baseSlug}-${counter}`)) {
       counter++;
     }
 
-    return slug;
+    return `${baseSlug}-${counter}`;
   }
 
   public async createArticle(data: CreateArticleParams): Promise<NewsArticle> {
@@ -446,17 +448,18 @@ export class AdminNewsRepository {
     if (data.isFeatured !== undefined) updateData.isFeatured = data.isFeatured;
 
     if (data.images !== undefined) {
-      await db.newsImage.deleteMany({ where: { newsId: data.id } });
-
-      if (data.images.length > 0) {
-        updateData.images = {
-          create: data.images.map((img) => ({
-            url: img.url,
-            alt: img.alt,
-            order: img.order,
-          })),
-        };
-      }
+      updateData.images = {
+        deleteMany: {},
+        ...(data.images.length > 0
+          ? {
+              create: data.images.map((img) => ({
+                url: img.url,
+                alt: img.alt,
+                order: img.order,
+              })),
+            }
+          : {}),
+      };
     }
 
     const article = await db.news.update({

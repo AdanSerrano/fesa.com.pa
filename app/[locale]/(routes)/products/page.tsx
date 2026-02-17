@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { ProductsView } from "@/modules/products/view/products.view";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Productos",
   description: "Descubre todos nuestros productos",

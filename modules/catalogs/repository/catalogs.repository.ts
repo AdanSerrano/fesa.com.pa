@@ -1,8 +1,9 @@
+import { unstable_cache } from "next/cache";
 import { db } from "@/utils/db";
 import type { Catalog, CatalogListItem, CatalogsByYear } from "../types/catalogs.types";
 
-export class CatalogsRepository {
-  public async getActiveCatalogs(): Promise<CatalogListItem[]> {
+const _getActiveCatalogs = unstable_cache(
+  async (): Promise<CatalogListItem[]> => {
     const catalogs = await db.catalog.findMany({
       where: { isActive: true },
       orderBy: [{ year: "desc" }, { title: "asc" }],
@@ -26,28 +27,13 @@ export class CatalogsRepository {
       coverImage: c.coverImage,
       pageCount: c._count.pages,
     }));
-  }
+  },
+  ["catalogs-active"],
+  { tags: ["catalogs"], revalidate: 3600 }
+);
 
-  public async getCatalogsByYear(): Promise<CatalogsByYear[]> {
-    const catalogs = await this.getActiveCatalogs();
-
-    const byYear = new Map<number, CatalogListItem[]>();
-
-    for (const catalog of catalogs) {
-      const existing = byYear.get(catalog.year) || [];
-      existing.push(catalog);
-      byYear.set(catalog.year, existing);
-    }
-
-    const result: CatalogsByYear[] = [];
-    for (const [year, yearCatalogs] of byYear.entries()) {
-      result.push({ year, catalogs: yearCatalogs });
-    }
-
-    return result.sort((a, b) => b.year - a.year);
-  }
-
-  public async getFeaturedCatalogs(limit: number = 4): Promise<CatalogListItem[]> {
+const _getFeaturedCatalogs = unstable_cache(
+  async (limit: number): Promise<CatalogListItem[]> => {
     const catalogs = await db.catalog.findMany({
       where: {
         isActive: true,
@@ -75,9 +61,13 @@ export class CatalogsRepository {
       coverImage: c.coverImage,
       pageCount: c._count.pages,
     }));
-  }
+  },
+  ["catalogs-featured"],
+  { tags: ["catalogs"], revalidate: 3600 }
+);
 
-  public async getCatalogBySlug(slug: string): Promise<Catalog | null> {
+const _getCatalogBySlug = unstable_cache(
+  async (slug: string): Promise<Catalog | null> => {
     const catalog = await db.catalog.findUnique({
       where: { slug, isActive: true },
       include: {
@@ -101,9 +91,13 @@ export class CatalogsRepository {
         order: p.order,
       })),
     };
-  }
+  },
+  ["catalogs-by-slug"],
+  { tags: ["catalogs"], revalidate: 3600 }
+);
 
-  public async getYears(): Promise<number[]> {
+const _getYears = unstable_cache(
+  async (): Promise<number[]> => {
     const years = await db.catalog.findMany({
       where: { isActive: true },
       select: { year: true },
@@ -112,5 +106,44 @@ export class CatalogsRepository {
     });
 
     return years.map((y) => y.year);
+  },
+  ["catalogs-years"],
+  { tags: ["catalogs"], revalidate: 3600 }
+);
+
+export class CatalogsRepository {
+  public async getActiveCatalogs(): Promise<CatalogListItem[]> {
+    return _getActiveCatalogs();
+  }
+
+  public async getCatalogsByYear(): Promise<CatalogsByYear[]> {
+    const catalogs = await _getActiveCatalogs();
+
+    const byYear = new Map<number, CatalogListItem[]>();
+
+    for (const catalog of catalogs) {
+      const existing = byYear.get(catalog.year) || [];
+      existing.push(catalog);
+      byYear.set(catalog.year, existing);
+    }
+
+    const result: CatalogsByYear[] = [];
+    for (const [year, yearCatalogs] of byYear.entries()) {
+      result.push({ year, catalogs: yearCatalogs });
+    }
+
+    return result.sort((a, b) => b.year - a.year);
+  }
+
+  public async getFeaturedCatalogs(limit: number = 4): Promise<CatalogListItem[]> {
+    return _getFeaturedCatalogs(limit);
+  }
+
+  public async getCatalogBySlug(slug: string): Promise<Catalog | null> {
+    return _getCatalogBySlug(slug);
+  }
+
+  public async getYears(): Promise<number[]> {
+    return _getYears();
   }
 }

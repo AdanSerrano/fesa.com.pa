@@ -1,8 +1,9 @@
+import { unstable_cache } from "next/cache";
 import { db } from "@/utils/db";
 import type { PublicProductCategory, PublicProductItem } from "../types/products.types";
 
-export class PublicProductsRepository {
-  public async getActiveCategories(): Promise<PublicProductCategory[]> {
+const _getActiveCategories = unstable_cache(
+  async (): Promise<PublicProductCategory[]> => {
     const categories = await db.productCategory.findMany({
       where: { isActive: true },
       select: {
@@ -30,9 +31,13 @@ export class PublicProductsRepository {
       image: cat.image,
       itemCount: cat._count.items,
     }));
-  }
+  },
+  ["products-active-categories"],
+  { tags: ["products"], revalidate: 3600 }
+);
 
-  public async getFeaturedProducts(limit: number = 6): Promise<PublicProductItem[]> {
+const _getFeaturedProducts = unstable_cache(
+  async (limit: number): Promise<PublicProductItem[]> => {
     const items = await db.productItem.findMany({
       where: {
         isActive: true,
@@ -73,11 +78,15 @@ export class PublicProductsRepository {
       categoryName: item.category?.name || "",
       categorySlug: item.category?.slug || "",
     }));
-  }
+  },
+  ["products-featured"],
+  { tags: ["products"], revalidate: 3600 }
+);
 
-  public async getCategoryBySlug(
+const _getCategoryBySlug = unstable_cache(
+  async (
     slug: string
-  ): Promise<(PublicProductCategory & { items: PublicProductItem[] }) | null> {
+  ): Promise<(PublicProductCategory & { items: PublicProductItem[] }) | null> => {
     const category = await db.productCategory.findFirst({
       where: {
         isActive: true,
@@ -128,12 +137,16 @@ export class PublicProductsRepository {
         categorySlug: category.slug,
       })),
     };
-  }
+  },
+  ["products-category-by-slug"],
+  { tags: ["products"], revalidate: 3600 }
+);
 
-  public async getProductBySlug(
+const _getProductBySlug = unstable_cache(
+  async (
     categorySlug: string,
     productSlug: string
-  ): Promise<PublicProductItem | null> {
+  ): Promise<PublicProductItem | null> => {
     const item = await db.productItem.findFirst({
       where: {
         isActive: true,
@@ -175,5 +188,30 @@ export class PublicProductsRepository {
       categoryName: item.category?.name || "",
       categorySlug: item.category?.slug || "",
     };
+  },
+  ["products-product-by-slug"],
+  { tags: ["products"], revalidate: 3600 }
+);
+
+export class PublicProductsRepository {
+  public async getActiveCategories(): Promise<PublicProductCategory[]> {
+    return _getActiveCategories();
+  }
+
+  public async getFeaturedProducts(limit: number = 6): Promise<PublicProductItem[]> {
+    return _getFeaturedProducts(limit);
+  }
+
+  public async getCategoryBySlug(
+    slug: string
+  ): Promise<(PublicProductCategory & { items: PublicProductItem[] }) | null> {
+    return _getCategoryBySlug(slug);
+  }
+
+  public async getProductBySlug(
+    categorySlug: string,
+    productSlug: string
+  ): Promise<PublicProductItem | null> {
+    return _getProductBySlug(categorySlug, productSlug);
   }
 }

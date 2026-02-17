@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useReducer, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, FolderPlus, Plus, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
@@ -287,7 +287,45 @@ const ErrorAlert = memo(function ErrorAlert({
   );
 });
 
-export function AdminNewsClient({
+interface NewsDialogState {
+  activeDialog: AdminNewsDialogType;
+  selectedCategory: NewsCategory | null;
+  selectedArticle: NewsArticle | null;
+}
+
+type NewsDialogAction =
+  | { type: "OPEN"; dialog: AdminNewsDialogType; category?: NewsCategory | null; article?: NewsArticle | null }
+  | { type: "CLOSE" };
+
+function newsDialogReducer(state: NewsDialogState, action: NewsDialogAction): NewsDialogState {
+  switch (action.type) {
+    case "OPEN":
+      return {
+        activeDialog: action.dialog,
+        selectedCategory: action.category ?? null,
+        selectedArticle: action.article ?? null,
+      };
+    case "CLOSE":
+      return { activeDialog: null, selectedCategory: null, selectedArticle: null };
+  }
+}
+
+interface NewsArticlesState {
+  articles: NewsArticle[];
+  pagination: AdminNewsPagination;
+}
+
+type NewsArticlesAction =
+  | { type: "SET"; articles: NewsArticle[]; pagination: AdminNewsPagination };
+
+function newsArticlesReducer(state: NewsArticlesState, action: NewsArticlesAction): NewsArticlesState {
+  switch (action.type) {
+    case "SET":
+      return { articles: action.articles, pagination: action.pagination };
+  }
+}
+
+export const AdminNewsClient = memo(function AdminNewsClient({
   initialData,
   categoriesForSelect,
   labels,
@@ -298,16 +336,18 @@ export function AdminNewsClient({
   const searchParams = useSearchParams();
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
-  const [activeDialog, setActiveDialog] = useState<AdminNewsDialogType>(null);
-  const [selectedCategory, setSelectedCategory] = useState<NewsCategory | null>(null);
-  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [dialogState, dispatchDialog] = useReducer(newsDialogReducer, {
+    activeDialog: null,
+    selectedCategory: null,
+    selectedArticle: null,
+  });
   const [isPending, startActionTransition] = useTransition();
   const [isNavigating, startNavigationTransition] = useTransition();
   const [isLoadingArticles, startArticlesTransition] = useTransition();
 
   const { categories, stats, pagination, error, articles: initialArticles, articlesPagination: initialArticlesPagination } = initialData;
 
-  const articlesStateRef = useRef({
+  const [articlesState, dispatchArticles] = useReducer(newsArticlesReducer, {
     articles: initialArticles,
     pagination: initialArticlesPagination || {
       pageIndex: 0,
@@ -316,10 +356,9 @@ export function AdminNewsClient({
       totalPages: 0,
     },
   });
-  const [, setArticlesVersion] = useState(0);
 
-  const articles = articlesStateRef.current.articles;
-  const articlesPagination = articlesStateRef.current.pagination;
+  const articles = articlesState.articles;
+  const articlesPagination = articlesState.pagination;
 
   const urlState = useMemo(() => {
     const getParam = (key: string) => searchParams.get(`${PREFIX}_${key}`);
@@ -392,7 +431,8 @@ export function AdminNewsClient({
         });
         if (result.data && "articles" in result.data) {
           const data = result.data as GetArticlesResult;
-          articlesStateRef.current = {
+          dispatchArticles({
+            type: "SET",
             articles: data.articles,
             pagination: {
               pageIndex: page - 1,
@@ -400,8 +440,7 @@ export function AdminNewsClient({
               totalRows: data.pagination.total,
               totalPages: data.pagination.totalPages,
             },
-          };
-          setArticlesVersion((v) => v + 1);
+          });
         }
       });
     },
@@ -531,25 +570,19 @@ export function AdminNewsClient({
 
   const openDialog = useCallback(
     (type: AdminNewsDialogType, entity: NewsCategory | NewsArticle | null = null) => {
-      setActiveDialog(type);
       if (type?.startsWith("category") && entity) {
-        setSelectedCategory(entity as NewsCategory);
-        setSelectedArticle(null);
+        dispatchDialog({ type: "OPEN", dialog: type, category: entity as NewsCategory });
       } else if (type?.startsWith("article") && entity) {
-        setSelectedArticle(entity as NewsArticle);
-        setSelectedCategory(null);
+        dispatchDialog({ type: "OPEN", dialog: type, article: entity as NewsArticle });
       } else {
-        setSelectedCategory(null);
-        setSelectedArticle(null);
+        dispatchDialog({ type: "OPEN", dialog: type });
       }
     },
     []
   );
 
   const closeDialog = useCallback(() => {
-    setActiveDialog(null);
-    setSelectedCategory(null);
-    setSelectedArticle(null);
+    dispatchDialog({ type: "CLOSE" });
   }, []);
 
   const handleCategorySuccess = useCallback(() => {
@@ -558,9 +591,9 @@ export function AdminNewsClient({
   }, [closeDialog, router]);
 
   const handleDeleteCategory = useCallback(() => {
-    if (!selectedCategory) return;
+    if (!dialogState.selectedCategory) return;
     startActionTransition(async () => {
-      const result = await deleteCategoryAction(selectedCategory.id);
+      const result = await deleteCategoryAction(dialogState.selectedCategory!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -569,7 +602,7 @@ export function AdminNewsClient({
         router.refresh();
       }
     });
-  }, [selectedCategory, closeDialog, router]);
+  }, [dialogState.selectedCategory, closeDialog, router]);
 
   const handleArticleSuccess = useCallback(() => {
     closeDialog();
@@ -583,9 +616,9 @@ export function AdminNewsClient({
   }, [closeDialog, router, loadArticles, urlState]);
 
   const handleDeleteArticle = useCallback(() => {
-    if (!selectedArticle) return;
+    if (!dialogState.selectedArticle) return;
     startActionTransition(async () => {
-      const result = await deleteArticleAction(selectedArticle.id);
+      const result = await deleteArticleAction(dialogState.selectedArticle!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -595,7 +628,7 @@ export function AdminNewsClient({
         loadArticles();
       }
     });
-  }, [selectedArticle, closeDialog, router, loadArticles]);
+  }, [dialogState.selectedArticle, closeDialog, router, loadArticles]);
 
   const handleToggleCategoryStatus = useCallback(
     (id: string, isActive: boolean) => {
@@ -771,12 +804,12 @@ export function AdminNewsClient({
   const getArticleRowId = useCallback((row: NewsArticle) => row.id, []);
 
   const getSelectedCategoryName = useCallback(() => {
-    return selectedCategory?.name || "";
-  }, [selectedCategory]);
+    return dialogState.selectedCategory?.name || "";
+  }, [dialogState.selectedCategory]);
 
   const getSelectedArticleName = useCallback(() => {
-    return selectedArticle?.title || "";
-  }, [selectedArticle]);
+    return dialogState.selectedArticle?.title || "";
+  }, [dialogState.selectedArticle]);
 
   return (
     <div className="space-y-6">
@@ -883,18 +916,18 @@ export function AdminNewsClient({
       </AnimatedSection>
 
       <CategoryFormDialog
-        key={`category-form-${activeDialog === "category-edit" ? selectedCategory?.id : "create"}`}
-        open={activeDialog === "category-create" || activeDialog === "category-edit"}
-        category={activeDialog === "category-edit" ? selectedCategory : null}
+        key={`category-form-${dialogState.activeDialog === "category-edit" ? dialogState.selectedCategory?.id : "create"}`}
+        open={dialogState.activeDialog === "category-create" || dialogState.activeDialog === "category-edit"}
+        category={dialogState.activeDialog === "category-edit" ? dialogState.selectedCategory : null}
         onClose={closeDialog}
         onSuccess={handleCategorySuccess}
         labels={labels.categoryForm}
       />
 
       <ArticleFormDialog
-        key={`article-form-${activeDialog === "article-edit" ? selectedArticle?.id : "create"}`}
-        open={activeDialog === "article-create" || activeDialog === "article-edit"}
-        article={activeDialog === "article-edit" ? selectedArticle : null}
+        key={`article-form-${dialogState.activeDialog === "article-edit" ? dialogState.selectedArticle?.id : "create"}`}
+        open={dialogState.activeDialog === "article-create" || dialogState.activeDialog === "article-edit"}
+        article={dialogState.activeDialog === "article-edit" ? dialogState.selectedArticle : null}
         categories={categoriesForSelect}
         onClose={closeDialog}
         onSuccess={handleArticleSuccess}
@@ -902,7 +935,7 @@ export function AdminNewsClient({
       />
 
       <DeleteDialog
-        open={activeDialog === "category-delete"}
+        open={dialogState.activeDialog === "category-delete"}
         title={labels.deleteDialog.categoryTitle}
         description={labels.deleteDialog.categoryDescription}
         itemName={getSelectedCategoryName()}
@@ -913,7 +946,7 @@ export function AdminNewsClient({
       />
 
       <DeleteDialog
-        open={activeDialog === "article-delete"}
+        open={dialogState.activeDialog === "article-delete"}
         title={labels.deleteDialog.articleTitle}
         description={labels.deleteDialog.articleDescription}
         itemName={getSelectedArticleName()}
@@ -924,20 +957,20 @@ export function AdminNewsClient({
       />
 
       <CategoryDetailsDialog
-        open={activeDialog === "category-details"}
-        category={selectedCategory}
+        open={dialogState.activeDialog === "category-details"}
+        category={dialogState.selectedCategory}
         onClose={closeDialog}
         labels={labels.categoryDetails}
         locale={locale}
       />
 
       <ArticleDetailsDialog
-        open={activeDialog === "article-details"}
-        article={selectedArticle}
+        open={dialogState.activeDialog === "article-details"}
+        article={dialogState.selectedArticle}
         onClose={closeDialog}
         labels={labels.articleDetails}
         locale={locale}
       />
     </div>
   );
-}
+});

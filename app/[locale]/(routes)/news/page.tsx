@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { NewsView } from "@/modules/news/view/news.view";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export const revalidate = 1800;
+
 export const metadata = {
   title: "Noticias",
   description: "Mantente informado con las últimas noticias",

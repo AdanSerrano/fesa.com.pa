@@ -22,9 +22,8 @@ export const useTwoFactor = ({ email, onSuccess }: UseTwoFactorProps) => {
   const [isPending, startTransition] = useTransition();
   const [isResending, startResendTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [countdown, setCountdown] = useState(60); // Iniciar con 60 directamente
+  const [countdown, setCountdown] = useState(60);
 
-  // useRef para interval ID - evita memory leaks y permite cleanup
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const form = useForm<TwoFactorInput>({
@@ -35,16 +34,6 @@ export const useTwoFactor = ({ email, onSuccess }: UseTwoFactorProps) => {
     },
   });
 
-  // Cleanup del interval al desmontar - useEffect para browser API es aceptable
-  useEffect(() => {
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    };
-  }, []);
-
-  // Iniciar countdown al montar - useEffect para browser API (setInterval) es aceptable
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setCountdown((prev) => {
@@ -67,7 +56,6 @@ export const useTwoFactor = ({ email, onSuccess }: UseTwoFactorProps) => {
   }, []);
 
   const startCountdown = useCallback(() => {
-    // Limpiar interval anterior si existe
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }

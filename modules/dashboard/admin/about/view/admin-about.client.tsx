@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useState, useTransition, useMemo } from "react";
+import { memo, useCallback, useReducer, useTransition, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -84,6 +84,43 @@ interface SectionFormProps {
   onSave: () => void;
 }
 
+interface SectionFormState {
+  title: string;
+  content: string;
+  mediaType: string;
+  mediaUrl: string;
+  isActive: boolean;
+  pendingFile: File | null;
+}
+
+type SectionFormAction =
+  | { type: "SET_TITLE"; value: string }
+  | { type: "SET_CONTENT"; value: string }
+  | { type: "SET_MEDIA_TYPE"; value: string }
+  | { type: "SET_PENDING_FILE"; file: File; mediaType: string }
+  | { type: "REMOVE_MEDIA" }
+  | { type: "SET_IS_ACTIVE"; value: boolean }
+  | { type: "SAVE_SUCCESS"; mediaUrl: string };
+
+function sectionFormReducer(state: SectionFormState, action: SectionFormAction): SectionFormState {
+  switch (action.type) {
+    case "SET_TITLE":
+      return { ...state, title: action.value };
+    case "SET_CONTENT":
+      return { ...state, content: action.value };
+    case "SET_MEDIA_TYPE":
+      return { ...state, mediaType: action.value };
+    case "SET_PENDING_FILE":
+      return { ...state, pendingFile: action.file, mediaType: action.mediaType };
+    case "REMOVE_MEDIA":
+      return { ...state, pendingFile: null, mediaUrl: "", mediaType: "" };
+    case "SET_IS_ACTIVE":
+      return { ...state, isActive: action.value };
+    case "SAVE_SUCCESS":
+      return { ...state, pendingFile: null, mediaUrl: action.mediaUrl };
+  }
+}
+
 const SectionForm = memo(function SectionForm({
   section,
   sectionKey,
@@ -92,49 +129,50 @@ const SectionForm = memo(function SectionForm({
   labels,
   onSave,
 }: SectionFormProps) {
-  const [title, setTitle] = useState(section?.title || "");
-  const [content, setContent] = useState(section?.content || "");
-  const [mediaType, setMediaType] = useState<string>(section?.mediaType || "");
-  const [mediaUrl, setMediaUrl] = useState(section?.mediaUrl || "");
-  const [isActive, setIsActive] = useState(section?.isActive ?? true);
+  const [formState, dispatch] = useReducer(sectionFormReducer, {
+    title: section?.title || "",
+    content: section?.content || "",
+    mediaType: section?.mediaType || "",
+    mediaUrl: section?.mediaUrl || "",
+    isActive: section?.isActive ?? true,
+    pendingFile: null,
+  });
   const [isPending, startTransition] = useTransition();
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const previewUrl = useMemo(() => {
-    if (pendingFile) {
-      return URL.createObjectURL(pendingFile);
+    if (formState.pendingFile) {
+      return URL.createObjectURL(formState.pendingFile);
     }
-    return mediaUrl;
-  }, [pendingFile, mediaUrl]);
+    return formState.mediaUrl;
+  }, [formState.pendingFile, formState.mediaUrl]);
 
   const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setPendingFile(file);
+      let detectedType = "";
       if (file.type.startsWith("video/")) {
-        setMediaType("video");
+        detectedType = "video";
       } else if (file.type.startsWith("image/")) {
-        setMediaType("image");
+        detectedType = "image";
       }
+      dispatch({ type: "SET_PENDING_FILE", file, mediaType: detectedType || formState.mediaType });
     }
-  }, []);
+  }, [formState.mediaType]);
 
   const handleRemoveMedia = useCallback(() => {
-    setPendingFile(null);
-    setMediaUrl("");
-    setMediaType("");
+    dispatch({ type: "REMOVE_MEDIA" });
   }, []);
 
   const handleSave = useCallback(() => {
     startTransition(async () => {
       try {
-        let finalMediaUrl = mediaUrl;
+        let finalMediaUrl = formState.mediaUrl;
 
-        if (pendingFile) {
+        if (formState.pendingFile) {
           const uploadResult = await getAboutMediaUploadUrlAction(
             sectionKey,
-            pendingFile.name,
-            pendingFile.type
+            formState.pendingFile.name,
+            formState.pendingFile.type
           );
 
           if ("error" in uploadResult) {
@@ -144,8 +182,8 @@ const SectionForm = memo(function SectionForm({
 
           const response = await fetch(uploadResult.url, {
             method: "PUT",
-            headers: { "Content-Type": pendingFile.type },
-            body: pendingFile,
+            headers: { "Content-Type": formState.pendingFile.type },
+            body: formState.pendingFile,
           });
 
           if (response.ok) {
@@ -158,28 +196,25 @@ const SectionForm = memo(function SectionForm({
 
         const result = await updateAboutSectionAction({
           section: sectionKey,
-          title: title || null,
-          content: content || null,
-          mediaType: mediaType || null,
+          title: formState.title || null,
+          content: formState.content || null,
+          mediaType: formState.mediaType || null,
           mediaUrl: finalMediaUrl || null,
-          isActive,
+          isActive: formState.isActive,
         });
 
         if (result.error) {
           toast.error(result.error);
         } else {
           toast.success(labels.messages.saved);
-          setPendingFile(null);
-          if (finalMediaUrl !== mediaUrl) {
-            setMediaUrl(finalMediaUrl);
-          }
+          dispatch({ type: "SAVE_SUCCESS", mediaUrl: finalMediaUrl });
           onSave();
         }
       } catch {
         toast.error(labels.messages.error);
       }
     });
-  }, [sectionKey, title, content, mediaType, mediaUrl, isActive, pendingFile, labels, onSave]);
+  }, [sectionKey, formState, labels, onSave]);
 
   return (
     <Card>
@@ -207,8 +242,8 @@ const SectionForm = memo(function SectionForm({
           <Label htmlFor={`${sectionKey}-title`}>{labels.form.title}</Label>
           <Input
             id={`${sectionKey}-title`}
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            value={formState.title}
+            onChange={(e) => dispatch({ type: "SET_TITLE", value: e.target.value })}
             placeholder={labels.form.titlePlaceholder}
             disabled={isPending}
           />
@@ -218,8 +253,8 @@ const SectionForm = memo(function SectionForm({
           <Label htmlFor={`${sectionKey}-content`}>{labels.form.content}</Label>
           <Textarea
             id={`${sectionKey}-content`}
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            value={formState.content}
+            onChange={(e) => dispatch({ type: "SET_CONTENT", value: e.target.value })}
             placeholder={labels.form.contentPlaceholder}
             rows={6}
             disabled={isPending}
@@ -230,8 +265,8 @@ const SectionForm = memo(function SectionForm({
           <div className="space-y-2">
             <Label>{labels.form.mediaType}</Label>
             <Select
-              value={mediaType || "none"}
-              onValueChange={(v) => setMediaType(v === "none" ? "" : v)}
+              value={formState.mediaType || "none"}
+              onValueChange={(v) => dispatch({ type: "SET_MEDIA_TYPE", value: v === "none" ? "" : v })}
               disabled={isPending}
             >
               <SelectTrigger>
@@ -255,13 +290,13 @@ const SectionForm = memo(function SectionForm({
             </Select>
           </div>
 
-          {mediaType && (
+          {formState.mediaType && (
             <div className="space-y-3">
               {previewUrl ? (
                 <div className="relative">
                   <div className="relative w-full overflow-hidden rounded-lg border bg-muted">
-                    {mediaType === "video" ? (
-                      <AdminVideoPlayer src={previewUrl} isPending={!!pendingFile} />
+                    {formState.mediaType === "video" ? (
+                      <AdminVideoPlayer src={previewUrl} isPending={!!formState.pendingFile} />
                     ) : (
                       <div className="relative aspect-video">
                         <Image
@@ -270,9 +305,9 @@ const SectionForm = memo(function SectionForm({
                           fill
                           className="object-cover"
                           sizes="400px"
-                          unoptimized={!!pendingFile}
+                          unoptimized={!!formState.pendingFile}
                         />
-                        {pendingFile && (
+                        {formState.pendingFile && (
                           <div className="absolute top-2 left-2 bg-primary text-primary-foreground text-xs px-2 py-1 rounded">
                             Pendiente
                           </div>
@@ -296,7 +331,7 @@ const SectionForm = memo(function SectionForm({
                 <div className="border-2 border-dashed rounded-lg p-6 text-center">
                   <input
                     type="file"
-                    accept={mediaType === "video" ? "video/*" : "image/*"}
+                    accept={formState.mediaType === "video" ? "video/*" : "image/*"}
                     onChange={handleFileSelect}
                     disabled={isPending}
                     className="hidden"
@@ -307,7 +342,7 @@ const SectionForm = memo(function SectionForm({
                     className="cursor-pointer"
                   >
                     <div className="flex flex-col items-center gap-2">
-                      {mediaType === "video" ? (
+                      {formState.mediaType === "video" ? (
                         <Video className="h-10 w-10 text-muted-foreground" />
                       ) : (
                         <ImageIcon className="h-10 w-10 text-muted-foreground" />
@@ -326,8 +361,8 @@ const SectionForm = memo(function SectionForm({
         <div className="flex items-center gap-2">
           <Switch
             id={`${sectionKey}-active`}
-            checked={isActive}
-            onCheckedChange={setIsActive}
+            checked={formState.isActive}
+            onCheckedChange={(checked) => dispatch({ type: "SET_IS_ACTIVE", value: checked })}
             disabled={isPending}
           />
           <Label htmlFor={`${sectionKey}-active`}>{labels.form.isActive}</Label>

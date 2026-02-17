@@ -1,6 +1,16 @@
 import { Suspense } from "react";
 import { CategoryView } from "@/modules/services/view/category.view";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PublicServicesRepository } from "@/modules/services/repository/services.repository";
+
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const repository = new PublicServicesRepository();
+  const categories = await repository.getActiveCategories();
+  return categories.map((cat) => ({ slug: cat.slug }));
+}
 
 interface PageProps {
   params: Promise<{

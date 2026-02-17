@@ -22,12 +22,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { ImageUpload } from "../image-upload";
-import {
-  getProductImageUploadUrlAction,
-  createItemAction,
-  updateItemAction,
-} from "../../actions/admin-products.actions";
+import { ImageUpload } from "../../../_shared/components/image-upload";
+import { uploadImage } from "../../../_shared/utils/upload-image";
+import { getProductImageUploadUrlAction, createItemAction, updateItemAction } from "../../actions/admin-products.actions";
 import type { ProductItem, CategoryForSelect } from "../../types/admin-products.types";
 
 interface FormData {
@@ -69,23 +66,6 @@ interface ItemFormDialogProps {
   };
 }
 
-async function uploadImage(
-  type: "category" | "item",
-  id: string,
-  file: File
-): Promise<string | null> {
-  const result = await getProductImageUploadUrlAction(type, id, file.name, file.type);
-  if ("error" in result) return null;
-
-  const response = await fetch(result.url, {
-    method: "PUT",
-    headers: { "Content-Type": file.type },
-    body: file,
-  });
-
-  return response.ok ? result.publicUrl : null;
-}
-
 export const ItemFormDialog = memo(function ItemFormDialog({
   open,
   item,
@@ -120,7 +100,7 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             let imageUrl = data.image;
 
             if (pendingFile) {
-              const uploadedUrl = await uploadImage("item", item.id, pendingFile);
+              const uploadedUrl = await uploadImage(getProductImageUploadUrlAction, "item", item.id, pendingFile);
               if (uploadedUrl) imageUrl = uploadedUrl;
             }
 
@@ -156,7 +136,7 @@ export const ItemFormDialog = memo(function ItemFormDialog({
             const createdId = (createResult.data as { id: string } | undefined)?.id;
 
             if (createdId && pendingFile) {
-              const uploadedUrl = await uploadImage("item", createdId, pendingFile);
+              const uploadedUrl = await uploadImage(getProductImageUploadUrlAction, "item", createdId, pendingFile);
 
               if (uploadedUrl) {
                 await updateItemAction({

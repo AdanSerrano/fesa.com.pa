@@ -22,8 +22,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
-import { ImageUpload } from "../image-upload";
+import { ImageUpload } from "../../../_shared/components/image-upload";
 import { MultiImageUpload, type ImageItem } from "../multi-image-upload";
+import { uploadImage } from "../../../_shared/utils/upload-image";
 import {
   getNewsImageUploadUrlAction,
   createArticleAction,
@@ -70,24 +71,6 @@ interface ArticleFormDialogProps {
     saving: string;
     additionalImages?: string;
   };
-}
-
-async function uploadImage(
-  type: "category" | "article",
-  id: string,
-  file: File,
-  imageIndex?: number
-): Promise<string | null> {
-  const result = await getNewsImageUploadUrlAction(type, id, file.name, file.type, imageIndex);
-  if ("error" in result) return null;
-
-  const response = await fetch(result.url, {
-    method: "PUT",
-    headers: { "Content-Type": file.type },
-    body: file,
-  });
-
-  return response.ok ? result.publicUrl : null;
 }
 
 function formatDateForInput(date: Date | null): string {
@@ -169,7 +152,7 @@ export const ArticleFormDialog = memo(function ArticleFormDialog({
             let imageUrl = data.image;
 
             if (pendingFile) {
-              const uploadedUrl = await uploadImage("article", article.id, pendingFile);
+              const uploadedUrl = await uploadImage(getNewsImageUploadUrlAction, "article", article.id, pendingFile);
               if (uploadedUrl) imageUrl = uploadedUrl;
             }
 
@@ -177,7 +160,7 @@ export const ArticleFormDialog = memo(function ArticleFormDialog({
             for (let i = 0; i < additionalImages.length; i++) {
               const img = additionalImages[i];
               if (img.file) {
-                const uploadedUrl = await uploadImage("article", article.id, img.file, i);
+                const uploadedUrl = await uploadImage(getNewsImageUploadUrlAction, "article", article.id, img.file, i);
                 if (uploadedUrl) {
                   uploadedImages.push({
                     url: uploadedUrl,
@@ -232,14 +215,14 @@ export const ArticleFormDialog = memo(function ArticleFormDialog({
               let mainImageUrl: string | null = null;
 
               if (pendingFile) {
-                mainImageUrl = await uploadImage("article", createdId, pendingFile);
+                mainImageUrl = await uploadImage(getNewsImageUploadUrlAction, "article", createdId, pendingFile);
               }
 
               const uploadedImages: ImageInput[] = [];
               for (let i = 0; i < additionalImages.length; i++) {
                 const img = additionalImages[i];
                 if (img.file) {
-                  const uploadedUrl = await uploadImage("article", createdId, img.file, i);
+                  const uploadedUrl = await uploadImage(getNewsImageUploadUrlAction, "article", createdId, img.file, i);
                   if (uploadedUrl) {
                     uploadedImages.push({
                       url: uploadedUrl,

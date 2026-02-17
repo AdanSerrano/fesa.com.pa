@@ -1,8 +1,8 @@
 "use client";
 
-import { memo, useCallback, useMemo, useRef, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useReducer, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { AlertCircle, FolderPlus, Plus, RefreshCw } from "lucide-react";
+import { AlertCircle, CheckCircle, FolderOpen, FolderPlus, Layers, Plus, RefreshCw, Star } from "lucide-react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -20,8 +20,9 @@ import {
   toggleCategoryFeaturedAction,
 } from "../actions/admin-services.actions";
 import { createCategoryColumns, createItemColumns } from "../components/columns/admin-services.columns";
-import { AdminServicesStatsSection } from "../components/stats/admin-services-stats";
-import { AdminServicesFiltersSection } from "../components/filters/admin-services-filters";
+import { AdminStatsSection } from "../../_shared/components/stats/admin-stats-section";
+import type { StatConfig } from "../../_shared/components/stats/admin-stats-section";
+import { AdminFiltersSection } from "../../_shared/components/filters/admin-filters-section";
 import { CategoryFormDialog, ItemFormDialog, DeleteDialog, CategoryDetailsDialog, ItemDetailsDialog } from "../components/dialogs";
 
 import type {
@@ -267,7 +268,45 @@ const ErrorAlert = memo(function ErrorAlert({
   );
 });
 
-export function AdminServicesClient({
+interface ServicesDialogState {
+  activeDialog: AdminServicesDialogType;
+  selectedCategory: ServiceCategory | null;
+  selectedItem: ServiceItem | null;
+}
+
+type ServicesDialogAction =
+  | { type: "OPEN"; dialog: AdminServicesDialogType; category?: ServiceCategory | null; item?: ServiceItem | null }
+  | { type: "CLOSE" };
+
+function servicesDialogReducer(state: ServicesDialogState, action: ServicesDialogAction): ServicesDialogState {
+  switch (action.type) {
+    case "OPEN":
+      return {
+        activeDialog: action.dialog,
+        selectedCategory: action.category ?? null,
+        selectedItem: action.item ?? null,
+      };
+    case "CLOSE":
+      return { activeDialog: null, selectedCategory: null, selectedItem: null };
+  }
+}
+
+interface ServicesItemsState {
+  items: ServiceItem[];
+  pagination: AdminServicesPagination;
+}
+
+type ServicesItemsAction =
+  | { type: "SET"; items: ServiceItem[]; pagination: AdminServicesPagination };
+
+function servicesItemsReducer(state: ServicesItemsState, action: ServicesItemsAction): ServicesItemsState {
+  switch (action.type) {
+    case "SET":
+      return { items: action.items, pagination: action.pagination };
+  }
+}
+
+export const AdminServicesClient = memo(function AdminServicesClient({
   initialData,
   categoriesForSelect,
   labels,
@@ -278,16 +317,18 @@ export function AdminServicesClient({
   const searchParams = useSearchParams();
 
   const [columnVisibility, setColumnVisibility] = useState<Record<string, boolean>>({});
-  const [activeDialog, setActiveDialog] = useState<AdminServicesDialogType>(null);
-  const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
-  const [selectedItem, setSelectedItem] = useState<ServiceItem | null>(null);
+  const [dialogState, dispatchDialog] = useReducer(servicesDialogReducer, {
+    activeDialog: null,
+    selectedCategory: null,
+    selectedItem: null,
+  });
   const [isPending, startActionTransition] = useTransition();
   const [isNavigating, startNavigationTransition] = useTransition();
   const [isLoadingItems, startItemsTransition] = useTransition();
 
   const { categories, stats, pagination, error, items: initialItems, itemsPagination: initialItemsPagination } = initialData;
 
-  const itemsStateRef = useRef({
+  const [itemsState, dispatchItems] = useReducer(servicesItemsReducer, {
     items: initialItems,
     pagination: initialItemsPagination || {
       pageIndex: 0,
@@ -296,10 +337,9 @@ export function AdminServicesClient({
       totalPages: 0,
     },
   });
-  const [itemsVersion, setItemsVersion] = useState(0);
 
-  const items = itemsStateRef.current.items;
-  const itemsPagination = itemsStateRef.current.pagination;
+  const items = itemsState.items;
+  const itemsPagination = itemsState.pagination;
 
   const urlState = useMemo(() => {
     const getParam = (key: string) => searchParams.get(`${PREFIX}_${key}`);
@@ -372,7 +412,8 @@ export function AdminServicesClient({
         });
         if (result.data && "items" in result.data) {
           const data = result.data as GetItemsResult;
-          itemsStateRef.current = {
+          dispatchItems({
+            type: "SET",
             items: data.items,
             pagination: {
               pageIndex: page - 1,
@@ -380,8 +421,7 @@ export function AdminServicesClient({
               totalRows: data.pagination.total,
               totalPages: data.pagination.totalPages,
             },
-          };
-          setItemsVersion((v) => v + 1);
+          });
         }
       });
     },
@@ -514,25 +554,19 @@ export function AdminServicesClient({
 
   const openDialog = useCallback(
     (type: AdminServicesDialogType, entity: ServiceCategory | ServiceItem | null = null) => {
-      setActiveDialog(type);
       if (type?.startsWith("category") && entity) {
-        setSelectedCategory(entity as ServiceCategory);
-        setSelectedItem(null);
+        dispatchDialog({ type: "OPEN", dialog: type, category: entity as ServiceCategory });
       } else if (type?.startsWith("item") && entity) {
-        setSelectedItem(entity as ServiceItem);
-        setSelectedCategory(null);
+        dispatchDialog({ type: "OPEN", dialog: type, item: entity as ServiceItem });
       } else {
-        setSelectedCategory(null);
-        setSelectedItem(null);
+        dispatchDialog({ type: "OPEN", dialog: type });
       }
     },
     []
   );
 
   const closeDialog = useCallback(() => {
-    setActiveDialog(null);
-    setSelectedCategory(null);
-    setSelectedItem(null);
+    dispatchDialog({ type: "CLOSE" });
   }, []);
 
   const handleCategorySuccess = useCallback(() => {
@@ -541,9 +575,9 @@ export function AdminServicesClient({
   }, [closeDialog, router]);
 
   const handleDeleteCategory = useCallback(() => {
-    if (!selectedCategory) return;
+    if (!dialogState.selectedCategory) return;
     startActionTransition(async () => {
-      const result = await deleteCategoryAction(selectedCategory.id);
+      const result = await deleteCategoryAction(dialogState.selectedCategory!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -552,7 +586,7 @@ export function AdminServicesClient({
         router.refresh();
       }
     });
-  }, [selectedCategory, closeDialog, router]);
+  }, [dialogState.selectedCategory, closeDialog, router]);
 
   const handleItemSuccess = useCallback(() => {
     closeDialog();
@@ -566,9 +600,9 @@ export function AdminServicesClient({
   }, [closeDialog, router, loadItems, urlState]);
 
   const handleDeleteItem = useCallback(() => {
-    if (!selectedItem) return;
+    if (!dialogState.selectedItem) return;
     startActionTransition(async () => {
-      const result = await deleteItemAction(selectedItem.id);
+      const result = await deleteItemAction(dialogState.selectedItem!.id);
       if (result.error) {
         toast.error(result.error);
       } else if (result.success) {
@@ -578,7 +612,7 @@ export function AdminServicesClient({
         loadItems();
       }
     });
-  }, [selectedItem, closeDialog, router, loadItems]);
+  }, [dialogState.selectedItem, closeDialog, router, loadItems]);
 
   const handleToggleCategoryStatus = useCallback(
     (id: string, isActive: boolean) => {
@@ -733,16 +767,27 @@ export function AdminServicesClient({
     [urlState.search, urlState.status, urlState.categoryId]
   );
 
+  const statConfigs: StatConfig[] = useMemo(() => {
+    if (!stats) return [];
+    return [
+      { title: labels.stats.totalCategories, value: stats.totalCategories, description: labels.stats.totalCategoriesDesc, icon: <FolderOpen className="h-4 w-4" /> },
+      { title: labels.stats.totalItems, value: stats.totalItems, description: labels.stats.totalItemsDesc, icon: <Layers className="h-4 w-4" /> },
+      { title: labels.stats.activeCategories, value: stats.activeCategories, description: labels.stats.activeCategoriesDesc, icon: <CheckCircle className="h-4 w-4" />, variant: "success" },
+      { title: labels.stats.activeItems, value: stats.activeItems, description: labels.stats.activeItemsDesc, icon: <CheckCircle className="h-4 w-4" />, variant: "success" },
+      { title: labels.stats.featuredCategories, value: stats.featuredCategories, description: labels.stats.featuredCategoriesDesc, icon: <Star className="h-4 w-4" />, variant: "warning" },
+    ];
+  }, [stats, labels.stats]);
+
   const getCategoryRowId = useCallback((row: ServiceCategory) => row.id, []);
   const getItemRowId = useCallback((row: ServiceItem) => row.id, []);
 
   const getSelectedCategoryName = useCallback(() => {
-    return selectedCategory?.name || "";
-  }, [selectedCategory]);
+    return dialogState.selectedCategory?.name || "";
+  }, [dialogState.selectedCategory]);
 
   const getSelectedItemName = useCallback(() => {
-    return selectedItem?.name || "";
-  }, [selectedItem]);
+    return dialogState.selectedItem?.name || "";
+  }, [dialogState.selectedItem]);
 
   return (
     <div className="space-y-6">
@@ -760,7 +805,7 @@ export function AdminServicesClient({
       )}
 
       <AnimatedSection animation="fade-up" delay={100}>
-        <AdminServicesStatsSection stats={stats} labels={labels.stats} />
+        <AdminStatsSection stats={stats} statConfigs={statConfigs} />
       </AnimatedSection>
 
       <AnimatedSection animation="fade-up" delay={200}>
@@ -787,7 +832,7 @@ export function AdminServicesClient({
           </div>
 
           <TabsContent value="categories" className="space-y-4">
-            <AdminServicesFiltersSection
+            <AdminFiltersSection
               filters={filters}
               categories={[]}
               onFiltersChange={handleFiltersChange}
@@ -814,7 +859,7 @@ export function AdminServicesClient({
           </TabsContent>
 
           <TabsContent value="items" className="space-y-4">
-            <AdminServicesFiltersSection
+            <AdminFiltersSection
               filters={filters}
               categories={categoriesForSelect}
               onFiltersChange={handleFiltersChange}
@@ -848,18 +893,18 @@ export function AdminServicesClient({
       </AnimatedSection>
 
       <CategoryFormDialog
-        key={`category-form-${activeDialog === "category-edit" ? selectedCategory?.id : "create"}`}
-        open={activeDialog === "category-create" || activeDialog === "category-edit"}
-        category={activeDialog === "category-edit" ? selectedCategory : null}
+        key={`category-form-${dialogState.activeDialog === "category-edit" ? dialogState.selectedCategory?.id : "create"}`}
+        open={dialogState.activeDialog === "category-create" || dialogState.activeDialog === "category-edit"}
+        category={dialogState.activeDialog === "category-edit" ? dialogState.selectedCategory : null}
         onClose={closeDialog}
         onSuccess={handleCategorySuccess}
         labels={labels.categoryForm}
       />
 
       <ItemFormDialog
-        key={`item-form-${activeDialog === "item-edit" ? selectedItem?.id : "create"}`}
-        open={activeDialog === "item-create" || activeDialog === "item-edit"}
-        item={activeDialog === "item-edit" ? selectedItem : null}
+        key={`item-form-${dialogState.activeDialog === "item-edit" ? dialogState.selectedItem?.id : "create"}`}
+        open={dialogState.activeDialog === "item-create" || dialogState.activeDialog === "item-edit"}
+        item={dialogState.activeDialog === "item-edit" ? dialogState.selectedItem : null}
         categories={categoriesForSelect}
         onClose={closeDialog}
         onSuccess={handleItemSuccess}
@@ -867,7 +912,7 @@ export function AdminServicesClient({
       />
 
       <DeleteDialog
-        open={activeDialog === "category-delete"}
+        open={dialogState.activeDialog === "category-delete"}
         title={labels.deleteDialog.categoryTitle}
         description={labels.deleteDialog.categoryDescription}
         itemName={getSelectedCategoryName()}
@@ -878,7 +923,7 @@ export function AdminServicesClient({
       />
 
       <DeleteDialog
-        open={activeDialog === "item-delete"}
+        open={dialogState.activeDialog === "item-delete"}
         title={labels.deleteDialog.itemTitle}
         description={labels.deleteDialog.itemDescription}
         itemName={getSelectedItemName()}
@@ -889,20 +934,20 @@ export function AdminServicesClient({
       />
 
       <CategoryDetailsDialog
-        open={activeDialog === "category-details"}
-        category={selectedCategory}
+        open={dialogState.activeDialog === "category-details"}
+        category={dialogState.selectedCategory}
         onClose={closeDialog}
         labels={labels.categoryDetails}
         locale={locale}
       />
 
       <ItemDetailsDialog
-        open={activeDialog === "item-details"}
-        item={selectedItem}
+        open={dialogState.activeDialog === "item-details"}
+        item={dialogState.selectedItem}
         onClose={closeDialog}
         labels={labels.itemDetails}
         locale={locale}
       />
     </div>
   );
-}
+});

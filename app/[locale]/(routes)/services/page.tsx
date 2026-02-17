@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { ServicesView } from "@/modules/services/view/services.view";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export const revalidate = 3600;
+
 export const metadata = {
   title: "Servicios",
   description: "Descubre todos nuestros servicios",

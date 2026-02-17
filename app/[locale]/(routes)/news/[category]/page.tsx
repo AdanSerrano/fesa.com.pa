@@ -1,6 +1,16 @@
 import { Suspense } from "react";
 import { CategoryView } from "@/modules/news/view/category.view";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PublicNewsRepository } from "@/modules/news/repository/news.repository";
+
+export const revalidate = 1800;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const repository = new PublicNewsRepository();
+  const categories = await repository.getActiveCategories();
+  return categories.map((cat) => ({ category: cat.slug }));
+}
 
 interface NewsCategoryPageProps {
   params: Promise<{ category: string }>;

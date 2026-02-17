@@ -57,7 +57,7 @@ export const useProfileForm = ({ defaultValues }: UseProfileFormProps = {}) => {
           }
 
           toast.success(result.success);
-          
+
           await updateSession({
             user: {
               name: values.name,
