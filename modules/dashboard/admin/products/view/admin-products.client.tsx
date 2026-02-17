@@ -429,8 +429,11 @@ export function AdminProductsClient({
         priceFilter: "all" as AdminProductPriceFilter,
         skuFilter: "all" as AdminProductSkuFilter,
       });
+      if (tab === "items") {
+        loadItems();
+      }
     },
-    [navigate]
+    [navigate, loadItems]
   );
 
   const handlePaginationChange = useCallback(
