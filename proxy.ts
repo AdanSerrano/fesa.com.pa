@@ -70,10 +70,8 @@ export const proxy = NextAuth(authConfig).auth(async (req) => {
         callbackUrl && !isAuthRoute(callbackUrl) && !isPublicRoute(callbackUrl)
           ? callbackUrl
           : DEFAULT_LOGIN_REDIRECT;
-
       return Response.redirect(new URL(redirectUrl, nextUrl.origin));
     }
-
     const response = intlMiddleware(req);
     return response;
   }
