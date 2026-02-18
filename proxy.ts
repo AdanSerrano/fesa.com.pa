@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import authConfig from "./auth.config";
 import {
@@ -20,6 +20,17 @@ function getPathnameWithoutLocale(pathname: string): string {
     return pathname.slice(`/${localePrefix}`.length) || "/";
   }
   return pathname;
+}
+
+function getPublicOrigin(req: { headers: Headers; nextUrl: URL }): string {
+  const proto =
+    req.headers.get("x-forwarded-proto") ||
+    req.nextUrl.protocol.replace(":", "");
+  const host =
+    req.headers.get("x-forwarded-host") ||
+    req.headers.get("host") ||
+    req.nextUrl.host;
+  return `${proto}://${host}`;
 }
 
 function routePatternToRegex(pattern: string): RegExp {
@@ -72,7 +83,7 @@ export const proxy = NextAuth(authConfig).auth((req) => {
         callbackUrl && !isAuthRoute(callbackUrl) && !isPublicRoute(callbackUrl)
           ? callbackUrl
           : DEFAULT_LOGIN_REDIRECT;
-      return Response.redirect(new URL(redirectUrl, nextUrl.origin));
+      return Response.redirect(new URL(redirectUrl, getPublicOrigin(req)));
     }
     // Si NO está logueado, aplicar intl y dejar que cargue /login
     return intlMiddleware(req);
@@ -80,7 +91,8 @@ export const proxy = NextAuth(authConfig).auth((req) => {
 
   // 4. Para rutas protegidas (NO logueado)
   if (!isLoggedIn) {
-    const loginUrl = new URL("/login", nextUrl.origin);
+    const origin = getPublicOrigin(req);
+    const loginUrl = new URL("/login", origin);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return Response.redirect(loginUrl);
   }

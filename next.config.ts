@@ -439,7 +439,7 @@ const nextConfig: NextConfig = {
                   value: "http",
                 },
               ],
-              destination: "https://${process.env.NEXT_PUBLIC_APP_URL}/:path*",
+              destination: `https://${process.env.NEXT_PUBLIC_APP_URL}/:path*`,
               permanent: true,
             },
           ]
