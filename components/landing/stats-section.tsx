@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { AnimatedCounter } from "./animated-counter";
+import { SectionHeading } from "./section-heading";
 import { TrendingUp, Clock, Shield, Building2 } from "lucide-react";
 
 interface StatsSectionProps {
@@ -52,12 +53,15 @@ function StatsSectionComponent({ labels }: StatsSectionProps) {
 
       <div className="max-w-7xl mx-auto px-4 md:px-6 relative">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white">
-            {labels.title}
-          </h2>
+          <SectionHeading text={labels.title} className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4 text-white" />
           <p className="text-brand-200/70 max-w-2xl mx-auto text-lg">
             {labels.subtitle}
           </p>
+          <div className="mt-6 flex items-center justify-center gap-2">
+            <div className="h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent to-brand-300" />
+            <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-brand-300 to-brand-400 animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, #93c5fd, #bfdbfe, #93c5fd)", backgroundSize: "200% auto" }} />
+            <div className="h-0.5 w-12 rounded-full bg-gradient-to-l from-transparent to-brand-300" />
+          </div>
         </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">

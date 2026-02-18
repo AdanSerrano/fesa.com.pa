@@ -231,6 +231,7 @@
     "contactUs": "Contact Us",
     "viewCatalogs": "View Catalogs",
     "clientsMarquee": "We serve companies across all sectors",
+    "clientsIndustries": ["Banking", "Insurance", "Manufacturing", "Retail", "Education", "Government", "Healthcare", "Telecommunications", "Energy", "Logistics", "Construction", "Agribusiness"],
     "heroFeatures": {
       "feature1": "No implementation costs",
       "feature2": "24/7 technical support",
@@ -512,9 +513,9 @@
       "title": "Over 50 years of innovation",
       "subtitle": "Since 1972, a journey of commitment to business excellence in Panama.",
       "milestones": [
-        { "year": "1972", "title": "Fesa Founded", "description": "Formas Eficientes, S.A. is founded in Panama City, beginning operations in design, manufacturing, and distribution of continuous forms, checkbooks, and security documents." },
-        { "year": "2013", "title": "FESA Card Panama", "description": "Creation of FESA Card Panama, S.A. for financial and identification card personalization services with cutting-edge technology." },
-        { "year": "2020", "title": "Digital Ecosystem", "description": "Launch of the Fesa digital ecosystem: Store (B2B), Transfer, Tracking, Storage, and ID, transforming our clients' enterprise experience." }
+        { "year": "1972", "title": "Fesa Founded", "description": "Formas Eficientes, S.A. is founded in Panama City, beginning operations in design, manufacturing, and distribution of continuous forms, checkbooks, and security documents.", "icon": "building" },
+        { "year": "2013", "title": "FESA Card Panama", "description": "Creation of FESA Card Panama, S.A. for financial and identification card personalization services with cutting-edge technology.", "icon": "creditCard" },
+        { "year": "2020", "title": "Digital Ecosystem", "description": "Launch of the Fesa digital ecosystem: Store (B2B), Transfer, Tracking, Storage, and ID, transforming our clients' enterprise experience.", "icon": "globe" }
       ]
     }
   },

@@ -231,6 +231,7 @@
     "contactUs": "Contáctanos",
     "viewCatalogs": "Ver Catálogos",
     "clientsMarquee": "Atendemos empresas de todos los sectores",
+    "clientsIndustries": ["Banca", "Seguros", "Manufactura", "Retail", "Educación", "Gobierno", "Salud", "Telecomunicaciones", "Energía", "Logística", "Construcción", "Agroindustria"],
     "heroFeatures": {
       "feature1": "Sin costos de implementación",
       "feature2": "Soporte técnico 24/7",
@@ -512,9 +513,9 @@
       "title": "Más de 50 años de innovación",
       "subtitle": "Desde 1972, un recorrido de compromiso con la excelencia empresarial en Panamá.",
       "milestones": [
-        { "year": "1972", "title": "Fundación de Fesa", "description": "Se funda Formas Eficientes, S.A. en Ciudad de Panamá, iniciando operaciones en diseño, manufactura y distribución de formularios continuos, chequeras y documentos de seguridad." },
-        { "year": "2013", "title": "FESA Card Panama", "description": "Creación de FESA Card Panama, S.A. para servicios de personalización de tarjetas financieras y de identificación con tecnología de punta." },
-        { "year": "2020", "title": "Ecosistema Digital", "description": "Lanzamiento del ecosistema digital Fesa: Store (B2B), Transfer, Tracking, Storage e ID, transformando la experiencia empresarial de nuestros clientes." }
+        { "year": "1972", "title": "Fundación de Fesa", "description": "Se funda Formas Eficientes, S.A. en Ciudad de Panamá, iniciando operaciones en diseño, manufactura y distribución de formularios continuos, chequeras y documentos de seguridad.", "icon": "building" },
+        { "year": "2013", "title": "FESA Card Panama", "description": "Creación de FESA Card Panama, S.A. para servicios de personalización de tarjetas financieras y de identificación con tecnología de punta.", "icon": "creditCard" },
+        { "year": "2020", "title": "Ecosistema Digital", "description": "Lanzamiento del ecosistema digital Fesa: Store (B2B), Transfer, Tracking, Storage e ID, transformando la experiencia empresarial de nuestros clientes.", "icon": "globe" }
       ]
     }
   },

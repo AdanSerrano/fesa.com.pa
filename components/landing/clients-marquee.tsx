@@ -4,24 +4,10 @@ import { memo } from "react";
 
 interface ClientsMarqueeProps {
   title: string;
+  industries: string[];
 }
 
-const industries = [
-  "Banca",
-  "Seguros",
-  "Manufactura",
-  "Retail",
-  "Educación",
-  "Gobierno",
-  "Salud",
-  "Telecomunicaciones",
-  "Energía",
-  "Logística",
-  "Construcción",
-  "Agroindustria",
-];
-
-function ClientsMarqueeComponent({ title }: ClientsMarqueeProps) {
+function ClientsMarqueeComponent({ title, industries }: ClientsMarqueeProps) {
   return (
     <div className="relative overflow-hidden py-6">
       <p className="text-center text-sm text-muted-foreground mb-6">{title}</p>

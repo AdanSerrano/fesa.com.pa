@@ -4,6 +4,7 @@ import { memo } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { AnimatedSection } from "@/components/ui/animated-section";
+import { SectionHeading } from "./section-heading";
 import { Award, Shield, Leaf, Cog } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -75,9 +76,7 @@ function CertificationsSectionComponent({ labels, certifications }: Certificatio
               <Award className="mr-2 h-3.5 w-3.5" />
               {labels.badge}
             </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {labels.title}
-            </h2>
+            <SectionHeading text={labels.title} />
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               {labels.subtitle}
             </p>

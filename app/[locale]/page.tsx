@@ -27,16 +27,11 @@ import { ValuePillarsBento } from "@/components/landing/value-pillars-bento";
 import { Spotlight } from "@/components/ui/spotlight";
 import { CtaLamp } from "@/components/landing/cta-lamp";
 import { EcosystemCard } from "@/components/landing/ecosystem-card";
+import { HeroLinkCard } from "@/components/landing/hero-link-card";
 import { WorldMapSection } from "@/components/landing/world-map-section";
 import { HistoryTimeline } from "@/components/landing/history-timeline";
 import { AnimatedSection } from "@/components/ui/animated-section";
-import { Link } from "@/i18n/navigation";
 import {
-  Briefcase,
-  Package,
-  Newspaper,
-  BookOpen,
-  ArrowRight,
   CheckCircle2,
   Award,
   Globe,
@@ -156,10 +151,10 @@ export default async function Home({ params }: HomeProps) {
   };
 
   const quickLinks = [
-    { icon: Briefcase, label: t("quickLinks.services"), href: "/services" },
-    { icon: Package, label: t("quickLinks.products"), href: "/products" },
-    { icon: BookOpen, label: t("quickLinks.catalogs"), href: "/catalogs" },
-    { icon: Newspaper, label: t("quickLinks.news"), href: "/news" },
+    { icon: "briefcase", label: t("quickLinks.services"), href: "/services" },
+    { icon: "package", label: t("quickLinks.products"), href: "/products" },
+    { icon: "bookOpen", label: t("quickLinks.catalogs"), href: "/catalogs" },
+    { icon: "newspaper", label: t("quickLinks.news"), href: "/news" },
   ];
 
   const mobileQuickLinks = [
@@ -180,6 +175,7 @@ export default async function Home({ params }: HomeProps) {
 
   const certifications = t.raw("certifications") as { icon: string; name: string; description: string }[];
   const faqs = t.raw("faqs") as { question: string; answer: string }[];
+  const clientsIndustries = t.raw("clientsIndustries") as string[];
   const flipWords = t.raw("flipWords") as string[];
   const worldMapLabels = t.raw("worldMapSection") as {
     hub: string;
@@ -188,7 +184,7 @@ export default async function Home({ params }: HomeProps) {
     locations: { label: string; lat: number; lng: number }[];
   };
 
-  const timelineMilestones = t.raw("timelineSection.milestones") as { year: string; title: string; description: string }[];
+  const timelineMilestones = t.raw("timelineSection.milestones") as { year: string; title: string; description: string; icon?: string }[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -265,17 +261,12 @@ export default async function Home({ params }: HomeProps) {
                     <div className="absolute -inset-8 bg-gradient-to-r from-primary/20 to-brand-600/20 rounded-3xl blur-3xl" />
                     <div className="relative grid grid-cols-2 gap-4">
                       {quickLinks.map((link) => (
-                          <Link
-                            key={link.href}
-                            href={link.href}
-                            className="group flex h-full min-h-[200px] flex-col items-center justify-center gap-4 p-8 rounded-3xl border border-white/60 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-md transition-all duration-300 hover:border-primary/40 hover:shadow-2xl hover:shadow-primary/10 hover:-translate-y-2"
-                          >
-                            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/15 to-primary/5 ring-1 ring-primary/20 text-primary transition-all duration-300 group-hover:bg-primary group-hover:text-white group-hover:scale-110 group-hover:ring-primary/40">
-                              <link.icon className="h-7 w-7" />
-                            </div>
-                            <span className="text-base font-semibold text-center">{link.label}</span>
-                            <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
-                          </Link>
+                        <HeroLinkCard
+                          key={link.href}
+                          href={link.href}
+                          icon={link.icon}
+                          label={link.label}
+                        />
                       ))}
                     </div>
                   </div>
@@ -286,7 +277,7 @@ export default async function Home({ params }: HomeProps) {
         </section>
 
         <section className="bg-muted/40 py-6 border-y border-border/50">
-          <ClientsMarquee title={t("clientsMarquee")} />
+          <ClientsMarquee title={t("clientsMarquee")} industries={clientsIndustries} />
         </section>
 
         <section className="py-20 sm:py-28 bg-gradient-to-b from-muted/10 via-brand-100/25 to-background dark:from-muted/10 dark:via-brand-950/20 dark:to-background section-divider-wave">
@@ -506,7 +497,7 @@ export default async function Home({ params }: HomeProps) {
                   <p className="text-sm text-brand-300/60 mb-4">{t("ctaSection.contactDirect")}</p>
                   <div className="flex flex-wrap items-center justify-center gap-6">
                     <a
-                      href="https://wa.me/50768761381"
+                      href="https://wa.me/5072200011"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 text-sm font-medium text-brand-400 hover:text-brand-300 hover:underline transition-colors"

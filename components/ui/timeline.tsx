@@ -3,11 +3,26 @@
 import { memo, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "motion/react";
 import { cn } from "@/lib/utils";
+import { Building2, CreditCard, Globe, type LucideIcon } from "lucide-react";
+
+const iconMap: Record<string, LucideIcon> = {
+  building: Building2,
+  creditCard: CreditCard,
+  globe: Globe,
+};
+
+const accentColors = [
+  "border-l-brand-500",
+  "border-l-brand-600",
+  "border-l-brand-700",
+  "border-l-brand-800",
+];
 
 interface TimelineMilestone {
   year: string;
   title: string;
   description: string;
+  icon?: string;
 }
 
 interface TimelineProps {
@@ -25,6 +40,8 @@ const TimelineItemComponent = memo(function TimelineItemInner({
   const itemRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(itemRef, { once: true, amount: 0.4 });
   const isEven = index % 2 === 0;
+  const Icon = milestone.icon ? iconMap[milestone.icon] : null;
+  const accentColor = accentColors[index % accentColors.length];
 
   return (
     <div
@@ -36,7 +53,8 @@ const TimelineItemComponent = memo(function TimelineItemInner({
     >
       <motion.div
         className={cn(
-          "flex-1 rounded-2xl border bg-card p-6 shadow-sm",
+          "flex-1 rounded-2xl border border-l-4 bg-card p-6 shadow-sm transition-shadow duration-300 hover:shadow-md",
+          accentColor,
           isEven ? "md:text-right" : "md:text-left",
           "text-left"
         )}
@@ -49,12 +67,16 @@ const TimelineItemComponent = memo(function TimelineItemInner({
       </motion.div>
 
       <motion.div
-        className="relative z-10 flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-brand-500 bg-background font-bold text-brand-600 text-xs shadow-md"
+        className="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-brand-500 bg-background shadow-md"
         initial={{ scale: 0 }}
         animate={isInView ? { scale: 1 } : {}}
         transition={{ duration: 0.3, delay: 0.1 }}
       >
-        {milestone.year.slice(-2)}
+        {Icon ? (
+          <Icon className="h-6 w-6 text-brand-600" />
+        ) : (
+          <span className="font-bold text-brand-600 text-xs">{milestone.year}</span>
+        )}
       </motion.div>
 
       <div className="hidden flex-1 md:block" />

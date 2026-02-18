@@ -3,6 +3,7 @@
 import { memo, useCallback, useReducer } from "react";
 import { Badge } from "@/components/ui/badge";
 import { AnimatedSection } from "@/components/ui/animated-section";
+import { SectionHeading } from "./section-heading";
 import { HelpCircle, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -100,16 +101,14 @@ function FAQSectionComponent({ labels, faqs }: FAQSectionProps) {
               <HelpCircle className="mr-2 h-3.5 w-3.5" />
               {labels.badge}
             </Badge>
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
-              {labels.title}
-            </h2>
+            <SectionHeading text={labels.title} />
             <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
               {labels.subtitle}
             </p>
             <div className="mt-6 flex items-center justify-center gap-2">
-              <div className="h-1 w-8 rounded-full bg-brand-400" />
-              <div className="h-1 w-16 rounded-full bg-brand-500" />
-              <div className="h-1 w-8 rounded-full bg-brand-400" />
+              <div className="h-0.5 w-12 rounded-full bg-gradient-to-r from-transparent to-brand-500" />
+              <div className="h-1.5 w-20 rounded-full bg-gradient-to-r from-brand-500 to-brand-600 animate-shimmer" style={{ backgroundImage: "linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6)", backgroundSize: "200% auto" }} />
+              <div className="h-0.5 w-12 rounded-full bg-gradient-to-l from-transparent to-brand-500" />
             </div>
           </div>
         </AnimatedSection>
