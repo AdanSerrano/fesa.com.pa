@@ -64,29 +64,30 @@ const authMiddleware = NextAuth(authConfig).auth((req) => {
   const isLoggedIn = !!req.auth;
   const pathname = nextUrl.pathname;
 
-  if (isAuthRoute(pathname)) {
-    if (isLoggedIn) {
-      const callbackUrl = nextUrl.searchParams.get("callbackUrl");
-      const redirectUrl =
-        callbackUrl && !isAuthRoute(callbackUrl) && !isPublicRoute(callbackUrl)
-          ? callbackUrl
-          : DEFAULT_LOGIN_REDIRECT;
-      return Response.redirect(new URL(redirectUrl, getPublicOrigin(req)));
-    }
-    return intlMiddleware(req);
+  if (isAuthRoute(pathname) && isLoggedIn) {
+    const callbackUrl = nextUrl.searchParams.get("callbackUrl");
+    const redirectUrl =
+      callbackUrl && !isAuthRoute(callbackUrl) && !isPublicRoute(callbackUrl)
+        ? callbackUrl
+        : DEFAULT_LOGIN_REDIRECT;
+    return Response.redirect(new URL(redirectUrl, getPublicOrigin(req)));
   }
 
-  if (!isLoggedIn) {
+  if (!isAuthRoute(pathname) && !isLoggedIn) {
     const origin = getPublicOrigin(req);
     const loginUrl = new URL("/login", origin);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return Response.redirect(loginUrl);
   }
 
-  return intlMiddleware(req);
+  return NextResponse.next();
 });
 
-export function proxy(req: NextRequest) {
+function isRedirect(response: Response): boolean {
+  return response.status >= 300 && response.status < 400;
+}
+
+export async function proxy(req: NextRequest) {
   const pathname = req.nextUrl.pathname;
 
   if (isApiAuthRoute(pathname) || isApiRoute(pathname)) {
@@ -97,7 +98,21 @@ export function proxy(req: NextRequest) {
     return intlMiddleware(req);
   }
 
-  return (authMiddleware as (req: NextRequest) => Promise<Response>)(req);
+  const authResponse = await (
+    authMiddleware as (req: NextRequest) => Promise<Response>
+  )(req);
+
+  if (isRedirect(authResponse)) {
+    return authResponse;
+  }
+
+  const intlResponse = intlMiddleware(req);
+
+  authResponse.headers.getSetCookie().forEach((cookie) => {
+    intlResponse.headers.append("set-cookie", cookie);
+  });
+
+  return intlResponse;
 }
 
 export const config = {
