@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandName } from "@/components/landing/brand-name";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -28,7 +29,7 @@ export async function DashboardHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2">
-          <span className="text-xl font-bold">Fesa</span>
+          <BrandName />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

@@ -26,6 +26,7 @@ import {
   Mail,
 } from "lucide-react";
 import { LogoutButton } from "./logout-button";
+import { BrandName } from "./brand-name";
 import type { MobileMenuProps, NavGroupLink } from "./header-dynamic";
 
 const iconMap = {
@@ -123,8 +124,8 @@ function HeaderMobileMenuComponent({
       </SheetTrigger>
       <SheetContent side="right" className="w-[300px] sm:w-[340px] flex flex-col p-0">
         <SheetHeader className="px-5 pt-5 pb-3 border-b">
-          <SheetTitle className="text-foreground font-black tracking-tight text-lg">
-            Fesa
+          <SheetTitle>
+            <BrandName size="md" />
           </SheetTitle>
         </SheetHeader>
 

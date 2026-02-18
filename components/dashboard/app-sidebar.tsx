@@ -31,6 +31,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { NavUser } from "./nav-user";
+import { BrandName } from "@/components/landing/brand-name";
 import { Role } from "@/app/prisma/enums";
 
 interface NavItem {
@@ -153,7 +154,7 @@ function AppSidebarComponent({ user }: AppSidebarProps) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Fesa</span>
+                  <BrandName size="md" className="truncate" />
                   <span className="truncate text-xs text-muted-foreground">
                     {t("dashboard")}
                   </span>
