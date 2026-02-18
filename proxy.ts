@@ -1,5 +1,5 @@
 import NextAuth from "next-auth";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import createIntlMiddleware from "next-intl/middleware";
 import authConfig from "./auth.config";
 import {
@@ -59,24 +59,12 @@ const isApiAuthRoute = (pathname: string): boolean =>
   pathname.startsWith(apiAuthPrefix);
 const isApiRoute = (pathname: string): boolean => pathname.startsWith("/api/");
 
-export const proxy = NextAuth(authConfig).auth((req) => {
+const authMiddleware = NextAuth(authConfig).auth((req) => {
   const { nextUrl } = req;
   const isLoggedIn = !!req.auth;
   const pathname = nextUrl.pathname;
 
-  // 1. Para rutas API, pasar directamente
-  if (isApiAuthRoute(pathname) || isApiRoute(pathname)) {
-    return NextResponse.next();
-  }
-
-  // 2. Para rutas públicas, aplicar intl
-  if (isPublicRoute(pathname)) {
-    return intlMiddleware(req);
-  }
-
-  // 3. Para rutas de auth
   if (isAuthRoute(pathname)) {
-    // Si está logueado, redirigir al dashboard
     if (isLoggedIn) {
       const callbackUrl = nextUrl.searchParams.get("callbackUrl");
       const redirectUrl =
@@ -85,11 +73,9 @@ export const proxy = NextAuth(authConfig).auth((req) => {
           : DEFAULT_LOGIN_REDIRECT;
       return Response.redirect(new URL(redirectUrl, getPublicOrigin(req)));
     }
-    // Si NO está logueado, aplicar intl y dejar que cargue /login
     return intlMiddleware(req);
   }
 
-  // 4. Para rutas protegidas (NO logueado)
   if (!isLoggedIn) {
     const origin = getPublicOrigin(req);
     const loginUrl = new URL("/login", origin);
@@ -97,9 +83,22 @@ export const proxy = NextAuth(authConfig).auth((req) => {
     return Response.redirect(loginUrl);
   }
 
-  // 5. Para rutas protegidas (logueado)
   return intlMiddleware(req);
 });
+
+export function proxy(req: NextRequest) {
+  const pathname = req.nextUrl.pathname;
+
+  if (isApiAuthRoute(pathname) || isApiRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  if (isPublicRoute(pathname)) {
+    return intlMiddleware(req);
+  }
+
+  return (authMiddleware as (req: NextRequest) => Promise<Response>)(req);
+}
 
 export const config = {
   matcher: [
