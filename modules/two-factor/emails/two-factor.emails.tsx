@@ -14,8 +14,7 @@ export const sendTwoFactorEmail = async (email: string, code: string) => {
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error sending two factor email:", error);
+  } catch {
     return { success: false, error: "Error al enviar el código" };
   }
 };

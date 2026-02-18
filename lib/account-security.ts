@@ -55,8 +55,7 @@ export async function checkAccountLock(
       allowed: true,
       remainingAttempts: MAX_FAILED_ATTEMPTS - user.failedLoginAttempts,
     };
-  } catch (error) {
-    console.error("Error checking account lock:", error);
+  } catch {
     return { allowed: true };
   }
 }
@@ -106,8 +105,7 @@ export async function recordFailedLogin(
       allowed: true,
       remainingAttempts: MAX_FAILED_ATTEMPTS - user.failedLoginAttempts,
     };
-  } catch (error) {
-    console.error("Error recording failed login:", error);
+  } catch {
     return { allowed: true };
   }
 }
@@ -122,9 +120,7 @@ export async function resetFailedAttempts(userId: string): Promise<void> {
         lastFailedLogin: null,
       },
     });
-  } catch (error) {
-    console.error("Error resetting failed attempts:", error);
-  }
+  } catch {}
 }
 
 export async function unlockAccount(
@@ -142,8 +138,7 @@ export async function unlockAccount(
     });
 
     return true;
-  } catch (error) {
-    console.error("Error unlocking account:", error);
+  } catch {
     return false;
   }
 }
@@ -173,8 +168,7 @@ export async function getAccountSecurityInfo(userId: string): Promise<{
       lastFailedLogin: user.lastFailedLogin,
       isTwoFactorEnabled: user.isTwoFactorEnabled,
     };
-  } catch (error) {
-    console.error("Error getting account security info:", error);
+  } catch {
     return null;
   }
 }

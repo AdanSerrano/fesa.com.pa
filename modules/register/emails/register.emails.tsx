@@ -19,8 +19,7 @@ export const sendVerificationEmail = async (email: string, token: string) => {
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error sending verification email:", error);
+  } catch {
     return { success: false, error: "Error al enviar el correo de verificación" };
   }
 };

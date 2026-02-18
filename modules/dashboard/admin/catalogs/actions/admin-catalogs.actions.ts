@@ -96,8 +96,7 @@ export async function createCatalogAction(
     const catalog = await repository.createCatalog(inputValidation.data);
     revalidateTag("catalogs", "max");
     return { success: "Catálogo creado exitosamente", data: catalog };
-  } catch (error) {
-    console.error("Error creating catalog:", error);
+  } catch {
     return { error: "Error al crear el catálogo" };
   }
 }
@@ -119,8 +118,7 @@ export async function updateCatalogAction(
     const catalog = await repository.updateCatalog(inputValidation.data);
     revalidateTag("catalogs", "max");
     return { success: "Catálogo actualizado exitosamente", data: catalog };
-  } catch (error) {
-    console.error("Error updating catalog:", error);
+  } catch {
     return { error: "Error al actualizar el catálogo" };
   }
 }
@@ -135,8 +133,7 @@ export async function deleteCatalogAction(id: string): Promise<AdminCatalogsActi
     await repository.deleteCatalog(id);
     revalidateTag("catalogs", "max");
     return { success: "Catálogo eliminado exitosamente" };
-  } catch (error) {
-    console.error("Error deleting catalog:", error);
+  } catch {
     return { error: "Error al eliminar el catálogo" };
   }
 }
@@ -157,8 +154,7 @@ export async function toggleCatalogStatusAction(
       success: isActive ? "Catálogo activado" : "Catálogo desactivado",
       data: catalog,
     };
-  } catch (error) {
-    console.error("Error toggling catalog status:", error);
+  } catch {
     return { error: "Error al cambiar el estado del catálogo" };
   }
 }
@@ -179,8 +175,7 @@ export async function toggleCatalogFeaturedAction(
       success: isFeatured ? "Catálogo destacado" : "Catálogo no destacado",
       data: catalog,
     };
-  } catch (error) {
-    console.error("Error toggling catalog featured:", error);
+  } catch {
     return { error: "Error al cambiar el destacado del catálogo" };
   }
 }
@@ -199,12 +194,10 @@ export async function getCatalogUploadUrlAction(
   }
 
   if (!R2_CONFIG.bucket) {
-    console.error("[Catalog Upload] R2_BUCKET_NAME not configured");
     return { error: "Configuración de almacenamiento incompleta (bucket)" };
   }
 
   if (!R2_CONFIG.publicUrl) {
-    console.error("[Catalog Upload] R2_PUBLIC_URL not configured");
     return { error: "Configuración de almacenamiento incompleta (publicUrl)" };
   }
 
@@ -225,11 +218,8 @@ export async function getCatalogUploadUrlAction(
     const url = await getSignedUrl(s3Client, command, { expiresIn: 3600 });
     const publicUrl = `${R2_CONFIG.publicUrl}/${key}`;
 
-    console.log(`[Catalog Upload] Generated URL for ${type}:`, { key, publicUrl });
-
     return { url, publicUrl };
-  } catch (error) {
-    console.error("[Catalog Upload] Error generating signed URL:", error);
+  } catch {
     return { error: "Error al generar URL de subida" };
   }
 }

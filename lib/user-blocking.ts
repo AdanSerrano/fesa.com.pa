@@ -39,8 +39,7 @@ export async function blockUser(
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error blocking user:", error);
+  } catch {
     return { success: false, error: "Error al bloquear usuario" };
   }
 }
@@ -69,8 +68,7 @@ export async function unblockUser(
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error unblocking user:", error);
+  } catch {
     return { success: false, error: "Error al desbloquear usuario" };
   }
 }
@@ -108,8 +106,7 @@ export async function blockUserFromServices(
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error blocking user from services:", error);
+  } catch {
     return { success: false, error: "Error al bloquear servicios" };
   }
 }
@@ -147,8 +144,7 @@ export async function unblockUserFromServices(
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error unblocking user from services:", error);
+  } catch {
     return { success: false, error: "Error al desbloquear servicios" };
   }
 }
@@ -164,8 +160,7 @@ export async function isUserBlocked(userId: string): Promise<boolean> {
     });
 
     return user?.isBlocked ?? false;
-  } catch (error) {
-    console.error("Error checking if user is blocked:", error);
+  } catch {
     return false;
   }
 }
@@ -190,8 +185,7 @@ export async function isUserBlockedFromService(
 
     const blockedServices = (user.blockedServices as string[] | null) || [];
     return blockedServices.includes(service);
-  } catch (error) {
-    console.error("Error checking if user is blocked from service:", error);
+  } catch {
     return false;
   }
 }
@@ -221,8 +215,7 @@ export async function getUserBlockStatus(
       blockedReason: user.blockedReason,
       blockedServices: (user.blockedServices as string[] | null) || [],
     };
-  } catch (error) {
-    console.error("Error getting user block status:", error);
+  } catch {
     return null;
   }
 }

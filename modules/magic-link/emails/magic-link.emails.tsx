@@ -18,8 +18,7 @@ export const sendMagicLinkEmail = async (email: string, token: string) => {
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error sending magic link email:", error);
+  } catch {
     return { success: false, error: "Error al enviar el enlace mágico" };
   }
 };

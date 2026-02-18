@@ -39,8 +39,7 @@ export class ForgotPasswordService {
       await sendPasswordResetEmail(validation.email!, passwordResetToken.token);
 
       return { success: GENERIC_SUCCESS_MESSAGE };
-    } catch (error) {
-      console.error("Error en forgot password service:", error);
+    } catch {
       return { error: "Error al procesar la solicitud" };
     }
   }

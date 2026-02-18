@@ -14,8 +14,7 @@ export async function getNewsPageDataAction(): Promise<NewsPageData> {
     ]);
 
     return { categories, featuredNews, recentNews };
-  } catch (error) {
-    console.error("Error fetching news page data:", error);
+  } catch {
     return { categories: [], featuredNews: [], recentNews: [] };
   }
 }
@@ -25,8 +24,7 @@ export async function getCategoryWithArticlesAction(
 ): Promise<(PublicNewsCategory & { articles: PublicNewsArticle[] }) | null> {
   try {
     return await repository.getCategoryBySlug(slug);
-  } catch (error) {
-    console.error("Error fetching category:", error);
+  } catch {
     return null;
   }
 }
@@ -37,8 +35,7 @@ export async function getArticleDetailAction(
 ): Promise<PublicNewsArticle | null> {
   try {
     return await repository.getArticleBySlug(categorySlug, articleSlug);
-  } catch (error) {
-    console.error("Error fetching article:", error);
+  } catch {
     return null;
   }
 }
@@ -54,8 +51,7 @@ export async function getHomeNewsDataAction(): Promise<{
     ]);
 
     return { categories, featuredNews: recentNews };
-  } catch (error) {
-    console.error("Error fetching home news data:", error);
+  } catch {
     return { categories: [], featuredNews: [] };
   }
 }

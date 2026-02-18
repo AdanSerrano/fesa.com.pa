@@ -7,6 +7,42 @@ import authConfig from "./auth.config";
 import { db } from "./utils/db";
 import { createUserSession, deleteSessionByToken, isSessionValid } from "./lib/session-manager";
 
+const SESSION_CACHE_TTL = 30_000;
+const USER_CACHE_TTL = 60_000;
+const MAX_CACHE_SIZE = 500;
+
+type CacheEntry<T> = { data: T; expiresAt: number };
+
+const sessionValidityCache = new Map<string, CacheEntry<boolean>>();
+const userDataCache = new Map<string, CacheEntry<{
+  role: Role;
+  name: string | null;
+  email: string | null;
+  image: string | null;
+  userName: string | null;
+  isTwoFactorEnabled: boolean;
+  isBlocked: boolean;
+  deletedAt: Date | null;
+}>>();
+
+function getCached<T>(cache: Map<string, CacheEntry<T>>, key: string): T | undefined {
+  const entry = cache.get(key);
+  if (!entry) return undefined;
+  if (Date.now() > entry.expiresAt) {
+    cache.delete(key);
+    return undefined;
+  }
+  return entry.data;
+}
+
+function setCache<T>(cache: Map<string, CacheEntry<T>>, key: string, data: T, ttl: number): void {
+  if (cache.size >= MAX_CACHE_SIZE) {
+    const firstKey = cache.keys().next().value;
+    if (firstKey) cache.delete(firstKey);
+  }
+  cache.set(key, { data, expiresAt: Date.now() + ttl });
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: "/login",
@@ -16,7 +52,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   events: {
     async signOut(message) {
       if ("token" in message && message.token?.sessionToken) {
-        await deleteSessionByToken(message.token.sessionToken as string);
+        const st = message.token.sessionToken as string;
+        sessionValidityCache.delete(st);
+        await deleteSessionByToken(st);
       }
     },
   },
@@ -25,21 +63,15 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const existingUser = await db.user.findUnique({ where: { id: user.id } });
 
       if (!existingUser) return false;
-
-      // Verificar que el email esté verificado
       if (!existingUser.emailVerified) return false;
-
-      // Si el usuario está bloqueado por un admin, no permitir acceso
       if (existingUser.isBlocked) return false;
 
-      // Si el usuario está eliminado, verificar período de gracia (30 días)
       if (existingUser.deletedAt) {
         const GRACE_PERIOD_DAYS = 30;
         const gracePeriodMs = GRACE_PERIOD_DAYS * 24 * 60 * 60 * 1000;
         const deletedTime = new Date(existingUser.deletedAt).getTime();
         const now = Date.now();
 
-        // Si está dentro del período de gracia, restaurar la cuenta
         if (now - deletedTime < gracePeriodMs) {
           await db.user.update({
             where: { id: user.id },
@@ -48,14 +80,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return true;
         }
 
-        // Si pasó el período de gracia, no permitir acceso
         return false;
       }
 
       return true;
     },
     async session({ token, session }) {
-      // Si la sesión fue revocada, marcarla para que el cliente lo detecte
       if (token.sessionRevoked) {
         (session as { sessionRevoked?: boolean }).sessionRevoked = true;
         return session;
@@ -101,37 +131,46 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           if (sessionResult) {
             token.sessionToken = sessionResult.token;
           }
-        } catch (error) {
-          console.error("Error creating session on sign in:", error);
+        } catch {
         }
 
         return token;
       }
 
-      // Verificar si la sesión fue revocada (solo si hay sessionToken)
       if (token.sessionToken) {
-        const sessionExists = await isSessionValid(token.sessionToken as string);
+        const sessionToken = token.sessionToken as string;
+        let sessionExists = getCached(sessionValidityCache, sessionToken);
+        if (sessionExists === undefined) {
+          sessionExists = await isSessionValid(sessionToken);
+          setCache(sessionValidityCache, sessionToken, sessionExists, SESSION_CACHE_TTL);
+        }
         if (!sessionExists) {
-          // Marcar el token como revocado para que el middleware lo detecte
           token.sessionRevoked = true;
           return token;
         }
       }
 
       if (token.sub && !user) {
-        const dbUser = await db.user.findUnique({
-          where: { id: token.sub },
-          select: {
-            role: true,
-            name: true,
-            email: true,
-            image: true,
-            userName: true,
-            isTwoFactorEnabled: true,
-            isBlocked: true,
-            deletedAt: true,
-          },
-        });
+        const userId = token.sub;
+        let dbUser = getCached(userDataCache, userId);
+        if (dbUser === undefined) {
+          dbUser = await db.user.findUnique({
+            where: { id: userId },
+            select: {
+              role: true,
+              name: true,
+              email: true,
+              image: true,
+              userName: true,
+              isTwoFactorEnabled: true,
+              isBlocked: true,
+              deletedAt: true,
+            },
+          }) ?? undefined;
+          if (dbUser) {
+            setCache(userDataCache, userId, dbUser, USER_CACHE_TTL);
+          }
+        }
 
         if (dbUser) {
           if (dbUser.isBlocked || dbUser.deletedAt) {
@@ -148,6 +187,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       }
 
       if (trigger === "update") {
+        if (token.sub) userDataCache.delete(token.sub);
         if (session?.user) {
           if (session.user.name !== undefined) token.name = session.user.name;
           if (session.user.userName !== undefined)

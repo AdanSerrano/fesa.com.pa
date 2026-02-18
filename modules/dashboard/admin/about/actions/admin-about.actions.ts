@@ -58,8 +58,7 @@ export async function updateAboutSectionAction(
   try {
     const section = await repository.upsertSection(inputValidation.data);
     return { success: "Sección actualizada correctamente", data: section };
-  } catch (error) {
-    console.error("Error updating about section:", error);
+  } catch {
     return { error: "Error al actualizar la sección" };
   }
 }
@@ -76,8 +75,7 @@ export async function toggleAboutSectionStatusAction(
   try {
     const data = await repository.toggleSectionStatus(section, isActive);
     return { success: "Estado actualizado", data };
-  } catch (error) {
-    console.error("Error toggling section status:", error);
+  } catch {
     return { error: "Error al actualizar el estado" };
   }
 }

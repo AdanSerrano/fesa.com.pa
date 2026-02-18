@@ -56,8 +56,7 @@ export class RegisterDomainService {
         isValid: true,
         data: validationResult.data,
       };
-    } catch (error) {
-      console.error("Error in domain validation:", error);
+    } catch {
       return {
         isValid: false,
         error: "Error al validar los datos",

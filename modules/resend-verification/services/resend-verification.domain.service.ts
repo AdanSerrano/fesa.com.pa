@@ -53,8 +53,7 @@ export class ResendVerificationDomainService {
         shouldSendEmail: true,
         email: input.email.toLowerCase(),
       };
-    } catch (error) {
-      console.error("Error in domain validation:", error);
+    } catch {
       return {
         isValid: false,
         shouldSendEmail: false,

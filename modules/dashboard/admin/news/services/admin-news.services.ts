@@ -44,8 +44,7 @@ export class AdminNewsService {
       };
 
       return { data: result };
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    } catch {
       return { error: "Error al obtener categorías" };
     }
   }
@@ -77,8 +76,7 @@ export class AdminNewsService {
       };
 
       return { data: result };
-    } catch (error) {
-      console.error("Error fetching articles:", error);
+    } catch {
       return { error: "Error al obtener artículos" };
     }
   }
@@ -87,8 +85,7 @@ export class AdminNewsService {
     try {
       const category = await this.repository.createCategory(params);
       return { success: "Categoría creada correctamente", data: { id: category.id } };
-    } catch (error) {
-      console.error("Error creating category:", error);
+    } catch {
       return { error: "Error al crear categoría" };
     }
   }
@@ -102,8 +99,7 @@ export class AdminNewsService {
 
       await this.repository.updateCategory(params);
       return { success: "Categoría actualizada correctamente" };
-    } catch (error) {
-      console.error("Error updating category:", error);
+    } catch {
       return { error: "Error al actualizar categoría" };
     }
   }
@@ -121,8 +117,7 @@ export class AdminNewsService {
 
       await this.repository.deleteCategory(id);
       return { success: "Categoría eliminada correctamente" };
-    } catch (error) {
-      console.error("Error deleting category:", error);
+    } catch {
       return { error: "Error al eliminar categoría" };
     }
   }
@@ -138,8 +133,7 @@ export class AdminNewsService {
 
       const article = await this.repository.createArticle(params);
       return { success: "Artículo creado correctamente", data: { id: article.id } };
-    } catch (error) {
-      console.error("Error creating article:", error);
+    } catch {
       return { error: "Error al crear artículo" };
     }
   }
@@ -160,8 +154,7 @@ export class AdminNewsService {
 
       await this.repository.updateArticle(params);
       return { success: "Artículo actualizado correctamente" };
-    } catch (error) {
-      console.error("Error updating article:", error);
+    } catch {
       return { error: "Error al actualizar artículo" };
     }
   }
@@ -175,8 +168,7 @@ export class AdminNewsService {
 
       await this.repository.deleteArticle(id);
       return { success: "Artículo eliminado correctamente" };
-    } catch (error) {
-      console.error("Error deleting article:", error);
+    } catch {
       return { error: "Error al eliminar artículo" };
     }
   }
@@ -190,8 +182,7 @@ export class AdminNewsService {
 
       await this.repository.toggleCategoryStatus(id, isActive);
       return { success: isActive ? "Categoría activada" : "Categoría desactivada" };
-    } catch (error) {
-      console.error("Error toggling category status:", error);
+    } catch {
       return { error: "Error al cambiar estado de categoría" };
     }
   }
@@ -205,8 +196,7 @@ export class AdminNewsService {
 
       await this.repository.toggleArticleStatus(id, isActive);
       return { success: isActive ? "Artículo activado" : "Artículo desactivado" };
-    } catch (error) {
-      console.error("Error toggling article status:", error);
+    } catch {
       return { error: "Error al cambiar estado de artículo" };
     }
   }
@@ -220,8 +210,7 @@ export class AdminNewsService {
 
       await this.repository.toggleCategoryFeatured(id, isFeatured);
       return { success: isFeatured ? "Categoría destacada" : "Categoría no destacada" };
-    } catch (error) {
-      console.error("Error toggling category featured:", error);
+    } catch {
       return { error: "Error al cambiar destacado de categoría" };
     }
   }
@@ -235,8 +224,7 @@ export class AdminNewsService {
 
       await this.repository.toggleArticleFeatured(id, isFeatured);
       return { success: isFeatured ? "Artículo destacado" : "Artículo no destacado" };
-    } catch (error) {
-      console.error("Error toggling article featured:", error);
+    } catch {
       return { error: "Error al cambiar destacado de artículo" };
     }
   }
@@ -244,8 +232,7 @@ export class AdminNewsService {
   public async getCategoriesForSelect(): Promise<CategoryForSelect[]> {
     try {
       return await this.repository.getCategoriesForSelect();
-    } catch (error) {
-      console.error("Error fetching categories for select:", error);
+    } catch {
       return [];
     }
   }

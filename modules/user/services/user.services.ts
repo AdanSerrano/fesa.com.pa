@@ -60,8 +60,7 @@ export class UserService {
       }
 
       return { data: user };
-    } catch (error) {
-      console.error("Error getting user profile:", error);
+    } catch {
       return { error: "Error al obtener el perfil" };
     }
   }
@@ -90,8 +89,7 @@ export class UserService {
         success: "Perfil actualizado correctamente",
         data: updatedUser,
       };
-    } catch (error) {
-      console.error("Error updating profile:", error);
+    } catch {
       return { error: "Error al actualizar el perfil" };
     }
   }
@@ -109,8 +107,7 @@ export class UserService {
         success: "Imagen de perfil actualizada",
         data: updatedUser,
       };
-    } catch (error) {
-      console.error("Error updating profile image:", error);
+    } catch {
       return { error: "Error al actualizar la imagen de perfil" };
     }
   }
@@ -159,8 +156,7 @@ export class UserService {
           expiresAt,
         },
       };
-    } catch (error) {
-      console.error("Error generating avatar upload URL:", error);
+    } catch {
       return { error: "Error al generar URL de subida" };
     }
   }
@@ -202,8 +198,7 @@ export class UserService {
           user: updatedUser,
         },
       };
-    } catch (error) {
-      console.error("Error confirming avatar upload:", error);
+    } catch {
       return { error: "Error al confirmar subida de avatar" };
     }
   }
@@ -236,8 +231,7 @@ export class UserService {
         requiresVerification: true,
         data: { token: verificationToken.token },
       };
-    } catch (error) {
-      console.error("Error updating email:", error);
+    } catch {
       return { error: "Error al actualizar el email" };
     }
   }
@@ -272,8 +266,7 @@ export class UserService {
       return {
         success: "Contraseña actualizada correctamente",
       };
-    } catch (error) {
-      console.error("Error updating password:", error);
+    } catch {
       return { error: "Error al actualizar la contraseña" };
     }
   }
@@ -314,8 +307,7 @@ export class UserService {
         success: `Tu cuenta será eliminada el ${formattedDate}. Puedes reactivarla iniciando sesión antes de esa fecha.`,
         requiresLogout: true,
       };
-    } catch (error) {
-      console.error("Error scheduling account deletion:", error);
+    } catch {
       return { error: "Error al programar la eliminación de la cuenta" };
     }
   }
@@ -332,8 +324,7 @@ export class UserService {
       return {
         success: "¡Tu cuenta ha sido reactivada exitosamente!",
       };
-    } catch (error) {
-      console.error("Error cancelling account deletion:", error);
+    } catch {
       return { error: "Error al reactivar la cuenta" };
     }
   }
@@ -361,8 +352,7 @@ export class UserService {
         scheduledDeletionDate: status.scheduledDeletionDate,
         daysRemaining: Math.max(0, daysRemaining),
       };
-    } catch (error) {
-      console.error("Error getting deletion status:", error);
+    } catch {
       return { error: "Error al obtener el estado de eliminación" };
     }
   }
@@ -390,8 +380,7 @@ export class UserService {
         scheduledDeletionDate: status.scheduledDeletionDate,
         daysRemaining: Math.max(0, daysRemaining),
       };
-    } catch (error) {
-      console.error("Error getting deletion status by email:", error);
+    } catch {
       return { error: "Error al obtener el estado de eliminación" };
     }
   }
@@ -419,8 +408,7 @@ export class UserService {
       return {
         success: "¡Tu cuenta ha sido reactivada! Ya puedes iniciar sesión.",
       };
-    } catch (error) {
-      console.error("Error reactivating account:", error);
+    } catch {
       return { error: "Error al reactivar la cuenta" };
     }
   }

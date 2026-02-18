@@ -21,8 +21,7 @@ export class FileManagerController {
     try {
       const result = await this.service.listObjects(prefix, continuationToken);
       return { data: result };
-    } catch (error) {
-      console.error("Error listing objects:", error);
+    } catch {
       return { error: "Error al listar archivos" };
     }
   }
@@ -31,8 +30,7 @@ export class FileManagerController {
     try {
       await this.service.deleteObject(key);
       return { success: "Archivo eliminado correctamente" };
-    } catch (error) {
-      console.error("Error deleting object:", error);
+    } catch {
       return { error: "Error al eliminar archivo" };
     }
   }
@@ -49,8 +47,7 @@ export class FileManagerController {
       }
 
       return { success: "Carpeta eliminada correctamente" };
-    } catch (error) {
-      console.error("Error deleting folder:", error);
+    } catch {
       return { error: "Error al eliminar carpeta" };
     }
   }
@@ -62,8 +59,7 @@ export class FileManagerController {
     try {
       await this.service.createFolder(path, folderName);
       return { success: "Carpeta creada correctamente" };
-    } catch (error) {
-      console.error("Error creating folder:", error);
+    } catch {
       return { error: "Error al crear carpeta" };
     }
   }
@@ -76,8 +72,7 @@ export class FileManagerController {
     try {
       const result = await this.service.getUploadUrl(path, fileName, contentType);
       return { data: result };
-    } catch (error) {
-      console.error("Error getting upload URL:", error);
+    } catch {
       return { error: "Error al obtener URL de subida" };
     }
   }
@@ -94,8 +89,7 @@ export class FileManagerController {
       }
 
       return { success: "Archivo renombrado correctamente", data: { newKey: result.newKey! } };
-    } catch (error) {
-      console.error("Error renaming object:", error);
+    } catch {
       return { error: "Error al renombrar archivo" };
     }
   }
@@ -112,8 +106,7 @@ export class FileManagerController {
       }
 
       return { success: "Carpeta renombrada correctamente", data: { newPrefix: result.newPrefix! } };
-    } catch (error) {
-      console.error("Error renaming folder:", error);
+    } catch {
       return { error: "Error al renombrar carpeta" };
     }
   }

@@ -90,9 +90,7 @@ export function useRecentActivity({
           activities: result.data,
           pagination: result.pagination,
         });
-      } catch (err) {
-        console.error("Error loading more activity:", err);
-      }
+      } catch {}
     });
   }, [state.currentPagination, isLoadingMore]);
 

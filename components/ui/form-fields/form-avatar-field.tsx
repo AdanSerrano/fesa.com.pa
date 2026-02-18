@@ -127,9 +127,7 @@ const AvatarContent = memo(function AvatarContent({
       try {
         const result = await processImage(file);
         field.onChange(result);
-      } catch (error) {
-        console.error("Error processing image:", error);
-      }
+      } catch {}
 
       if (inputRef.current) {
         inputRef.current.value = "";

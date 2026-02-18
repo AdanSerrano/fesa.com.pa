@@ -44,8 +44,7 @@ export class AdminServicesService {
       };
 
       return { data: result };
-    } catch (error) {
-      console.error("Error fetching categories:", error);
+    } catch {
       return { error: "Error al obtener categorías" };
     }
   }
@@ -77,8 +76,7 @@ export class AdminServicesService {
       };
 
       return { data: result };
-    } catch (error) {
-      console.error("Error fetching items:", error);
+    } catch {
       return { error: "Error al obtener servicios" };
     }
   }
@@ -87,8 +85,7 @@ export class AdminServicesService {
     try {
       const category = await this.repository.createCategory(params);
       return { success: "Categoría creada correctamente", data: { id: category.id } };
-    } catch (error) {
-      console.error("Error creating category:", error);
+    } catch {
       return { error: "Error al crear categoría" };
     }
   }
@@ -102,8 +99,7 @@ export class AdminServicesService {
 
       await this.repository.updateCategory(params);
       return { success: "Categoría actualizada correctamente" };
-    } catch (error) {
-      console.error("Error updating category:", error);
+    } catch {
       return { error: "Error al actualizar categoría" };
     }
   }
@@ -121,8 +117,7 @@ export class AdminServicesService {
 
       await this.repository.deleteCategory(id);
       return { success: "Categoría eliminada correctamente" };
-    } catch (error) {
-      console.error("Error deleting category:", error);
+    } catch {
       return { error: "Error al eliminar categoría" };
     }
   }
@@ -138,8 +133,7 @@ export class AdminServicesService {
 
       const item = await this.repository.createItem(params);
       return { success: "Servicio creado correctamente", data: { id: item.id } };
-    } catch (error) {
-      console.error("Error creating item:", error);
+    } catch {
       return { error: "Error al crear servicio" };
     }
   }
@@ -160,8 +154,7 @@ export class AdminServicesService {
 
       await this.repository.updateItem(params);
       return { success: "Servicio actualizado correctamente" };
-    } catch (error) {
-      console.error("Error updating item:", error);
+    } catch {
       return { error: "Error al actualizar servicio" };
     }
   }
@@ -175,8 +168,7 @@ export class AdminServicesService {
 
       await this.repository.deleteItem(id);
       return { success: "Servicio eliminado correctamente" };
-    } catch (error) {
-      console.error("Error deleting item:", error);
+    } catch {
       return { error: "Error al eliminar servicio" };
     }
   }
@@ -190,8 +182,7 @@ export class AdminServicesService {
 
       await this.repository.toggleCategoryStatus(id, isActive);
       return { success: isActive ? "Categoría activada" : "Categoría desactivada" };
-    } catch (error) {
-      console.error("Error toggling category status:", error);
+    } catch {
       return { error: "Error al cambiar estado de categoría" };
     }
   }
@@ -205,8 +196,7 @@ export class AdminServicesService {
 
       await this.repository.toggleItemStatus(id, isActive);
       return { success: isActive ? "Servicio activado" : "Servicio desactivado" };
-    } catch (error) {
-      console.error("Error toggling item status:", error);
+    } catch {
       return { error: "Error al cambiar estado de servicio" };
     }
   }
@@ -220,8 +210,7 @@ export class AdminServicesService {
 
       await this.repository.toggleCategoryFeatured(id, isFeatured);
       return { success: isFeatured ? "Categoría destacada" : "Categoría no destacada" };
-    } catch (error) {
-      console.error("Error toggling category featured:", error);
+    } catch {
       return { error: "Error al cambiar destacado de categoría" };
     }
   }
@@ -229,8 +218,7 @@ export class AdminServicesService {
   public async getCategoriesForSelect(): Promise<CategoryForSelect[]> {
     try {
       return await this.repository.getCategoriesForSelect();
-    } catch (error) {
-      console.error("Error fetching categories for select:", error);
+    } catch {
       return [];
     }
   }

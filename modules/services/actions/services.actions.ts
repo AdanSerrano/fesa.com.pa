@@ -13,8 +13,7 @@ export async function getServicesPageDataAction(): Promise<ServicesPageData> {
     ]);
 
     return { categories, featuredServices };
-  } catch (error) {
-    console.error("Error fetching services page data:", error);
+  } catch {
     return { categories: [], featuredServices: [] };
   }
 }
@@ -24,8 +23,7 @@ export async function getCategoryWithItemsAction(
 ): Promise<(PublicServiceCategory & { items: PublicServiceItem[] }) | null> {
   try {
     return await repository.getCategoryBySlug(slug);
-  } catch (error) {
-    console.error("Error fetching category:", error);
+  } catch {
     return null;
   }
 }
@@ -36,8 +34,7 @@ export async function getServiceDetailAction(
 ): Promise<PublicServiceItem | null> {
   try {
     return await repository.getServiceBySlug(categorySlug, serviceSlug);
-  } catch (error) {
-    console.error("Error fetching service:", error);
+  } catch {
     return null;
   }
 }

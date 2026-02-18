@@ -13,8 +13,7 @@ export async function getProductsPageDataAction(): Promise<ProductsPageData> {
     ]);
 
     return { categories, featuredProducts };
-  } catch (error) {
-    console.error("Error fetching products page data:", error);
+  } catch {
     return { categories: [], featuredProducts: [] };
   }
 }
@@ -24,8 +23,7 @@ export async function getCategoryWithItemsAction(
 ): Promise<(PublicProductCategory & { items: PublicProductItem[] }) | null> {
   try {
     return await repository.getCategoryBySlug(slug);
-  } catch (error) {
-    console.error("Error fetching category:", error);
+  } catch {
     return null;
   }
 }
@@ -36,8 +34,7 @@ export async function getProductDetailAction(
 ): Promise<PublicProductItem | null> {
   try {
     return await repository.getProductBySlug(categorySlug, productSlug);
-  } catch (error) {
-    console.error("Error fetching product:", error);
+  } catch {
     return null;
   }
 }

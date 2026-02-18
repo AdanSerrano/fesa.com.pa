@@ -122,9 +122,7 @@ const CoordinatesContent = memo(function CoordinatesContent({
           longitude: position.coords.longitude,
         });
       },
-      (error) => {
-        console.error("Geolocation error:", error);
-      },
+      () => {},
       { enableHighAccuracy: true }
     );
   }, [field]);

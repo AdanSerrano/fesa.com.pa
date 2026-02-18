@@ -19,8 +19,7 @@ export class RegisterRepository {
       return await db.user.findUnique({
         where: { email: email.toLowerCase() },
       });
-    } catch (error) {
-      console.error("Error en getUserByEmail:", error);
+    } catch {
       return null;
     }
   }
@@ -34,8 +33,7 @@ export class RegisterRepository {
       return await db.user.findUnique({
         where: { userName: userName.toLowerCase() },
       });
-    } catch (error) {
-      console.error("Error en getUserByUsername:", error);
+    } catch {
       return null;
     }
   }
@@ -52,7 +50,6 @@ export class RegisterRepository {
         },
       });
     } catch (error) {
-      console.error("Error en createUser:", error);
       throw error;
     }
   }

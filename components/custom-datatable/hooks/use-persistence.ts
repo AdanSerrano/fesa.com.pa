@@ -67,8 +67,7 @@ export function usePersistence({
 
       const parsed = JSON.parse(stored) as PersistedState;
       return parsed;
-    } catch (error) {
-      console.error("Error loading persisted state:", error);
+    } catch {
       return null;
     }
   }, [storageKey, getStorage]);
@@ -102,9 +101,7 @@ export function usePersistence({
         }
 
         storageInstance.setItem(storageKey, JSON.stringify(stateToSave));
-      } catch (error) {
-        console.error("Error saving persisted state:", error);
-      }
+      } catch {}
     },
     [storageKey, include, getStorage]
   );
@@ -116,9 +113,7 @@ export function usePersistence({
 
     try {
       storageInstance.removeItem(storageKey);
-    } catch (error) {
-      console.error("Error clearing persisted state:", error);
-    }
+    } catch {}
   }, [storageKey, getStorage]);
 
   // Restore state on mount

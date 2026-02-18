@@ -71,8 +71,7 @@ export class VerifyEmailDomainService {
           email: existingToken.email,
         },
       };
-    } catch (error) {
-      console.error("Error in domain validation:", error);
+    } catch {
       return {
         isValid: false,
         error: "Error al validar el token",

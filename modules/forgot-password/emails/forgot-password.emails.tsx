@@ -17,8 +17,7 @@ export const sendPasswordResetEmail = async (email: string, token: string) => {
     });
 
     return { success: true };
-  } catch (error) {
-    console.error("Error sending password reset email:", error);
+  } catch {
     return { success: false, error: "Error al enviar el correo de recuperación" };
   }
 };

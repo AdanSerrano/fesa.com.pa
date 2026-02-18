@@ -166,8 +166,7 @@ export function useCopyClipboard<TData>({
       await navigator.clipboard.writeText(formattedData);
       config.onCopy?.(formattedData);
       return true;
-    } catch (error) {
-      console.error("Error copying to clipboard:", error);
+    } catch {
       return false;
     }
   }, [enabled, config, data, formatData]);
@@ -186,8 +185,7 @@ export function useCopyClipboard<TData>({
       await navigator.clipboard.writeText(formattedData);
       config.onCopy?.(formattedData);
       return true;
-    } catch (error) {
-      console.error("Error copying to clipboard:", error);
+    } catch {
       return false;
     }
   }, [enabled, config, data, selectedRows, getRowId, formatData]);
@@ -202,8 +200,7 @@ export function useCopyClipboard<TData>({
         await navigator.clipboard.writeText(formattedData);
         config.onCopy?.(formattedData);
         return true;
-      } catch (error) {
-        console.error("Error copying to clipboard:", error);
+      } catch {
         return false;
       }
     },
@@ -223,8 +220,7 @@ export function useCopyClipboard<TData>({
         await navigator.clipboard.writeText(value);
         config.onCopy?.(value);
         return true;
-      } catch (error) {
-        console.error("Error copying to clipboard:", error);
+      } catch {
         return false;
       }
     },

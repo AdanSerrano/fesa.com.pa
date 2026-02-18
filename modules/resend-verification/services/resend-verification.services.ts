@@ -39,8 +39,7 @@ export class ResendVerificationService {
       await sendVerificationEmail(validation.email!, verificationToken.token);
 
       return { success: GENERIC_SUCCESS_MESSAGE };
-    } catch (error) {
-      console.error("Error en resend verification service:", error);
+    } catch {
       return { error: "Error al enviar el correo de verificación" };
     }
   }

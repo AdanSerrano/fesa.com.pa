@@ -64,8 +64,7 @@ export class LoginDomainService {
         user,
         identifier,
       };
-    } catch (error) {
-      console.error("Error in domain validation:", error);
+    } catch {
       return {
         isValid: false,
         error: "Error al verificar credenciales",

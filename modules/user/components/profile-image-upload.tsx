@@ -125,8 +125,7 @@ const ProfileImageUploadComponent = ({
           router.refresh();
 
           toast.success(labels.successUpload);
-        } catch (error) {
-          console.error("Profile image upload error:", error);
+        } catch {
           toast.error(labels.errorUpload);
         }
       });

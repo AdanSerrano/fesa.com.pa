@@ -50,9 +50,8 @@ export function useFileUpload(props?: UseFileUploadProps) {
         if (!uploadResponse.ok) {
           throw new Error("Error al subir archivo a S3");
         }
-      } catch (error) {
+      } catch {
         toast.error("Error al subir archivo");
-        console.error("S3 upload error:", error);
         return null;
       }
 

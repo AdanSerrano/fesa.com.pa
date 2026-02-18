@@ -44,8 +44,7 @@ export class ResetPasswordService {
       return {
         success: "¡Contraseña actualizada! Ya puedes iniciar sesión.",
       };
-    } catch (error) {
-      console.error("Error en reset password service:", error);
+    } catch {
       return { error: "Error al restablecer la contraseña" };
     }
   }

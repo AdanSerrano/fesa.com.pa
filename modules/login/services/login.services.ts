@@ -148,8 +148,7 @@ export class LoginService {
       }
 
       return authResult;
-    } catch (error) {
-      console.error("Error en login service:", error);
+    } catch {
       return { error: "Error al verificar credenciales" };
     }
   }

@@ -31,8 +31,7 @@ export class VerifyEmailService {
       await this.repository.deleteVerificationToken(tokenId);
 
       return { success: "¡Tu email ha sido verificado correctamente!" };
-    } catch (error) {
-      console.error("Error en verify email service:", error);
+    } catch {
       return { error: "Error al verificar el email" };
     }
   }

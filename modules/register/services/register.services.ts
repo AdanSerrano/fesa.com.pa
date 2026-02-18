@@ -43,8 +43,7 @@ export class RegisterService {
         success: "¡Cuenta creada! Revisa tu email para verificar tu cuenta.",
         requiresVerification: true,
       };
-    } catch (error) {
-      console.error("Error en register service:", error);
+    } catch {
       return { error: "Error al registrar usuario" };
     }
   }

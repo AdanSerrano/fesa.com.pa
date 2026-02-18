@@ -25,8 +25,7 @@ export async function createUserSession(data: CreateSessionData) {
     });
 
     return { session, token };
-  } catch (error) {
-    console.error("Error creating user session:", error);
+  } catch {
     return null;
   }
 }
@@ -37,9 +36,7 @@ export async function updateSessionActivity(token: string) {
       where: { token },
       data: { lastActive: new Date() },
     });
-  } catch (error) {
-    console.error("Error updating session activity:", error);
-  }
+  } catch {}
 }
 
 export async function deleteSessionByToken(token: string) {
@@ -48,8 +45,7 @@ export async function deleteSessionByToken(token: string) {
       where: { token },
     });
     return true;
-  } catch (error) {
-    console.error("Error deleting session:", error);
+  } catch {
     return false;
   }
 }
@@ -60,8 +56,7 @@ export async function deleteAllUserSessions(userId: string) {
       where: { userId },
     });
     return true;
-  } catch (error) {
-    console.error("Error deleting all user sessions:", error);
+  } catch {
     return false;
   }
 }
@@ -73,8 +68,7 @@ export async function isSessionValid(token: string): Promise<boolean> {
       select: { id: true },
     });
     return session !== null;
-  } catch (error) {
-    console.error("Error checking session validity:", error);
+  } catch {
     return false;
   }
 }

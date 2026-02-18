@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useEffect, useRef } from "react";
+import { memo, useMemo, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 
 interface ExtendedSession {
@@ -11,22 +11,15 @@ function SessionGuardComponent({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const isLoggingOut = useRef(false);
 
-  useEffect(() => {
+  const isRevoked = useMemo(() => {
     const extendedSession = session as ExtendedSession | null;
-
-    if (
-      status === "authenticated" &&
-      extendedSession?.sessionRevoked &&
-      !isLoggingOut.current
-    ) {
-      isLoggingOut.current = true;
-
-      signOut({
-        callbackUrl: "/login?sessionExpired=true",
-        redirect: true,
-      });
-    }
+    return status === "authenticated" && !!extendedSession?.sessionRevoked;
   }, [session, status]);
+
+  if (isRevoked && !isLoggingOut.current) {
+    isLoggingOut.current = true;
+    signOut({ callbackUrl: "/login?sessionExpired=true", redirect: true });
+  }
 
   return <>{children}</>;
 }

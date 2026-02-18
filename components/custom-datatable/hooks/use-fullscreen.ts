@@ -41,9 +41,7 @@ export function useFullscreen({
       }
       setIsFullscreen(true);
       configRef.current?.onFullscreenChange?.(true);
-    } catch (error) {
-      console.error("Error entering fullscreen:", error);
-    }
+    } catch {}
   }, []); // Empty deps - stable reference
 
   // Stable exit fullscreen - uses refs
@@ -56,9 +54,7 @@ export function useFullscreen({
       }
       setIsFullscreen(false);
       configRef.current?.onFullscreenChange?.(false);
-    } catch (error) {
-      console.error("Error exiting fullscreen:", error);
-    }
+    } catch {}
   }, []); // Empty deps - stable reference
 
   // Stable toggle - reads isFullscreen via ref pattern

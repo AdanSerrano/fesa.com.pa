@@ -38,8 +38,7 @@ export class TwoFactorService {
         success: "Código enviado a tu correo electrónico",
         requiresTwoFactor: true,
       };
-    } catch (error) {
-      console.error("Error en send two factor code:", error);
+    } catch {
       return { error: "Error al enviar el código de verificación" };
     }
   }
@@ -70,8 +69,7 @@ export class TwoFactorService {
       await this.repository.createTwoFactorConfirmation(validation.userId);
 
       return { success: "Código verificado correctamente" };
-    } catch (error) {
-      console.error("Error en verify two factor code:", error);
+    } catch {
       return { error: "Error al verificar el código" };
     }
   }
@@ -88,8 +86,7 @@ export class TwoFactorService {
           ? "Autenticación de dos factores activada"
           : "Autenticación de dos factores desactivada",
       };
-    } catch (error) {
-      console.error("Error en toggle two factor:", error);
+    } catch {
       return { error: "Error al cambiar la configuración de 2FA" };
     }
   }

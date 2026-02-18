@@ -136,7 +136,6 @@ function FormDemoViewComponent() {
   const handleSubmit = useCallback(
     (data: FormDemoValues) => {
       startTransition(() => {
-        console.log("Form submitted:", data);
         toast.success("Form submitted successfully!");
       });
     },

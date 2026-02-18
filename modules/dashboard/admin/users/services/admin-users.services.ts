@@ -48,8 +48,7 @@ export class AdminUsersService {
       };
 
       return { data: result };
-    } catch (error) {
-      console.error("Error fetching users:", error);
+    } catch {
       return { error: "Error al obtener usuarios" };
     }
   }
@@ -72,8 +71,7 @@ export class AdminUsersService {
       await this.repository.blockUser(userId, reason);
 
       return { success: "Usuario bloqueado correctamente" };
-    } catch (error) {
-      console.error("Error blocking user:", error);
+    } catch {
       return { error: "Error al bloquear usuario" };
     }
   }
@@ -96,8 +94,7 @@ export class AdminUsersService {
       await this.repository.unblockUser(userId);
 
       return { success: "Usuario desbloqueado correctamente" };
-    } catch (error) {
-      console.error("Error unblocking user:", error);
+    } catch {
       return { error: "Error al desbloquear usuario" };
     }
   }
@@ -121,8 +118,7 @@ export class AdminUsersService {
       await this.repository.changeRole(userId, newRole);
 
       return { success: "Rol actualizado correctamente" };
-    } catch (error) {
-      console.error("Error changing role:", error);
+    } catch {
       return { error: "Error al cambiar rol" };
     }
   }
@@ -145,8 +141,7 @@ export class AdminUsersService {
       await this.repository.softDeleteUser(userId, reason);
 
       return { success: "Usuario eliminado correctamente" };
-    } catch (error) {
-      console.error("Error deleting user:", error);
+    } catch {
       return { error: "Error al eliminar usuario" };
     }
   }
@@ -172,8 +167,7 @@ export class AdminUsersService {
       const count = await this.repository.bulkBlockUsers(filteredIds, reason);
 
       return { success: `${count} usuarios bloqueados correctamente` };
-    } catch (error) {
-      console.error("Error bulk blocking users:", error);
+    } catch {
       return { error: "Error al bloquear usuarios" };
     }
   }
@@ -199,8 +193,7 @@ export class AdminUsersService {
       const count = await this.repository.bulkDeleteUsers(filteredIds, reason);
 
       return { success: `${count} usuarios eliminados correctamente` };
-    } catch (error) {
-      console.error("Error bulk deleting users:", error);
+    } catch {
       return { error: "Error al eliminar usuarios" };
     }
   }
@@ -223,8 +216,7 @@ export class AdminUsersService {
       await this.repository.restoreUser(userId);
 
       return { success: "Usuario restaurado correctamente" };
-    } catch (error) {
-      console.error("Error restoring user:", error);
+    } catch {
       return { error: "Error al restaurar usuario" };
     }
   }
@@ -250,8 +242,7 @@ export class AdminUsersService {
       const count = await this.repository.bulkRestoreUsers(filteredIds);
 
       return { success: `${count} usuarios restaurados correctamente` };
-    } catch (error) {
-      console.error("Error bulk restoring users:", error);
+    } catch {
       return { error: "Error al restaurar usuarios" };
     }
   }

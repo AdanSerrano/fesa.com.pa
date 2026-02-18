@@ -164,8 +164,7 @@ export class FileManagerService {
       await s3Client.send(deleteCommand);
 
       return { success: true, newKey };
-    } catch (error) {
-      console.error("Error renaming object:", error);
+    } catch {
       return { success: false, error: "RENAME_FAILED" };
     }
   }
@@ -209,8 +208,7 @@ export class FileManagerService {
       }
 
       return { success: true, newPrefix };
-    } catch (error) {
-      console.error("Error renaming folder:", error);
+    } catch {
       return { success: false, error: "RENAME_FOLDER_FAILED" };
     }
   }

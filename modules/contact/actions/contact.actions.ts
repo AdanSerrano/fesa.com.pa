@@ -44,14 +44,11 @@ export async function sendContactMessageAction(
   try {
     await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Contact form submission:", validatedFields.data);
-
     return {
       success: true,
       message: "Message sent successfully",
     };
-  } catch (error) {
-    console.error("Error sending contact message:", error);
+  } catch {
     return {
       success: false,
       message: "Failed to send message",

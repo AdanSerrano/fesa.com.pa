@@ -8,8 +8,7 @@ const repository = new PublicAboutRepository();
 export async function getAboutPageDataAction(): Promise<AboutPageData> {
   try {
     return await repository.getAboutPageData();
-  } catch (error) {
-    console.error("Error fetching about page data:", error);
+  } catch {
     return { history: null, mission: null, vision: null };
   }
 }

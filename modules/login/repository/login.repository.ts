@@ -20,8 +20,7 @@ export class LoginRepository {
       return await db.user.findUnique({
         where: { userName: normalizedIdentifier },
       });
-    } catch (error) {
-      console.error("Error en getUserByIdentifier:", error);
+    } catch {
       return null;
     }
   }

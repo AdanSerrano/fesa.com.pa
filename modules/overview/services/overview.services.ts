@@ -43,8 +43,7 @@ export class OverviewService {
           isTwoFactorEnabled: user.isTwoFactorEnabled ?? false,
         },
       };
-    } catch (error) {
-      console.error("Error getting user session:", error);
+    } catch {
       return { error: "Error al obtener la sesión" };
     }
   }

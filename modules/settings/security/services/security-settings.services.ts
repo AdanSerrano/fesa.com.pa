@@ -55,8 +55,7 @@ export class SecuritySettingsService {
           createdAt: log.createdAt,
         })),
       };
-    } catch (error) {
-      console.error("Error getting security info:", error);
+    } catch {
       return null;
     }
   }
@@ -95,8 +94,7 @@ export class SecuritySettingsService {
       await logTwoFactorEnabled(userId, ipAddress, userAgent);
 
       return { success: "Autenticación de dos factores activada" };
-    } catch (error) {
-      console.error("Error enabling 2FA:", error);
+    } catch {
       return { error: "Error al activar la autenticación de dos factores" };
     }
   }
@@ -136,8 +134,7 @@ export class SecuritySettingsService {
       await logTwoFactorDisabled(userId, ipAddress, userAgent);
 
       return { success: "Autenticación de dos factores desactivada" };
-    } catch (error) {
-      console.error("Error disabling 2FA:", error);
+    } catch {
       return { error: "Error al desactivar la autenticación de dos factores" };
     }
   }

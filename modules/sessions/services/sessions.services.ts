@@ -44,8 +44,7 @@ export class SessionsService {
       });
 
       return { sessions: sortedSessions };
-    } catch (error) {
-      console.error("Error getting active sessions:", error);
+    } catch {
       return { error: "Error al obtener las sesiones activas" };
     }
   }
@@ -57,8 +56,7 @@ export class SessionsService {
   ): Promise<PaginatedResponse<ActivityData> | { error: string }> {
     try {
       return await this.repository.getRecentActivity(userId, page, limit);
-    } catch (error) {
-      console.error("Error getting recent activity:", error);
+    } catch {
       return { error: "Error al obtener la actividad reciente" };
     }
   }
@@ -66,8 +64,7 @@ export class SessionsService {
   public async createSession(input: CreateSessionInput) {
     try {
       return await this.repository.createSession(input);
-    } catch (error) {
-      console.error("Error creating session:", error);
+    } catch {
       return null;
     }
   }
@@ -75,9 +72,7 @@ export class SessionsService {
   public async updateSessionActivity(token: string) {
     try {
       await this.repository.updateSessionActivity(token);
-    } catch (error) {
-      console.error("Error updating session activity:", error);
-    }
+    } catch {}
   }
 
   public async revokeSession(
@@ -104,8 +99,7 @@ export class SessionsService {
       }
 
       return { success: "Sesión cerrada correctamente" };
-    } catch (error) {
-      console.error("Error revoking session:", error);
+    } catch {
       return { error: "Error al cerrar la sesión" };
     }
   }
@@ -128,8 +122,7 @@ export class SessionsService {
         success: `Se cerraron ${count} sesión${count > 1 ? "es" : ""}`,
         count,
       };
-    } catch (error) {
-      console.error("Error revoking other sessions:", error);
+    } catch {
       return { error: "Error al cerrar las otras sesiones" };
     }
   }

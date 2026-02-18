@@ -43,8 +43,7 @@ export default {
           }
 
           return user;
-        } catch (error) {
-          console.error("Error en authorize:", error);
+        } catch {
           return null;
         }
       },
@@ -92,8 +91,7 @@ export default {
           });
 
           return user;
-        } catch (error) {
-          console.error("Error en magic link authorize:", error);
+        } catch {
           return null;
         }
       },
