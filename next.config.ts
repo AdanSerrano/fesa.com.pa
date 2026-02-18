@@ -426,25 +426,7 @@ const nextConfig: NextConfig = {
   // REDIRECTS DE SEGURIDAD
   // ========================================================================
   async redirects() {
-    return [
-      // Forzar HTTPS en producción
-      ...(process.env.NODE_ENV === "production"
-        ? [
-            {
-              source: "/:path*",
-              has: [
-                {
-                  type: "header" as const,
-                  key: "x-forwarded-proto",
-                  value: "http",
-                },
-              ],
-              destination: `https://${process.env.NEXT_PUBLIC_APP_URL}/:path*`,
-              permanent: true,
-            },
-          ]
-        : []),
-    ];
+    return [];
   },
 
   // ========================================================================
