@@ -454,7 +454,69 @@
         "answer": "Puedes contactarnos por WhatsApp, teléfono o email. Uno de nuestros asesores se comunicará contigo para entender tus necesidades, luego programaremos una visita o reunión virtual para presentarte una propuesta personalizada sin compromiso."
       }
     ],
-    "whatsappMessage": "Hola, me interesa conocer más sobre los servicios de Fesa."
+    "flipWords": [
+      "transformar tu empresa",
+      "impulsar tu negocio",
+      "optimizar tus procesos",
+      "asegurar tu futuro"
+    ],
+    "testimonialsSection": {
+      "badge": "Lo que dicen nuestros clientes",
+      "title": "Testimonios de éxito",
+      "subtitle": "Empresas líderes en Panamá confían en nuestras soluciones tecnológicas."
+    },
+    "testimonials": [
+      {
+        "quote": "Fesa transformó completamente nuestro proceso de impresión de cheques. La seguridad y velocidad superaron nuestras expectativas.",
+        "name": "Carlos Rodríguez",
+        "designation": "Director de Operaciones",
+        "company": "Banco Nacional de Panamá"
+      },
+      {
+        "quote": "La implementación de RFID en nuestros almacenes redujo un 40% los tiempos de inventario. Una inversión que se pagó sola.",
+        "name": "María González",
+        "designation": "Gerente de Logística",
+        "company": "Grupo Rey"
+      },
+      {
+        "quote": "El soporte técnico 24/7 de Fesa es excepcional. Siempre tienen una solución rápida cuando más la necesitamos.",
+        "name": "Roberto Méndez",
+        "designation": "CTO",
+        "company": "Copa Airlines"
+      },
+      {
+        "quote": "Llevamos más de 15 años trabajando con Fesa. Su calidad y compromiso con la innovación los hace un socio estratégico invaluable.",
+        "name": "Ana Patricia Varela",
+        "designation": "Directora de Compras",
+        "company": "Super 99"
+      },
+      {
+        "quote": "Las soluciones de medios de pago de Fesa nos permitieron modernizar todas nuestras sucursales en tiempo récord.",
+        "name": "José Miguel Torres",
+        "designation": "VP de Tecnología",
+        "company": "Banistmo"
+      }
+    ],
+    "whatsappMessage": "Hola, me interesa conocer más sobre los servicios de Fesa.",
+    "worldMapSection": {
+      "badge": "Nuestra Sede",
+      "title": "Con sede en Panamá",
+      "subtitle": "Ubicados estratégicamente en Ciudad de Panamá, el hub logístico y financiero de las Américas.",
+      "hub": "Panamá",
+      "hubLat": 8.9824,
+      "hubLng": -79.5199,
+      "locations": []
+    },
+    "timelineSection": {
+      "badge": "Nuestra Historia",
+      "title": "Más de 50 años de innovación",
+      "subtitle": "Desde 1972, un recorrido de compromiso con la excelencia empresarial en Panamá.",
+      "milestones": [
+        { "year": "1972", "title": "Fundación de Fesa", "description": "Se funda Formas Eficientes, S.A. en Ciudad de Panamá, iniciando operaciones en diseño, manufactura y distribución de formularios continuos, chequeras y documentos de seguridad." },
+        { "year": "2013", "title": "FESA Card Panama", "description": "Creación de FESA Card Panama, S.A. para servicios de personalización de tarjetas financieras y de identificación con tecnología de punta." },
+        { "year": "2020", "title": "Ecosistema Digital", "description": "Lanzamiento del ecosistema digital Fesa: Store (B2B), Transfer, Tracking, Storage e ID, transformando la experiencia empresarial de nuestros clientes." }
+      ]
+    }
   },
   "Dashboard": {
     "welcome": "Bienvenido, {name}",

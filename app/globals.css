@@ -546,4 +546,50 @@
   .ecosystem-card-shine:hover::after {
     left: 150%;
   }
+
+  .dot-pattern {
+    background-image: radial-gradient(circle, rgba(59, 130, 246, 0.15) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .dark .dot-pattern {
+    background-image: radial-gradient(circle, rgba(96, 165, 250, 0.1) 1px, transparent 1px);
+  }
+
+  .dot-pattern-glow {
+    position: relative;
+  }
+
+  .dot-pattern-glow::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(59, 130, 246, 0.08), transparent 70%);
+    animation: dot-glow-pulse 6s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes dot-glow-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  .moving-border-wrapper {
+    position: relative;
+    border-radius: var(--radius-xl);
+    padding: 2px;
+    overflow: hidden;
+  }
+
+  .moving-border-gradient {
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(from 0deg, transparent 0%, transparent 60%, var(--brand-500) 75%, var(--brand-300) 85%, transparent 100%);
+    animation: moving-border-spin 3s linear infinite;
+  }
+
+  @keyframes moving-border-spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 }

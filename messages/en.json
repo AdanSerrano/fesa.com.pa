@@ -454,7 +454,69 @@
         "answer": "You can contact us via WhatsApp, phone or email. One of our advisors will contact you to understand your needs, then we'll schedule a visit or virtual meeting to present you with a personalized proposal with no obligation."
       }
     ],
-    "whatsappMessage": "Hello, I'm interested in learning more about Fesa's services."
+    "flipWords": [
+      "transform your business",
+      "boost your growth",
+      "optimize your processes",
+      "secure your future"
+    ],
+    "testimonialsSection": {
+      "badge": "What our clients say",
+      "title": "Success stories",
+      "subtitle": "Leading companies in Panama trust our technology solutions."
+    },
+    "testimonials": [
+      {
+        "quote": "Fesa completely transformed our check printing process. The security and speed exceeded our expectations.",
+        "name": "Carlos Rodríguez",
+        "designation": "Operations Director",
+        "company": "Banco Nacional de Panamá"
+      },
+      {
+        "quote": "Implementing RFID in our warehouses reduced inventory times by 40%. An investment that paid for itself.",
+        "name": "María González",
+        "designation": "Logistics Manager",
+        "company": "Grupo Rey"
+      },
+      {
+        "quote": "Fesa's 24/7 technical support is exceptional. They always have a quick solution when we need it most.",
+        "name": "Roberto Méndez",
+        "designation": "CTO",
+        "company": "Copa Airlines"
+      },
+      {
+        "quote": "We've been working with Fesa for over 15 years. Their quality and commitment to innovation makes them an invaluable strategic partner.",
+        "name": "Ana Patricia Varela",
+        "designation": "Purchasing Director",
+        "company": "Super 99"
+      },
+      {
+        "quote": "Fesa's payment solutions allowed us to modernize all our branches in record time.",
+        "name": "José Miguel Torres",
+        "designation": "VP of Technology",
+        "company": "Banistmo"
+      }
+    ],
+    "whatsappMessage": "Hello, I'm interested in learning more about Fesa's services.",
+    "worldMapSection": {
+      "badge": "Our Headquarters",
+      "title": "Based in Panama",
+      "subtitle": "Strategically located in Panama City, the logistics and financial hub of the Americas.",
+      "hub": "Panamá",
+      "hubLat": 8.9824,
+      "hubLng": -79.5199,
+      "locations": []
+    },
+    "timelineSection": {
+      "badge": "Our History",
+      "title": "Over 50 years of innovation",
+      "subtitle": "Since 1972, a journey of commitment to business excellence in Panama.",
+      "milestones": [
+        { "year": "1972", "title": "Fesa Founded", "description": "Formas Eficientes, S.A. is founded in Panama City, beginning operations in design, manufacturing, and distribution of continuous forms, checkbooks, and security documents." },
+        { "year": "2013", "title": "FESA Card Panama", "description": "Creation of FESA Card Panama, S.A. for financial and identification card personalization services with cutting-edge technology." },
+        { "year": "2020", "title": "Digital Ecosystem", "description": "Launch of the Fesa digital ecosystem: Store (B2B), Transfer, Tracking, Storage, and ID, transforming our clients' enterprise experience." }
+      ]
+    }
   },
   "Dashboard": {
     "welcome": "Welcome, {name}",

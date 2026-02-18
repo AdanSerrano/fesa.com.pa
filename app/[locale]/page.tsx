@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { Header } from "@/components/landing/header";
 import { Footer } from "@/components/landing/footer";
 import { ClientsMarquee } from "@/components/landing/clients-marquee";
@@ -21,6 +20,15 @@ import { getFeaturedCatalogsAction } from "@/modules/catalogs/actions/catalogs.a
 import { HomeCatalogsSection } from "@/modules/catalogs/components/home-catalogs-section";
 import { HeroButtons } from "@/components/landing/hero-buttons";
 import { CtaButtons } from "@/components/landing/cta-buttons";
+import { HeroFlipWords } from "@/components/landing/hero-flip-words";
+import { HeroSubtitle } from "@/components/landing/hero-subtitle";
+import { SectionHeading } from "@/components/landing/section-heading";
+import { ValuePillarsBento } from "@/components/landing/value-pillars-bento";
+import { Spotlight } from "@/components/ui/spotlight";
+import { CtaLamp } from "@/components/landing/cta-lamp";
+import { EcosystemCard } from "@/components/landing/ecosystem-card";
+import { WorldMapSection } from "@/components/landing/world-map-section";
+import { HistoryTimeline } from "@/components/landing/history-timeline";
 import { AnimatedSection } from "@/components/ui/animated-section";
 import { Link } from "@/i18n/navigation";
 import {
@@ -32,19 +40,11 @@ import {
   CheckCircle2,
   Award,
   Globe,
-  ExternalLink,
-  Store,
-  Send,
-  MapPin,
-  Database,
-  IdCard,
-  Zap,
-  ShieldCheck,
-  Target,
-  TrendingUp,
   Phone,
   Mail,
   Sparkles,
+  Clock,
+  MapPinned,
 } from "lucide-react";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
@@ -82,25 +82,25 @@ export default async function Home({ params }: HomeProps) {
 
   const valuePillars = [
     {
-      icon: Zap,
+      icon: "zap",
       title: t("pillars.productivity.title"),
       description: t("pillars.productivity.description"),
       color: "from-brand-500 to-brand-600",
     },
     {
-      icon: ShieldCheck,
+      icon: "shieldCheck",
       title: t("pillars.security.title"),
       description: t("pillars.security.description"),
       color: "from-brand-600 to-brand-700",
     },
     {
-      icon: TrendingUp,
+      icon: "trendingUp",
       title: t("pillars.savings.title"),
       description: t("pillars.savings.description"),
       color: "from-brand-700 to-brand-800",
     },
     {
-      icon: Target,
+      icon: "target",
       title: t("pillars.revenue.title"),
       description: t("pillars.revenue.description"),
       color: "from-brand-800 to-brand-900",
@@ -109,7 +109,7 @@ export default async function Home({ params }: HomeProps) {
 
   const ecosystem = [
     {
-      icon: Store,
+      icon: "store",
       name: "Fesa Store",
       description: t("ecosystem.store"),
       href: "https://app.fesastore.com.pa",
@@ -117,7 +117,7 @@ export default async function Home({ params }: HomeProps) {
       badge: t("ecosystem.storeBadge"),
     },
     {
-      icon: Send,
+      icon: "send",
       name: "Fesa Transfer",
       description: t("ecosystem.transfer"),
       href: "https://transfer.fesa.com.pa",
@@ -125,7 +125,7 @@ export default async function Home({ params }: HomeProps) {
       badge: null,
     },
     {
-      icon: MapPin,
+      icon: "mapPin",
       name: "Fesa Tracking",
       description: t("ecosystem.tracking"),
       href: "https://tracking.fesa.com.pa",
@@ -133,7 +133,7 @@ export default async function Home({ params }: HomeProps) {
       badge: null,
     },
     {
-      icon: Database,
+      icon: "database",
       name: "Fesa Storage",
       description: t("ecosystem.storage"),
       href: "https://storage.fesa.com.pa",
@@ -141,7 +141,7 @@ export default async function Home({ params }: HomeProps) {
       badge: null,
     },
     {
-      icon: IdCard,
+      icon: "idCard",
       name: "Fesa ID",
       description: t("ecosystem.id"),
       href: "https://id.fesa.com.pa",
@@ -149,6 +149,11 @@ export default async function Home({ params }: HomeProps) {
       badge: null,
     },
   ];
+
+  const ecosystemLabels = {
+    comingSoon: t("ecosystemSection.comingSoon"),
+    visit: t("ecosystemSection.visitApp"),
+  };
 
   const quickLinks = [
     { icon: Briefcase, label: t("quickLinks.services"), href: "/services" },
@@ -175,6 +180,15 @@ export default async function Home({ params }: HomeProps) {
 
   const certifications = t.raw("certifications") as { icon: string; name: string; description: string }[];
   const faqs = t.raw("faqs") as { question: string; answer: string }[];
+  const flipWords = t.raw("flipWords") as string[];
+  const worldMapLabels = t.raw("worldMapSection") as {
+    hub: string;
+    hubLat: number;
+    hubLng: number;
+    locations: { label: string; lat: number; lng: number }[];
+  };
+
+  const timelineMilestones = t.raw("timelineSection.milestones") as { year: string; title: string; description: string }[];
 
   return (
     <div className="min-h-screen bg-background">
@@ -182,7 +196,8 @@ export default async function Home({ params }: HomeProps) {
 
       <main>
         <section className="relative min-h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-4rem)] overflow-hidden bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+          <div className="absolute inset-0 dot-pattern dot-pattern-glow [mask-image:linear-gradient(0deg,white,rgba(255,255,255,0.6))]" />
+          <Spotlight className="opacity-60 dark:opacity-40" />
           <div className="absolute top-0 right-0 -translate-y-12 translate-x-12 blur-3xl opacity-10 lg:opacity-20">
             <div className="aspect-square w-[32rem] rounded-full bg-gradient-to-br from-primary to-brand-600" />
           </div>
@@ -206,16 +221,12 @@ export default async function Home({ params }: HomeProps) {
                 <AnimatedSection animation="fade-up" delay={100}>
                   <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold tracking-tight text-foreground leading-[1.1]">
                     {t("title")}{" "}
-                    <span className="text-primary">
-                      {t("titleHighlight")}
-                    </span>
+                    <HeroFlipWords words={flipWords} />
                   </h1>
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={200}>
-                  <p className="mt-4 sm:mt-6 text-base sm:text-lg lg:text-xl text-foreground/70 lg:text-muted-foreground max-w-xl mx-auto lg:mx-0 leading-relaxed">
-                    {t("subtitle")}
-                  </p>
+                  <HeroSubtitle text={t("subtitle")} />
                 </AnimatedSection>
 
                 <AnimatedSection animation="fade-up" delay={300}>
@@ -286,9 +297,7 @@ export default async function Home({ params }: HomeProps) {
                   <Award className="mr-2 h-3.5 w-3.5" />
                   {t("pillarsSection.badge")}
                 </Badge>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                  {t("pillarsSection.title")}
-                </h2>
+                <SectionHeading text={t("pillarsSection.title")} />
                 <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                   {t("pillarsSection.subtitle")}
                 </p>
@@ -300,29 +309,7 @@ export default async function Home({ params }: HomeProps) {
               </div>
             </AnimatedSection>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {valuePillars.map((pillar, index) => (
-                <AnimatedSection key={pillar.title} animation="fade-up" delay={index * 100}>
-                  <div className="group relative h-full">
-                    <div className="absolute inset-0 bg-gradient-to-br from-brand-600/10 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity" />
-                    <Card className="relative h-full border-2 transition-all duration-300 hover:border-brand-600/30 hover:shadow-xl hover:-translate-y-1 overflow-hidden card-glow-hover">
-                      <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${pillar.color}`} />
-                      <CardContent className="p-6 sm:p-8 text-center">
-                        <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${pillar.color} text-white mb-5 transition-transform group-hover:scale-110 shadow-lg`}>
-                          <pillar.icon className="h-8 w-8" />
-                        </div>
-                        <h3 className="text-xl font-bold mb-3 group-hover:text-brand-600 transition-colors">
-                          {pillar.title}
-                        </h3>
-                        <p className="text-muted-foreground leading-relaxed">
-                          {pillar.description}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </div>
-                </AnimatedSection>
-              ))}
-            </div>
+            <ValuePillarsBento pillars={valuePillars} />
           </div>
         </section>
 
@@ -356,6 +343,24 @@ export default async function Home({ params }: HomeProps) {
 
         <StatsSection labels={statsLabels} />
 
+        <section className="py-20 sm:py-28 bg-gradient-to-b from-muted/10 via-background to-muted/10 dark:from-muted/5 dark:via-background dark:to-muted/5">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <AnimatedSection animation="fade-up" delay={0}>
+              <div className="text-center mb-16">
+                <Badge variant="outline" className="mb-4">
+                  <Clock className="mr-2 h-3.5 w-3.5" />
+                  {t("timelineSection.badge")}
+                </Badge>
+                <SectionHeading text={t("timelineSection.title")} />
+                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+                  {t("timelineSection.subtitle")}
+                </p>
+              </div>
+            </AnimatedSection>
+            <HistoryTimeline milestones={timelineMilestones} />
+          </div>
+        </section>
+
         <section className="py-20 sm:py-28 bg-gradient-to-b from-brand-100/30 via-background to-brand-100/15 dark:from-brand-950/30 dark:via-background dark:to-brand-950/10">
           <div className="max-w-7xl mx-auto px-4 md:px-6">
             <AnimatedSection animation="fade-up" delay={0}>
@@ -364,9 +369,7 @@ export default async function Home({ params }: HomeProps) {
                   <Globe className="mr-2 h-3.5 w-3.5" />
                   {t("ecosystemSection.badge")}
                 </Badge>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-4">
-                  {t("ecosystemSection.title")}
-                </h2>
+                <SectionHeading text={t("ecosystemSection.title")} />
                 <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
                   {t("ecosystemSection.subtitle")}
                 </p>
@@ -379,56 +382,39 @@ export default async function Home({ params }: HomeProps) {
             </AnimatedSection>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              {ecosystem.map((app, index) => {
-                const isComingSoon = app.href === "#";
-                return (
-                  <AnimatedSection key={app.name} animation="fade-up" delay={index * 100}>
-                    <a
-                      href={isComingSoon ? undefined : app.href}
-                      target={app.href.startsWith("http") ? "_blank" : undefined}
-                      rel={app.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                      className={`group block h-full ${isComingSoon ? "opacity-60 grayscale pointer-events-none" : ""}`}
-                    >
-                      <Card className={`h-full transition-all duration-300 overflow-hidden ${isComingSoon ? "" : "hover:shadow-xl hover:-translate-y-2 hover:border-brand-600/30 card-glow-hover ecosystem-card-shine"}`}>
-                        <CardContent className="p-6 text-center relative">
-                          {app.badge && (
-                            <Badge
-                              variant="secondary"
-                              className="absolute top-3 right-3 text-xs"
-                            >
-                              {app.badge}
-                            </Badge>
-                          )}
-                          {isComingSoon && !app.badge && (
-                            <Badge
-                              variant="outline"
-                              className="absolute top-3 right-3 text-xs"
-                            >
-                              {t("ecosystemSection.comingSoon")}
-                            </Badge>
-                          )}
-                          <div className={`inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br ${app.color} text-white mb-4 transition-transform group-hover:scale-110 group-hover:rotate-3 shadow-lg`}>
-                            <app.icon className="h-8 w-8" />
-                          </div>
-                          <h3 className="font-bold text-lg mb-2 group-hover:text-brand-600 transition-colors">
-                            {app.name}
-                          </h3>
-                          <p className="text-sm text-muted-foreground line-clamp-2">
-                            {app.description}
-                          </p>
-                          {app.href.startsWith("http") && (
-                            <div className="mt-4 flex items-center justify-center text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-                              <ExternalLink className="h-3 w-3 mr-1" />
-                              {t("ecosystemSection.visitApp")}
-                            </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    </a>
-                  </AnimatedSection>
-                );
-              })}
+              {ecosystem.map((app, index) => (
+                <AnimatedSection key={app.name} animation="fade-up" delay={index * 100}>
+                  <EcosystemCard
+                    icon={app.icon}
+                    name={app.name}
+                    description={app.description}
+                    href={app.href}
+                    color={app.color}
+                    badge={app.badge}
+                    comingSoonLabel={ecosystemLabels.comingSoon}
+                    visitLabel={ecosystemLabels.visit}
+                  />
+                </AnimatedSection>
+              ))}
             </div>
+          </div>
+        </section>
+
+        <section className="py-20 sm:py-28 bg-gradient-to-b from-background via-brand-50/20 to-background dark:from-background dark:via-brand-950/15 dark:to-background">
+          <div className="max-w-7xl mx-auto px-4 md:px-6">
+            <AnimatedSection animation="fade-up" delay={0}>
+              <div className="text-center mb-12">
+                <Badge variant="outline" className="mb-4">
+                  <MapPinned className="mr-2 h-3.5 w-3.5" />
+                  {t("worldMapSection.badge")}
+                </Badge>
+                <SectionHeading text={t("worldMapSection.title")} />
+                <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
+                  {t("worldMapSection.subtitle")}
+                </p>
+              </div>
+            </AnimatedSection>
+            <WorldMapSection labels={worldMapLabels} />
           </div>
         </section>
 
@@ -494,9 +480,7 @@ export default async function Home({ params }: HomeProps) {
                   <Phone className="mr-2 h-4 w-4" />
                   {t("ctaSection.badge")}
                 </Badge>
-                <h2 className="mb-6 text-3xl sm:text-4xl md:text-5xl font-bold text-white">
-                  {t("ctaSection.title")}
-                </h2>
+                <CtaLamp title={t("ctaSection.title")} />
                 <p className="mb-10 text-brand-200/70 text-lg max-w-xl mx-auto">
                   {t("ctaSection.subtitle")}
                 </p>
