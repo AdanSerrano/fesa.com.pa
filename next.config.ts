@@ -43,7 +43,7 @@ const withPWA = withPWAInit({
         handler: "NetworkOnly",
       },
       {
-        urlPattern: ({ request, url }: { request: Request; url: URL }) => {
+        urlPattern: ({ request, url }) => {
           if (request.mode !== "navigate") return false;
           if (url.pathname.includes("dashboard")) return false;
           if (url.search) return true;
@@ -52,7 +52,7 @@ const withPWA = withPWAInit({
         handler: "NetworkOnly",
       },
       {
-        urlPattern: ({ request, url }: { request: Request; url: URL }) => {
+        urlPattern: ({ request, url }) => {
           if (request.mode !== "navigate") return false;
           if (url.pathname.includes("dashboard")) return false;
           return true;

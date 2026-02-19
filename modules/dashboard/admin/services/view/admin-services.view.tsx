@@ -1,8 +1,6 @@
-import { Suspense } from "react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getCategoriesAction, getCategoriesForSelectAction, getItemsAction } from "../actions/admin-services.actions";
 import { AdminServicesClient } from "./admin-services.client";
-import { AdminServicesSkeleton } from "../components/admin-services.skeleton";
 import type { AdminServicesFilters, AdminServicesSorting, AdminServiceStatus, GetItemsResult } from "../types/admin-services.types";
 
 interface AdminServicesViewProps {
@@ -50,14 +48,12 @@ export async function AdminServicesView({ searchParams }: AdminServicesViewProps
       filters,
     }),
     getCategoriesForSelectAction(),
-    activeTab === "items"
-      ? getItemsAction({
-          page,
-          limit: pageSize,
-          sorting,
-          filters,
-        })
-      : Promise.resolve(null),
+    getItemsAction({
+      page,
+      limit: pageSize,
+      sorting,
+      filters,
+    }),
   ]);
 
   const labels = {
@@ -190,20 +186,21 @@ export async function AdminServicesView({ searchParams }: AdminServicesViewProps
     },
   };
 
-  const itemsData = itemsResult?.data as GetItemsResult | undefined;
+  const categoriesData = result.data as { categories: unknown[]; stats: unknown; pagination: { total: number; totalPages: number } } | undefined;
+  const itemsData = itemsResult.data as GetItemsResult | undefined;
 
   const initialData = {
-    categories: "categories" in (result.data || {}) ? (result.data as { categories: unknown[] }).categories : [],
-    stats: "stats" in (result.data || {}) ? (result.data as { stats: unknown }).stats : null,
+    categories: categoriesData?.categories || [],
+    stats: categoriesData?.stats || null,
     pagination: {
       pageIndex: page - 1,
       pageSize,
-      totalRows: "pagination" in (result.data || {}) ? (result.data as { pagination: { total: number } }).pagination.total : 0,
-      totalPages: "pagination" in (result.data || {}) ? (result.data as { pagination: { totalPages: number } }).pagination.totalPages : 0,
+      totalRows: categoriesData?.pagination.total || 0,
+      totalPages: categoriesData?.pagination.totalPages || 0,
     },
     sorting,
     filters,
-    error: result.error || null,
+    error: result.error || itemsResult.error || null,
     activeTab,
     items: itemsData?.items || [],
     itemsPagination: itemsData
@@ -217,13 +214,11 @@ export async function AdminServicesView({ searchParams }: AdminServicesViewProps
   };
 
   return (
-    <Suspense fallback={<AdminServicesSkeleton />}>
-      <AdminServicesClient
-        initialData={initialData as Parameters<typeof AdminServicesClient>[0]["initialData"]}
-        categoriesForSelect={categoriesForSelect}
-        labels={labels}
-        locale={locale}
-      />
-    </Suspense>
+    <AdminServicesClient
+      initialData={initialData as Parameters<typeof AdminServicesClient>[0]["initialData"]}
+      categoriesForSelect={categoriesForSelect}
+      labels={labels}
+      locale={locale}
+    />
   );
 }

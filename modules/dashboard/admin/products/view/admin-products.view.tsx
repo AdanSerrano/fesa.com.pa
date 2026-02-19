@@ -1,8 +1,6 @@
-import { Suspense } from "react";
 import { getTranslations, getLocale } from "next-intl/server";
 import { getCategoriesAction, getCategoriesForSelectAction, getItemsAction } from "../actions/admin-products.actions";
 import { AdminProductsClient } from "./admin-products.client";
-import { AdminProductsSkeleton } from "../components/admin-products.skeleton";
 import type { AdminProductsFilters, AdminProductsSorting, AdminProductStatus, AdminProductPriceFilter, AdminProductSkuFilter, GetItemsResult } from "../types/admin-products.types";
 
 interface AdminProductsViewProps {
@@ -56,14 +54,12 @@ export async function AdminProductsView({ searchParams }: AdminProductsViewProps
       filters,
     }),
     getCategoriesForSelectAction(),
-    activeTab === "items"
-      ? getItemsAction({
-          page,
-          limit: pageSize,
-          sorting,
-          filters,
-        })
-      : Promise.resolve(null),
+    getItemsAction({
+      page,
+      limit: pageSize,
+      sorting,
+      filters,
+    }),
   ]);
 
   const labels = {
@@ -212,20 +208,21 @@ export async function AdminProductsView({ searchParams }: AdminProductsViewProps
     },
   };
 
-  const itemsData = itemsResult?.data as GetItemsResult | undefined;
+  const categoriesData = result.data as { categories: unknown[]; stats: unknown; pagination: { total: number; totalPages: number } } | undefined;
+  const itemsData = itemsResult.data as GetItemsResult | undefined;
 
   const initialData = {
-    categories: "categories" in (result.data || {}) ? (result.data as { categories: unknown[] }).categories : [],
-    stats: "stats" in (result.data || {}) ? (result.data as { stats: unknown }).stats : null,
+    categories: categoriesData?.categories || [],
+    stats: categoriesData?.stats || null,
     pagination: {
       pageIndex: page - 1,
       pageSize,
-      totalRows: "pagination" in (result.data || {}) ? (result.data as { pagination: { total: number } }).pagination.total : 0,
-      totalPages: "pagination" in (result.data || {}) ? (result.data as { pagination: { totalPages: number } }).pagination.totalPages : 0,
+      totalRows: categoriesData?.pagination.total || 0,
+      totalPages: categoriesData?.pagination.totalPages || 0,
     },
     sorting,
     filters,
-    error: result.error || null,
+    error: result.error || itemsResult.error || null,
     activeTab,
     items: itemsData?.items || [],
     itemsPagination: itemsData
@@ -239,13 +236,11 @@ export async function AdminProductsView({ searchParams }: AdminProductsViewProps
   };
 
   return (
-    <Suspense fallback={<AdminProductsSkeleton />}>
-      <AdminProductsClient
-        initialData={initialData as Parameters<typeof AdminProductsClient>[0]["initialData"]}
-        categoriesForSelect={categoriesForSelect}
-        labels={labels}
-        locale={locale}
-      />
-    </Suspense>
+    <AdminProductsClient
+      initialData={initialData as Parameters<typeof AdminProductsClient>[0]["initialData"]}
+      categoriesForSelect={categoriesForSelect}
+      labels={labels}
+      locale={locale}
+    />
   );
 }
