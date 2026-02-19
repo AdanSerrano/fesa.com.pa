@@ -449,15 +449,21 @@ export const AdminNewsClient = memo(function AdminNewsClient({
 
   const handleTabChange = useCallback(
     (tab: string) => {
-      navigate({
-        tab,
-        page: 1,
-        search: "",
-        status: "all" as AdminNewsStatus,
-        categoryId: "all",
-      });
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete(`${PREFIX}_page`);
+      params.delete(`${PREFIX}_pageSize`);
+      params.delete(`${PREFIX}_sort`);
+      params.delete(`${PREFIX}_sortDir`);
+      params.delete(`${PREFIX}_search`);
+      params.delete(`${PREFIX}_status`);
+      params.delete(`${PREFIX}_category`);
+      if (tab === "categories") params.delete(`${PREFIX}_tab`);
+      else params.set(`${PREFIX}_tab`, tab);
+      const queryString = params.toString();
+      const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+      window.history.replaceState(null, "", newUrl);
     },
-    [navigate]
+    [searchParams, pathname]
   );
 
   const handlePaginationChange = useCallback(
