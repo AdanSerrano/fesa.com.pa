@@ -10,7 +10,33 @@ import {
 } from "./routes";
 import { routing } from "./i18n/routing";
 
-const intlMiddleware = createIntlMiddleware(routing);
+const baseIntlMiddleware = createIntlMiddleware(routing);
+
+function handleIntl(req: NextRequest): NextResponse {
+  const response = baseIntlMiddleware(req);
+  const search = req.nextUrl.search;
+  if (!search) return response;
+
+  const rewriteHeader = response.headers.get("x-middleware-rewrite");
+  if (rewriteHeader) {
+    const rewriteUrl = new URL(rewriteHeader);
+    if (!rewriteUrl.search) {
+      rewriteUrl.search = search;
+      response.headers.set("x-middleware-rewrite", rewriteUrl.toString());
+    }
+  }
+
+  const locationHeader = response.headers.get("location");
+  if (locationHeader) {
+    const locationUrl = new URL(locationHeader, req.url);
+    if (!locationUrl.search) {
+      locationUrl.search = search;
+      response.headers.set("location", locationUrl.toString());
+    }
+  }
+
+  return response;
+}
 
 function getPathnameWithoutLocale(pathname: string): string {
   const localePrefix = routing.locales.find(
@@ -95,7 +121,7 @@ export async function proxy(req: NextRequest) {
   }
 
   if (isPublicRoute(pathname)) {
-    return intlMiddleware(req);
+    return handleIntl(req);
   }
 
   const authResponse = await (
@@ -106,7 +132,7 @@ export async function proxy(req: NextRequest) {
     return authResponse;
   }
 
-  const intlResponse = intlMiddleware(req);
+  const intlResponse = handleIntl(req);
 
   authResponse.headers.getSetCookie().forEach((cookie) => {
     intlResponse.headers.append("set-cookie", cookie);
