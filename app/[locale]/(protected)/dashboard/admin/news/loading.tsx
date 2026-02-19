@@ -2,7 +2,7 @@ import { AdminNewsSkeleton } from "@/modules/dashboard/admin/news/components/adm
 
 export default function Loading() {
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+    <div className="flex flex-1 flex-col min-w-0 gap-6 p-4 md:p-6">
       <AdminNewsSkeleton />
     </div>
   );

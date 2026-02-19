@@ -31,7 +31,7 @@ export default async function FormDemoPage() {
   const t = await getTranslations("FormDemoPage");
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+    <div className="flex flex-1 flex-col min-w-0 gap-6 p-4 md:p-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("title")}

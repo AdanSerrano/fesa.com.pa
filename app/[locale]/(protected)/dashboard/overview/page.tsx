@@ -20,7 +20,7 @@ export default async function OverviewPage() {
   const firstName = session?.user?.name?.split(" ")[0] || t("defaultUser");
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+    <div className="flex flex-1 flex-col min-w-0 gap-6 p-4 md:p-6">
       <div className="flex flex-col gap-1">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t("welcome", { name: firstName })}

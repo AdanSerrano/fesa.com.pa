@@ -37,7 +37,7 @@ export default async function AdminProductsPage({ searchParams }: PageProps) {
   const params = await searchParams;
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-4 md:p-6">
+    <div className="flex flex-1 flex-col min-w-0 gap-6 p-4 md:p-6">
       <Suspense fallback={<AdminProductsSkeleton />}>
         <AdminProductsView searchParams={params} />
       </Suspense>
