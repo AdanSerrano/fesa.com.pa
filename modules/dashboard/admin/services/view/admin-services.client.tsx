@@ -437,11 +437,8 @@ export const AdminServicesClient = memo(function AdminServicesClient({
         status: "all" as AdminServiceStatus,
         categoryId: "all",
       });
-      if (tab === "items") {
-        loadItems();
-      }
     },
-    [navigate, loadItems]
+    [navigate]
   );
 
   const handlePaginationChange = useCallback(

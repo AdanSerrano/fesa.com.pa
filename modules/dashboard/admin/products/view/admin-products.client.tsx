@@ -469,11 +469,8 @@ export const AdminProductsClient = memo(function AdminProductsClient({
         priceFilter: "all" as AdminProductPriceFilter,
         skuFilter: "all" as AdminProductSkuFilter,
       });
-      if (tab === "items") {
-        loadItems();
-      }
     },
-    [navigate, loadItems]
+    [navigate]
   );
 
   const handlePaginationChange = useCallback(

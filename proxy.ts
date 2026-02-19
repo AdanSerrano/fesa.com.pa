@@ -10,52 +10,7 @@ import {
 } from "./routes";
 import { routing } from "./i18n/routing";
 
-const baseIntlMiddleware = createIntlMiddleware(routing);
-
-function handleIntl(req: NextRequest): NextResponse {
-  const originalSearch = req.nextUrl.search;
-  const response = baseIntlMiddleware(req);
-
-  if (!originalSearch) return response;
-
-  const rewriteHeader = response.headers.get("x-middleware-rewrite");
-  if (rewriteHeader) {
-    const rewriteUrl = new URL(rewriteHeader);
-    if (!rewriteUrl.search) {
-      rewriteUrl.search = originalSearch;
-      const rewritten = NextResponse.rewrite(rewriteUrl);
-      response.headers.forEach((value, key) => {
-        if (key.toLowerCase() !== "x-middleware-rewrite") {
-          rewritten.headers.set(key, value);
-        }
-      });
-      response.headers.getSetCookie().forEach((cookie) => {
-        rewritten.headers.append("set-cookie", cookie);
-      });
-      return rewritten;
-    }
-  }
-
-  const locationHeader = response.headers.get("location");
-  if (locationHeader) {
-    const locationUrl = new URL(locationHeader, req.url);
-    if (!locationUrl.search) {
-      locationUrl.search = originalSearch;
-      const redirected = NextResponse.redirect(locationUrl, response.status);
-      response.headers.forEach((value, key) => {
-        if (key.toLowerCase() !== "location") {
-          redirected.headers.set(key, value);
-        }
-      });
-      response.headers.getSetCookie().forEach((cookie) => {
-        redirected.headers.append("set-cookie", cookie);
-      });
-      return redirected;
-    }
-  }
-
-  return response;
-}
+const intlMiddleware = createIntlMiddleware(routing);
 
 function getPathnameWithoutLocale(pathname: string): string {
   const localePrefix = routing.locales.find(
@@ -140,7 +95,7 @@ export async function proxy(req: NextRequest) {
   }
 
   if (isPublicRoute(pathname)) {
-    return handleIntl(req);
+    return intlMiddleware(req);
   }
 
   const authResponse = await (
@@ -151,7 +106,7 @@ export async function proxy(req: NextRequest) {
     return authResponse;
   }
 
-  const intlResponse = handleIntl(req);
+  const intlResponse = intlMiddleware(req);
 
   authResponse.headers.getSetCookie().forEach((cookie) => {
     intlResponse.headers.append("set-cookie", cookie);
