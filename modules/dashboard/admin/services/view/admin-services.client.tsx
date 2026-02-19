@@ -1,6 +1,6 @@
 "use client";
 
-import { memo, useCallback, useMemo, useOptimistic, useReducer, useRef, useState, useTransition } from "react";
+import { memo, useCallback, useMemo, useReducer, useRef, useState, useTransition } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { AlertCircle, CheckCircle, FolderOpen, FolderPlus, Layers, Plus, RefreshCw, Star } from "lucide-react";
 import { toast } from "sonner";
@@ -355,10 +355,8 @@ export const AdminServicesClient = memo(function AdminServicesClient({
     };
   }, [searchParams]);
 
-  const [optimisticTab, setOptimisticTab] = useOptimistic(urlState.tab);
-
   const navigate = useCallback(
-    (updates: Partial<typeof urlState>, beforeTransition?: () => void) => {
+    (updates: Partial<typeof urlState>) => {
       const params = new URLSearchParams(searchParams.toString());
       const newState = { ...urlState, ...updates };
 
@@ -392,7 +390,6 @@ export const AdminServicesClient = memo(function AdminServicesClient({
       const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
 
       startNavigationTransition(() => {
-        beforeTransition?.();
         router.replace(newUrl, { scroll: false });
       });
     },
@@ -433,18 +430,21 @@ export const AdminServicesClient = memo(function AdminServicesClient({
 
   const handleTabChange = useCallback(
     (tab: string) => {
-      navigate(
-        {
-          tab,
-          page: 1,
-          search: "",
-          status: "all" as AdminServiceStatus,
-          categoryId: "all",
-        },
-        () => setOptimisticTab(tab)
-      );
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete(`${PREFIX}_page`);
+      params.delete(`${PREFIX}_pageSize`);
+      params.delete(`${PREFIX}_sort`);
+      params.delete(`${PREFIX}_sortDir`);
+      params.delete(`${PREFIX}_search`);
+      params.delete(`${PREFIX}_status`);
+      params.delete(`${PREFIX}_category`);
+      if (tab === "categories") params.delete(`${PREFIX}_tab`);
+      else params.set(`${PREFIX}_tab`, tab);
+      const queryString = params.toString();
+      const newUrl = queryString ? `${pathname}?${queryString}` : pathname;
+      window.history.replaceState(null, "", newUrl);
     },
-    [navigate, setOptimisticTab]
+    [searchParams, pathname]
   );
 
   const handlePaginationChange = useCallback(
@@ -812,7 +812,7 @@ export const AdminServicesClient = memo(function AdminServicesClient({
       </AnimatedSection>
 
       <AnimatedSection animation="fade-up" delay={200}>
-        <Tabs value={optimisticTab} onValueChange={handleTabChange}>
+        <Tabs value={urlState.tab} onValueChange={handleTabChange}>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-4">
             <TabsList>
               <TabsTrigger value="categories">{labels.tabs.categories}</TabsTrigger>
@@ -820,7 +820,7 @@ export const AdminServicesClient = memo(function AdminServicesClient({
             </TabsList>
 
             <div className="flex items-center gap-2">
-              {optimisticTab === "categories" ? (
+              {urlState.tab === "categories" ? (
                 <Button onClick={() => openDialog("category-create")}>
                   <FolderPlus className="mr-2 h-4 w-4" />
                   {labels.actions.createCategory}
