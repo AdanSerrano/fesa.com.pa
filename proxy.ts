@@ -13,16 +13,26 @@ import { routing } from "./i18n/routing";
 const baseIntlMiddleware = createIntlMiddleware(routing);
 
 function handleIntl(req: NextRequest): NextResponse {
+  const originalSearch = req.nextUrl.search;
   const response = baseIntlMiddleware(req);
-  const search = req.nextUrl.search;
-  if (!search) return response;
+
+  if (!originalSearch) return response;
 
   const rewriteHeader = response.headers.get("x-middleware-rewrite");
   if (rewriteHeader) {
     const rewriteUrl = new URL(rewriteHeader);
     if (!rewriteUrl.search) {
-      rewriteUrl.search = search;
-      response.headers.set("x-middleware-rewrite", rewriteUrl.toString());
+      rewriteUrl.search = originalSearch;
+      const rewritten = NextResponse.rewrite(rewriteUrl);
+      response.headers.forEach((value, key) => {
+        if (key.toLowerCase() !== "x-middleware-rewrite") {
+          rewritten.headers.set(key, value);
+        }
+      });
+      response.headers.getSetCookie().forEach((cookie) => {
+        rewritten.headers.append("set-cookie", cookie);
+      });
+      return rewritten;
     }
   }
 
@@ -30,8 +40,17 @@ function handleIntl(req: NextRequest): NextResponse {
   if (locationHeader) {
     const locationUrl = new URL(locationHeader, req.url);
     if (!locationUrl.search) {
-      locationUrl.search = search;
-      response.headers.set("location", locationUrl.toString());
+      locationUrl.search = originalSearch;
+      const redirected = NextResponse.redirect(locationUrl, response.status);
+      response.headers.forEach((value, key) => {
+        if (key.toLowerCase() !== "location") {
+          redirected.headers.set(key, value);
+        }
+      });
+      response.headers.getSetCookie().forEach((cookie) => {
+        redirected.headers.append("set-cookie", cookie);
+      });
+      return redirected;
     }
   }
 
