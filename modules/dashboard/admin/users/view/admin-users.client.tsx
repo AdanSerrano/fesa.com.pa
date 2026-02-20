@@ -14,6 +14,8 @@ import { AnimatedSection } from "@/components/ui/animated-section";
 import {
   blockUserAction,
   unblockUserAction,
+  verifyUserAction,
+  unverifyUserAction,
   changeRoleAction,
   deleteUserAction,
   restoreUserAction,
@@ -26,6 +28,7 @@ import { AdminUsersFiltersSection } from "../components/filters/admin-users-filt
 import {
   UserDetailsDialog,
   BlockUserDialog,
+  VerifyUserDialog,
   ChangeRoleDialog,
   DeleteUserDialog,
   RestoreUserDialog,
@@ -410,6 +413,46 @@ export const AdminUsersClient = memo(function AdminUsersClient({ initialData }: 
     [closeDialog, router]
   );
 
+  const verifyUser = useCallback(
+    (userId: string) => {
+      startActionTransition(async () => {
+        try {
+          const result = await verifyUserAction(userId);
+          if (result.error) {
+            toast.error(result.error);
+          } else if (result.success) {
+            toast.success(result.success);
+            closeDialog();
+            router.refresh();
+          }
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Error al verificar usuario");
+        }
+      });
+    },
+    [closeDialog, router]
+  );
+
+  const unverifyUser = useCallback(
+    (userId: string) => {
+      startActionTransition(async () => {
+        try {
+          const result = await unverifyUserAction(userId);
+          if (result.error) {
+            toast.error(result.error);
+          } else if (result.success) {
+            toast.success(result.success);
+            closeDialog();
+            router.refresh();
+          }
+        } catch (err) {
+          toast.error(err instanceof Error ? err.message : "Error al quitar verificación");
+        }
+      });
+    },
+    [closeDialog, router]
+  );
+
   const changeRole = useCallback(
     (userId: string, newRole: Role) => {
       startActionTransition(async () => {
@@ -765,6 +808,16 @@ export const AdminUsersClient = memo(function AdminUsersClient({ initialData }: 
         onClose={closeDialog}
         onBlock={blockUser}
         onUnblock={unblockUser}
+      />
+
+      <VerifyUserDialog
+        user={dialogState.selectedUser}
+        open={dialogState.activeDialog === "verify" || dialogState.activeDialog === "unverify"}
+        isPending={isPending}
+        mode={dialogState.activeDialog === "verify" ? "verify" : "unverify"}
+        onClose={closeDialog}
+        onVerify={verifyUser}
+        onUnverify={unverifyUser}
       />
 
       <ChangeRoleDialog

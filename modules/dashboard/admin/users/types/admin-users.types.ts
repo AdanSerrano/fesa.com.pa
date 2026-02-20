@@ -43,6 +43,8 @@ export type AdminUsersDialogType =
   | "details"
   | "block"
   | "unblock"
+  | "verify"
+  | "unverify"
   | "change-role"
   | "delete"
   | "restore"
@@ -116,6 +118,16 @@ export interface BulkBlockParams {
 export interface BulkDeleteParams {
   userIds: string[];
   reason?: string;
+  currentUserId: string;
+}
+
+export interface VerifyUserParams {
+  userId: string;
+  currentUserId: string;
+}
+
+export interface UnverifyUserParams {
+  userId: string;
   currentUserId: string;
 }
 

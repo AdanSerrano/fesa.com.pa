@@ -58,6 +58,16 @@ export const bulkDeleteSchema = z.object({
   currentUserId: z.string().min(1, "ID de usuario actual requerido"),
 });
 
+export const verifyUserSchema = z.object({
+  userId: z.string().min(1, "ID de usuario requerido"),
+  currentUserId: z.string().min(1, "ID de usuario actual requerido"),
+});
+
+export const unverifyUserSchema = z.object({
+  userId: z.string().min(1, "ID de usuario requerido"),
+  currentUserId: z.string().min(1, "ID de usuario actual requerido"),
+});
+
 export const restoreUserSchema = z.object({
   userId: z.string().min(1, "ID de usuario requerido"),
   currentUserId: z.string().min(1, "ID de usuario actual requerido"),
@@ -76,5 +86,7 @@ export type ChangeRoleInput = z.infer<typeof changeRoleSchema>;
 export type DeleteUserInput = z.infer<typeof deleteUserSchema>;
 export type BulkBlockInput = z.infer<typeof bulkBlockSchema>;
 export type BulkDeleteInput = z.infer<typeof bulkDeleteSchema>;
+export type VerifyUserInput = z.infer<typeof verifyUserSchema>;
+export type UnverifyUserInput = z.infer<typeof unverifyUserSchema>;
 export type RestoreUserInput = z.infer<typeof restoreUserSchema>;
 export type BulkRestoreInput = z.infer<typeof bulkRestoreSchema>;

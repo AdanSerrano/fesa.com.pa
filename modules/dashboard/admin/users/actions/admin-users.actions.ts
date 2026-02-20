@@ -7,6 +7,8 @@ import {
   getUsersParamsSchema,
   blockUserSchema,
   unblockUserSchema,
+  verifyUserSchema,
+  unverifyUserSchema,
   changeRoleSchema,
   deleteUserSchema,
   bulkBlockSchema,
@@ -93,6 +95,44 @@ export async function unblockUserAction(
   }
 
   return await controller.unblockUser(inputValidation.data);
+}
+
+export async function verifyUserAction(
+  userId: string
+): Promise<AdminUsersActionResult> {
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
+  }
+
+  const inputValidation = verifyUserSchema.safeParse({
+    userId,
+    currentUserId: accessValidation.userId,
+  });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.verifyUser(inputValidation.data);
+}
+
+export async function unverifyUserAction(
+  userId: string
+): Promise<AdminUsersActionResult> {
+  const accessValidation = await validateAdminAccess();
+  if (!accessValidation.isValid || !accessValidation.userId) {
+    return { error: accessValidation.error };
+  }
+
+  const inputValidation = unverifyUserSchema.safeParse({
+    userId,
+    currentUserId: accessValidation.userId,
+  });
+  if (!inputValidation.success) {
+    return { error: inputValidation.error.issues[0]?.message || "Datos inválidos" };
+  }
+
+  return await controller.unverifyUser(inputValidation.data);
 }
 
 export async function changeRoleAction(

@@ -3,6 +3,8 @@ import type {
   GetUsersParams,
   BlockUserParams,
   UnblockUserParams,
+  VerifyUserParams,
+  UnverifyUserParams,
   ChangeRoleParams,
   DeleteUserParams,
   BulkBlockParams,
@@ -35,6 +37,18 @@ export class AdminUsersController {
     params: UnblockUserParams
   ): Promise<AdminUsersActionResult> {
     return await this.service.unblockUser(params);
+  }
+
+  public async verifyUser(
+    params: VerifyUserParams
+  ): Promise<AdminUsersActionResult> {
+    return await this.service.verifyUser(params);
+  }
+
+  public async unverifyUser(
+    params: UnverifyUserParams
+  ): Promise<AdminUsersActionResult> {
+    return await this.service.unverifyUser(params);
   }
 
   public async changeRole(

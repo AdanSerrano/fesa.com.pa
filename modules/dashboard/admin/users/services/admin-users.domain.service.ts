@@ -55,6 +55,54 @@ export class AdminUsersDomainService {
     return { isValid: true };
   }
 
+  public validateVerifyUser(
+    userId: string,
+    currentUserId: string,
+    user: AdminUser | null
+  ): DomainValidationResult {
+    if (userId === currentUserId) {
+      return { isValid: false, error: "No puedes verificarte a ti mismo" };
+    }
+
+    if (!user) {
+      return { isValid: false, error: "Usuario no encontrado" };
+    }
+
+    if (user.deletedAt) {
+      return { isValid: false, error: "El usuario está eliminado" };
+    }
+
+    if (user.emailVerified) {
+      return { isValid: false, error: "El usuario ya está verificado" };
+    }
+
+    return { isValid: true };
+  }
+
+  public validateUnverifyUser(
+    userId: string,
+    currentUserId: string,
+    user: AdminUser | null
+  ): DomainValidationResult {
+    if (userId === currentUserId) {
+      return { isValid: false, error: "No puedes quitar tu propia verificación" };
+    }
+
+    if (!user) {
+      return { isValid: false, error: "Usuario no encontrado" };
+    }
+
+    if (user.deletedAt) {
+      return { isValid: false, error: "El usuario está eliminado" };
+    }
+
+    if (!user.emailVerified) {
+      return { isValid: false, error: "El usuario no está verificado" };
+    }
+
+    return { isValid: true };
+  }
+
   public validateChangeRole(
     userId: string,
     currentUserId: string,

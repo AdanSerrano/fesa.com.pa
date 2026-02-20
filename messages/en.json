@@ -707,6 +707,8 @@
         "changeRole": "Change role",
         "viewDetails": "View details",
         "openMenu": "Open menu",
+        "verify": "Verify account",
+        "unverify": "Remove verification",
         "restoreAccount": "Restore account"
       },
       "columns": {
@@ -1329,6 +1331,15 @@
     "blockReasonPlaceholder": "Ex: Terms of service violation...",
     "blockButton": "Block",
     "unblockButton": "Unblock"
+  },
+  "VerifyUserDialog": {
+    "verifyTitle": "Verify Account",
+    "unverifyTitle": "Remove Verification",
+    "verifyMessage": "Do you want to manually verify {user}'s account?",
+    "unverifyMessage": "Do you want to remove the verification from {user}?",
+    "verifyWarning": "By manually verifying, the email will be marked as verified without the user having completed the email verification process.",
+    "verifyButton": "Verify",
+    "unverifyButton": "Remove verification"
   },
   "ChangeRoleDialog": {
     "title": "Change User Role",

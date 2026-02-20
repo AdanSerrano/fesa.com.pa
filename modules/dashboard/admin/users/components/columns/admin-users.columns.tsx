@@ -20,6 +20,8 @@ import {
   Trash2,
   Shield,
   ShieldCheck,
+  BadgeCheck,
+  BadgeX,
   RotateCcw,
   Check,
   X,
@@ -263,6 +265,7 @@ const ActionsCell = memo(function ActionsCell({
   const t = useTranslations("Admin.users.actions");
   const isDeleted = !!row.deletedAt;
   const isBlocked = row.isBlocked;
+  const isVerified = !!row.emailVerified;
 
   return (
     <DropdownMenu>
@@ -302,6 +305,18 @@ const ActionsCell = memo(function ActionsCell({
               <DropdownMenuItem onClick={() => onOpenDialog("block", row)}>
                 <Ban className="mr-2 h-4 w-4" />
                 {t("block")}
+              </DropdownMenuItem>
+            )}
+
+            {isVerified ? (
+              <DropdownMenuItem onClick={() => onOpenDialog("unverify", row)}>
+                <BadgeX className="mr-2 h-4 w-4" />
+                {t("unverify")}
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem onClick={() => onOpenDialog("verify", row)}>
+                <BadgeCheck className="mr-2 h-4 w-4" />
+                {t("verify")}
               </DropdownMenuItem>
             )}
 

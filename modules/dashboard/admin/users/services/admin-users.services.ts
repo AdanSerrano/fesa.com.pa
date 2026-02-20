@@ -6,6 +6,8 @@ import type {
   GetUsersParams,
   BlockUserParams,
   UnblockUserParams,
+  VerifyUserParams,
+  UnverifyUserParams,
   ChangeRoleParams,
   DeleteUserParams,
   BulkBlockParams,
@@ -96,6 +98,52 @@ export class AdminUsersService {
       return { success: "Usuario desbloqueado correctamente" };
     } catch {
       return { error: "Error al desbloquear usuario" };
+    }
+  }
+
+  public async verifyUser(params: VerifyUserParams): Promise<AdminUsersActionResult> {
+    try {
+      const { userId, currentUserId } = params;
+
+      const user = await this.repository.getUserById(userId);
+      const validation = this.domainService.validateVerifyUser(
+        userId,
+        currentUserId,
+        user
+      );
+
+      if (!validation.isValid) {
+        return { error: validation.error };
+      }
+
+      await this.repository.verifyUser(userId);
+
+      return { success: "Usuario verificado correctamente" };
+    } catch {
+      return { error: "Error al verificar usuario" };
+    }
+  }
+
+  public async unverifyUser(params: UnverifyUserParams): Promise<AdminUsersActionResult> {
+    try {
+      const { userId, currentUserId } = params;
+
+      const user = await this.repository.getUserById(userId);
+      const validation = this.domainService.validateUnverifyUser(
+        userId,
+        currentUserId,
+        user
+      );
+
+      if (!validation.isValid) {
+        return { error: validation.error };
+      }
+
+      await this.repository.unverifyUser(userId);
+
+      return { success: "Verificación removida correctamente" };
+    } catch {
+      return { error: "Error al quitar verificación" };
     }
   }
 

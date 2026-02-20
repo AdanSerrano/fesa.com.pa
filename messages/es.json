@@ -707,6 +707,8 @@
         "changeRole": "Cambiar rol",
         "viewDetails": "Ver detalles",
         "openMenu": "Abrir menú",
+        "verify": "Verificar cuenta",
+        "unverify": "Quitar verificación",
         "restoreAccount": "Restaurar cuenta"
       },
       "columns": {
@@ -1329,6 +1331,15 @@
     "blockReasonPlaceholder": "Ej: Violación de términos de servicio...",
     "blockButton": "Bloquear",
     "unblockButton": "Desbloquear"
+  },
+  "VerifyUserDialog": {
+    "verifyTitle": "Verificar Cuenta",
+    "unverifyTitle": "Quitar Verificación",
+    "verifyMessage": "¿Deseas verificar manualmente la cuenta de {user}?",
+    "unverifyMessage": "¿Deseas quitar la verificación de {user}?",
+    "verifyWarning": "Al verificar manualmente, se marcará el email como verificado sin que el usuario haya completado el proceso de verificación por email.",
+    "verifyButton": "Verificar",
+    "unverifyButton": "Quitar verificación"
   },
   "ChangeRoleDialog": {
     "title": "Cambiar Rol de Usuario",

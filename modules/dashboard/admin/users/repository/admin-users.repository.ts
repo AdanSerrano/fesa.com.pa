@@ -189,6 +189,26 @@ export class AdminUsersRepository {
     return user as AdminUser;
   }
 
+  public async verifyUser(id: string): Promise<AdminUser | null> {
+    const user = await db.user.update({
+      where: { id },
+      data: { emailVerified: new Date() },
+      select: userSelectFields,
+    });
+
+    return user as AdminUser;
+  }
+
+  public async unverifyUser(id: string): Promise<AdminUser | null> {
+    const user = await db.user.update({
+      where: { id },
+      data: { emailVerified: null },
+      select: userSelectFields,
+    });
+
+    return user as AdminUser;
+  }
+
   public async changeRole(id: string, role: Role): Promise<AdminUser | null> {
     const user = await db.user.update({
       where: { id },
