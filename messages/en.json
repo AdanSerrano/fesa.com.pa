@@ -230,6 +230,28 @@
     "exploreServices": "Explore Services",
     "contactUs": "Contact Us",
     "viewCatalogs": "View Catalogs",
+    "carousel": {
+      "slide1": {
+        "title": "Transform Your Ideas into Visual Impact",
+        "subtitle": "Commercial printing that highlights your brand",
+        "alt": "Large format commercial printing"
+      },
+      "slide2": {
+        "title": "Connecting Your World, Delivering Possibilities",
+        "subtitle": "Logistics services tailored to your needs",
+        "alt": "Logistics services with warehouse management"
+      },
+      "slide3": {
+        "title": "Unlock the Potential of Connectivity",
+        "subtitle": "RFID technology: more than a label, a revolution",
+        "alt": "RFID technology for traceability"
+      },
+      "slide4": {
+        "title": "Transform Your Business with Digital Innovation",
+        "subtitle": "Technology solutions that take your business to the next level",
+        "alt": "Enterprise digital innovation"
+      }
+    },
     "clientsMarquee": "We serve companies across all sectors",
     "clientsIndustries": ["Banking", "Insurance", "Manufacturing", "Retail", "Education", "Government", "Healthcare", "Telecommunications", "Energy", "Logistics", "Construction", "Agribusiness"],
     "heroFeatures": {

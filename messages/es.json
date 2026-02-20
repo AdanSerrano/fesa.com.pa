@@ -230,6 +230,28 @@
     "exploreServices": "Explorar Servicios",
     "contactUs": "Contáctanos",
     "viewCatalogs": "Ver Catálogos",
+    "carousel": {
+      "slide1": {
+        "title": "Transforma tus Ideas en Impacto Visual",
+        "subtitle": "Impresión comercial que destaca tu marca",
+        "alt": "Impresión comercial de gran formato"
+      },
+      "slide2": {
+        "title": "Conectando tu Mundo, Entregando Posibilidades",
+        "subtitle": "Servicios logísticos a tu medida",
+        "alt": "Servicios logísticos con gestión de almacén"
+      },
+      "slide3": {
+        "title": "Desbloquea el Potencial de la Conectividad",
+        "subtitle": "Tecnología RFID: más que una etiqueta, una revolución",
+        "alt": "Tecnología RFID para trazabilidad"
+      },
+      "slide4": {
+        "title": "Transforma tu Empresa con Innovación Digital",
+        "subtitle": "Soluciones tecnológicas que llevan tu negocio al siguiente nivel",
+        "alt": "Innovación digital empresarial"
+      }
+    },
     "clientsMarquee": "Atendemos empresas de todos los sectores",
     "clientsIndustries": ["Banca", "Seguros", "Manufactura", "Retail", "Educación", "Gobierno", "Salud", "Telecomunicaciones", "Energía", "Logística", "Construcción", "Agroindustria"],
     "heroFeatures": {

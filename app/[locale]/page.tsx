@@ -28,6 +28,7 @@ import { Spotlight } from "@/components/ui/spotlight";
 import { CtaLamp } from "@/components/landing/cta-lamp";
 import { EcosystemCard } from "@/components/landing/ecosystem-card";
 import { HeroLinkCard } from "@/components/landing/hero-link-card";
+import { HeroCarousel } from "@/components/landing/hero-carousel";
 import { WorldMapSection } from "@/components/landing/world-map-section";
 import { HistoryTimeline } from "@/components/landing/history-timeline";
 import { AnimatedSection } from "@/components/ui/animated-section";
@@ -177,6 +178,32 @@ export default async function Home({ params }: HomeProps) {
   const faqs = t.raw("faqs") as { question: string; answer: string }[];
   const clientsIndustries = t.raw("clientsIndustries") as string[];
   const flipWords = t.raw("flipWords") as string[];
+  const carouselSlides = [
+    {
+      src: "/carrousel/carrusel01.png",
+      title: t("carousel.slide1.title"),
+      subtitle: t("carousel.slide1.subtitle"),
+      alt: t("carousel.slide1.alt"),
+    },
+    {
+      src: "/carrousel/carrusel02.png",
+      title: t("carousel.slide2.title"),
+      subtitle: t("carousel.slide2.subtitle"),
+      alt: t("carousel.slide2.alt"),
+    },
+    {
+      src: "/carrousel/carrusel03.png",
+      title: t("carousel.slide3.title"),
+      subtitle: t("carousel.slide3.subtitle"),
+      alt: t("carousel.slide3.alt"),
+    },
+    {
+      src: "/carrousel/carrusel04.png",
+      title: t("carousel.slide4.title"),
+      subtitle: t("carousel.slide4.subtitle"),
+      alt: t("carousel.slide4.alt"),
+    },
+  ];
   const worldMapLabels = t.raw("worldMapSection") as {
     hub: string;
     hubLat: number;
@@ -274,6 +301,10 @@ export default async function Home({ params }: HomeProps) {
               </AnimatedSection>
             </div>
           </div>
+        </section>
+
+        <section>
+          <HeroCarousel images={carouselSlides} />
         </section>
 
         <section className="bg-muted/40 py-6 border-y border-border/50">
