@@ -31,18 +31,23 @@ interface SliderState {
 
 type SliderAction =
   | { type: "NEXT"; total: number }
+  | { type: "PREV"; total: number }
   | { type: "GO_TO"; index: number };
 
 function sliderReducer(state: SliderState, action: SliderAction): SliderState {
   switch (action.type) {
     case "NEXT":
       return { active: (state.active + 1) % action.total };
+    case "PREV":
+      return { active: (state.active - 1 + action.total) % action.total };
     case "GO_TO":
       return { active: action.index };
     default:
       return state;
   }
 }
+
+const SWIPE_THRESHOLD = 50;
 
 function ImagesSliderComponent({
   images,
@@ -52,9 +57,14 @@ function ImagesSliderComponent({
 }: ImagesSliderProps) {
   const [state, dispatch] = useReducer(sliderReducer, { active: 0 });
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const touchStartRef = useRef<number | null>(null);
 
   const handleNext = useCallback(() => {
     dispatch({ type: "NEXT", total: images.length });
+  }, [images.length]);
+
+  const handlePrev = useCallback(() => {
+    dispatch({ type: "PREV", total: images.length });
   }, [images.length]);
 
   const handleGoTo = useCallback((index: number) => {
@@ -91,15 +101,43 @@ function ImagesSliderComponent({
     [handleGoTo, resetAutoplay]
   );
 
+  const onTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      touchStartRef.current = e.touches[0].clientX;
+      stopAutoplay();
+    },
+    [stopAutoplay]
+  );
+
+  const onTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      if (touchStartRef.current === null) return;
+      const delta = e.changedTouches[0].clientX - touchStartRef.current;
+      touchStartRef.current = null;
+
+      if (Math.abs(delta) >= SWIPE_THRESHOLD) {
+        if (delta < 0) {
+          handleNext();
+        } else {
+          handlePrev();
+        }
+      }
+      resetAutoplay();
+    },
+    [handleNext, handlePrev, resetAutoplay]
+  );
+
   const activeImage = images[state.active];
 
   if (!activeImage) return null;
 
   return (
     <div
-      className={cn("relative w-full overflow-hidden", className)}
+      className={cn("relative w-full overflow-hidden touch-pan-y", className)}
       onMouseEnter={stopAutoplay}
       onMouseLeave={resetAutoplay}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       {images.map((image, index) => (
         <div
