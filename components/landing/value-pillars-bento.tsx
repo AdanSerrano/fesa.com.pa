@@ -2,6 +2,7 @@
 
 import { memo } from "react";
 import { BentoGrid, BentoGridItem } from "@/components/ui/bento-grid";
+import { AnimatedSection } from "@/components/ui/animated-section";
 import { Zap, ShieldCheck, TrendingUp, Target } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -58,19 +59,24 @@ function ValuePillarsBentoComponent({ pillars }: ValuePillarsBentoProps) {
   return (
     <BentoGrid className="lg:grid-cols-3">
       {pillars.map((item, index) => (
-        <BentoGridItem
+        <AnimatedSection
           key={item.title}
-          className={bentoSpans[index % bentoSpans.length]}
-          title={item.title}
-          description={item.description}
-          header={
-            <PillarHeader
-              color={item.color}
-              iconName={item.icon}
-              isWide={index === 0 || index === 3}
-            />
-          }
-        />
+          animation="fade-up"
+          delay={index * 150}
+        >
+          <BentoGridItem
+            className={bentoSpans[index % bentoSpans.length]}
+            title={item.title}
+            description={item.description}
+            header={
+              <PillarHeader
+                color={item.color}
+                iconName={item.icon}
+                isWide={index === 0 || index === 3}
+              />
+            }
+          />
+        </AnimatedSection>
       ))}
     </BentoGrid>
   );
