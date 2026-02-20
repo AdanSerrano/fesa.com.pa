@@ -18,7 +18,7 @@ function HeroCarouselComponent({ images }: HeroCarouselProps) {
       images={images}
       autoplay
       autoplayInterval={5000}
-      className="h-[320px] sm:h-[400px] md:h-[480px] lg:h-[560px] xl:h-[640px]"
+      className="h-[60vh] sm:h-[65vh] md:h-[70vh] lg:h-[75vh]"
     />
   );
 }
